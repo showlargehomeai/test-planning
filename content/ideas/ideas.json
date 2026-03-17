@@ -1,1 +1,33 @@
-[]
+[
+  {
+    "title": "產品使用紀錄與推薦追蹤",
+    "description": "每個產品可以記錄展示在哪些專案被使用，以及被哪些人推薦或使用過。建立產品的「使用履歷」，讓建材商看到自家產品的實際應用場景，也讓設計師參考其他人的選材經驗。",
+    "category": "product",
+    "priority": "high",
+    "tags": [
+      "建材追蹤",
+      "推薦系統",
+      "產品履歷"
+    ],
+    "author": "brighten",
+    "status": "new",
+    "id": "idea-1773730849366-t5enny",
+    "timestamp": "2026-03-17T07:00:49.367Z"
+  },
+  {
+    "title": "展場 QR Code 獨立端點與事件追蹤",
+    "description": "為展場地下室的每個廠商建立獨立的 QR Code 端點。該端點可跳轉至 LINE 或其他指定位置，並安插追蹤事件（掃碼次數、時間、來源等），作為向廠商收費的依據。每個廠商一個獨立短網址，後台可管理跳轉目標和查看統計。",
+    "category": "business",
+    "priority": "high",
+    "tags": [
+      "QR Code",
+      "廠商收費",
+      "事件追蹤",
+      "LINE跳轉"
+    ],
+    "author": "brighten",
+    "status": "new",
+    "id": "idea-1773730856857-ufw4z5",
+    "timestamp": "2026-03-17T07:00:56.857Z"
+  }
+]
