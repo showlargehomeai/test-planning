@@ -150,6 +150,20 @@ When the user sends a message, determine their intent from context and keywords.
 - Commit message format: `dashboard: description` for dashboard changes
 - Do NOT push automatically — let the user decide when to push
 
+## 戰情室 (Dashboard)
+- 路徑：`/dashboard`
+- 功能：即時顯示 LargeHome 用戶成長數據
+- 資料來源：PostgreSQL `users` 表（read-only 帳號 `dashboard_readonly`）
+- 圖表：累計成長曲線、每日新增用戶、每日活躍用戶 (DAU)
+- 自動更新：每 30 秒刷新一次
+- 環境變數：資料庫連線設定在 `.env.local`，參考 `.env.example`
+
+## 快速部署（其他電腦）
+1. 解壓專案：`tar xzf test-planning.tar.gz && cd test-planning`
+2. 執行 `bash setup.sh`（會自動安裝依賴、檢查環境）
+3. `npm run dev` 啟動
+4. `.env.local` 已包含完整資料庫連線設定（read-only 帳號），無需額外設定
+
 ## Development
 - Run dashboard: `npm run dev` → http://localhost:3000
 - The dashboard reads from `content/` directory at runtime

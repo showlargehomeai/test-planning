@@ -1,1 +1,9 @@
-[]
+[
+  {
+    "version": "v001",
+    "timestamp": "2026-03-17T13:10:00+08:00",
+    "description": "裝修產業平台 — 商業規劃（全可能性矩陣 + ROI試算 + 開發優先序）",
+    "author": "brighten",
+    "files": ["index.html"]
+  }
+]

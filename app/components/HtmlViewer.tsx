@@ -46,9 +46,9 @@ export default function HtmlViewer({ type }: { type: "demos" | "plans" }) {
     return (
       <div className="flex flex-col items-center justify-center h-96 text-slate-500">
         <span className="text-6xl mb-4">{type === "demos" ? "🎨" : "📊"}</span>
-        <p className="text-lg font-medium">No {type === "demos" ? "demos" : "plans"} yet</p>
+        <p className="text-lg font-medium">尚無{type === "demos" ? "展示" : "計畫"}</p>
         <p className="text-sm mt-2">
-          Talk to Claude to create your first {type === "demos" ? "demo" : "business plan"}
+          與 Claude 對話來建立你的第一個{type === "demos" ? "展示" : "商業計畫"}
         </p>
       </div>
     );
@@ -57,9 +57,9 @@ export default function HtmlViewer({ type }: { type: "demos" | "plans" }) {
   return (
     <div className="flex flex-col h-full">
       {/* Toolbar */}
-      <div className="flex items-center gap-4 p-4 bg-slate-50 border-b border-slate-200">
-        <div className="flex items-center gap-2">
-          <label className="text-sm font-medium text-slate-700">Version:</label>
+      <div className="flex flex-wrap items-center gap-2 sm:gap-4 p-3 sm:p-4 bg-slate-50 border-b border-slate-200">
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          <label className="text-sm font-medium text-slate-700 shrink-0">版本：</label>
           <select
             value={selectedVersion}
             onChange={(e) => {
@@ -67,7 +67,7 @@ export default function HtmlViewer({ type }: { type: "demos" | "plans" }) {
               const v = versions.find((v) => v.version === e.target.value);
               setSelectedFile(v?.files?.[0] || "index.html");
             }}
-            className="border border-slate-300 rounded-md px-3 py-1.5 text-sm bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            className="border border-slate-300 rounded-md px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 min-w-0 flex-1 sm:flex-initial"
           >
             {versions.map((v) => (
               <option key={v.version} value={v.version}>
@@ -78,12 +78,12 @@ export default function HtmlViewer({ type }: { type: "demos" | "plans" }) {
         </div>
 
         {currentVersion && currentVersion.files.length > 1 && (
-          <div className="flex items-center gap-2">
-            <label className="text-sm font-medium text-slate-700">Page:</label>
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <label className="text-sm font-medium text-slate-700 shrink-0">頁面：</label>
             <select
               value={selectedFile}
               onChange={(e) => setSelectedFile(e.target.value)}
-              className="border border-slate-300 rounded-md px-3 py-1.5 text-sm bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="border border-slate-300 rounded-md px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 min-w-0 flex-1 sm:flex-initial"
             >
               {currentVersion.files.map((f) => (
                 <option key={f} value={f}>
@@ -95,9 +95,9 @@ export default function HtmlViewer({ type }: { type: "demos" | "plans" }) {
         )}
 
         {currentVersion && (
-          <div className="ml-auto text-xs text-slate-500">
-            {new Date(currentVersion.timestamp).toLocaleString()} by{" "}
-            {currentVersion.author}
+          <div className="text-xs text-slate-500 w-full sm:w-auto sm:ml-auto">
+            {new Date(currentVersion.timestamp).toLocaleString()} 由{" "}
+            {currentVersion.author} 建立
           </div>
         )}
       </div>
@@ -108,7 +108,7 @@ export default function HtmlViewer({ type }: { type: "demos" | "plans" }) {
           key={`${selectedVersion}-${selectedFile}`}
           src={`/api/content/${type}/${selectedVersion}/${selectedFile}`}
           className="w-full h-full border-0"
-          title={`${type} viewer`}
+          title={`${type === "demos" ? "展示" : "計畫"}檢視器`}
           sandbox="allow-scripts allow-same-origin"
         />
       </div>

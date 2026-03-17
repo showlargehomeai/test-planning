@@ -1,10 +1,15 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import TabNavigation from "./components/TabNavigation";
 
 export const metadata: Metadata = {
-  title: "TestPlanning Hub",
-  description: "Claude-powered planning dashboard - 測試用的計劃管理系統",
+  title: "TestPlanning 管理中心",
+  description: "Claude 驅動的計畫管理儀表板 - 測試用的計劃管理系統",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({
@@ -13,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="zh-TW">
       <head>
         <link
           href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"

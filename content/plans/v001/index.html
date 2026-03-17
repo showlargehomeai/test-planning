@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>裝修產業平台 — 全可能性矩陣</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, 'Noto Sans TC', 'Microsoft JhengHei', sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; }
+
+  /* Nav */
+  .nav { position: sticky; top: 0; z-index: 100; background: rgba(15,23,42,0.95); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.08); padding: 0 32px; display: flex; align-items: center; gap: 8px; }
+  .nav-title { font-size: 14px; font-weight: 600; color: #94a3b8; padding: 16px 0; margin-right: 16px; white-space: nowrap; }
+  .tab { padding: 14px 20px; font-size: 14px; font-weight: 500; color: #64748b; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; }
+  .tab:hover { color: #cbd5e1; }
+  .tab.active { color: #f1f5f9; border-bottom-color: #3b82f6; }
+
+  /* Panels */
+  .panel { display: none; padding: 32px; max-width: 1400px; margin: 0 auto; }
+  .panel.active { display: block; }
+
+  /* Header */
+  .page-header { margin-bottom: 32px; }
+  .page-header h1 { font-size: 28px; font-weight: 700; color: #f1f5f9; margin-bottom: 8px; }
+  .page-header p { font-size: 15px; color: #64748b; }
+  .badge { display: inline-block; padding: 4px 12px; border-radius: 999px; font-size: 12px; font-weight: 600; margin-right: 8px; }
+
+  /* Filters */
+  .filters { display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; align-items: center; }
+  .filter-btn { padding: 8px 18px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04); color: #94a3b8; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+  .filter-btn:hover { background: rgba(255,255,255,0.08); color: #e2e8f0; }
+  .filter-btn.active { border-color: #3b82f6; background: rgba(59,130,246,0.15); color: #60a5fa; }
+  .filter-btn.designer.active { border-color: #3b82f6; background: rgba(59,130,246,0.15); color: #60a5fa; }
+  .filter-btn.supplier.active { border-color: #f97316; background: rgba(249,115,22,0.15); color: #fb923c; }
+  .filter-btn.crew.active { border-color: #22c55e; background: rgba(34,197,94,0.15); color: #4ade80; }
+
+  /* Cards */
+  .category-group { margin-bottom: 28px; }
+  .category-label { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #64748b; margin-bottom: 12px; padding-left: 4px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 12px; }
+  .card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 20px; transition: all 0.2s; cursor: default; position: relative; overflow: hidden; }
+  .card:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.12); transform: translateY(-1px); }
+  .card .role-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 8px; flex-shrink: 0; }
+  .card .card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .card .card-top-left { display: flex; align-items: center; }
+  .card .type-badge { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 6px; }
+  .type-saas { background: rgba(59,130,246,0.15); color: #60a5fa; }
+  .type-offline { background: rgba(251,191,36,0.15); color: #fbbf24; }
+  .card h3 { font-size: 15px; font-weight: 600; color: #f1f5f9; margin-bottom: 8px; }
+  .card .value { font-size: 13px; color: #94a3b8; line-height: 1.5; }
+  .card .meta { display: flex; gap: 16px; margin-top: 12px; font-size: 12px; color: #64748b; }
+  .card .meta span { display: flex; align-items: center; gap: 4px; }
+  .stars { color: #fbbf24; letter-spacing: 1px; }
+  .stars-dim { color: #334155; letter-spacing: 1px; }
+
+  /* ROI Section */
+  .roi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 20px; margin-bottom: 32px; }
+  .roi-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 28px; }
+  .roi-card h3 { font-size: 18px; font-weight: 600; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+  .roi-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .roi-item:last-child { border-bottom: none; }
+  .roi-item .label { font-size: 14px; color: #cbd5e1; flex: 1; }
+  .roi-item .detail { font-size: 12px; color: #64748b; margin-top: 2px; }
+  .roi-item .amount { font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .roi-total { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; margin-top: 8px; border-top: 2px solid rgba(255,255,255,0.1); }
+  .roi-total .label { font-size: 15px; font-weight: 600; color: #f1f5f9; }
+  .roi-total .amount { font-size: 22px; font-weight: 800; }
+  .roi-badge { display: inline-block; margin-top: 12px; padding: 6px 16px; border-radius: 8px; font-size: 14px; font-weight: 700; }
+  .roi-note { font-size: 12px; color: #64748b; margin-top: 8px; font-style: italic; }
+
+  /* Priority Table */
+  .priority-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+  .priority-table thead th { padding: 14px 16px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #64748b; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.08); position: sticky; top: 52px; background: #0f172a; }
+  .priority-table thead th:nth-child(2) { text-align: left; }
+  .priority-table tbody tr { transition: background 0.15s; }
+  .priority-table tbody tr:hover { background: rgba(255,255,255,0.04); }
+  .priority-table td { padding: 14px 16px; font-size: 14px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .priority-table td:nth-child(2) { text-align: left; font-weight: 500; }
+  .priority-table td:nth-child(7) { text-align: left; font-size: 13px; color: #94a3b8; }
+  .score-bar { display: inline-flex; align-items: center; gap: 8px; }
+  .score-fill { height: 6px; border-radius: 3px; display: inline-block; }
+  .score-num { font-weight: 700; font-size: 15px; min-width: 36px; }
+
+  .role-tag { display: inline-block; padding: 4px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; }
+  .role-designer { background: rgba(59,130,246,0.15); color: #60a5fa; }
+  .role-supplier { background: rgba(249,115,22,0.15); color: #fb923c; }
+  .role-crew { background: rgba(34,197,94,0.15); color: #4ade80; }
+
+  .dot-designer { background: #3b82f6; }
+  .dot-supplier { background: #f97316; }
+  .dot-crew { background: #22c55e; }
+
+  .color-designer { color: #60a5fa; }
+  .color-supplier { color: #fb923c; }
+  .color-crew { color: #4ade80; }
+
+  /* Summary bar */
+  .summary-bar { display: flex; gap: 16px; margin-bottom: 28px; flex-wrap: wrap; }
+  .summary-stat { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 16px 24px; flex: 1; min-width: 160px; }
+  .summary-stat .num { font-size: 28px; font-weight: 800; color: #f1f5f9; }
+  .summary-stat .desc { font-size: 13px; color: #64748b; margin-top: 4px; }
+
+  @media (max-width: 768px) {
+    .nav { padding: 0 16px; flex-wrap: wrap; }
+    .panel { padding: 20px 16px; }
+    .cards { grid-template-columns: 1fr; }
+    .roi-grid { grid-template-columns: 1fr; }
+    .priority-table { font-size: 12px; }
+    .priority-table td, .priority-table th { padding: 10px 8px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-title">裝修產業平台</div>
+  <div class="tab active" data-panel="matrix">全可能性矩陣</div>
+  <div class="tab" data-panel="roi">月費價值試算</div>
+  <div class="tab" data-panel="priority">開發優先序</div>
+</nav>
+
+<!-- ============ PANEL 1: 全可能性矩陣 ============ -->
+<div id="matrix" class="panel active">
+  <div class="page-header">
+    <h1>全可能性矩陣</h1>
+    <p>SaaS 工具 + 線下服務，三個角色共 49 項可能的功能與服務</p>
+  </div>
+
+  <div class="summary-bar">
+    <div class="summary-stat"><div class="num" style="color:#60a5fa">16</div><div class="desc">設計師功能/服務</div></div>
+    <div class="summary-stat"><div class="num" style="color:#fb923c">16</div><div class="desc">建材商功能/服務</div></div>
+    <div class="summary-stat"><div class="num" style="color:#4ade80">17</div><div class="desc">工班功能/服務</div></div>
+    <div class="summary-stat"><div class="num">30</div><div class="desc">SaaS 工具項</div></div>
+    <div class="summary-stat"><div class="num">19</div><div class="desc">線下服務項</div></div>
+  </div>
+
+  <div class="filters">
+    <div class="filter-btn active" data-filter="all">全部</div>
+    <div class="filter-btn designer" data-filter="設計師">設計師</div>
+    <div class="filter-btn supplier" data-filter="建材商">建材商</div>
+    <div class="filter-btn crew" data-filter="工班">工班</div>
+    <span style="color:#334155;margin:0 4px">|</span>
+    <div class="filter-btn" data-type="all">全部類型</div>
+    <div class="filter-btn" data-type="SaaS">SaaS</div>
+    <div class="filter-btn" data-type="線下">線下</div>
+  </div>
+
+  <div id="matrix-content"></div>
+</div>
+
+<!-- ============ PANEL 2: 月費價值試算 ============ -->
+<div id="roi" class="panel">
+  <div class="page-header">
+    <h1>月費 NT$30,000 的價值正當性</h1>
+    <p>每個角色付三萬月費，能換回多少實際價值？以下是保守估計</p>
+  </div>
+
+  <div class="roi-grid" id="roi-grid"></div>
+</div>
+
+<!-- ============ PANEL 3: 開發優先序 ============ -->
+<div id="priority" class="panel">
+  <div class="page-header">
+    <h1>功能開發優先序分析</h1>
+    <p>優先分數 = 付費意願 × (6 − 開發難度) × 網絡效應 ÷ 5 — 分數越高越該先做</p>
+  </div>
+
+  <div class="filters">
+    <div class="filter-btn active" data-pfilter="all">全部</div>
+    <div class="filter-btn designer" data-pfilter="設計師">設計師</div>
+    <div class="filter-btn supplier" data-pfilter="建材商">建材商</div>
+    <div class="filter-btn crew" data-pfilter="工班">工班</div>
+  </div>
+
+  <table class="priority-table">
+    <thead><tr><th>角色</th><th>功能 / 服務</th><th>付費意願</th><th>開發難度</th><th>網絡效應</th><th style="width:140px">優先分數</th><th>建議</th></tr></thead>
+    <tbody id="priority-body"></tbody>
+  </table>
+</div>
+
+<script>
+// ===== DATA =====
+const matrixData = [
+  // 設計師
+  {role:"設計師",cat:"SaaS — 接案獲客",name:"精準業主媒合系統（依風格/預算/地區配對）",type:"SaaS",value:"不用再花時間找客戶，案子自動來",pay:5,dev:4},
+  {role:"設計師",cat:"SaaS — 接案獲客",name:"作品集線上展示與 SEO 優化",type:"SaaS",value:"被更多潛在客戶搜尋到",pay:3,dev:2},
+  {role:"設計師",cat:"SaaS — 接案獲客",name:"業主評價與口碑系統",type:"SaaS",value:"累積信任資產，提高成交率",pay:4,dev:2},
+  {role:"設計師",cat:"SaaS — 接案獲客",name:"線上諮詢預約系統",type:"SaaS",value:"自動化排程，減少溝通成本",pay:3,dev:2},
+  {role:"設計師",cat:"SaaS — 設計效率",name:"3D / AI 快速渲染出圖工具",type:"SaaS",value:"提案速度加快 3-5 倍",pay:5,dev:5},
+  {role:"設計師",cat:"SaaS — 設計效率",name:"建材資料庫（含報價即時查詢）",type:"SaaS",value:"選材效率大幅提升",pay:4,dev:3},
+  {role:"設計師",cat:"SaaS — 設計效率",name:"智慧報價系統（自動生成估價單）",type:"SaaS",value:"報價從 3 天變 3 小時",pay:5,dev:4},
+  {role:"設計師",cat:"SaaS — 設計效率",name:"工程進度管理看板",type:"SaaS",value:"一眼掌握所有案子進度",pay:3,dev:3},
+  {role:"設計師",cat:"SaaS — 設計效率",name:"合約範本庫與電子簽章",type:"SaaS",value:"減少法律風險，加速簽約",pay:3,dev:2},
+  {role:"設計師",cat:"SaaS — 財務管理",name:"收支管理與利潤分析",type:"SaaS",value:"清楚每個案子賺多少",pay:4,dev:3},
+  {role:"設計師",cat:"SaaS — 財務管理",name:"客戶付款追蹤與催款自動化",type:"SaaS",value:"不再漏收、減少呆帳",pay:4,dev:2},
+  {role:"設計師",cat:"線下 — 成長服務",name:"一對一接案策略顧問（月度）",type:"線下",value:"有人幫你看全局、調策略",pay:5,dev:2},
+  {role:"設計師",cat:"線下 — 成長服務",name:"提案話術與成交技巧培訓",type:"線下",value:"成交率實際提升",pay:4,dev:2},
+  {role:"設計師",cat:"線下 — 成長服務",name:"高端業主專屬媒合（人工篩選）",type:"線下",value:"不只量多，質也高",pay:5,dev:3},
+  {role:"設計師",cat:"線下 — 成長服務",name:"設計師社群與異業合作牽線",type:"線下",value:"拓展人脈與合作機會",pay:3,dev:2},
+  {role:"設計師",cat:"線下 — 成長服務",name:"品牌形象包裝（攝影/文案/社群）",type:"線下",value:"專業形象大幅升級",pay:4,dev:3},
+  // 建材商
+  {role:"建材商",cat:"SaaS — 通路拓展",name:"產品上架至設計師選材系統",type:"SaaS",value:"直接進入設計師的選材流程",pay:5,dev:3},
+  {role:"建材商",cat:"SaaS — 通路拓展",name:"精準推薦引擎（依案件需求推材料）",type:"SaaS",value:"不用業務開發，訂單自動來",pay:5,dev:4},
+  {role:"建材商",cat:"SaaS — 通路拓展",name:"設計師關係管理 CRM",type:"SaaS",value:"掌握哪些設計師常用你的材料",pay:4,dev:3},
+  {role:"建材商",cat:"SaaS — 通路拓展",name:"線上型錄與 AR 預覽展示",type:"SaaS",value:"讓設計師和業主遠端看材料",pay:3,dev:4},
+  {role:"建材商",cat:"SaaS — 營運效率",name:"訂單管理與出貨追蹤系統",type:"SaaS",value:"出貨不漏單、物流透明",pay:4,dev:3},
+  {role:"建材商",cat:"SaaS — 營運效率",name:"庫存管理與備貨預測",type:"SaaS",value:"減少庫存壓力、避免缺貨",pay:4,dev:4},
+  {role:"建材商",cat:"SaaS — 營運效率",name:"報價自動化（依量/設計師等級浮動）",type:"SaaS",value:"價格策略更靈活精準",pay:3,dev:3},
+  {role:"建材商",cat:"SaaS — 營運效率",name:"應收帳款管理",type:"SaaS",value:"減少呆帳風險",pay:4,dev:2},
+  {role:"建材商",cat:"SaaS — 數據洞察",name:"銷售數據分析（熱門品項/區域趨勢）",type:"SaaS",value:"知道什麼賣得好、往哪裡推",pay:4,dev:3},
+  {role:"建材商",cat:"SaaS — 數據洞察",name:"設計師採購行為分析",type:"SaaS",value:"精準行銷，提高轉換率",pay:4,dev:3},
+  {role:"建材商",cat:"SaaS — 數據洞察",name:"競品價格監控",type:"SaaS",value:"隨時掌握市場定價",pay:3,dev:4},
+  {role:"建材商",cat:"線下 — 成長服務",name:"設計師拜訪與關係建立代行",type:"線下",value:"有人幫你跑業務",pay:5,dev:2},
+  {role:"建材商",cat:"線下 — 成長服務",name:"新品發佈會/體驗活動策劃",type:"線下",value:"打開新品知名度",pay:4,dev:3},
+  {role:"建材商",cat:"線下 — 成長服務",name:"展間設計與陳列優化顧問",type:"線下",value:"讓展間更有吸引力",pay:3,dev:3},
+  {role:"建材商",cat:"線下 — 成長服務",name:"設計師教育訓練（材料應用課程）",type:"線下",value:"培養設計師對你品牌的忠誠度",pay:4,dev:2},
+  {role:"建材商",cat:"線下 — 成長服務",name:"區域獨家推薦資格",type:"線下",value:"在特定區域獲得優先曝光",pay:5,dev:1},
+  // 工班
+  {role:"工班",cat:"SaaS — 案源穩定",name:"設計師派工媒合系統",type:"SaaS",value:"穩定接案，減少空窗期",pay:5,dev:3},
+  {role:"工班",cat:"SaaS — 案源穩定",name:"工班評價與認證系統",type:"SaaS",value:"建立專業信譽，被優先指定",pay:5,dev:2},
+  {role:"工班",cat:"SaaS — 案源穩定",name:"即時案件通知與搶單機制",type:"SaaS",value:"第一時間看到適合的案子",pay:4,dev:3},
+  {role:"工班",cat:"SaaS — 案源穩定",name:"歷史合作記錄與回客系統",type:"SaaS",value:"熟悉的設計師持續合作",pay:4,dev:2},
+  {role:"工班",cat:"SaaS — 工程管理",name:"施工進度回報工具（照片+文字）",type:"SaaS",value:"設計師即時看到進度，減少來回",pay:4,dev:2},
+  {role:"工班",cat:"SaaS — 工程管理",name:"工程排程日曆（多案並行管理）",type:"SaaS",value:"不再撞期、排程更合理",pay:4,dev:2},
+  {role:"工班",cat:"SaaS — 工程管理",name:"材料需求清單自動生成",type:"SaaS",value:"減少估料錯誤和浪費",pay:3,dev:3},
+  {role:"工班",cat:"SaaS — 工程管理",name:"施工品質檢核表",type:"SaaS",value:"標準化品質，減少返工",pay:3,dev:2},
+  {role:"工班",cat:"SaaS — 財務收入",name:"工程款項追蹤與請款管理",type:"SaaS",value:"清楚每筆錢的進度",pay:5,dev:2},
+  {role:"工班",cat:"SaaS — 財務收入",name:"電子報價單與合約",type:"SaaS",value:"專業感提升，減少糾紛",pay:3,dev:2},
+  {role:"工班",cat:"SaaS — 財務收入",name:"收入報表與稅務整理",type:"SaaS",value:"年底報稅不頭痛",pay:3,dev:2},
+  {role:"工班",cat:"線下 — 成長服務",name:"技術升級培訓課程",type:"線下",value:"學新工法，接更高價的案子",pay:4,dev:2},
+  {role:"工班",cat:"線下 — 成長服務",name:"專業證照輔導",type:"線下",value:"取得證照，提升報價能力",pay:4,dev:3},
+  {role:"工班",cat:"線下 — 成長服務",name:"設計師媒合專人服務",type:"線下",value:"有人幫你牽線優質設計師",pay:5,dev:2},
+  {role:"工班",cat:"線下 — 成長服務",name:"品牌形象建立（制服/名片/車貼）",type:"線下",value:"專業形象升級",pay:3,dev:2},
+  {role:"工班",cat:"線下 — 成長服務",name:"工安與保險規劃諮詢",type:"線下",value:"降低營運風險",pay:3,dev:2},
+  {role:"工班",cat:"線下 — 成長服務",name:"團隊擴編與人才招募協助",type:"線下",value:"從個人工班變成公司化經營",pay:4,dev:3},
+];
+
+const roiData = [
+  { role:"設計師", color:"#3b82f6", items:[
+    {label:"平台媒合帶來新案",qty:1,unit:80000,detail:"每月多成交 1 案 × 案均毛利 $80K"},
+    {label:"報價效率提升省時間",qty:10,unit:1500,detail:"每月省 10hr × 時薪 $1,500"},
+    {label:"提案成交率提升",qty:200000,unit:0.15,detail:"原月營收 $200K × 成交率提升 15%"},
+    {label:"減少設計修改來回",qty:8,unit:1500,detail:"每月省 8hr × 時薪 $1,500"},
+    {label:"品牌口碑帶自來客",qty:2,unit:5000,detail:"每月 2 組自來客 × 省行銷費 $5K/組"},
+  ]},
+  { role:"建材商", color:"#f97316", items:[
+    {label:"平台帶來設計師訂單",qty:3,unit:50000,detail:"每月 3 筆新訂單 × 均單 $50K"},
+    {label:"減少業務開發人力",qty:1,unit:40000,detail:"省 1 名業務 × 月薪 $40K"},
+    {label:"庫存優化減少資金積壓",qty:2000000,unit:0.0125,detail:"庫存 $2M × 降 15% × 月化"},
+    {label:"減少呆帳損失",qty:30000,unit:0.3,detail:"原月呆帳 $30K × 降低 30%"},
+    {label:"品牌曝光增加訂單",qty:2,unit:30000,detail:"轉換 2 筆 × 均單 $30K"},
+  ]},
+  { role:"工班", color:"#22c55e", items:[
+    {label:"減少空窗期天數",qty:5,unit:5000,detail:"每月少閒 5 天 × 日收入 $5K"},
+    {label:"接到更高價案件",qty:1,unit:15000,detail:"每月多 1 高價案 × 多賺 $15K"},
+    {label:"減少返工成本",qty:20000,unit:0.4,detail:"原月返工 $20K × 降低 40%"},
+    {label:"請款效率提升",qty:300000,unit:0.0067,detail:"月週轉 $300K × 資金成本節省"},
+    {label:"設計師回頭指定",qty:2,unit:12000,detail:"每月 2 案回客 × 均案利潤 $12K"},
+  ]},
+];
+
+const priorityData = [
+  {role:"設計師",name:"精準業主媒合系統",pay:5,dev:4,net:5,note:"核心功能，最能驅動付費"},
+  {role:"設計師",name:"智慧報價系統",pay:5,dev:4,net:3,note:"高頻痛點，黏著度高"},
+  {role:"設計師",name:"3D/AI 快速出圖",pay:5,dev:5,net:2,note:"差異化大但開發成本最高"},
+  {role:"設計師",name:"一對一成長顧問（線下）",pay:5,dev:2,net:1,note:"線下服務，可快速驗證價值"},
+  {role:"設計師",name:"工程進度管理看板",pay:3,dev:3,net:4,note:"串聯工班的關鍵節點"},
+  {role:"設計師",name:"建材資料庫",pay:4,dev:3,net:5,note:"串聯建材商的關鍵節點"},
+  {role:"設計師",name:"品牌形象包裝（線下）",pay:4,dev:3,net:1,note:"差異化服務，提升客單感受"},
+  {role:"建材商",name:"產品上架選材系統",pay:5,dev:3,net:5,note:"核心功能，依賴設計師量"},
+  {role:"建材商",name:"精準推薦引擎",pay:5,dev:4,net:5,note:"高價值但需要數據量"},
+  {role:"建材商",name:"設計師拜訪代行（線下）",pay:5,dev:2,net:3,note:"線下服務，立即見效"},
+  {role:"建材商",name:"訂單管理系統",pay:4,dev:3,net:2,note:"基礎功能，留客用"},
+  {role:"建材商",name:"區域獨家推薦",pay:5,dev:1,net:4,note:"最簡單且高付費意願"},
+  {role:"建材商",name:"銷售數據分析",pay:4,dev:3,net:2,note:"需要交易量才有分析價值"},
+  {role:"建材商",name:"設計師教育訓練（線下）",pay:4,dev:2,net:3,note:"低成本建立品牌忠誠"},
+  {role:"工班",name:"設計師派工媒合",pay:5,dev:3,net:5,note:"核心功能，依賴設計師量"},
+  {role:"工班",name:"工班認證系統",pay:5,dev:2,net:4,note:"低成本高價值"},
+  {role:"工班",name:"設計師媒合專人（線下）",pay:5,dev:2,net:3,note:"線下服務，立即見效"},
+  {role:"工班",name:"施工進度回報",pay:4,dev:2,net:4,note:"串聯設計師的關鍵節點"},
+  {role:"工班",name:"技術升級培訓（線下）",pay:4,dev:2,net:1,note:"線下服務，提升單價能力"},
+  {role:"工班",name:"請款管理系統",pay:5,dev:2,net:1,note:"高頻痛點，黏著度高"},
+  {role:"工班",name:"團隊擴編協助（線下）",pay:4,dev:3,net:1,note:"進階服務，鎖定成長型工班"},
+];
+
+// ===== HELPERS =====
+const roleClass = r => r==="設計師"?"designer":r==="建材商"?"supplier":"crew";
+const fmt = n => n.toLocaleString('zh-TW');
+function stars(n, max=5) {
+  return '<span class="stars">'+'★'.repeat(n)+'</span><span class="stars-dim">'+'★'.repeat(max-n)+'</span>';
+}
+
+// ===== RENDER MATRIX =====
+let roleFilter = 'all', typeFilter = 'all';
+
+function renderMatrix() {
+  const container = document.getElementById('matrix-content');
+  let filtered = matrixData.filter(d => {
+    if (roleFilter !== 'all' && d.role !== roleFilter) return false;
+    if (typeFilter !== 'all' && d.type !== typeFilter) return false;
+    return true;
+  });
+  const groups = {};
+  filtered.forEach(d => {
+    const key = d.role + ' › ' + d.cat;
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(d);
+  });
+  let html = '';
+  for (const [key, items] of Object.entries(groups)) {
+    html += `<div class="category-group"><div class="category-label">${key}</div><div class="cards">`;
+    items.forEach(d => {
+      const rc = roleClass(d.role);
+      html += `<div class="card">
+        <div class="card-top">
+          <div class="card-top-left"><span class="role-dot dot-${rc}"></span><span class="type-badge ${d.type==='SaaS'?'type-saas':'type-offline'}">${d.type}</span></div>
+        </div>
+        <h3>${d.name}</h3>
+        <div class="value">${d.value}</div>
+        <div class="meta">
+          <span>付費意願 ${stars(d.pay)}</span>
+          <span>開發難度 ${stars(d.dev)}</span>
+        </div>
+      </div>`;
+    });
+    html += '</div></div>';
+  }
+  container.innerHTML = html || '<p style="color:#64748b;padding:40px;text-align:center;">沒有符合條件的項目</p>';
+}
+
+// ===== RENDER ROI =====
+function renderROI() {
+  const grid = document.getElementById('roi-grid');
+  let html = '';
+  roiData.forEach(r => {
+    const rc = roleClass(r.role);
+    let total = 0;
+    let itemsHtml = '';
+    r.items.forEach(it => {
+      const amt = Math.round(it.qty * it.unit);
+      total += amt;
+      itemsHtml += `<div class="roi-item">
+        <div><div class="label">${it.label}</div><div class="detail">${it.detail}</div></div>
+        <div class="amount" style="color:${r.color}">$${fmt(amt)}</div>
+      </div>`;
+    });
+    const roi = (total / 30000).toFixed(1);
+    html += `<div class="roi-card">
+      <h3><span class="role-dot dot-${rc}"></span>${r.role}</h3>
+      ${itemsHtml}
+      <div class="roi-total">
+        <div class="label">月增額收益合計</div>
+        <div class="amount" style="color:${r.color};font-size:24px;">$${fmt(total)}</div>
+      </div>
+      <div style="text-align:right">
+        <div class="roi-badge" style="background:${r.color}22;color:${r.color}">ROI ${roi}x</div>
+        <div class="roi-note">付 $30,000 → 賺回 $${fmt(total)}</div>
+      </div>
+    </div>`;
+  });
+  grid.innerHTML = html;
+}
+
+// ===== RENDER PRIORITY =====
+let pFilter = 'all';
+
+function renderPriority() {
+  const body = document.getElementById('priority-body');
+  let filtered = priorityData.filter(d => pFilter === 'all' || d.role === pFilter);
+  filtered.forEach(d => { d.score = d.pay * (6 - d.dev) * d.net / 5; });
+  filtered.sort((a, b) => b.score - a.score);
+  const maxScore = Math.max(...filtered.map(d => d.score));
+
+  let html = '';
+  filtered.forEach(d => {
+    const rc = roleClass(d.role);
+    const color = d.role==="設計師"?"#3b82f6":d.role==="建材商"?"#f97316":"#22c55e";
+    const pct = (d.score / maxScore * 100).toFixed(0);
+    html += `<tr>
+      <td><span class="role-tag role-${rc}">${d.role}</span></td>
+      <td>${d.name}</td>
+      <td>${stars(d.pay)}</td>
+      <td>${stars(d.dev)}</td>
+      <td>${stars(d.net)}</td>
+      <td><div class="score-bar"><span class="score-fill" style="width:${pct}px;background:${color}"></span><span class="score-num" style="color:${color}">${d.score.toFixed(1)}</span></div></td>
+      <td>${d.note}</td>
+    </tr>`;
+  });
+  body.innerHTML = html;
+}
+
+// ===== EVENT LISTENERS =====
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(tab.dataset.panel).classList.add('active');
+  });
+});
+
+document.querySelectorAll('[data-filter]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    roleFilter = btn.dataset.filter;
+    renderMatrix();
+  });
+});
+
+document.querySelectorAll('[data-type]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('[data-type]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    typeFilter = btn.dataset.type;
+    renderMatrix();
+  });
+});
+
+document.querySelectorAll('[data-pfilter]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('[data-pfilter]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    pFilter = btn.dataset.pfilter;
+    renderPriority();
+  });
+});
+
+// Init
+renderMatrix();
+renderROI();
+renderPriority();
+</script>
+</body>
+</html>

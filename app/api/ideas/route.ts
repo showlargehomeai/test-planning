@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
       category: body.category || "other",
       priority: body.priority || "medium",
       tags: body.tags || [],
-      author: body.author || "Anonymous",
+      author: body.author || "匿名",
       status: "new",
     });
 

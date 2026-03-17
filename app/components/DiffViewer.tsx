@@ -33,6 +33,7 @@ export default function DiffViewer() {
   const [diff, setDiff] = useState<DiffResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [viewMode, setViewMode] = useState<"diff" | "sideBySide">("diff");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     fetch(`/api/versions?type=${type}`)
@@ -69,9 +70,30 @@ export default function DiffViewer() {
   }, [versions]);
 
   return (
-    <div className="flex h-full">
+    <div className="flex flex-col md:flex-row h-full">
+      {/* Mobile sidebar toggle */}
+      <button
+        onClick={() => setSidebarOpen(!sidebarOpen)}
+        className="md:hidden flex items-center gap-2 px-4 py-3 bg-slate-50 border-b border-slate-200 text-sm font-medium text-slate-700"
+      >
+        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+        版本時間軸
+        {toVersion && (
+          <span className="ml-auto font-mono text-xs bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded">
+            {toVersion}
+          </span>
+        )}
+      </button>
+
       {/* Sidebar: version timeline */}
-      <div className="w-80 border-r border-slate-200 bg-slate-50 overflow-y-auto">
+      <div
+        className={clsx(
+          "w-full md:w-80 border-r border-slate-200 bg-slate-50 overflow-y-auto shrink-0",
+          sidebarOpen ? "block" : "hidden md:block"
+        )}
+      >
         <div className="p-4">
           <div className="flex gap-2 mb-4">
             <button
@@ -83,7 +105,7 @@ export default function DiffViewer() {
                   : "bg-white text-slate-600 border border-slate-300 hover:bg-slate-100"
               )}
             >
-              Demos
+              展示
             </button>
             <button
               onClick={() => setType("plans")}
@@ -94,16 +116,16 @@ export default function DiffViewer() {
                   : "bg-white text-slate-600 border border-slate-300 hover:bg-slate-100"
               )}
             >
-              Plans
+              計畫
             </button>
           </div>
 
           <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
-            Version Timeline
+            版本時間軸
           </h3>
 
           {timeline.length === 0 && (
-            <p className="text-sm text-slate-400">No versions yet</p>
+            <p className="text-sm text-slate-400">尚無版本</p>
           )}
 
           <div className="space-y-1">
@@ -115,6 +137,7 @@ export default function DiffViewer() {
                     setFromVersion(timeline[i + 1].version);
                     setToVersion(v.version);
                   }
+                  setSidebarOpen(false);
                 }}
                 className={clsx(
                   "w-full text-left p-3 rounded-lg transition-colors",
@@ -141,16 +164,16 @@ export default function DiffViewer() {
       </div>
 
       {/* Main area: diff view */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden min-w-0">
         {/* Toolbar */}
-        <div className="flex items-center gap-4 p-4 bg-white border-b border-slate-200">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-4 p-3 sm:p-4 bg-white border-b border-slate-200">
           <div className="flex items-center gap-2 text-sm">
-            <span className="text-slate-500">Comparing</span>
-            <span className="font-mono font-medium bg-red-50 text-red-700 px-2 py-0.5 rounded">
+            <span className="text-slate-500">比較</span>
+            <span className="font-mono font-medium bg-red-50 text-red-700 px-2 py-0.5 rounded text-xs sm:text-sm">
               {fromVersion || "—"}
             </span>
             <span className="text-slate-400">→</span>
-            <span className="font-mono font-medium bg-green-50 text-green-700 px-2 py-0.5 rounded">
+            <span className="font-mono font-medium bg-green-50 text-green-700 px-2 py-0.5 rounded text-xs sm:text-sm">
               {toVersion || "—"}
             </span>
           </div>
@@ -158,10 +181,10 @@ export default function DiffViewer() {
           {diff && (
             <div className="flex items-center gap-3 text-xs">
               <span className="text-green-600 font-medium">
-                +{diff.stats.additions} additions
+                +{diff.stats.additions} 新增
               </span>
               <span className="text-red-600 font-medium">
-                -{diff.stats.deletions} deletions
+                -{diff.stats.deletions} 刪除
               </span>
             </div>
           )}
@@ -170,24 +193,24 @@ export default function DiffViewer() {
             <button
               onClick={() => setViewMode("diff")}
               className={clsx(
-                "px-3 py-1 rounded text-xs font-medium",
+                "px-3 py-1.5 rounded text-xs font-medium min-h-[44px] sm:min-h-0 sm:py-1",
                 viewMode === "diff"
                   ? "bg-slate-900 text-white"
                   : "bg-slate-100 text-slate-600"
               )}
             >
-              Unified Diff
+              統一差異
             </button>
             <button
               onClick={() => setViewMode("sideBySide")}
               className={clsx(
-                "px-3 py-1 rounded text-xs font-medium",
+                "px-3 py-1.5 rounded text-xs font-medium min-h-[44px] sm:min-h-0 sm:py-1",
                 viewMode === "sideBySide"
                   ? "bg-slate-900 text-white"
                   : "bg-slate-100 text-slate-600"
               )}
             >
-              Side by Side
+              並排比較
             </button>
           </div>
         </div>
@@ -202,13 +225,13 @@ export default function DiffViewer() {
 
           {!loading && !diff && fromVersion && toVersion && fromVersion !== toVersion && (
             <div className="flex items-center justify-center h-full text-slate-400">
-              Could not compute diff
+              無法計算差異
             </div>
           )}
 
           {!loading && fromVersion === toVersion && (
             <div className="flex items-center justify-center h-full text-slate-400">
-              Select two different versions to compare
+              請選擇兩個不同的版本進行比較
             </div>
           )}
 
@@ -234,15 +257,15 @@ export default function DiffViewer() {
           )}
 
           {!loading && diff && viewMode === "sideBySide" && (
-            <div className="grid grid-cols-2 h-full">
-              <div className="border-r border-slate-200">
+            <div className="grid grid-cols-1 md:grid-cols-2 h-full">
+              <div className="border-b md:border-b-0 md:border-r border-slate-200">
                 <div className="bg-red-50 px-4 py-2 border-b border-slate-200 text-xs font-medium text-red-700">
                   {fromVersion}
                 </div>
                 <iframe
                   src={`/api/content/${type}/${fromVersion}/index.html`}
-                  className="w-full h-full border-0"
-                  title="Previous version"
+                  className="w-full h-64 md:h-full border-0"
+                  title="前一版本"
                   sandbox="allow-scripts allow-same-origin"
                 />
               </div>
@@ -252,8 +275,8 @@ export default function DiffViewer() {
                 </div>
                 <iframe
                   src={`/api/content/${type}/${toVersion}/index.html`}
-                  className="w-full h-full border-0"
-                  title="Current version"
+                  className="w-full h-64 md:h-full border-0"
+                  title="目前版本"
                   sandbox="allow-scripts allow-same-origin"
                 />
               </div>
