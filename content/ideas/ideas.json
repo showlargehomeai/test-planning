@@ -47,5 +47,18 @@
     "author": "brighten tso",
     "timestamp": "2026-03-19T01:50:22.000Z",
     "status": "new"
+  },
+  {
+    "title": "測試按鈕新增",
+    "description": "這是一個測試，確認 Vercel 上的新增功能是否正常",
+    "category": "tech",
+    "priority": "low",
+    "tags": [
+      "測試"
+    ],
+    "author": "SHOW_BOT",
+    "status": "new",
+    "id": "idea-1773890310617-j4xrpz",
+    "timestamp": "2026-03-19T03:18:30.617Z"
   }
 ]
