@@ -1,0 +1,11 @@
+{
+  "stages": [
+    { "id": "lead", "label": "接觸中", "count": 12, "color": "slate" },
+    { "id": "contacted", "label": "已聯繫", "count": 8, "color": "blue" },
+    { "id": "negotiating", "label": "洽談中", "count": 5, "color": "amber" },
+    { "id": "onboarding", "label": "導入中", "count": 3, "color": "indigo" },
+    { "id": "active", "label": "已上線", "count": 7, "color": "emerald" }
+  ],
+  "total": 35,
+  "updatedAt": "2026-03-19T00:00:00Z"
+}

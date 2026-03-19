@@ -1,0 +1,58 @@
+[
+  {
+    "id": "team-product",
+    "name": "Product",
+    "lead": "Alice",
+    "goal": "完成設計師配對 v2 上線",
+    "progress": 65,
+    "status": "on-track",
+    "milestones": [
+      { "label": "需求確認", "done": true },
+      { "label": "UI 設計", "done": true },
+      { "label": "開發完成", "done": false },
+      { "label": "測試上線", "done": false }
+    ]
+  },
+  {
+    "id": "team-engineering",
+    "name": "Engineering",
+    "lead": "Bob",
+    "goal": "戰情室 Dashboard 重構完成",
+    "progress": 40,
+    "status": "at-risk",
+    "milestones": [
+      { "label": "架構設計", "done": true },
+      { "label": "元件拆分", "done": false },
+      { "label": "API 整合", "done": false },
+      { "label": "效能優化", "done": false }
+    ]
+  },
+  {
+    "id": "team-bd",
+    "name": "BD",
+    "lead": "Carol",
+    "goal": "本季簽約 15 家合作廠商",
+    "progress": 47,
+    "status": "on-track",
+    "milestones": [
+      { "label": "名單建立", "done": true },
+      { "label": "首輪接觸", "done": true },
+      { "label": "簽約達標", "done": false },
+      { "label": "導入完成", "done": false }
+    ]
+  },
+  {
+    "id": "team-design",
+    "name": "Design",
+    "lead": "Diana",
+    "goal": "Design System v2 交付",
+    "progress": 80,
+    "status": "on-track",
+    "milestones": [
+      { "label": "色彩系統", "done": true },
+      { "label": "元件庫", "done": true },
+      { "label": "文件化", "done": true },
+      { "label": "團隊培訓", "done": false }
+    ]
+  }
+]

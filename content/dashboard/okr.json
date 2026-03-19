@@ -1,0 +1,37 @@
+{
+  "quarter": "2026 Q1",
+  "nsm": {
+    "label": "North Star Metric",
+    "title": "月活躍用戶 (MAU)",
+    "current": 1250,
+    "target": 5000,
+    "unit": "人"
+  },
+  "kpis": [
+    {
+      "id": "kpi-1",
+      "title": "用戶註冊數",
+      "current": 380,
+      "target": 1000,
+      "unit": "人/月",
+      "status": "on-track"
+    },
+    {
+      "id": "kpi-2",
+      "title": "設計師配對成功率",
+      "current": 42,
+      "target": 60,
+      "unit": "%",
+      "status": "at-risk"
+    },
+    {
+      "id": "kpi-3",
+      "title": "平均專案週期",
+      "current": 45,
+      "target": 30,
+      "unit": "天",
+      "status": "behind"
+    }
+  ],
+  "updatedAt": "2026-03-19T00:00:00Z"
+}
