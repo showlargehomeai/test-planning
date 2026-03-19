@@ -29,5 +29,23 @@
     "status": "new",
     "id": "idea-1773730856857-ufw4z5",
     "timestamp": "2026-03-17T07:00:56.857Z"
+  },
+  {
+    "id": "idea-1773885022713-ilxvqy",
+    "title": "BD 廠商 Onboarding 進度追蹤系統",
+    "description": "建立一個追蹤機制，確保 BD 有確實按照進度協助廠商熟悉我們的網站平台，包含：\n1. 廠商 Onboarding 進度看板（引導廠商了解網站功能）\n2. 追蹤 BD 是否有按時協助廠商新增產品與服務\n3. 各廠商狀態一目瞭然：待引導 → 熟悉中 → 已上架產品 → 已上架服務 → 完成\n4. BD 績效報表：每位 BD 負責的廠商數、完成率、延遲率",
+    "category": "business",
+    "priority": "high",
+    "tags": [
+      "BD",
+      "廠商管理",
+      "onboarding",
+      "進度追蹤",
+      "產品上架",
+      "服務上架"
+    ],
+    "author": "brighten tso",
+    "timestamp": "2026-03-19T01:50:22.000Z",
+    "status": "new"
   }
 ]
