@@ -5,5 +5,12 @@
     "description": "裝修產業平台 — 商業規劃（全可能性矩陣 + ROI試算 + 開發優先序）",
     "author": "brighten",
     "files": ["index.html"]
+  },
+  {
+    "version": "v002",
+    "timestamp": "2026-03-18T10:27:00+08:00",
+    "description": "樂居空間選材 — 完整策略總覽（BD方案）",
+    "author": "show",
+    "files": ["index.html"]
   }
 ]

@@ -11,6 +11,7 @@ const tabs = [
   { name: "更新日誌", href: "/changelog", icon: "📝" },
   { name: "點子牆", href: "/ideas", icon: "💡" },
   { name: "戰情室", href: "/dashboard", icon: "📈" },
+  { name: "設計師工具", href: "/designer", icon: "🛠️" },
 ];
 
 export default function TabNavigation() {

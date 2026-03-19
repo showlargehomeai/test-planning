@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>樂居空間選材 — 完整策略總覽（最終版）</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, "Microsoft JhengHei", sans-serif; background: #f5f5f5; color: #333; line-height: 1.7; padding: 20px; }
+  .container { max-width: 1200px; margin: 0 auto; background: #fff; padding: 40px 50px; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+  h1 { color: #1a1a2e; border-bottom: 3px solid #e94560; padding-bottom: 12px; margin-bottom: 24px; font-size: 2.2em; text-align: center; }
+  h2 { color: #16213e; margin-top: 32px; margin-bottom: 16px; font-size: 1.4em; border-left: 4px solid #e94560; padding-left: 12px; }
+  h3 { color: #0f3460; margin-top: 24px; margin-bottom: 12px; font-size: 1.15em; }
+  h4 { color: #533483; margin-top: 20px; margin-bottom: 8px; }
+  p { margin-bottom: 12px; }
+  table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 0.9em; }
+  th { background: #1a1a2e; color: #fff; padding: 10px 12px; text-align: left; }
+  td { border: 1px solid #ddd; padding: 8px 12px; }
+  tr:nth-child(even) { background: #f9f9f9; }
+  tr:hover { background: #f0f0f0; }
+  code { background: #f0f0f0; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; font-family: "SF Mono", monospace; }
+  pre { background: #1a1a2e; color: #e0e0e0; padding: 16px 20px; border-radius: 8px; overflow-x: auto; margin: 16px 0; }
+  pre code { background: transparent; color: inherit; padding: 0; }
+  blockquote { border-left: 4px solid #e94560; padding: 12px 20px; margin: 16px 0; background: #fff5f5; color: #555; font-style: italic; }
+  ul, ol { margin: 12px 0 12px 24px; }
+  li { margin-bottom: 4px; }
+  strong { color: #1a1a2e; }
+  a { color: #e94560; }
+  hr { border: none; border-top: 2px solid #eee; margin: 24px 0; }
+  .nav { margin-bottom: 24px; padding: 12px 16px; background: #1a1a2e; border-radius: 8px; }
+  .nav a { color: #e94560; text-decoration: none; margin-right: 12px; font-size: 0.85em; }
+  .nav a:hover { text-decoration: underline; }
+  .footer { text-align: center; margin-top: 32px; color: #999; font-size: 0.8em; }
+  .badge { background: #e94560; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8em; margin-left: 8px; }
+  .highlight { background: linear-gradient(120deg, #fff5f5 0%, #fff 100%); padding: 16px; border-radius: 8px; border: 1px solid #ffe0e0; margin: 16px 0; }
+  .warning { background: #fff9e6; border: 1px solid #ffd700; padding: 12px; border-radius: 6px; margin: 12px 0; }
+  .success { background: #f0fff4; border: 1px solid #90ee90; padding: 12px; border-radius: 6px; margin: 12px 0; }
+  .danger { background: #ffe6e6; border: 1px solid #ff6b6b; padding: 12px; border-radius: 6px; margin: 12px 0; }
+</style>
+</head>
+<body>
+<div class="container">
+<div class="nav">
+<a href="index.html">📋 目錄</a>
+<a href="bd-final-model.html">BD模型</a>
+<a href="certification-system.html">認證制度</a>
+<a href="pricing-strategy.html">定價策略</a>
+<a href="team-structure.html">團隊架構</a>
+<a href="kpi-system.html">KPI體系</a>
+</div>
+
+<h1>樂居空間選材 — 完整策略總覽（最終版）</h1>
+
+<blockquote>
+<strong>平台定位：</strong> 室內裝修產業的工作加速器<br>
+<strong>商業模式：</strong> 認證制平台，連結建材商、設計師、工班<br>
+<strong>核心理念：</strong> 讓裝修產業裡的每個人，工作變快、賺更多
+</blockquote>
+
+<hr>
+
+<h2>第一部分：戰略總覽</h2>
+
+<h3>1.1 公司使命與平台定位</h3>
+
+<div class="highlight">
+<p><strong>使命宣言：</strong><br>
+讓室內裝修產業裡的每個人，工作變快、賺更多。</p>
+
+<p><strong>平台定位：</strong><br>
+室內裝修產業的「工作加速器」— 不只是撮合平台，而是讓每個角色的工作效率都提升的專業工具。</p>
+</div>
+
+<p><strong>價值主張：</strong></p>
+
+<table>
+<thead>
+<tr>
+<th>角色</th>
+<th>沒有樂居</th>
+<th>有樂居</th>
+<th>加速效果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>設計師選材</strong></td>
+<td>跑 3-5 家展示廳，2 天</td>
+<td>平台搜尋比較，30 分鐘</td>
+<td>⚡ 快 10 倍</td>
+</tr>
+<tr>
+<td><strong>設計師發包</strong></td>
+<td>打 10 通電話找工班，等 3 天報價</td>
+<td>平台一鍵發包，24hr 收報價</td>
+<td>⚡ 快 3 倍</td>
+</tr>
+<tr>
+<td><strong>工班接案</strong></td>
+<td>等設計師電話，被動</td>
+<td>平台主動接案+被搜尋</td>
+<td>⚡ 案量 +50%</td>
+</tr>
+<tr>
+<td><strong>建材商獲客</strong></td>
+<td>等展示廳來客</td>
+<td>10,000 設計師主動搜尋</td>
+<td>⚡ 觸及 +10 倍</td>
+</tr>
+</tbody>
+</table>
+
+<h3>1.2 商業模式一頁圖</h3>
+
+<pre><code>                    樂居空間選材平台
+                   「工作加速器」
+                        │
+    ┌───────────────────┼───────────────────┐
+    │                   │                   │
+建材廠商              工班               設計師
+(供給側)             (供給側)           (需求側)
+    │                   │                   │
+樂居PRO認證          樂居PRO認證         樂居PRO認證
+$10K-80K/月         $3K-10K/月          $10K-30K/月
+    │                   │                   │
+    └───────────────────┼───────────────────┘
+                        │
+                  BD全循環服務
+              開發→成功→反饋→閉環
+</code></pre>
+
+<p><strong>核心邏輯：</strong></p>
+<ol>
+<li><strong>BD開發供給側</strong>（建材商+工班）→ 平台內容豐富</li>
+<li><strong>平台吸引需求側</strong>（設計師）→ 因為內容豐富而主動來用</li>
+<li><strong>認證制收費</strong>→ 不是「收月費」，是「申請認證」的心理</li>
+<li><strong>全循環BD</strong>→ 同一人做開發+成功+反饋，確保客戶留存</li>
+</ol>
+
+<h3>1.3 核心數字</h3>
+
+<table>
+<thead>
+<tr>
+<th>指標</th>
+<th>M6目標</th>
+<th>M12目標</th>
+<th>M24目標</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>認證建材商</strong></td>
+<td>60 家</td>
+<td>150 家</td>
+<td>300 家</td>
+</tr>
+<tr>
+<td><strong>認證工班</strong></td>
+<td>120 人</td>
+<td>800 人</td>
+<td>2,000 人</td>
+</tr>
+<tr>
+<td><strong>認證設計師</strong></td>
+<td>80 人</td>
+<td>800 人</td>
+<td>1,500 人</td>
+</tr>
+<tr>
+<td><strong>月營收</strong></td>
+<td>$176 萬</td>
+<td>$1,190 萬</td>
+<td>$3,500 萬</td>
+</tr>
+<tr>
+<td><strong>BD團隊規模</strong></td>
+<td>46 人</td>
+<td>46 人</td>
+<td>80 人</td>
+</tr>
+<tr>
+<td><strong>現金流狀態</strong></td>
+<td>正向</td>
+<td>強勁正向</td>
+<td>規模盈利</td>
+</tr>
+</tbody>
+</table>
+
+<div class="success">
+<p><strong>關鍵財務目標：</strong></p>
+<ul>
+<li>$800 萬現金支撐至 M5 打平</li>
+<li>M6 開始正向現金流</li>
+<li>M12 達成 $1,190 萬月營收</li>
+<li>ROI 目標：15:1（營收：BD投入）</li>
+</ul>
+</div>
+
+<h3>1.4 三階段路線圖</h3>
+
+<table>
+<thead>
+<tr>
+<th>階段</th>
+<th>時間</th>
+<th>核心策略</th>
+<th>關鍵里程碑</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Phase 1: 連結</strong></td>
+<td>M1-M6</td>
+<td>全免費，衝供給量，跑通連結</td>
+<td>60家建材商+120工班+80設計師上線</td>
+</tr>
+<tr>
+<td><strong>Phase 2: 認證</strong></td>
+<td>M7-M12</td>
+<td>推基礎認證（PRO Basic），建立付費習慣</td>
+<td>150家建材商認證+800工班認證</td>
+</tr>
+<tr>
+<td><strong>Phase 3: 升級</strong></td>
+<td>M13+</td>
+<td>推進階認證（PRO Plus/Elite），ARPU提升</td>
+<td>30%客戶升級進階，規模盈利</td>
+</tr>
+</tbody>
+</table>
+
+<p><strong>Phase轉換關鍵：</strong></p>
+<ul>
+<li>Phase 1→2：有足夠連結數據證明平台價值</li>
+<li>Phase 2→3：基礎認證用戶有明顯成果，願意升級</li>
+</ul>
+
+<hr>
+
+<h2>第二部分：認證制度</h2>
+
+<h3>2.1 樂居 PRO 認證體系</h3>
+
+<p><strong>認證品牌：樂居 PRO</strong></p>
+
+<pre><code>🔵 PRO Basic ─── 基礎認證（藍標）
+🟡 PRO Plus ──── 進階認證（金標）
+🔴 PRO Elite ─── 戰略認證（紅標）
+</code></pre>
+
+<div class="highlight">
+<p><strong>核心設計理念：</strong></p>
+<ul>
+<li>付的不是「月費」，是「認證維護費」</li>
+<li>沒認證 = 不是 PRO = 功能受限</li>
+<li>認證標章 = 行業身份象徵</li>
+<li>認證客戶優先配對，形成「圈內人經濟」</li>
+</ul>
+</div>
+
+<h3>2.2 認證等級與定價</h3>
+
+<table>
+<thead>
+<tr>
+<th>角色\等級</th>
+<th>PRO Basic</th>
+<th>PRO Plus</th>
+<th>PRO Elite</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>建材商</strong></td>
+<td>$10,000/月</td>
+<td>$30,000/月</td>
+<td>$80,000/月</td>
+</tr>
+<tr>
+<td><strong>設計師</strong></td>
+<td>$10,000/月</td>
+<td>$30,000/月</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>工班</strong></td>
+<td>$3,000/月</td>
+<td>$10,000/月</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+
+<h3>2.3 功能權益對比</h3>
+
+<h4>建材商認證權益</h4>
+
+<table>
+<thead>
+<tr>
+<th>功能</th>
+<th>未認證（免費）</th>
+<th>PRO Basic</th>
+<th>PRO Plus</th>
+<th>PRO Elite</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>產品上架數量</td>
+<td>50 件</td>
+<td>500 件</td>
+<td>無限</td>
+<td>無限</td>
+</tr>
+<tr>
+<td>搜尋排序</td>
+<td>後段</td>
+<td>優先</td>
+<td>置頂</td>
+<td>置頂+推薦標籤</td>
+</tr>
+<tr>
+<td>詢價通知</td>
+<td>每日彙總</td>
+<td>即時通知</td>
+<td>即時+分級</td>
+<td>即時+AI建議</td>
+</tr>
+<tr>
+<td>數據報表</td>
+<td>❌</td>
+<td>月報</td>
+<td>即時儀表板</td>
+<td>全方位分析</td>
+</tr>
+<tr>
+<td>標章顯示</td>
+<td>❌</td>
+<td>🔵</td>
+<td>🟡</td>
+<td>🔴</td>
+</tr>
+<tr>
+<td>專屬BD</td>
+<td>❌</td>
+<td>共享</td>
+<td>專屬</td>
+<td>總監級對接</td>
+</tr>
+</tbody>
+</table>
+
+<h3>2.4 免費→認證轉換策略</h3>
+
+<h4>轉換時間表</h4>
+
+<table>
+<thead>
+<tr>
+<th>時間</th>
+<th>動作</th>
+<th>目標群體</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>M5</strong></td>
+<td>宣布樂居PRO認證制度</td>
+<td>全平台公告</td>
+</tr>
+<tr>
+<td><strong>M6</strong></td>
+<td>A群邀請（有成交記錄）</td>
+<td>首批50家優質客戶</td>
+</tr>
+<tr>
+<td><strong>M7</strong></td>
+<td>B群推廣+A群成果展示</td>
+<td>有瀏覽無成交的客戶</td>
+</tr>
+<tr>
+<td><strong>M8-M9</strong></td>
+<td>免費版功能開始限縮</td>
+<td>引導升級認證</td>
+</tr>
+<tr>
+<td><strong>M10+</strong></td>
+<td>全面推廣認證制</td>
+<td>規模轉換</td>
+</tr>
+</tbody>
+</table>
+
+<h4>轉換話術（從「收費」到「認證」）</h4>
+
+<div class="danger">
+<p><strong>❌ 舊話術（月費思維）：</strong></p>
+<p>"我們平台要開始收費了，月費$10,000，可以使用這些功能..."</p>
+</div>
+
+<div class="success">
+<p><strong>✅ 新話術（認證思維）：</strong></p>
+<p>"我們推出了樂居PRO認證制度。通過認證的建材商，會獲得認證標章，在平台上優先被200+認證設計師看到。認證需要審核您的產品品質、回覆速度，不是每家都能通過。認證維護費$10,000/月。您有興趣申請嗎？"</p>
+</div>
+
+<p><strong>心理差異：</strong></p>
+<ul>
+<li>月費：你向我要錢 → 抗拒</li>
+<li>認證：我想向你申請 → 主動</li>
+</ul>
+
+<hr>
+
+<h2>第三部分：BD 團隊</h2>
+
+<h3>3.1 最終組織架構（46人）</h3>
+
+<pre><code>                   BD 總監 (1)
+                      │
+         ┌────────────┼────────────┐
+         │            │            │
+      北區部(16)    中區部(13)    南區部(12)
+      主管(1)       主管(1)       主管(1)
+         │            │            │
+      ┌──┼──┐      ┌──┼──┐      ┌──┼──┐
+    A組  B組  C組   D組  E組    F組  G組
+   組長  組長 組長  組長  組長   組長  組長
+   BD×4 BD×4 BD×4  BD×4 BD×4   BD×4 BD×4
+   
+                + 產品反饋組 (3人)
+                + 營運支援 (4人)
+</code></pre>
+
+<h3>3.2 BD 全循環工作模型</h3>
+
+<p><strong>一個BD做全循環（不分供給BD和CS）</strong></p>
+
+<pre><code>① 開發客戶 (40%) → ② 讓客戶成功 (30%) → ③ 發現瓶頸 (10%) 
+    ↑                                              ↓
+⑤ 閉環回訪 (10%) ← ④ 反饋產品團隊 (10%) ←────────┘
+</code></pre>
+
+<p><strong>為什麼一個人做全循環？</strong></p>
+<ol>
+<li>開發客戶的人最了解客戶痛點</li>
+<li>客戶不用跟兩個人重複講一樣的話</li>
+<li>BD看到客戶成功才有動力做好</li>
+<li>BD自己反饋的需求被產品實現，能回去跟客戶說「搞定了」</li>
+</ol>
+
+<h3>3.3 BD 各階段職責</h3>
+
+<table>
+<thead>
+<tr>
+<th>階段</th>
+<th>BD 做什麼</th>
+<th>時間佔比</th>
+<th>關鍵產出</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>① 開發客戶</td>
+<td>拜訪建材商+工班，用「加速工作」切入</td>
+<td>40%</td>
+<td>新註冊用戶</td>
+</tr>
+<tr>
+<td>② 讓客戶成功</td>
+<td>教客戶用平台、追蹤使用狀況</td>
+<td>30%</td>
+<td>活躍用戶、成功連結</td>
+</tr>
+<tr>
+<td>③ 發現瓶頸</td>
+<td>觀察客戶卡住的地方</td>
+<td>10%</td>
+<td>瓶頸清單</td>
+</tr>
+<tr>
+<td>④ 反饋產品</td>
+<td>填需求工單、提交產品反饋組</td>
+<td>10%</td>
+<td>需求工單</td>
+</tr>
+<tr>
+<td>⑤ 閉環回訪</td>
+<td>產品改善後回去告知客戶</td>
+<td>10%</td>
+<td>客戶滿意度UP</td>
+</tr>
+</tbody>
+</table>
+
+<hr>
+
+<h2>第四部分：BD 執行系統</h2>
+
+<h3>4.1 BD 的一天（標準化作業）</h3>
+
+<table>
+<thead>
+<tr>
+<th>時間</th>
+<th>任務</th>
+<th>循環階段</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>08:30-09:00</td>
+<td>晨會：檢視數據+今日目標</td>
+<td>—</td>
+</tr>
+<tr>
+<td>09:00-12:00</td>
+<td>開發新客戶（電話+外出拜訪）</td>
+<td>① 開發</td>
+</tr>
+<tr>
+<td>13:00-15:30</td>
+<td>客戶成功拜訪（教學+追蹤）</td>
+<td>② 成功</td>
+</tr>
+<tr>
+<td>15:30-16:00</td>
+<td>整理客戶遇到的問題</td>
+<td>③ 瓶頸</td>
+</tr>
+<tr>
+<td>16:00-16:30</td>
+<td>填需求工單、提交反饋</td>
+<td>④ 反饋</td>
+</tr>
+<tr>
+<td>16:30-17:00</td>
+<td>閉環回訪已解決問題的客戶</td>
+<td>⑤ 閉環</td>
+</tr>
+<tr>
+<td>17:00-17:30</td>
+<td>更新CRM、寫日報</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+
+<h3>4.2 三階段話術</h3>
+
+<h4>Phase 1 話術（M1-M6免費邀請）</h4>
+
+<p><strong>對建材商：</strong></p>
+<blockquote>
+<p>"X總您好，我是樂居空間的OOO。我們做的事很簡單—幫建材商直接連結到有案子的設計師。完全免費，沒有任何費用。我想花5分鐘跟您說明，您方便嗎？"</p>
+</blockquote>
+
+<h4>Phase 2 話術（M7-M12推基礎認證）</h4>
+
+<p><strong>核心：用數據說服</strong></p>
+
+<blockquote>
+<p>"X總，我帶了一份您過去6個月的平台數據。您收到了XX次詢價，成交了XX筆約XX萬。但因為通知延遲，有XX次詢價您錯過了。升級樂居PRO基礎認證$10,000/月，最大改變是即時通知+範本快速回覆。以您的數據，光搶回那些錯失的單，每月至少多XX萬營收。"</p>
+</blockquote>
+
+<hr>
+
+<h2>第七部分：財務模型</h2>
+
+<h3>7.1 認證制營收預測（M1-M24）</h3>
+
+<table>
+<thead>
+<tr>
+<th>月份</th>
+<th>認證建材商</th>
+<th>認證設計師</th>
+<th>認證工班</th>
+<th>月營收</th>
+<th>累計營收</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>M1-M5</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>$0</td>
+<td>$0</td>
+</tr>
+<tr>
+<td>M6</td>
+<td>60</td>
+<td>80</td>
+<td>120</td>
+<td>$176萬</td>
+<td>$176萬</td>
+</tr>
+<tr>
+<td>M9</td>
+<td>80</td>
+<td>150</td>
+<td>200</td>
+<td>$290萬</td>
+<td>$1,173萬</td>
+</tr>
+<tr>
+<td>M12</td>
+<td>150</td>
+<td>800</td>
+<td>800</td>
+<td>$1,190萬</td>
+<td>$6,118萬</td>
+</tr>
+<tr>
+<td>M18</td>
+<td>200</td>
+<td>1,200</td>
+<td>1,000</td>
+<td>$1,860萬</td>
+<td>$15,840萬</td>
+</tr>
+<tr>
+<td>M24</td>
+<td>300</td>
+<td>1,500</td>
+<td>1,500</td>
+<td>$3,500萬</td>
+<td>$35,500萬</td>
+</tr>
+</tbody>
+</table>
+
+<h3>7.2 $800萬現金流規劃</h3>
+
+<table>
+<thead>
+<tr>
+<th>月份</th>
+<th>BD人數</th>
+<th>月支出</th>
+<th>月營收</th>
+<th>現金餘額</th>
+<th>備註</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>M1</td>
+<td>18人</td>
+<td>$165萬</td>
+<td>$0</td>
+<td>$635萬</td>
+<td>團隊建置期</td>
+</tr>
+<tr>
+<td>M2</td>
+<td>32人</td>
+<td>$250萬</td>
+<td>$50萬</td>
+<td>$435萬</td>
+<td>加速擴編</td>
+</tr>
+<tr>
+<td>M3</td>
+<td>46人</td>
+<td>$350萬</td>
+<td>$100萬</td>
+<td>$185萬</td>
+<td>全員到位</td>
+</tr>
+<tr>
+<td>M4</td>
+<td>46人</td>
+<td>$350萬</td>
+<td>$130萬</td>
+<td>$-35萬</td>
+<td>⚠️ 現金緊張</td>
+</tr>
+<tr>
+<td>M5</td>
+<td>46人</td>
+<td>$350萬</td>
+<td>$160萬</td>
+<td>$-225萬</td>
+<td>🔴 需要融資/盈利</td>
+</tr>
+<tr>
+<td>M6</td>
+<td>46人</td>
+<td>$350萬</td>
+<td>$176萬</td>
+<td>$-399萬</td>
+<td>🔴 必須盈利</td>
+</tr>
+</tbody>
+</table>
+
+<div class="warning">
+<p><strong>現金流風險控制：</strong></p>
+<ol>
+<li><strong>M4檢查點</strong>：如現金&lt;$100萬，啟動應急計畫</li>
+<li><strong>M5強制盈利</strong>：必須開始認證收費</li>
+<li><strong>備選方案</strong>：精簡至30人團隊（見風險備案）</li>
+</ol>
+</div>
+
+<hr>
+
+<h2>第八部分：風險與備案</h2>
+
+<h3>8.1 關鍵風險分析</h3>
+
+<table>
+<thead>
+<tr>
+<th>風險</th>
+<th>機率</th>
+<th>影響</th>
+<th>現狀應對</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>現金流斷鏈</strong></td>
+<td>高</td>
+<td>致命</td>
+<td>M5前必須開始認證收費</td>
+</tr>
+<tr>
+<td><strong>BD招募困難</strong></td>
+<td>中</td>
+<td>高</td>
+<td>提高薪資+內推獎金</td>
+</tr>
+<tr>
+<td><strong>客戶不願付費</strong></td>
+<td>中</td>
+<td>高</td>
+<td>認證制+早鳥方案+數據說服</td>
+</tr>
+<tr>
+<td><strong>競品出現</strong></td>
+<td>低</td>
+<td>中</td>
+<td>加速建立客戶黏性</td>
+</tr>
+<tr>
+<td><strong>經濟衰退</strong></td>
+<td>低</td>
+<td>高</td>
+<td>聚焦翻修市場+成本控制</td>
+</tr>
+</tbody>
+</table>
+
+<h3>8.2 精簡版備案</h3>
+
+<h4>30人精簡版（應急方案）</h4>
+
+<table>
+<thead>
+<tr>
+<th>角色</th>
+<th>人數</th>
+<th>月成本</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BD總監</td>
+<td>1</td>
+<td>$14萬</td>
+</tr>
+<tr>
+<td>區域主管</td>
+<td>2</td>
+<td>$18萬</td>
+</tr>
+<tr>
+<td>組長</td>
+<td>3</td>
+<td>$20萬</td>
+</tr>
+<tr>
+<td>BD專員</td>
+<td>21</td>
+<td>$105萬</td>
+</tr>
+<tr>
+<td>支援</td>
+<td>3</td>
+<td>$12萬</td>
+</tr>
+<tr>
+<td><strong>合計</strong></td>
+<td><strong>30</strong></td>
+<td><strong>$169萬</strong></td>
+</tr>
+</tbody>
+</table>
+
+<p><strong>30人版目標：</strong></p>
+<ul>
+<li>聚焦台北+台中兩區</li>
+<li>月營收目標$200萬</li>
+<li>現金支撐至M8</li>
+</ul>
+
+<hr>
+
+<h2>總結</h2>
+
+<h3>成功關鍵要素</h3>
+
+<ol>
+<li><strong>精準定位</strong>：工作加速器，不是撮合平台</li>
+<li><strong>認證心理</strong>：付費變成「申請認證」，心理門檻降低</li>
+<li><strong>全循環BD</strong>：開發+成功+反饋+閉環，確保客戶留存</li>
+<li><strong>產品閉環</strong>：客戶需求→產品改善→客戶更成功→更黏平台</li>
+<li><strong>現金流控制</strong>：M5前必須開始盈利</li>
+</ol>
+
+<h3>致勝策略三要件</h3>
+
+<ol>
+<li><strong>速度</strong>：搶在競品前建立市場地位</li>
+<li><strong>深度</strong>：不只做交易撮合，做工作流程優化</li>
+<li><strong>黏性</strong>：透過認證制+需求反饋建立客戶依賴</li>
+</ol>
+
+<div class="highlight">
+<p><strong>這是一個「先建生態，再變現」的策略。關鍵是Phase 1跑通連結，Phase 2成功轉認證制，Phase 3實現規模盈利。</strong></p>
+</div>
+
+<hr>
+
+<div class="footer">
+本文件為最終決策版本，整合所有演進策略，去除矛盾與過時內容，供經營團隊執行使用。<br>
+版本：Final 1.0 | 更新日期：2026-03-18
+</div>
+
+</div>
+</body>
+</html>

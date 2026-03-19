@@ -5,5 +5,12 @@
     "description": "裝修產業平台 — 全可能性矩陣（初版）",
     "author": "brighten",
     "files": ["index.html"]
+  },
+  {
+    "version": "v002",
+    "timestamp": "2026-03-18T10:25:00+08:00",
+    "description": "設計師加速器 Pro — 設計事務所經營平台（SaaS 功能模擬）",
+    "author": "show",
+    "files": ["index.html"]
   }
 ]
