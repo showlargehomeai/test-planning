@@ -25,6 +25,8 @@ interface DashboardData {
   updatedAt: string;
 }
 
+type TimeRange = "7d" | "30d" | "90d";
+
 function formatDate(dateStr: string) {
   const d = new Date(dateStr);
   return `${d.getMonth() + 1}/${d.getDate()}`;
@@ -35,6 +37,11 @@ export default function UserGrowth() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [autoRefresh, setAutoRefresh] = useState(true);
+  const [range, setRange] = useState<TimeRange>("90d");
+  const [wauMau, setWauMau] = useState<{
+    wau: number;
+    mau: number;
+  } | null>(null);
 
   const fetchData = useCallback(async () => {
     try {
@@ -52,6 +59,11 @@ export default function UserGrowth() {
 
   useEffect(() => {
     fetchData();
+    // Fetch WAU/MAU from retention API
+    fetch("/api/dashboard/retention", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((d) => setWauMau({ wau: d.wau, mau: d.mau }))
+      .catch(() => {});
   }, [fetchData]);
 
   useEffect(() => {
@@ -95,7 +107,12 @@ export default function UserGrowth() {
         ? "+100"
         : "0";
 
-  const stats = [
+  const stats: {
+    label: string;
+    value: number;
+    color: string;
+    sub?: string;
+  }[] = [
     { label: "總用戶", value: data.total, color: "text-indigo-600" },
     {
       label: "今日新增",
@@ -103,9 +120,19 @@ export default function UserGrowth() {
       color: "text-emerald-600",
       sub: `${Number(growthRate) >= 0 ? "+" : ""}${growthRate}%`,
     },
-    { label: "本週", value: data.thisWeek, color: "text-blue-600" },
-    { label: "本月", value: data.thisMonth, color: "text-violet-600" },
+    { label: "本週新增", value: data.thisWeek, color: "text-blue-600" },
+    { label: "本月新增", value: data.thisMonth, color: "text-violet-600" },
+    ...(wauMau
+      ? [
+          { label: "WAU", value: wauMau.wau, color: "text-amber-600" },
+          { label: "MAU", value: wauMau.mau, color: "text-rose-600" },
+        ]
+      : []),
   ];
+
+  const rangeDays = range === "7d" ? 7 : range === "30d" ? 30 : 90;
+  const filteredDaily = data.daily.slice(-rangeDays);
+  const filteredCumulative = data.cumulative.slice(-rangeDays);
 
   return (
     <div className="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-100 lg:col-span-2 space-y-4">
@@ -113,6 +140,22 @@ export default function UserGrowth() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <h2 className="text-sm font-semibold text-slate-700">用戶成長</h2>
         <div className="flex items-center gap-2">
+          {/* Time range toggle */}
+          <div className="flex items-center gap-0.5 bg-slate-100 rounded-lg p-0.5">
+            {(["7d", "30d", "90d"] as const).map((r) => (
+              <button
+                key={r}
+                onClick={() => setRange(r)}
+                className={`px-2 py-1 rounded-md text-[10px] font-medium transition-colors ${
+                  range === r
+                    ? "bg-white text-indigo-700 shadow-sm"
+                    : "text-slate-500 hover:text-slate-700"
+                }`}
+              >
+                {r}
+              </button>
+            ))}
+          </div>
           <button
             onClick={() => setAutoRefresh(!autoRefresh)}
             className={`px-2 py-1 rounded-lg text-[10px] font-medium transition-colors ${
@@ -136,7 +179,13 @@ export default function UserGrowth() {
       </div>
 
       {/* Mini Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+      <div
+        className={`grid gap-2 ${
+          stats.length > 4
+            ? "grid-cols-2 sm:grid-cols-3"
+            : "grid-cols-2 sm:grid-cols-4"
+        }`}
+      >
         {stats.map((s) => (
           <div
             key={s.label}
@@ -146,7 +195,7 @@ export default function UserGrowth() {
             <p className={`text-lg font-bold ${s.color}`}>
               {s.value.toLocaleString()}
             </p>
-            {"sub" in s && s.sub && (
+            {s.sub && (
               <p className="text-[10px] text-slate-400">{s.sub}</p>
             )}
           </div>
@@ -155,9 +204,11 @@ export default function UserGrowth() {
 
       {/* Cumulative Growth */}
       <div>
-        <p className="text-xs text-slate-500 mb-2">累計成長</p>
+        <p className="text-xs text-slate-500 mb-2">
+          累計成長 ({range})
+        </p>
         <ResponsiveContainer width="100%" height={200}>
-          <AreaChart data={data.cumulative}>
+          <AreaChart data={filteredCumulative}>
             <defs>
               <linearGradient id="gradCum" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#6366f1" stopOpacity={0.3} />
@@ -195,9 +246,11 @@ export default function UserGrowth() {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {/* Daily New */}
         <div>
-          <p className="text-xs text-slate-500 mb-2">每日新增 (90天)</p>
+          <p className="text-xs text-slate-500 mb-2">
+            每日新增 ({range})
+          </p>
           <ResponsiveContainer width="100%" height={160}>
-            <BarChart data={data.daily}>
+            <BarChart data={filteredDaily}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
               <XAxis
                 dataKey="date"
