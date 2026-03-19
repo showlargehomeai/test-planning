@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import DashboardNav from "./_components/DashboardNav";
 
 export const metadata: Metadata = {
   title: "戰情室 — TestPlanning",
@@ -12,6 +13,7 @@ export default function DashboardLayout({
 }) {
   return (
     <div className="h-full overflow-y-auto bg-slate-50">
+      <DashboardNav />
       {children}
     </div>
   );
