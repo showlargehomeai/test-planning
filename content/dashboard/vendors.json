@@ -1,11 +1,137 @@
 {
   "stages": [
-    { "id": "lead", "label": "接觸中", "count": 12, "color": "slate" },
-    { "id": "contacted", "label": "已聯繫", "count": 8, "color": "blue" },
-    { "id": "negotiating", "label": "洽談中", "count": 5, "color": "amber" },
-    { "id": "onboarding", "label": "導入中", "count": 3, "color": "indigo" },
-    { "id": "active", "label": "已上線", "count": 7, "color": "emerald" }
+    { "id": "pending", "label": "待引導", "color": "slate" },
+    { "id": "learning", "label": "熟悉中", "color": "blue" },
+    { "id": "product_listed", "label": "已上架產品", "color": "amber" },
+    { "id": "service_listed", "label": "已上架服務", "color": "indigo" },
+    { "id": "completed", "label": "完成", "color": "emerald" }
   ],
-  "total": 35,
+  "bds": [
+    { "id": "bd1", "name": "王小明", "avatar": "王" },
+    { "id": "bd2", "name": "李美玲", "avatar": "李" },
+    { "id": "bd3", "name": "陳大偉", "avatar": "陳" }
+  ],
+  "vendors": [
+    {
+      "id": "v001",
+      "name": "綠能科技",
+      "bdId": "bd1",
+      "stage": "pending",
+      "startDate": "2026-03-15",
+      "productCount": 0,
+      "serviceCount": 0,
+      "notes": "節能設備供應商"
+    },
+    {
+      "id": "v002",
+      "name": "鼎新電腦",
+      "bdId": "bd2",
+      "stage": "pending",
+      "startDate": "2026-03-12",
+      "productCount": 0,
+      "serviceCount": 0,
+      "notes": "ERP 系統整合商"
+    },
+    {
+      "id": "v003",
+      "name": "和碩聯合",
+      "bdId": "bd3",
+      "stage": "pending",
+      "startDate": "2026-03-17",
+      "productCount": 0,
+      "serviceCount": 0,
+      "notes": "電子代工大廠"
+    },
+    {
+      "id": "v004",
+      "name": "光寶科技",
+      "bdId": "bd1",
+      "stage": "learning",
+      "startDate": "2026-03-05",
+      "productCount": 0,
+      "serviceCount": 0,
+      "notes": "LED 與電源供應器"
+    },
+    {
+      "id": "v005",
+      "name": "聯詠科技",
+      "bdId": "bd3",
+      "stage": "learning",
+      "startDate": "2026-03-01",
+      "productCount": 1,
+      "serviceCount": 0,
+      "notes": "IC 設計公司"
+    },
+    {
+      "id": "v006",
+      "name": "瑞昱半導體",
+      "bdId": "bd2",
+      "stage": "learning",
+      "startDate": "2026-03-03",
+      "productCount": 0,
+      "serviceCount": 0,
+      "notes": "網通晶片設計"
+    },
+    {
+      "id": "v007",
+      "name": "宏碁資訊",
+      "bdId": "bd1",
+      "stage": "product_listed",
+      "startDate": "2026-02-20",
+      "productCount": 3,
+      "serviceCount": 0,
+      "notes": "雲端服務與筆電"
+    },
+    {
+      "id": "v008",
+      "name": "微星科技",
+      "bdId": "bd3",
+      "stage": "product_listed",
+      "startDate": "2026-02-25",
+      "productCount": 2,
+      "serviceCount": 1,
+      "notes": "電競設備與顯卡"
+    },
+    {
+      "id": "v009",
+      "name": "研華科技",
+      "bdId": "bd2",
+      "stage": "service_listed",
+      "startDate": "2026-02-10",
+      "productCount": 4,
+      "serviceCount": 2,
+      "notes": "工業物聯網方案"
+    },
+    {
+      "id": "v010",
+      "name": "佳世達科技",
+      "bdId": "bd1",
+      "stage": "service_listed",
+      "startDate": "2026-02-15",
+      "productCount": 2,
+      "serviceCount": 1,
+      "notes": "顯示器與醫療設備"
+    },
+    {
+      "id": "v011",
+      "name": "台達電子",
+      "bdId": "bd3",
+      "stage": "completed",
+      "startDate": "2026-01-15",
+      "productCount": 5,
+      "serviceCount": 3,
+      "notes": "電源管理解決方案"
+    },
+    {
+      "id": "v012",
+      "name": "緯創資通",
+      "bdId": "bd2",
+      "stage": "completed",
+      "startDate": "2026-01-20",
+      "productCount": 3,
+      "serviceCount": 2,
+      "notes": "ICT 與企業解決方案"
+    }
+  ],
   "updatedAt": "2026-03-19T00:00:00Z"
 }
