@@ -77,7 +77,12 @@ export default function BDPipeline() {
   return (
     <div className="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-100">
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-sm font-semibold text-slate-700">BD 廠商管道</h2>
+        <div className="flex items-center gap-2">
+          <h2 className="text-sm font-semibold text-slate-700">BD 廠商管道</h2>
+          <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 font-semibold tracking-wide">
+            MOCK
+          </span>
+        </div>
         <span className="text-xs text-slate-400">共 {total} 家</span>
       </div>
 

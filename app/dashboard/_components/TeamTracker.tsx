@@ -66,7 +66,12 @@ export default function TeamTracker() {
 
   return (
     <div className="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-100">
-      <h2 className="text-sm font-semibold text-slate-700 mb-3">團隊進度</h2>
+      <div className="flex items-center gap-2 mb-3">
+        <h2 className="text-sm font-semibold text-slate-700">團隊進度</h2>
+        <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 font-semibold tracking-wide">
+          MOCK
+        </span>
+      </div>
       <div className="space-y-3">
         {teams.map((team) => {
           const style = statusConfig[team.status];

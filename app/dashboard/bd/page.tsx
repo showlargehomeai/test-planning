@@ -14,9 +14,14 @@ export default function BDPage() {
           <h1 className="text-xl sm:text-2xl font-bold text-slate-900">
             BD 廠商管理
           </h1>
-          <p className="text-sm text-slate-500">
-            廠商 Onboarding 看板 — Kanban View
-          </p>
+          <div className="flex items-center gap-2">
+            <p className="text-sm text-slate-500">
+              廠商 Onboarding 看板 — Kanban View
+            </p>
+            <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 font-semibold tracking-wide">
+              MOCK DATA
+            </span>
+          </div>
         </div>
         <Link
           href="/dashboard"

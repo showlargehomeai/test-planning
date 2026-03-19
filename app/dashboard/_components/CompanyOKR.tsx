@@ -77,6 +77,9 @@ export default function CompanyOKR() {
           <span className="text-xs px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 font-medium">
             {data.quarter}
           </span>
+          <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 font-semibold tracking-wide">
+            MOCK
+          </span>
         </div>
         <div className="flex items-center gap-2 text-xs text-slate-400">
           <span className="flex items-center gap-1">

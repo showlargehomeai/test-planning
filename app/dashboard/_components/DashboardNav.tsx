@@ -5,9 +5,9 @@ import { usePathname } from "next/navigation";
 import { clsx } from "clsx";
 
 const subTabs = [
-  { name: "總覽", href: "/dashboard", icon: "🏠" },
+  { name: "數據分析", href: "/dashboard", icon: "📊" },
+  { name: "總覽", href: "/dashboard/overview", icon: "🏠" },
   { name: "BD 管理", href: "/dashboard/bd", icon: "🤝" },
-  { name: "數據分析", href: "/dashboard/analytics", icon: "📊" },
 ];
 
 export default function DashboardNav() {
