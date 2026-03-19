@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import { filterIdeas, addIdea } from "@/app/lib/ideas";
+import { filterIdeasFromGitHub, addIdeaToGitHub } from "@/app/lib/github-ideas";
 
 export async function GET(request: NextRequest) {
-  const params = Object.fromEntries(request.nextUrl.searchParams.entries());
-  const ideas = filterIdeas(params);
-  return NextResponse.json(ideas);
+  try {
+    const params = Object.fromEntries(request.nextUrl.searchParams.entries());
+    const ideas = await filterIdeasFromGitHub(params);
+    return NextResponse.json(ideas);
+  } catch (err) {
+    console.error("GET /api/ideas error:", err);
+    return NextResponse.json({ error: "Failed to fetch ideas" }, { status: 500 });
+  }
 }
 
 export async function POST(request: NextRequest) {
@@ -18,7 +23,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const idea = addIdea({
+    const idea = await addIdeaToGitHub({
       title: body.title,
       description: body.description,
       category: body.category || "other",
@@ -29,7 +34,8 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json(idea, { status: 201 });
-  } catch {
-    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+  } catch (err) {
+    console.error("POST /api/ideas error:", err);
+    return NextResponse.json({ error: "Failed to save idea" }, { status: 500 });
   }
 }
