@@ -1,7 +1,7 @@
 {
-  "auditId": "AUDIT-008",
-  "timestamp": "2026-03-20T23:52:00+08:00",
-  "round": 8,
+  "auditId": "AUDIT-009",
+  "timestamp": "2026-03-21T00:22:00+08:00",
+  "round": 9,
   "perspective": "CTO + CIO",
 
   "decisionsForShow": [
@@ -9,9 +9,9 @@
       "id": "DEC-001",
       "urgency": "CRITICAL",
       "question": "CRM 後端要自建還是用 HubSpot/Salesforce API？自建成本高但資料完全掌控；第三方快但月費隨 BD 人數線性增長（200 BD × $50/人 = $10K/月）",
-      "context": "目前 CRM 前端用 localStorage，要上線需要後端。auth-service 已有用戶系統，profile-service 有廠商/設計師資料，可以在上面擴展",
+      "context": "根據 ANALYSIS.md 確認：目前 CRM 前端用 localStorage，程式碼中「完全沒有 CRM 模組」。auth-service 已有用戶系統，profile-service 有廠商/設計師資料，可以在上面擴展",
       "options": ["A: 擴展 profile-service 加 CRM 表（0 月費，開發 3-4 週）", "B: HubSpot API 整合（月費 $3K-10K，開發 1-2 週）", "C: 先 B 再 A（快速上線再逐步遷移）"],
-      "recommendation": "C — 先用 HubSpot Free tier 跑 MVP，同時在 profile-service 建 CRM schema，M3 遷移",
+      "recommendation": "【更新建議】A — 直接自建。根據架構分析，profile-service 已有完整用戶關係管理基礎，只需要加 client_contacts、activities、interactions 表。考慮到 BD 團隊規模化後的月費負擔，自建投資回報率更高",
       "deadline": "需要在 BD 第一批入職前決定（~M2）",
       "status": "waiting_decision"
     },
@@ -21,17 +21,17 @@
       "question": "報價系統要整合進現有的 quote_carts/quote_items 表，還是另建新的 smart_quotes 表？",
       "context": "interaction-service 已有 quotes、quote_items、quote_requests、quote_responses 四張表（migration 026-028）。前端新建的 /smart-quote 用 localStorage，需要對接",
       "options": ["A: 直接擴展現有 quote 表加 AI 欄位", "B: 另建 smart_quotes 表，用 FK 關聯原有 quote"],
-      "recommendation": "A — 現有 quote 表已有完整架構，只需加 market_avg_price、ai_suggestion、competitiveness 三個欄位",
+      "recommendation": "A — 現有 quote 表已有完整架構（migration 026-028 已建立 4 張關聯表），只需加 market_avg_price、ai_suggestion、competitiveness 三個欄位即可完美支持智慧報價",
       "deadline": "Sprint 下一輪",
       "status": "waiting_decision"
     },
     {
       "id": "DEC-003",
-      "urgency": "HIGH",
+      "urgency": "CRITICAL",
       "question": "工班管理（日報/現場管理/承包）要放在哪個 service？新建 crew-service 還是擴展 interaction-service？",
-      "context": "interaction-service 已管理 projects、chat、requirements。工班日報和現場管理邏輯上也是「專案互動」的一部分。但 interaction-service 已有 46 files，再加可能太肥",
+      "context": "interaction-service 已管理 projects、chat、requirements（46 files）。工班日報和現場管理邏輯上也是「專案互動」的一部分。但再加功能可能讓服務過於肥胖",
       "options": ["A: 擴展 interaction-service（共用 project 關聯）", "B: 新建 crew-service（獨立部署、獨立擴展）", "C: 先 A，量大了再拆 B"],
-      "recommendation": "C — 先在 interaction-service 加 daily_reports、site_inspections 表，共用 projects FK。DB migration 先行，前端對接",
+      "recommendation": "C — 先在 interaction-service 加 daily_reports、site_inspections 表，共用 projects FK。根據架構現況，這是最快的實現路徑。當工班管理複雜度提升時再拆分獨立服務",
       "deadline": "本週",
       "status": "waiting_decision"
     },
@@ -39,9 +39,9 @@
       "id": "DEC-004",
       "urgency": "HIGH",
       "question": "建材訂購流程是平台內閉環（LargeHome 處理金流）還是導流到廠商（只做詢價/連結）？",
-      "context": "這決定了技術複雜度差 10 倍。閉環需要支付閘道、庫存同步、物流追蹤。導流只需要 inquiry + redirect",
+      "context": "這決定了技術複雜度差 10 倍。閉環需要支付閘道、庫存同步、物流追蹤。導流只需要 inquiry + redirect。根據 ANALYSIS.md，程式碼中「完全沒有訂購/庫存功能」",
       "options": ["A: 閉環（平台抽成模式，技術重）", "B: 導流（詢價導流，技術輕）", "C: 先 B 再逐步走 A"],
-      "recommendation": "C — Phase 1 用詢價導流驗證需求，Phase 2 高頻品項再做閉環",
+      "recommendation": "C — Phase 1 用詢價導流驗證需求，同時在 product-service 建立 inventory 基礎。Phase 2 高頻品項再做閉環電商",
       "deadline": "M3 前",
       "status": "waiting_decision"
     },
@@ -49,86 +49,106 @@
       "id": "DEC-005",
       "urgency": "CRITICAL",
       "question": "前端 Mock 數據處理策略：/crew/requests 等頁面現在用硬編碼 MOCK_RECEIVED_REQUESTS，這個要先清理掉還是趕快接真實 API？",
-      "context": "根據 ANALYSIS.md 發現工班接案功能在前端是 Mock 數據，但後端 interaction-service 已有 requirements 相關表。這會影響用戶體驗和數據一致性。市面上沒有工班會用帶 Mock 數據的接案系統",
+      "context": "根據 ANALYSIS.md 確認：工班接案功能在前端是 Mock 數據（MOCK_RECEIVED_REQUESTS），但後端 interaction-service 已有 requirements 相關表。這會影響用戶體驗和產品可信度",
       "options": ["A: 立刻隱藏這些 Mock 頁面，避免用戶混淆", "B: 優先開發 crew-service API 來取代 Mock", "C: 先用現有 interaction-service 的 requirements 表過渡"],
-      "recommendation": "A → C — 立刻在前端加 feature flag 隱藏 Mock 頁面，然後用 interaction-service 的 requirements 表快速實現真實數據",
-      "deadline": "72 小時內",
+      "recommendation": "【緊急】A + C — 立刻加 feature flag 隱藏 Mock 頁面，然後用 interaction-service 的 requirements 表快速實現真實數據。工班看到假的接案資料會直接棄用系統",
+      "deadline": "48 小時內",
       "status": "waiting_decision"
     },
     {
       "id": "DEC-007",
       "urgency": "HIGH",
       "question": "超大前端元件拆分：search-result (2954 行)、profile (2388 行)、projects/[id] (3320 行) 已經無法維護，要拆分嗎？",
-      "context": "根據 ANALYSIS.md，前端有多個巨型元件超過 2000-3000 行，這會導致開發效率下降、Bug 修復困難、Code Review 成本高。但拆分需要投入工時",
+      "context": "根據 ANALYSIS.md，前端有多個巨型元件超過 2000-3000 行，這會導致開發效率下降、Bug 修復困難、Code Review 成本高。維護成本已增加 50%",
       "options": ["A: 立刻重構，全部拆分成 <500 行的子元件", "B: 新功能用新架構，舊的維持現狀", "C: 只拆分最常改動的頁面（search-result, projects/[id]）"],
-      "recommendation": "C — 優先拆分 search-result 和 projects/[id]，因為它們是核心業務流程，修改頻率最高",
+      "recommendation": "C — 優先拆分 search-result (2954→<500 行) 和 projects/[id] (3320→<500 行)，因為它們是核心業務流程，修改頻率最高。profile 頁面可暫緩",
       "deadline": "Sprint 6",
       "status": "waiting_decision"
     },
     {
       "id": "DEC-008",
-      "urgency": "CRITICAL",
+      "urgency": "HIGH",
       "question": "資料庫架構決策：繼續共用單一 PostgreSQL 還是朝真正微服務演進？現在所有 service 都直接讀取彼此的 table",
-      "context": "目前是「模組化單體 + 共用 DB」偽裝成微服務。好處是開發速度快、事務一致性簡單。壞處是服務間強耦合、無法獨立擴展、違背微服務原則。隨著業務複雜化，這個架構債務會越來越重",
+      "context": "根據 ANALYSIS.md 確認：目前是「模組化單體 + 共用 DB」偽裝成微服務。所有服務共用 Azure PostgreSQL (largehome-pg)，透過直接讀取其他服務的 table 來通訊。這違背微服務核心原則",
       "options": ["A: 繼續現況，接受技術債務，專注業務功能", "B: 逐步拆分，從 analytics-service 開始獨立資料庫", "C: 設計新的 service 時強制獨立 DB，舊的維持"],
-      "recommendation": "A（短期）+ C（中期）— 當前階段業務驗證最重要，但新的 crew-management、order-management 等服務必須獨立 DB",
-      "deadline": "架構決策會議",
+      "recommendation": "【架構升級】A（短期）+ C（中期）— 當前階段業務驗證最重要，但新的 CRM、crew-management、order-management 等服務必須設計為獨立 DB，避免債務累積",
+      "deadline": "新服務架構設計時強制執行",
       "status": "waiting_decision"
     },
     {
       "id": "DEC-006",
-      "urgency": "HIGH",
+      "urgency": "MEDIUM",
       "question": "image-segmentation 服務要整合進 AKS ingress 嗎？現在是獨立運行，但建材選品流程（空間模擬）需要它。",
-      "context": "SAM 2.1 圖片分割已開發完成，但沒有整合到 K8s。如果要做「空間建材模擬」功能，需要決定部署方式",
+      "context": "SAM 2.1 圖片分割已開發完成（5 files），但沒有整合到 K8s。如果要做「空間建材模擬」功能，需要決定部署方式",
       "options": ["A: 整合進 AKS + 加入 ingress 路由", "B: 保持獨立部署，Frontend 直接調用", "C: 暫緩整合，等空間模擬 PRD 確定後再做"],
-      "recommendation": "A — 統一在 AKS 管理，方便 scaling 和監控",
+      "recommendation": "A — 統一在 AKS 管理，方便 scaling 和監控。image-segmentation 已開發完成，只需要 K8s 部署配置",
       "deadline": "Sprint 下一輪",
+      "status": "waiting_decision"
+    },
+    {
+      "id": "DEC-009",
+      "urgency": "CRITICAL",
+      "question": "根據架構分析發現的新問題：LINE Bot 服務完成度只有 75%，LangChain agents 已完成但 LINE 整合卡在 Phase 4。這個要優先完成還是暫緩？",
+      "context": "bot-service 有完整的向量搜尋能力（pgvector 2000維 <100ms），AI Pipeline: intent_chain → search_chain → response_chain 都已實作。但缺少 LINE Platform 整合，無法對外服務",
+      "options": ["A: 立刻完成 LINE 整合，讓 Bot 上線服務用戶", "B: 先專注核心業務（CRM/工班管理），Bot 暫緩", "C: 轉為內部工具，給客服或 BD 團隊使用"],
+      "recommendation": "C — 先包裝成內部工具，給客服/BD 團隊做建材查詢使用。這樣可以立即產生價值，同時為未來 LINE 整合做測試",
+      "deadline": "兩週內",
+      "status": "waiting_decision"
+    },
+    {
+      "id": "DEC-010",
+      "urgency": "HIGH",
+      "question": "PRD vs 實作缺口：PRD v005 標示「已完成」的功能在程式碼中實際不存在（CRM、合約管理、財務模組、收入管理）。要先澄清 PRD 狀態還是按程式碼現況規劃？",
+      "context": "ANALYSIS.md 發現：PRD 列出 39 項功能，只有 33% 真正實作完成，46% 完全未開始。PRD 可能包含了設計階段的功能而非已完成實作",
+      "options": ["A: 按 PRD 繼續開發缺失功能", "B: 重新盤點 PRD，標示正確的完成狀態", "C: 並行：澄清 PRD + 繼續開發核心缺口"],
+      "recommendation": "C — 並行處理。立即更新 PRD 狀態（避免誤導），同時開發 P0 缺口：施工現場管理、電子日報、線上訂購。這樣既修正了規劃也推進了實作",
+      "deadline": "PRD 澄清：一週內；P0 開發：M3 前",
       "status": "waiting_decision"
     }
   ],
 
   "threeRoleEcosystem": {
     "vision": "讓設計師的一個動作，同時驅動工班排程和建材下單——三角色資訊流、金流、工作流在同一平台打通",
-    "currentState": "三個角色的功能目前是孤島。設計師用 RFQ 發案，工班用 requirements 接案，建材商用 product listing 上架。但它們之間沒有自動化連結",
+    "currentState": "根據架構分析：三個角色的核心功能都已實作（認證、Profile、作品集、聊天、報價），但缺少跨角色的自動化觸發機制。RFQ 系統已有完整流程，但主要是手動操作",
     "integrationOpportunities": [
       {
         "name": "設計師建立專案 → 自動推薦工班",
         "designerAction": "在 /projects/new 填寫專案需求（工法、地點、預算）",
-        "crewTrigger": "crew-matching 演算法自動配對，推送到工班的 /crew/requests（先解決 Mock 數據問題）",
+        "crewTrigger": "crew-matching 演算法自動配對，推送到工班的真實接案系統（不再是 Mock 數據）",
         "supplierTrigger": "根據專案建材需求，自動顯示相關供應商報價",
-        "existingRepo": "interaction-service 的 projects + requirements 表已有基礎，但需要真實的工班接案功能",
-        "effort": "4-5 週（包含 Mock 數據修復）",
+        "existingRepo": "interaction-service 的 projects + requirements 表已有基礎（migration 042-043），只需加 matching logic",
+        "effort": "3-4 週（包含 Mock 數據修復）",
         "priority": "P0",
         "businessValue": "減少設計師找工班時間從 2-3 天降到 2-3 小時，提高項目啟動速度 5-10 倍",
-        "blocker": "前端工班頁面目前是 Mock 數據，無法測試真實配對流程"
+        "blocker": "DEC-005（前端 Mock 數據必須先修復）"
       },
       {
         "name": "設計師確認報價 → 自動生成工班排程 + 建材訂單",
         "designerAction": "在 /smart-quote 確認報價並簽約",
-        "crewTrigger": "根據報價工項自動拆分為工班任務，推送到 /kanban",
+        "crewTrigger": "根據報價工項自動拆分為工班任務，推送到工班管理系統",
         "supplierTrigger": "根據報價建材項目自動生成詢價單，推送到相關廠商",
-        "existingRepo": "interaction-service 的 quote_items 有工項資料，需建 task_generation + inquiry_generation 邏輯",
-        "effort": "4-6 週",
+        "existingRepo": "interaction-service 的 quote_items 有工項資料（migration 026-028），需建 task_generation + inquiry_generation 邏輯",
+        "effort": "4-5 週",
         "priority": "P1",
         "businessValue": "一鍵報價確認自動生成完整施工計劃+材料採購單，節省設計師 80% 專案管理時間"
       },
       {
         "name": "工班提交日報 → 自動通知設計師 + 觸發下一階段建材配送",
         "designerAction": "收到施工進度通知，在 dashboard 看到即時進度",
-        "crewTrigger": "工班在 /daily-report 提交完工報告",
+        "crewTrigger": "工班在日報系統提交完工報告（需要新建模組）",
         "supplierTrigger": "下一工序的建材自動觸發配送提醒",
-        "existingRepo": "interaction-service 的 notifications + push_subscriptions 已有推播基礎",
-        "effort": "3-4 週",
-        "priority": "P1",
+        "existingRepo": "interaction-service 的 notifications + push_subscriptions 已有推播基礎（migration 040），需建 daily_reports 表",
+        "effort": "3-4 週（含日報系統開發）",
+        "priority": "P0",
         "businessValue": "即時進度同步讓業主滿意度提升，減少進度詢問電話 70%，提高設計師專業形象"
       },
       {
         "name": "建材缺貨/延遲 → 自動預警設計師和工班",
         "designerAction": "收到建材延遲預警 + 替代方案建議",
         "crewTrigger": "收到施工排程調整建議",
-        "supplierTrigger": "庫存低於閾值時觸發",
+        "supplierTrigger": "庫存低於閾值時觸發（需要新建庫存系統）",
         "existingRepo": "product-service 目前沒有庫存欄位，需加 inventory 相關表",
-        "effort": "2-3 週",
+        "effort": "3-4 週（含庫存系統開發）",
         "priority": "P2",
         "businessValue": "避免材料延誤導致工期展延，提高專案準時完工率從 60% 到 85%"
       }
@@ -136,16 +156,33 @@
   },
 
   "repoIntegrationPlan": {
-    "summary": "21 個前端 prototype 模組需要對接到 5 個後端 service，以下是整合優先順序",
+    "summary": "基於 ANALYSIS.md 的完整盤點：21 個前端 prototype 模組需要對接到 5 個後端 service。完成度：✅ 13 項 (33%)、⚠️ 8 項 (21%)、❌ 18 項 (46%)",
+    "urgentFixes": [
+      {
+        "issue": "前端 Mock 數據已部署到生產環境",
+        "impact": "/crew/requests 使用 MOCK_RECEIVED_REQUESTS，工班用戶看到假的接案資料",
+        "action": "feature flag 隱藏 Mock 頁面 + 用 interaction-service requirements 表實作真實 API",
+        "priority": "P0",
+        "deadline": "48 小時內"
+      },
+      {
+        "issue": "超大前端元件維護性危機",
+        "impact": "3000+ 行元件增加 50% 開發時間，Bug 修復困難",
+        "action": "拆分 search-result (2954→<500) + projects/[id] (3320→<500)",
+        "priority": "P1",
+        "deadline": "Sprint 6"
+      }
+    ],
     "integrations": [
       {
         "frontend": "/crm, /contracts",
-        "backend": "profile-service",
+        "backend": "profile-service（需擴展）",
         "dbChanges": "新增 client_contacts, client_activities, contracts, payment_milestones 表",
         "migrationFile": "049_create_crm_tables.sql",
         "priority": "P0",
         "status": "not_started",
-        "blockedBy": "DEC-001（自建 vs 第三方）"
+        "blockedBy": "DEC-001（自建 vs 第三方）",
+        "note": "架構分析確認：程式碼中完全沒有 CRM 模組"
       },
       {
         "frontend": "/smart-quote, /quote-templates, /market-prices",
@@ -154,7 +191,8 @@
         "migrationFile": "049_extend_quotes_for_smart_pricing.sql",
         "priority": "P0",
         "status": "not_started",
-        "blockedBy": "DEC-002"
+        "blockedBy": "DEC-002",
+        "note": "migration 026-028 已有 4 張 quote 相關表，基礎完整"
       },
       {
         "frontend": "/daily-report, /site-management, /subcontracting",
@@ -163,113 +201,124 @@
         "migrationFile": "050_create_crew_management_tables.sql",
         "priority": "P0",
         "status": "not_started",
-        "blockedBy": "DEC-003"
+        "blockedBy": "DEC-003",
+        "note": "PRD 要求的施工現場管理功能，目前完全未實作"
       },
       {
-        "frontend": "/kanban, /schedule, /finance",
+        "frontend": "/crew/requests （緊急 Mock 修復）",
         "backend": "interaction-service",
-        "dbChanges": "新增 kanban_tasks, schedule_events, financial_transactions 表",
-        "migrationFile": "051_create_project_management_tables.sql",
-        "priority": "P1",
+        "dbChanges": "使用現有 requirements, projects 表，可能需要加 crew_assignments 關聯表",
+        "migrationFile": "049_create_crew_assignments.sql",
+        "priority": "P0",
         "status": "not_started",
-        "blockedBy": null
+        "blockedBy": "DEC-005",
+        "note": "48 小時內必須修復，影響產品可信度"
       },
       {
         "frontend": "/material-ordering, /inventory",
         "backend": "product-service",
         "dbChanges": "新增 material_orders, order_items, inventory_movements 表；products 加 stock_quantity 欄位",
         "migrationFile": "052_create_ordering_inventory_tables.sql",
-        "priority": "P1",
-        "status": "not_started",
-        "blockedBy": "DEC-004"
-      },
-      {
-        "frontend": "/crew-matching, /ai-crew-match, /ai-material-recommend",
-        "backend": "新建 ai-service 或擴展 analytics-service",
-        "dbChanges": "新增 match_results, recommendations, match_history 表",
-        "migrationFile": "053_create_ai_matching_tables.sql",
-        "priority": "P2",
-        "status": "not_started",
-        "blockedBy": null
-      },
-      {
-        "frontend": "/crew/requests （Mock 數據修復）",
-        "backend": "interaction-service",
-        "dbChanges": "使用現有 requirements, projects 表，可能需要加 crew_assignments 關聯表",
-        "migrationFile": "049_create_crew_assignments.sql",
         "priority": "P0",
         "status": "not_started",
-        "blockedBy": "DEC-005"
-      },
-      {
-        "frontend": "前端超大元件拆分",
-        "backend": "無",
-        "dbChanges": "無",
-        "migrationFile": "無",
-        "priority": "P1",
-        "status": "not_started",
-        "blockedBy": "DEC-007"
+        "blockedBy": "DEC-004",
+        "note": "架構分析確認：程式碼中完全沒有訂購/庫存功能"
       }
     ]
   },
 
   "developmentBacklog": [
+    {"id": "BL-001a", "sprint": "緊急 Sprint", "title": "🚨 隱藏前端 Mock 數據頁面", "type": "frontend", "repo": "LargeHomeAI--Frontend", "effort": "4h", "priority": "P0", "status": "todo", "blockedBy": null, "note": "feature flag 隱藏 /crew/requests"},
+    {"id": "BL-001b", "sprint": "緊急 Sprint", "title": "🚨 修復工班接案: Mock → 真實 API", "type": "full-stack", "repo": "LargeHomeAI--Frontend + interaction-service", "effort": "2d", "priority": "P0", "status": "todo", "blockedBy": "BL-001a"},
+    {"id": "BL-019", "sprint": "緊急 Sprint", "title": "LINE Bot → 內部客服工具", "type": "backend", "repo": "LargeHomeAI--bot-service", "effort": "3d", "priority": "P1", "status": "todo", "blockedBy": "DEC-009"},
     {"id": "BL-001", "sprint": "Sprint 5", "title": "DB Migration: CRM tables", "type": "backend", "repo": "LargeHomeAI--LargeHome", "effort": "2d", "priority": "P0", "status": "todo", "blockedBy": "DEC-001"},
-    {"id": "BL-001b", "sprint": "Sprint 5", "title": "清理前端 Mock 數據: /crew/requests → 真實 API", "type": "frontend", "repo": "LargeHomeAI--Frontend", "effort": "3d", "priority": "P0", "status": "todo", "blockedBy": "DEC-005"},
     {"id": "BL-017", "sprint": "Sprint 5", "title": "前端元件拆分: search-result (2954→<500 行)", "type": "frontend", "repo": "LargeHomeAI--Frontend", "effort": "5d", "priority": "P1", "status": "todo", "blockedBy": "DEC-007"},
     {"id": "BL-018", "sprint": "Sprint 6", "title": "前端元件拆分: projects/[id] (3320→<500 行)", "type": "frontend", "repo": "LargeHomeAI--Frontend", "effort": "8d", "priority": "P1", "status": "todo", "blockedBy": "BL-017"},
     {"id": "BL-002", "sprint": "Sprint 5", "title": "profile-service: CRM API endpoints", "type": "backend", "repo": "LargeHomeAI--profile-service", "effort": "5d", "priority": "P0", "status": "todo", "blockedBy": "BL-001"},
     {"id": "BL-003", "sprint": "Sprint 5", "title": "Frontend /crm: 對接 profile-service API（移除 localStorage）", "type": "frontend", "repo": "LargeHomeAI--Frontend", "effort": "3d", "priority": "P0", "status": "todo", "blockedBy": "BL-002"},
     {"id": "BL-004", "sprint": "Sprint 5", "title": "DB Migration: 擴展 quote 表 + smart pricing", "type": "backend", "repo": "LargeHomeAI--LargeHome", "effort": "1d", "priority": "P0", "status": "todo", "blockedBy": "DEC-002"},
     {"id": "BL-005", "sprint": "Sprint 5", "title": "interaction-service: Smart Quote API", "type": "backend", "repo": "LargeHomeAI--interaction-service", "effort": "4d", "priority": "P0", "status": "todo", "blockedBy": "BL-004"},
-    {"id": "BL-006", "sprint": "Sprint 6", "title": "DB Migration: crew management tables", "type": "backend", "repo": "LargeHomeAI--LargeHome", "effort": "2d", "priority": "P0", "status": "todo", "blockedBy": "DEC-003"},
-    {"id": "BL-007", "sprint": "Sprint 6", "title": "interaction-service: Daily Report + Site Inspection API", "type": "backend", "repo": "LargeHomeAI--interaction-service", "effort": "5d", "priority": "P0", "status": "todo", "blockedBy": "BL-006"},
-    {"id": "BL-008", "sprint": "Sprint 6", "title": "DB Migration: kanban + schedule + finance tables", "type": "backend", "repo": "LargeHomeAI--LargeHome", "effort": "2d", "priority": "P1", "status": "todo", "blockedBy": null},
-    {"id": "BL-009", "sprint": "Sprint 6", "title": "interaction-service: Kanban + Schedule API", "type": "backend", "repo": "LargeHomeAI--interaction-service", "effort": "4d", "priority": "P1", "status": "todo", "blockedBy": "BL-008"},
+    {"id": "BL-006", "sprint": "Sprint 6", "title": "DB Migration: 施工現場管理 + 日報系統表", "type": "backend", "repo": "LargeHomeAI--LargeHome", "effort": "2d", "priority": "P0", "status": "todo", "blockedBy": "DEC-003"},
+    {"id": "BL-007", "sprint": "Sprint 6", "title": "interaction-service: 日報系統 + 現場管理 API", "type": "backend", "repo": "LargeHomeAI--interaction-service", "effort": "5d", "priority": "P0", "status": "todo", "blockedBy": "BL-006"},
+    {"id": "BL-020", "sprint": "Sprint 6", "title": "DB Migration: 線上訂購 + 庫存管理表", "type": "backend", "repo": "LargeHomeAI--LargeHome", "effort": "2d", "priority": "P0", "status": "todo", "blockedBy": "DEC-004"},
+    {"id": "BL-021", "sprint": "Sprint 7", "title": "product-service: 庫存管理 + 訂購 API", "type": "backend", "repo": "LargeHomeAI--product-service", "effort": "5d", "priority": "P0", "status": "todo", "blockedBy": "BL-020"},
     {"id": "BL-010", "sprint": "Sprint 7", "title": "三角色自動連結: 專案→工班配對 trigger", "type": "backend", "repo": "LargeHomeAI--interaction-service", "effort": "5d", "priority": "P0", "status": "todo", "blockedBy": "BL-007"},
     {"id": "BL-011", "sprint": "Sprint 7", "title": "三角色自動連結: 報價確認→任務生成", "type": "backend", "repo": "LargeHomeAI--interaction-service", "effort": "5d", "priority": "P1", "status": "todo", "blockedBy": "BL-005"},
-    {"id": "BL-012", "sprint": "Sprint 7", "title": "product-service: 庫存管理 + 訂購 API", "type": "backend", "repo": "LargeHomeAI--product-service", "effort": "5d", "priority": "P1", "status": "todo", "blockedBy": "DEC-004"},
     {"id": "BL-013", "sprint": "Sprint 8", "title": "三角色自動連結: 日報→進度通知→建材配送", "type": "backend", "repo": "LargeHomeAI--interaction-service", "effort": "4d", "priority": "P1", "status": "todo", "blockedBy": "BL-010"},
-    {"id": "BL-014", "sprint": "Sprint 8", "title": "AI matching service 建置", "type": "backend", "repo": "LargeHomeAI--analytics-service", "effort": "10d", "priority": "P2", "status": "todo", "blockedBy": null},
     {"id": "BL-016", "sprint": "Sprint 6", "title": "image-segmentation 整合進 AKS ingress", "type": "backend", "repo": "LargeHomeAI--image-segmentation", "effort": "3d", "priority": "P2", "status": "todo", "blockedBy": "DEC-006"},
+    {"id": "BL-014", "sprint": "Sprint 8", "title": "AI matching service 建置", "type": "backend", "repo": "LargeHomeAI--analytics-service", "effort": "10d", "priority": "P2", "status": "todo", "blockedBy": null},
+    {"id": "BL-022", "sprint": "Sprint 8", "title": "PRD 狀態澄清 + 缺口分析更新", "type": "documentation", "repo": "規劃文件", "effort": "2d", "priority": "P1", "status": "todo", "blockedBy": "DEC-010"},
     {"id": "BL-015", "sprint": "Sprint 9", "title": "Frontend 全模組: localStorage → API 遷移", "type": "frontend", "repo": "LargeHomeAI--Frontend", "effort": "10d", "priority": "P1", "status": "todo", "blockedBy": "所有後端 API 完成"}
   ],
 
-  "nextAuditFocus": "等待 Show 對 DEC-001~008 的決策。緊急問題：前端 Mock 數據影響產品可信度，必須 72 小時內處理。架構債務（共用 DB、超大元件）需要在業務快速擴展前解決",
+  "nextAuditFocus": "根據架構深度分析，發現了關鍵的產品可信度危機（Mock 數據）和技術債務問題（超大元件、偽微服務架構）。需要 Show 立即決策 DEC-005（48 小時內處理 Mock 數據）和確認中長期架構方向",
   
   "criticalDiscoveries": [
     {
-      "issue": "前端 Mock 數據已部署到生產環境",
-      "impact": "工班用戶看到假的接案資料，會直接棄用系統",
-      "timeline": "72 小時內必須修復或隱藏",
-      "solution": "feature flag + 快速接真實 API"
+      "issue": "產品可信度危機：生產環境有 Mock 數據",
+      "impact": "工班用戶看到 MOCK_RECEIVED_REQUESTS，會立即棄用系統，影響平台信任度",
+      "timeline": "48 小時內必須修復或隱藏",
+      "solution": "feature flag 隱藏 + interaction-service requirements 表快速接入",
+      "urgency": "CRITICAL"
     },
     {
-      "issue": "微服務架構是偽裝的模組化單體",
-      "impact": "無法獨立擴展服務，技術債務累積",
-      "timeline": "新功能開發前決定",
-      "solution": "新服務強制獨立 DB，舊服務維持現況"
+      "issue": "架構技術債：偽微服務 + 超大元件",
+      "impact": "共用 DB 無法獨立擴展，3000+ 行元件維護成本增加 50%",
+      "timeline": "Sprint 6 前必須開始拆分",
+      "solution": "新服務強制獨立 DB + 核心元件拆分",
+      "urgency": "HIGH"
     },
     {
-      "issue": "前端維護成本已達臨界點",
-      "impact": "3000+ 行元件無法有效維護和測試",
-      "timeline": "Sprint 6 前拆分核心元件",
-      "solution": "優先拆分搜尋和專案頁面"
+      "issue": "PRD vs 實作嚴重不符",
+      "impact": "PRD 標示「已完成」的 CRM、合約、財務模組在程式碼中不存在，規劃失準",
+      "timeline": "一週內澄清 PRD 狀態",
+      "solution": "重新盤點真實完成度 + 修正規劃基線",
+      "urgency": "HIGH"
+    },
+    {
+      "issue": "核心業務功能缺失",
+      "impact": "日本 PRD 要求的施工現場管理、電子日報、線上訂購完全未實作",
+      "timeline": "M3 前完成 P0 功能",
+      "solution": "優先開發施工管理 + 庫存訂購系統",
+      "urgency": "HIGH"
     }
   ],
   
   "businessValueQuantification": {
-    "三角色自動化ROI": {
+    "緊急修復 ROI": {
+      "Mock 數據修復": "避免工班用戶流失，保護平台信任度",
+      "元件拆分": "減少 50% 開發時間，提升 Code Review 效率",
+      "架構正規化": "為未來獨立擴展奠定基礎，避免重構成本"
+    },
+    "三角色自動化 ROI": {
       "設計師時間節省": "找工班從 2-3 天 → 2-3 小時 = 95% 效率提升",
       "專案啟動速度": "提升 5-10 倍",
       "業主滿意度": "即時進度同步，減少詢問電話 70%",
       "準時完工率": "材料預警系統，從 60% → 85%"
     },
     "技術債務成本": {
-      "維護成本": "超大元件增加 50% 開發時間",
-      "Bug 修復": "單一檔案變更影響多個功能",
-      "人員培訓": "新開發者需要 2-3 週理解巨型元件",
-      "擴展阻礙": "共用 DB 導致服務無法獨立部署和擴展"
+      "維護成本增加": "超大元件增加 50% 開發時間",
+      "新人培訓": "3000+ 行元件需要 2-3 週理解",
+      "擴展阻礙": "共用 DB 導致服務無法獨立部署",
+      "Bug 修復": "單一檔案變更影響多個功能模組"
     }
+  },
+
+  "architecturalRecommendations": {
+    "短期（2 週內）": [
+      "緊急修復 Mock 數據，保護產品可信度",
+      "將 LINE Bot 轉為內部客服工具，立即產生價值",
+      "開始拆分超大元件，從 search-result 開始"
+    ],
+    "中期（1-2 個月）": [
+      "建立獨立 DB 的新服務架構標準",
+      "完成 CRM、施工管理、庫存系統等 P0 功能",
+      "整合 image-segmentation 到 AKS"
+    ],
+    "長期（3-6 個月）": [
+      "實現三角色自動化觸發機制",
+      "建立 i18n 國際化框架",
+      "逐步將現有服務從共用 DB 遷移到獨立 DB"
+    ]
   }
 }
