@@ -1,12 +1,23 @@
 import { readFileSync, existsSync, readdirSync } from "fs";
 import path from "path";
 
+export interface ChangeSummary {
+  overview: string;
+  changes: {
+    type: "feature" | "improvement" | "breaking";
+    text: string;
+  }[];
+  businessGoal: string;
+  techNotes?: string;
+}
+
 export interface VersionEntry {
   version: string;
   timestamp: string;
   description: string;
   author: string;
   files: string[];
+  summary?: ChangeSummary;
 }
 
 const CONTENT_DIR = path.join(process.cwd(), "content");

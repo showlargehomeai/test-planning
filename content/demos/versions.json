@@ -4,13 +4,42 @@
     "timestamp": "2026-03-17T13:10:00+08:00",
     "description": "裝修產業平台 — 全可能性矩陣（初版）",
     "author": "brighten",
-    "files": ["index.html"]
+    "files": ["index.html"],
+    "summary": {
+      "overview": "首次發布裝修產業平台原型，以深色主題呈現全可能性矩陣分析",
+      "changes": [
+        { "type": "feature", "text": "建立多分頁導航架構：功能矩陣、ROI 分析、優先排序等面板" },
+        { "type": "feature", "text": "新增角色篩選系統（設計師/供應商/工班），支援多維度過濾" },
+        { "type": "feature", "text": "完整 ROI 投資回報分析卡片，含收入預測與成本計算" },
+        { "type": "feature", "text": "功能優先排序表格，含評分視覺化長條圖與權重計算" },
+        { "type": "feature", "text": "統計摘要列（總功能數、SaaS/線下佔比、角色分佈）" }
+      ],
+      "businessGoal": "以全景式矩陣展示裝修產業平台的所有可能功能方向，供決策評估",
+      "techNotes": "純 HTML + CSS 靜態頁面，深色主題（#0f172a），無框架依賴"
+    }
   },
   {
     "version": "v002",
     "timestamp": "2026-03-18T10:25:00+08:00",
     "description": "設計師加速器 Pro — 設計事務所經營平台（SaaS 功能模擬）",
     "author": "show",
-    "files": ["index.html"]
+    "files": ["index.html"],
+    "summary": {
+      "overview": "從產業全景矩陣轉型為設計師專屬 SaaS 經營平台，完整模擬 16 個功能模組",
+      "changes": [
+        { "type": "breaking", "text": "整體架構從分析矩陣改為 SaaS 平台 UI，新增側邊欄+頂部導航佈局" },
+        { "type": "breaking", "text": "視覺風格從深色主題（#0f172a）改為淺色商務風格（#f8fafc）" },
+        { "type": "feature", "text": "新增完整儀表板：營收趨勢圖表、待辦事項、專案進展、快速操作" },
+        { "type": "feature", "text": "新增接案獲客模組：AI 業主媒合（含匹配度評分）、作品集管理、CRM 客戶關係管理" },
+        { "type": "feature", "text": "新增設計效率工具：智慧報價建構器（含 AI 估價）、建材資料庫、工班管理" },
+        { "type": "feature", "text": "新增專案管理：看板式工程進度（Kanban）、甘特圖排程、合約管理" },
+        { "type": "feature", "text": "新增訊息中心：即時對話介面、快速回覆範本" },
+        { "type": "feature", "text": "新增財務收支管理與成長顧問模組" },
+        { "type": "improvement", "text": "加入用戶角色系統（設計師個人檔案、公司資訊）" },
+        { "type": "improvement", "text": "響應式設計支援，含行動裝置適配" }
+      ],
+      "businessGoal": "驗證設計師加速器的完整產品樣貌，展示 SaaS 平台的功能深度與商業可行性",
+      "techNotes": "純 HTML + CSS + 內嵌 JS，淺色主題，16 個可切換頁面，含互動元素模擬"
+    }
   }
 ]
