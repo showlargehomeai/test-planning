@@ -12,25 +12,52 @@ interface RetentionKPIData {
   mauTrend: number;
 }
 
+interface ProductSummary {
+  total: number;
+  active: number;
+}
+
+interface VendorSummary {
+  total: number;
+  active: number;
+}
+
 export default function AnalyticsKPIs() {
   const [data, setData] = useState<RetentionKPIData | null>(null);
+  const [products, setProducts] = useState<ProductSummary | null>(null);
+  const [vendors, setVendors] = useState<VendorSummary | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/dashboard/retention", { cache: "no-store" })
-      .then((r) => {
-        if (!r.ok) throw new Error("API error");
-        return r.json();
-      })
-      .then(setData)
-      .catch(() => {})
-      .finally(() => setLoading(false));
+    Promise.all([
+      fetch("/api/dashboard/retention", { cache: "no-store" })
+        .then((r) => {
+          if (!r.ok) throw new Error("API error");
+          return r.json();
+        })
+        .then(setData)
+        .catch(() => {}),
+      fetch("/api/dashboard/products", { cache: "no-store" })
+        .then((r) => {
+          if (!r.ok) throw new Error("API error");
+          return r.json();
+        })
+        .then((d) => setProducts({ total: d.total, active: d.active }))
+        .catch(() => {}),
+      fetch("/api/dashboard/vendors", { cache: "no-store" })
+        .then((r) => {
+          if (!r.ok) throw new Error("API error");
+          return r.json();
+        })
+        .then((d) => setVendors({ total: d.total, active: d.active }))
+        .catch(() => {}),
+    ]).finally(() => setLoading(false));
   }, []);
 
   if (loading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {[...Array(3)].map((_, i) => (
+      <div className="grid grid-cols-1 sm:grid-cols-5 gap-4">
+        {[...Array(5)].map((_, i) => (
           <div
             key={i}
             className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 animate-pulse"
@@ -52,7 +79,7 @@ export default function AnalyticsKPIs() {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-5 gap-4">
       <KPICard
         label="DAU (日活躍用戶)"
         value={data.dau}
@@ -70,6 +97,16 @@ export default function AnalyticsKPIs() {
         value={data.mau}
         unit="人"
         trend={data.mauTrend}
+      />
+      <KPICard
+        label="總商品數"
+        value={products?.total ?? 0}
+        unit="件"
+      />
+      <KPICard
+        label="總供應商"
+        value={vendors?.total ?? 0}
+        unit="家"
       />
     </div>
   );

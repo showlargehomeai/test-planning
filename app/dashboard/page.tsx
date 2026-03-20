@@ -1,6 +1,8 @@
 import { Suspense } from "react";
 import AnalyticsKPIs from "./_components/AnalyticsKPIs";
 import UserGrowth from "./_components/UserGrowth";
+import ProductGrowth from "./_components/ProductGrowth";
+import VendorGrowth from "./_components/VendorGrowth";
 import RetentionChart from "./_components/RetentionChart";
 
 function KPISkeleton() {
@@ -52,6 +54,16 @@ export default function DashboardPage() {
       {/* User Growth with Time Range Switch */}
       <Suspense fallback={<ChartSkeleton />}>
         <UserGrowth />
+      </Suspense>
+
+      {/* Product Growth */}
+      <Suspense fallback={<ChartSkeleton />}>
+        <ProductGrowth />
+      </Suspense>
+
+      {/* Vendor Growth */}
+      <Suspense fallback={<ChartSkeleton />}>
+        <VendorGrowth />
       </Suspense>
 
       {/* Retention Chart */}
