@@ -4,13 +4,52 @@
     "timestamp": "2026-03-17T13:10:00+08:00",
     "description": "裝修產業平台 — 商業規劃（全可能性矩陣 + ROI試算 + 開發優先序）",
     "author": "brighten",
-    "files": ["index.html"]
+    "files": ["index.html"],
+    "summary": {
+      "overview": "首版商業規劃，以全可能性矩陣展示裝修產業平台的功能方向與 ROI 試算",
+      "changes": [
+        { "type": "feature", "text": "建立功能可能性矩陣，涵蓋設計師/供應商/工班三大角色" },
+        { "type": "feature", "text": "ROI 投資回報分析，含收入預測與成本計算" },
+        { "type": "feature", "text": "功能開發優先排序表，含評分權重與視覺化" }
+      ],
+      "businessGoal": "全景式評估裝修產業平台的所有可能功能方向，供商業決策參考",
+      "techNotes": "純 HTML 靜態頁面，深色主題"
+    }
   },
   {
     "version": "v002",
     "timestamp": "2026-03-18T10:27:00+08:00",
     "description": "樂居空間選材 — 完整策略總覽（BD方案）",
     "author": "show",
-    "files": ["index.html"]
+    "files": ["index.html"],
+    "summary": {
+      "overview": "從功能矩陣收斂為「樂居空間選材」品牌策略，聚焦 BD 方案與商業模式",
+      "changes": [
+        { "type": "breaking", "text": "品牌定位從泛用平台收斂為「樂居空間選材」，明確商業名稱" },
+        { "type": "feature", "text": "完整 BD 策略方案，含供應商分級與合作模式" },
+        { "type": "feature", "text": "商業模式設計：免費/基礎/進階/企業四級定價" },
+        { "type": "improvement", "text": "視覺風格從深色改為淺色商務風格，更適合對外展示" }
+      ],
+      "businessGoal": "建立可對外展示的完整策略文件，用於 BD 拜訪與投資人溝通",
+      "techNotes": "淺色主題，適合列印與投影展示"
+    }
+  },
+  {
+    "version": "v003",
+    "timestamp": "2026-03-20T14:19:00+08:00",
+    "description": "日本競品分析報告 — 裝修產業SaaS平台",
+    "author": "show",
+    "files": ["index.html"],
+    "summary": {
+      "overview": "新增日本市場競品深度分析，驗證產品定位的市場獨特性",
+      "changes": [
+        { "type": "feature", "text": "分析 8 大日本競品：ANDPAD、Houzz Pro、ASCAST、CraftBank、助太刀、SAKSAK、Renoveru、SuMiKa" },
+        { "type": "feature", "text": "核心功能對照表：橫向比較各競品在設計師/工班/建材商三大面向的覆蓋度" },
+        { "type": "feature", "text": "關鍵發現分析：沒有完全一樣的競品、各領域有強者、『連結』是藍海" },
+        { "type": "feature", "text": "市場規模估算與進入策略建議" }
+      ],
+      "businessGoal": "以日本市場為參照，驗證 LargeHome 產品定位的獨特性——連結設計師、工班、建材商三方的整合平台在日本尚無先例",
+      "techNotes": "深色主題報告風格，含互動式對照表與競品卡片"
+    }
   }
 ]

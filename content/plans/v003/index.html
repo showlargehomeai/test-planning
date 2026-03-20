@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>日本競品分析報告 — 裝修產業SaaS平台</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--bg:#0f172a;--card:#1e293b;--border:#334155;--accent:#e94560;--blue:#3b82f6;--green:#10b981;--gold:#f59e0b;--purple:#8b5cf6;--text:#e2e8f0;--text2:#94a3b8;}
+body{font-family:-apple-system,'Noto Sans TC','Microsoft JhengHei',sans-serif;background:var(--bg);color:var(--text);line-height:1.8;font-size:15px;}
+
+/* Hero */
+.hero{background:linear-gradient(135deg,#0f172a 0%,#1e1b4b 50%,#0f172a 100%);padding:60px 40px;text-align:center;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at 30% 40%,rgba(233,69,96,.12) 0%,transparent 50%),radial-gradient(circle at 70% 60%,rgba(59,130,246,.08) 0%,transparent 50%);}
+.hero>*{position:relative;z-index:1;}
+.hero h1{font-size:clamp(24px,4vw,42px);font-weight:900;margin-bottom:12px;background:linear-gradient(135deg,#fff,#e2e8f0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero h1 em{font-style:normal;background:linear-gradient(135deg,var(--accent),#ff6b81);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero p{color:var(--text2);max-width:700px;margin:0 auto;font-size:16px;}
+.hero-date{display:inline-block;background:rgba(233,69,96,.2);border:1px solid rgba(233,69,96,.4);color:#ff8fa3;padding:4px 16px;border-radius:20px;font-size:12px;font-weight:600;margin-bottom:16px;}
+
+/* Container */
+.container{max-width:1100px;margin:0 auto;padding:40px 24px;}
+
+/* Section */
+.section{margin-bottom:48px;}
+.section-tag{display:inline-block;padding:4px 14px;border-radius:50px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;}
+.tag-red{background:rgba(233,69,96,.15);color:var(--accent);}
+.tag-blue{background:rgba(59,130,246,.15);color:var(--blue);}
+.tag-green{background:rgba(16,185,129,.15);color:var(--green);}
+.tag-gold{background:rgba(245,158,11,.15);color:var(--gold);}
+.tag-purple{background:rgba(139,92,246,.15);color:var(--purple);}
+.section h2{font-size:24px;font-weight:800;margin-bottom:8px;}
+.section .desc{color:var(--text2);margin-bottom:24px;font-size:14px;}
+
+/* Our Product Summary */
+.product-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px;}
+.product-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;text-align:center;transition:.3s;}
+.product-card:hover{transform:translateY(-3px);border-color:rgba(233,69,96,.3);}
+.product-card .icon{font-size:36px;margin-bottom:10px;}
+.product-card h3{font-size:16px;font-weight:700;margin-bottom:6px;}
+.product-card p{font-size:13px;color:var(--text2);line-height:1.6;}
+
+/* Feature list */
+.feat-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;justify-content:center;}
+.feat{padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;}
+.feat-designer{background:rgba(233,69,96,.12);color:#ff8fa3;}
+.feat-crew{background:rgba(16,185,129,.12);color:#6ee7b7;}
+.feat-supplier{background:rgba(245,158,11,.12);color:#fcd34d;}
+
+/* Competitor Cards */
+.comp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px;}
+.comp-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;position:relative;transition:.3s;}
+.comp-card:hover{transform:translateY(-3px);border-color:rgba(59,130,246,.3);}
+.comp-card .comp-type{position:absolute;top:16px;right:16px;font-size:10px;font-weight:700;padding:3px 10px;border-radius:6px;}
+.type-direct{background:rgba(233,69,96,.15);color:var(--accent);}
+.type-partial{background:rgba(245,158,11,.15);color:var(--gold);}
+.type-indirect{background:rgba(59,130,246,.15);color:var(--blue);}
+.comp-card h3{font-size:17px;font-weight:700;margin-bottom:4px;}
+.comp-card .comp-sub{font-size:12px;color:var(--text2);margin-bottom:12px;}
+.comp-card .comp-desc{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:14px;}
+.comp-card .comp-stats{display:flex;gap:16px;margin-bottom:14px;}
+.comp-stat{text-align:center;}
+.comp-stat .num{font-size:18px;font-weight:800;color:var(--blue);}
+.comp-stat .lbl{font-size:10px;color:var(--text2);}
+.comp-features{display:flex;flex-wrap:wrap;gap:6px;}
+.comp-feat{padding:3px 8px;border-radius:4px;font-size:10px;font-weight:600;background:rgba(255,255,255,.06);color:var(--text2);}
+.comp-feat.match{background:rgba(16,185,129,.15);color:var(--green);}
+.comp-feat.no{background:rgba(239,68,68,.1);color:#fca5a5;}
+
+/* Comparison Table */
+.table-wrap{overflow-x:auto;margin-bottom:24px;border-radius:14px;border:1px solid var(--border);}
+table{width:100%;border-collapse:collapse;background:var(--card);}
+th{padding:14px 16px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);text-align:center;border-bottom:1px solid var(--border);background:rgba(0,0,0,.2);}
+th:first-child{text-align:left;}
+td{padding:12px 16px;font-size:13px;text-align:center;border-bottom:1px solid rgba(255,255,255,.04);}
+td:first-child{text-align:left;font-weight:600;font-size:14px;}
+tr:hover{background:rgba(255,255,255,.03);}
+.yes{color:var(--green);font-weight:700;}
+.no{color:#64748b;}
+.partial{color:var(--gold);font-weight:600;}
+
+/* Insight Cards */
+.insight-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
+.insight-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;}
+.insight-card h3{font-size:16px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+.insight-card p{font-size:13px;color:var(--text2);line-height:1.7;}
+
+/* Verdict */
+.verdict{background:linear-gradient(135deg,rgba(233,69,96,.08),rgba(59,130,246,.08));border:1px solid rgba(233,69,96,.2);border-radius:16px;padding:32px;text-align:center;}
+.verdict h2{font-size:22px;font-weight:800;margin-bottom:12px;}
+.verdict p{color:var(--text2);max-width:700px;margin:0 auto;font-size:14px;line-height:1.8;}
+.verdict .highlight{color:var(--accent);font-weight:700;}
+
+/* Responsive */
+@media(max-width:768px){
+  .product-grid,.insight-grid{grid-template-columns:1fr;}
+  .comp-grid{grid-template-columns:1fr;}
+  .hero{padding:40px 20px;}
+  .container{padding:24px 16px;}
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <span class="hero-date">2026.03.20 競品研究報告</span>
+  <h1>日本市場有沒有人做<em>一樣的事</em>？</h1>
+  <p>深入分析日本裝修產業SaaS生態，對比我們的三角色一體化平台定位</p>
+</div>
+
+<div class="container">
+
+<!-- 我們的產品 -->
+<div class="section">
+  <span class="section-tag tag-red">OUR PRODUCT</span>
+  <h2>我們的產品定位</h2>
+  <p class="desc">一個同時服務設計師、工班、建材商的裝修產業一體化SaaS平台</p>
+
+  <div class="product-grid">
+    <div class="product-card">
+      <div class="icon">🎨</div>
+      <h3>設計師SaaS</h3>
+      <p>從接案、報價、CRM、工程管理到財務的全流程工具</p>
+      <div class="feat-list">
+        <span class="feat feat-designer">業主媒合</span>
+        <span class="feat feat-designer">智慧報價</span>
+        <span class="feat feat-designer">CRM</span>
+        <span class="feat feat-designer">作品集</span>
+        <span class="feat feat-designer">數據分析</span>
+        <span class="feat feat-designer">行銷推廣</span>
+      </div>
+    </div>
+    <div class="product-card">
+      <div class="icon">👷</div>
+      <h3>工班SaaS</h3>
+      <p>工班接案、排程管理、工程進度與團隊協作平台</p>
+      <div class="feat-list">
+        <span class="feat feat-crew">案件管理</span>
+        <span class="feat feat-crew">排程日曆</span>
+        <span class="feat feat-crew">工程進度</span>
+        <span class="feat feat-crew">收支管理</span>
+      </div>
+    </div>
+    <div class="product-card">
+      <div class="icon">🧱</div>
+      <h3>建材商SaaS</h3>
+      <p>建材供應商的訂單管理、庫存追蹤與客戶經營</p>
+      <div class="feat-list">
+        <span class="feat feat-supplier">商品管理</span>
+        <span class="feat feat-supplier">訂單追蹤</span>
+        <span class="feat feat-supplier">庫存管理</span>
+        <span class="feat feat-supplier">客戶分析</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 日本競品分析 -->
+<div class="section">
+  <span class="section-tag tag-blue">JAPAN COMPETITORS</span>
+  <h2>日本市場主要競品</h2>
+  <p class="desc">經過全面調研，日本沒有完全一樣的三角色一體化平台，但有多個覆蓋部分功能的玩家</p>
+
+  <div class="comp-grid">
+
+    <!-- ANDPAD -->
+    <div class="comp-card">
+      <span class="comp-type type-direct">高度重疊</span>
+      <h3>ANDPAD（アンドパッド）</h3>
+      <div class="comp-sub">日本建設SaaS龍頭 ・ 估值超10億美元</div>
+      <div class="comp-desc">日本最大的建設施工管理SaaS，覆蓋現場管理、顧客管理、成本管理、工程進度追蹤。已在國土交通省NETIS登錄。</div>
+      <div class="comp-stats">
+        <div class="comp-stat"><div class="num">23萬+</div><div class="lbl">用戶數</div></div>
+        <div class="comp-stat"><div class="num">No.1</div><div class="lbl">市佔率</div></div>
+        <div class="comp-stat"><div class="num">47</div><div class="lbl">覆蓋都道府縣</div></div>
+      </div>
+      <div class="comp-features">
+        <span class="comp-feat match">施工管理</span>
+        <span class="comp-feat match">工程進度</span>
+        <span class="comp-feat match">顧客CRM</span>
+        <span class="comp-feat match">成本管理</span>
+        <span class="comp-feat match">排程管理</span>
+        <span class="comp-feat no">✗ 設計師專屬</span>
+        <span class="comp-feat no">✗ 建材商城</span>
+        <span class="comp-feat no">✗ 業主媒合</span>
+      </div>
+    </div>
+
+    <!-- Houzz Pro -->
+    <div class="comp-card">
+      <span class="comp-type type-direct">高度重疊</span>
+      <h3>Houzz Pro Japan</h3>
+      <div class="comp-sub">美國Houzz日本版 ・ 月費¥6,300起</div>
+      <div class="comp-desc">住宅業界專業人士的一站式SaaS，涵蓋行銷、案件管理、客戶溝通、工程排程、圖面管理。提供網站建置與品牌推廣。</div>
+      <div class="comp-stats">
+        <div class="comp-stat"><div class="num">全球</div><div class="lbl">65M+用戶</div></div>
+        <div class="comp-stat"><div class="num">¥6,300</div><div class="lbl">月起跳</div></div>
+      </div>
+      <div class="comp-features">
+        <span class="comp-feat match">行銷推廣</span>
+        <span class="comp-feat match">顧客CRM</span>
+        <span class="comp-feat match">工程管理</span>
+        <span class="comp-feat match">報價工具</span>
+        <span class="comp-feat match">作品集</span>
+        <span class="comp-feat no">✗ 工班管理</span>
+        <span class="comp-feat no">✗ 建材商城</span>
+        <span class="comp-feat no">✗ 收支管理</span>
+      </div>
+    </div>
+
+    <!-- ASCAST / AMOUR -->
+    <div class="comp-card">
+      <span class="comp-type type-partial">部分重疊</span>
+      <h3>ASCAST（AMOUR）</h3>
+      <div class="comp-sub">インテリアデザイナー特化SaaS ・ 東京新創</div>
+      <div class="comp-desc">專為室內設計師打造的業務效率化SaaS。聚焦商品選定、見積（報價）、發注（下單）、庫存管理、提案資料製作等流程數位化。</div>
+      <div class="comp-stats">
+        <div class="comp-stat"><div class="num">新創</div><div class="lbl">早期階段</div></div>
+        <div class="comp-stat"><div class="num">VC</div><div class="lbl">已獲投資</div></div>
+      </div>
+      <div class="comp-features">
+        <span class="comp-feat match">商品選定</span>
+        <span class="comp-feat match">報價發注</span>
+        <span class="comp-feat match">庫存管理</span>
+        <span class="comp-feat match">提案製作</span>
+        <span class="comp-feat no">✗ 業主媒合</span>
+        <span class="comp-feat no">✗ CRM</span>
+        <span class="comp-feat no">✗ 工班管理</span>
+      </div>
+    </div>
+
+    <!-- CraftBank -->
+    <div class="comp-card">
+      <span class="comp-type type-partial">部分重疊</span>
+      <h3>CraftBank（クラフトバンク）</h3>
+      <div class="comp-sub">建設職人マッチング ・ Series B 38億円</div>
+      <div class="comp-desc">建設工事的受發注媒合平台＋中小建設公司管理SaaS「CraftBank Office」。涵蓋案件管理、日報、庫存、報價、經營報表。</div>
+      <div class="comp-stats">
+        <div class="comp-stat"><div class="num">3.4萬</div><div class="lbl">註冊公司</div></div>
+        <div class="comp-stat"><div class="num">86%</div><div class="lbl">媒合率</div></div>
+        <div class="comp-stat"><div class="num">38億¥</div><div class="lbl">B輪融資</div></div>
+      </div>
+      <div class="comp-features">
+        <span class="comp-feat match">職人媒合</span>
+        <span class="comp-feat match">案件管理</span>
+        <span class="comp-feat match">報價工具</span>
+        <span class="comp-feat match">日報管理</span>
+        <span class="comp-feat no">✗ 設計師端</span>
+        <span class="comp-feat no">✗ 建材商城</span>
+      </div>
+    </div>
+
+    <!-- 助太刀 -->
+    <div class="comp-card">
+      <span class="comp-type type-partial">部分重疊</span>
+      <h3>助太刀（Sukedachi）</h3>
+      <div class="comp-sub">建設人材マッチング ・ 國內最大級</div>
+      <div class="comp-desc">日本最大的建設人才媒合平台，22萬+事業者登錄。87職種×全國都道府縣的精準媒合，另有「助太刀社員」正社員招募及「助太刀學院」培訓。</div>
+      <div class="comp-stats">
+        <div class="comp-stat"><div class="num">22萬+</div><div class="lbl">事業者</div></div>
+        <div class="comp-stat"><div class="num">87</div><div class="lbl">職種</div></div>
+      </div>
+      <div class="comp-features">
+        <span class="comp-feat match">職人媒合</span>
+        <span class="comp-feat match">人才招募</span>
+        <span class="comp-feat match">教育培訓</span>
+        <span class="comp-feat no">✗ 項目管理</span>
+        <span class="comp-feat no">✗ CRM</span>
+        <span class="comp-feat no">✗ 設計師端</span>
+      </div>
+    </div>
+
+    <!-- SAKSAK -->
+    <div class="comp-card">
+      <span class="comp-type type-partial">部分重疊</span>
+      <h3>SAKSAK</h3>
+      <div class="comp-sub">リフォーム業特化統合管理 ・ 老牌系統</div>
+      <div class="comp-desc">裝修業專用統合管理系統，涵蓋營業進捗管理、販賣管理、入金管理、原價管理、見積書作成、商談及顧客管理。</div>
+      <div class="comp-stats">
+        <div class="comp-stat"><div class="num">老牌</div><div class="lbl">穩定營運</div></div>
+      </div>
+      <div class="comp-features">
+        <span class="comp-feat match">營業管理</span>
+        <span class="comp-feat match">顧客CRM</span>
+        <span class="comp-feat match">報價見積</span>
+        <span class="comp-feat match">收支管理</span>
+        <span class="comp-feat no">✗ 媒合功能</span>
+        <span class="comp-feat no">✗ 建材商城</span>
+        <span class="comp-feat no">✗ 工班端</span>
+      </div>
+    </div>
+
+    <!-- リノベる -->
+    <div class="comp-card">
+      <span class="comp-type type-indirect">間接競品</span>
+      <h3>リノベる。（Renoveru）</h3>
+      <div class="comp-sub">リノベーション一站式服務 ・ 上市公司</div>
+      <div class="comp-desc">中古住宅翻新一站式服務平台，連結不動產、工務店、金融機構、建材品牌。偏向C端消費者服務，非SaaS工具。</div>
+      <div class="comp-features">
+        <span class="comp-feat match">媒合概念</span>
+        <span class="comp-feat match">一站式服務</span>
+        <span class="comp-feat no">✗ SaaS工具</span>
+        <span class="comp-feat no">✗ B端管理</span>
+      </div>
+    </div>
+
+    <!-- SuMiKa -->
+    <div class="comp-card">
+      <span class="comp-type type-indirect">間接競品</span>
+      <h3>SuMiKa</h3>
+      <div class="comp-sub">建築家・工務店マッチング ・ 1000社+</div>
+      <div class="comp-desc">建築師/工務店媒合平台，連結事業者與1000+登錄專家。「SuMiKa for ビジネス」提供B2B合作夥伴搜尋。</div>
+      <div class="comp-features">
+        <span class="comp-feat match">建築師媒合</span>
+        <span class="comp-feat match">工務店搜尋</span>
+        <span class="comp-feat no">✗ SaaS管理</span>
+        <span class="comp-feat no">✗ CRM</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- 功能比較表 -->
+<div class="section">
+  <span class="section-tag tag-green">COMPARISON</span>
+  <h2>核心功能對照表</h2>
+  <p class="desc">我們的三角色平台 vs 日本各競品的功能覆蓋比較</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="min-width:140px;">功能模組</th>
+          <th>我們 🔥</th>
+          <th>ANDPAD</th>
+          <th>Houzz Pro</th>
+          <th>ASCAST</th>
+          <th>CraftBank</th>
+          <th>助太刀</th>
+          <th>SAKSAK</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>設計師專屬SaaS</td><td class="yes">✓</td><td class="no">—</td><td class="partial">△</td><td class="yes">✓</td><td class="no">—</td><td class="no">—</td><td class="no">—</td></tr>
+        <tr><td>工班專屬SaaS</td><td class="yes">✓</td><td class="partial">△</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td><td class="partial">△</td><td class="no">—</td></tr>
+        <tr><td>建材商專屬SaaS</td><td class="yes">✓</td><td class="no">—</td><td class="no">—</td><td class="partial">△</td><td class="no">—</td><td class="no">—</td><td class="no">—</td></tr>
+        <tr><td>三角色互聯</td><td class="yes">✓</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td></tr>
+        <tr><td>業主/職人媒合</td><td class="yes">✓</td><td class="no">—</td><td class="partial">△</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td><td class="no">—</td></tr>
+        <tr><td>智慧報價</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="no">—</td><td class="yes">✓</td></tr>
+        <tr><td>顧客CRM</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="no">—</td><td class="partial">△</td><td class="no">—</td><td class="yes">✓</td></tr>
+        <tr><td>作品集展示</td><td class="yes">✓</td><td class="no">—</td><td class="yes">✓</td><td class="partial">△</td><td class="no">—</td><td class="no">—</td><td class="no">—</td></tr>
+        <tr><td>工程進度追蹤</td><td class="yes">✓</td><td class="yes">✓</td><td class="partial">△</td><td class="no">—</td><td class="yes">✓</td><td class="no">—</td><td class="partial">△</td></tr>
+        <tr><td>排程日曆</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="no">—</td><td class="yes">✓</td><td class="no">—</td><td class="no">—</td></tr>
+        <tr><td>建材商城</td><td class="yes">✓</td><td class="no">—</td><td class="no">—</td><td class="partial">△</td><td class="no">—</td><td class="no">—</td><td class="no">—</td></tr>
+        <tr><td>收支/財務管理</td><td class="yes">✓</td><td class="yes">✓</td><td class="partial">△</td><td class="no">—</td><td class="yes">✓</td><td class="no">—</td><td class="yes">✓</td></tr>
+        <tr><td>行銷推廣工具</td><td class="yes">✓</td><td class="no">—</td><td class="yes">✓</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td></tr>
+        <tr><td>數據分析</td><td class="yes">✓</td><td class="partial">△</td><td class="partial">△</td><td class="no">—</td><td class="yes">✓</td><td class="no">—</td><td class="partial">△</td></tr>
+        <tr><td>合約管理</td><td class="yes">✓</td><td class="partial">△</td><td class="partial">△</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="partial">△</td></tr>
+        <tr><td>成長顧問</td><td class="yes">✓</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="font-size:12px;color:var(--text2);text-align:center;">✓ = 完整支援　△ = 部分支援　— = 不支援</p>
+</div>
+
+<!-- 關鍵發現 -->
+<div class="section">
+  <span class="section-tag tag-gold">KEY FINDINGS</span>
+  <h2>關鍵發現</h2>
+  <p class="desc">日本市場調研的核心結論</p>
+
+  <div class="insight-grid">
+    <div class="insight-card">
+      <h3>🎯 沒有完全一樣的競品</h3>
+      <p>日本目前<strong>沒有</strong>任何一家公司同時做到「設計師SaaS＋工班SaaS＋建材商SaaS」三位一體互聯。每家都只覆蓋1-2個角色，且功能集中在某些垂直面向。你們的「三角色互聯平台」在日本是獨特的定位。</p>
+    </div>
+    <div class="insight-card">
+      <h3>⚔️ 各領域都有強者</h3>
+      <p>但在單一角色的垂直領域，日本競爭激烈：ANDPAD（施工管理No.1, 23萬用戶）、CraftBank（職人媒合, 38億B輪融資）、助太刀（22萬事業者）、Houzz Pro（全球品牌）。進入日本需面對這些巨頭。</p>
+    </div>
+    <div class="insight-card">
+      <h3>🔗 「連結」是藍海</h3>
+      <p>日本現有的SaaS都是「孤島式」——設計師用Houzz Pro，工班用ANDPAD，建材商用各自ERP，三者之間沒有互聯。你們打通三方的概念在日本是還沒有人做的事，這是最大的差異化價值。</p>
+    </div>
+    <div class="insight-card">
+      <h3>📊 市場規模龐大</h3>
+      <p>日本SaaS市場2026年預計達1.7兆日圓。裝修（リフォーム）市場持續成長，加上人手不足的社會問題，數位化需求強烈。但日本市場進入障礙高：語言、商業習慣、信任建立都需要本地化。</p>
+    </div>
+    <div class="insight-card">
+      <h3>🏗️ ASCAST最像我們</h3>
+      <p>ASCAST的「AMOUR」是日本最接近設計師端定位的SaaS——同樣做報價、商品管理、提案製作。但他們只做設計師端，不做工班與建材商。且目前仍是早期新創，規模小。</p>
+    </div>
+    <div class="insight-card">
+      <h3>💡 台灣優勢明確</h3>
+      <p>台灣裝修產業的「設計師＋工班＋建材商」三角色生態與日本非常相似。你們先在台灣驗證三角色模型成功後，完全有機會以此模式進軍日本市場，填補日本「三方互聯」的空白。</p>
+    </div>
+  </div>
+</div>
+
+<!-- 結論 -->
+<div class="section">
+  <div class="verdict">
+    <h2>結論：日本沒有人做一模一樣的事</h2>
+    <p>
+      日本有做<span class="highlight">設計師工具</span>的（Houzz Pro, ASCAST）、有做<span class="highlight">工班媒合</span>的（CraftBank, 助太刀）、有做<span class="highlight">施工管理</span>的（ANDPAD）、有做<span class="highlight">裝修CRM</span>的（SAKSAK）。
+      <br><br>
+      但<span class="highlight">沒有任何一家</span>像你們一樣，用一個平台同時服務設計師、工班、建材商三個角色，並讓他們在平台上互相連結、協作。
+      <br><br>
+      你們的<span class="highlight">「三角色一體化互聯」</span>模式，在日本是一個尚未被佔領的市場定位。
+    </p>
+  </div>
+</div>
+
+</div>
+
+</body>
+</html>
