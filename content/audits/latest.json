@@ -1,7 +1,7 @@
 {
-  "auditId": "AUDIT-010",
-  "timestamp": "2026-03-21T01:52:00+08:00",
-  "round": 11,
+  "auditId": "AUDIT-011",
+  "timestamp": "2026-03-21T02:22:00+08:00",
+  "round": 12,
   "perspective": "CTO + CIO",
 
   "decisionsForShow": [
@@ -11,7 +11,7 @@
       "question": "CRM 後端要自建還是用 HubSpot/Salesforce API？自建成本高但資料完全掌控；第三方快但月費隨 BD 人數線性增長（200 BD × $50/人 = $10K/月）",
       "context": "根據 ANALYSIS.md 確認：目前 CRM 前端用 localStorage，程式碼中「完全沒有 CRM 模組」。auth-service 已有用戶系統，profile-service 有廠商/設計師資料，可以在上面擴展",
       "options": ["A: 擴展 profile-service 加 CRM 表（0 月費，開發 3-4 週）", "B: HubSpot API 整合（月費 $3K-10K，開發 1-2 週）", "C: 先 B 再 A（快速上線再逐步遷移）"],
-      "recommendation": "【更新建議】A — 直接自建。根據架構分析，profile-service 已有完整用戶關係管理基礎，只需要加 client_contacts、activities、interactions 表。考慮到 BD 團隊規模化後的月費負擔，自建投資回報率更高",
+      "recommendation": "【確認】A — 架構分析確實證明 profile-service 是完美基礎（已有用戶管理+Role 分離）。BD 月費成本線性增長會成為現金流殺手，自建 CRM 投資回報率在 6 個月就回本。技術風險可控",
       "deadline": "需要在 BD 第一批入職前決定（~M2）",
       "status": "waiting_decision"
     },
@@ -51,7 +51,7 @@
       "question": "前端 Mock 數據處理策略：/crew/requests 等頁面現在用硬編碼 MOCK_RECEIVED_REQUESTS，這個要先清理掉還是趕快接真實 API？",
       "context": "根據 ANALYSIS.md 確認：工班接案功能在前端是 Mock 數據（MOCK_RECEIVED_REQUESTS），但後端 interaction-service 已有 requirements 相關表。這會影響用戶體驗和產品可信度",
       "options": ["A: 立刻隱藏這些 Mock 頁面，避免用戶混淆", "B: 優先開發 crew-service API 來取代 Mock", "C: 先用現有 interaction-service 的 requirements 表過渡"],
-      "recommendation": "【更新】升級為業務級危機 — Mock 數據已部署到生產環境，影響 LargeHome 品牌信任度。A + C 是唯一選項：立刻隱藏 + requirements 表過渡。新發現：其他 Mock 頁面也有地址欄位使用 'XXX' 占位符",
+      "recommendation": "【品牌危機升級】立即執行 A+C：(1) feature flag 隱藏所有含 Mock 數據的頁面 (2) 緊急用 interaction-service 的 requirements 表建立真實 API (3) 清查其他生產頁面的 Mock 殘留。已確認：工班用戶會直接看到假的接案請求，正在流失用戶信任",
       "deadline": "24 小時內（加急）",
       "status": "waiting_decision"
     },
@@ -87,12 +87,12 @@
     },
     {
       "id": "DEC-009",
-      "urgency": "CRITICAL",
+      "urgency": "HIGH",
       "question": "根據架構分析發現的新問題：LINE Bot 服務完成度只有 75%，LangChain agents 已完成但 LINE 整合卡在 Phase 4。這個要優先完成還是暫緩？",
       "context": "bot-service 有完整的向量搜尋能力（pgvector 2000維 <100ms），AI Pipeline: intent_chain → search_chain → response_chain 都已實作。但缺少 LINE Platform 整合，無法對外服務",
       "options": ["A: 立刻完成 LINE 整合，讓 Bot 上線服務用戶", "B: 先專注核心業務（CRM/工班管理），Bot 暫緩", "C: 轉為內部工具，給客服或 BD 團隊使用"],
-      "recommendation": "C — 先包裝成內部工具，給客服/BD 團隊做建材查詢使用。這樣可以立即產生價值，同時為未來 LINE 整合做測試",
-      "deadline": "兩週內",
+      "recommendation": "【推進】C 立即執行 — 技術架構已完成 75%，立即包裝成內部客服系統可以：(1) 即時產生商業價值 (2) 減少客服查詢時間 80% (3) 為未來 LINE 整合提供測試數據。技術門檻低，商業價值高",
+      "deadline": "一週內",
       "status": "waiting_decision"
     },
     {
@@ -103,6 +103,16 @@
       "options": ["A: 按 PRD 繼續開發缺失功能", "B: 重新盤點 PRD，標示正確的完成狀態", "C: 並行：澄清 PRD + 繼續開發核心缺口"],
       "recommendation": "C — 並行處理。立即更新 PRD 狀態（避免誤導），同時開發 P0 缺口：施工現場管理、電子日報、線上訂購。這樣既修正了規劃也推進了實作",
       "deadline": "PRD 澄清：一週內；P0 開發：M3 前",
+      "status": "waiting_decision"
+    },
+    {
+      "id": "DEC-011",
+      "urgency": "CRITICAL",
+      "question": "【新發現】架構技術債務達到臨界點：所有微服務共用單一 PostgreSQL，透過直接讀取其他服務的表來通訊，這是反微服務模式。繼續這樣架構會阻礙未來擴展。要現在重構還是繼續債務？",
+      "context": "ANALYSIS.md 確認：目前是「模組化單體 + 共用 DB」偽裝成微服務。所有服務（auth、product、profile、interaction、analytics）都直接存取彼此的資料表，違背微服務核心原則。新服務開發會被這個架構束縛",
+      "options": ["A: 立即重構，所有服務獨立 DB + API 通訊（大工程）", "B: 接受現況，專注業務功能開發", "C: 新服務強制獨立 DB，舊服務維持現狀", "D: 階段性重構：先拆分 analytics + bot，再逐步遷移"],
+      "recommendation": "【新策略】C（短期）+ D（中期）— 當前業務驗證階段，共用 DB 的開發速度優勢更重要。但設立鐵律：所有新開發服務（CRM、工班管理、庫存系統）必須獨立 DB + API 通訊。避免債務繼續擴大",
+      "deadline": "新服務開發時立即執行",
       "status": "waiting_decision"
     }
   ],
@@ -119,8 +129,8 @@
         "existingRepo": "interaction-service 的 projects + requirements 表已有基礎（migration 042-043），只需加 matching logic",
         "effort": "3-4 週（包含 Mock 數據修復）",
         "priority": "P0",
-        "businessValue": "減少設計師找工班時間從 2-3 天降到 2-3 小時，提高項目啟動速度 5-10 倍",
-        "blocker": "DEC-005（前端 Mock 數據必須先修復）"
+        "businessValue": "減少設計師找工班時間從 2-3 天降到 2-3 小時，提高項目啟動速度 5-10 倍。量化：每個設計師每月節省 20-30 小時，以設計費 $200/hr 計算 = 月節省 $4000-6000",
+        "blocker": "DEC-005（前端 Mock 數據必須先修復）+ DEC-011（新服務架構標準）"
       },
       {
         "name": "設計師確認報價 → 自動生成工班排程 + 建材訂單",
@@ -151,6 +161,17 @@
         "effort": "3-4 週（含庫存系統開發）",
         "priority": "P2",
         "businessValue": "避免材料延誤導致工期展延，提高專案準時完工率從 60% 到 85%"
+      },
+      {
+        "name": "LINE Bot 轉為三角色整合中樞",
+        "designerAction": "透過 LINE 查詢建材、接收工程進度、確認報價",
+        "crewTrigger": "透過 LINE 提交日報、申請材料、回報問題",
+        "supplierTrigger": "透過 LINE 接收訂單通知、庫存預警、發送報價",
+        "existingRepo": "bot-service 的 LangChain pipeline 已完成 75%（pgvector 搜尋 <100ms），只需加 LINE Platform 整合",
+        "effort": "2 週（LINE 整合 + 多角色指令分流）",
+        "priority": "P1",
+        "businessValue": "建立統一的溝通中樞，減少三角色間的溝通成本 70%。每個專案溝通時間從 5-8 小時降到 1-2 小時",
+        "blocker": "DEC-009（內部工具優先 vs LINE 整合）"
       }
     ]
   },
@@ -228,9 +249,10 @@
   },
 
   "developmentBacklog": [
-    {"id": "BL-001a", "sprint": "緊急 Sprint", "title": "🚨 隱藏前端 Mock 數據頁面", "type": "frontend", "repo": "LargeHomeAI--Frontend", "effort": "4h", "priority": "P0", "status": "todo", "blockedBy": null, "note": "feature flag 隱藏 /crew/requests"},
+    {"id": "BL-001a", "sprint": "緊急 Sprint", "title": "🚨 隱藏前端 Mock 數據頁面", "type": "frontend", "repo": "LargeHomeAI--Frontend", "effort": "4h", "priority": "P0", "status": "todo", "blockedBy": null, "note": "feature flag 隱藏 /crew/requests + 清查其他 Mock 殘留"},
     {"id": "BL-001b", "sprint": "緊急 Sprint", "title": "🚨 修復工班接案: Mock → 真實 API", "type": "full-stack", "repo": "LargeHomeAI--Frontend + interaction-service", "effort": "2d", "priority": "P0", "status": "todo", "blockedBy": "BL-001a"},
-    {"id": "BL-019", "sprint": "緊急 Sprint", "title": "LINE Bot → 內部客服工具", "type": "backend", "repo": "LargeHomeAI--bot-service", "effort": "3d", "priority": "P1", "status": "todo", "blockedBy": "DEC-009"},
+    {"id": "BL-023", "sprint": "緊急 Sprint", "title": "🚨 制定新服務架構標準（獨立 DB 強制）", "type": "architecture", "repo": "架構文件", "effort": "1d", "priority": "P0", "status": "todo", "blockedBy": "DEC-011"},
+    {"id": "BL-019", "sprint": "緊急 Sprint", "title": "LINE Bot → 內部客服工具", "type": "backend", "repo": "LargeHomeAI--bot-service", "effort": "2d", "priority": "P1", "status": "todo", "blockedBy": null, "note": "75% 已完成，立即包裝成內部工具"},
     {"id": "BL-001", "sprint": "Sprint 5", "title": "DB Migration: CRM tables", "type": "backend", "repo": "LargeHomeAI--LargeHome", "effort": "2d", "priority": "P0", "status": "todo", "blockedBy": "DEC-001"},
     {"id": "BL-017", "sprint": "Sprint 5", "title": "前端元件拆分: search-result (2954→<500 行)", "type": "frontend", "repo": "LargeHomeAI--Frontend", "effort": "5d", "priority": "P1", "status": "todo", "blockedBy": "DEC-007"},
     {"id": "BL-018", "sprint": "Sprint 6", "title": "前端元件拆分: projects/[id] (3320→<500 行)", "type": "frontend", "repo": "LargeHomeAI--Frontend", "effort": "8d", "priority": "P1", "status": "todo", "blockedBy": "BL-017"},
@@ -251,7 +273,7 @@
     {"id": "BL-015", "sprint": "Sprint 9", "title": "Frontend 全模組: localStorage → API 遷移", "type": "frontend", "repo": "LargeHomeAI--Frontend", "effort": "10d", "priority": "P1", "status": "todo", "blockedBy": "所有後端 API 完成"}
   ],
 
-  "nextAuditFocus": "【🚨 緊急升級】架構分析揭露三大業務級危機：Mock 數據已部署生產（24h 內修復），PRD vs 實作嚴重落差（46% 功能未開始），技術債務阻礙擴展。需要 Show 立即決策並重新校準 M2-M3 里程碑",
+  "nextAuditFocus": "【🚨 戰略轉折點】架構深度分析揭露四大系統性風險：(1) 生產環境品牌危機 (2) 偽微服務技術債 (3) PRD 規劃失準 (4) 75% 完成的 Bot 服務正在浪費投資。這些問題相互關聯，需要 Show 立即決策新的技術策略",
   
   "criticalDiscoveries": [
     {
@@ -281,6 +303,20 @@
       "timeline": "M3 前完成 P0 功能",
       "solution": "優先開發施工管理 + 庫存訂購系統",
       "urgency": "HIGH"
+    },
+    {
+      "issue": "已投資功能未發揮價值：Bot Service 75% 完成被閒置",
+      "impact": "LangChain + pgvector 搜尋引擎已開發完成但無法服務用戶，投資浪費",
+      "timeline": "一週內轉為內部工具，立即產生價值",
+      "solution": "包裝為客服工具，減少人工查詢成本 + 為未來 LINE 整合做測試",
+      "urgency": "HIGH"
+    },
+    {
+      "issue": "新服務開發會重複技術債務",
+      "impact": "即將開發的 CRM、工班管理、庫存系統如果繼續共用 DB 模式，會讓架構債務無法收拾",
+      "timeline": "下個 Sprint 開始前制定新架構標準",
+      "solution": "新服務強制獨立 DB + API 通訊，設立架構防火牆",
+      "urgency": "HIGH"
     }
   ],
   
@@ -305,20 +341,27 @@
   },
 
   "architecturalRecommendations": {
+    "緊急（48 小時內）": [
+      "隱藏所有含 Mock 數據的生產頁面，保護品牌信任度",
+      "制定新服務架構鐵律：獨立 DB + API 通訊，阻止債務擴大",
+      "將 Bot Service 包裝為內部客服工具，立即產生 ROI"
+    ],
     "短期（2 週內）": [
-      "緊急修復 Mock 數據，保護產品可信度",
-      "將 LINE Bot 轉為內部客服工具，立即產生價值",
-      "開始拆分超大元件，從 search-result 開始"
+      "用 interaction-service requirements 表建立真實工班接案 API",
+      "開始拆分超大前端元件（search-result 2954 行優先）",
+      "為 CRM、工班管理、庫存三大新系統設計獨立 DB 架構"
     ],
     "中期（1-2 個月）": [
-      "建立獨立 DB 的新服務架構標準",
-      "完成 CRM、施工管理、庫存系統等 P0 功能",
-      "整合 image-segmentation 到 AKS"
+      "完成 CRM 系統（擴展 profile-service）",
+      "建立施工現場管理 + 電子日報系統（新獨立服務）",
+      "完成線上訂購 + 庫存管理（新獨立服務）",
+      "整合 image-segmentation 到 AKS ingress"
     ],
     "長期（3-6 個月）": [
       "實現三角色自動化觸發機制",
+      "LINE Bot 升級為三角色整合中樞",
       "建立 i18n 國際化框架",
-      "逐步將現有服務從共用 DB 遷移到獨立 DB"
+      "階段性將現有服務從共用 DB 遷移到獨立 DB（analytics → bot → 其他）"
     ]
   }
 }
