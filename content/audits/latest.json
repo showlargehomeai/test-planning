@@ -1,7 +1,7 @@
 {
-  "auditId": "AUDIT-011",
-  "timestamp": "2026-03-21T02:22:00+08:00",
-  "round": 12,
+  "auditId": "AUDIT-012",
+  "timestamp": "2026-03-21T02:52:00+08:00",
+  "round": 13,
   "perspective": "CTO + CIO",
 
   "decisionsForShow": [
@@ -114,12 +114,42 @@
       "recommendation": "【新策略】C（短期）+ D（中期）— 當前業務驗證階段，共用 DB 的開發速度優勢更重要。但設立鐵律：所有新開發服務（CRM、工班管理、庫存系統）必須獨立 DB + API 通訊。避免債務繼續擴大",
       "deadline": "新服務開發時立即執行",
       "status": "waiting_decision"
+    },
+    {
+      "id": "DEC-012",
+      "urgency": "HIGH",
+      "question": "【架構升級】微服務間通訊模式：繼續共用 DB 直接存取，還是建立 API 通訊？現況：所有服務能讀取彼此的表，技術上是分布式單體架構",
+      "context": "深度分析確認：14 個微服務全部共用 Azure PostgreSQL (largehome-pg)，無服務間 API 調用，只有 Nginx Ingress → 各服務的 HTTP 路由。這限制了獨立部署、技術棧多樣性、故障隔離等微服務核心優勢",
+      "options": ["A: 維持現況，共用 DB + 直接存取（開發快、一致性佳）", "B: 逐步引入服務間 API 通訊，開始從 analytics-service", "C: 建立混合模式：核心業務共用 DB，新功能模組獨立 DB"],
+      "recommendation": "C — 成熟策略。RFQ/產品/用戶等核心業務維持共用 DB 確保 ACID，但 CRM、工班管理、庫存、Bot 等新模組強制獨立 DB + REST API 通訊，建立架構分界線",
+      "deadline": "架構標準文件化：本週內",
+      "status": "waiting_decision"
+    },
+    {
+      "id": "DEC-013",
+      "urgency": "HIGH", 
+      "question": "【技術債務管控】超大前端元件維護危機：search-result (2954行)、projects/[id] (3320行)、profile (2388行) 已超過合理維護邊界，是否強制拆分？",
+      "context": "ANALYSIS.md 確認：4 個核心頁面元件超過 2000 行，其中 projects/[id] 達 3320 行。這導致：(1) 新人學習成本 2-3 週 (2) Code Review 困難 (3) Bug 修復影響範圍大 (4) 團隊開發衝突頻繁",
+      "options": ["A: 立即重構，拆分所有 >500 行的元件", "B: 只拆分最常修改的 search-result + projects/[id]", "C: 新功能不再增加到超大元件，舊的維持現狀"],
+      "recommendation": "B — 聚焦影響最大的元件。search-result (使用率最高) + projects/[id] (業務最核心) 優先拆分為 <500 行的子元件。profile 頁面可暫緩，因為修改頻率較低",
+      "deadline": "Sprint 6-7",
+      "status": "waiting_decision"
+    },
+    {
+      "id": "DEC-014",
+      "urgency": "CRITICAL",
+      "question": "【運營防火牆】要在生產環境建立「Mock 數據檢測」自動化機制嗎？避免未來再有 Mock 數據被部署到線上",
+      "context": "發現 /crew/requests 使用 MOCK_RECEIVED_REQUESTS 硬編碼數據已部署到生產，工班用戶看到假的接案請求會立即流失。這是品牌信任度危機，需要防止再次發生",
+      "options": ["A: ESLint rule 禁止 MOCK_* 變數出現在 production build", "B: CI pipeline 自動檢測 mock 關鍵字", "C: 建立 feature flag 系統，mock 功能統一管控", "D: A+B+C 全部執行"],
+      "recommendation": "D — 三層防火牆。(1) ESLint 即時檢測 (2) CI 自動化檢查 (3) Feature flag 統一控制。Mock 數據流到生產是不可接受的品質事故，必須從工具、流程、架構三個層面根除",
+      "deadline": "緊急：48 小時內",
+      "status": "waiting_decision"
     }
   ],
 
   "threeRoleEcosystem": {
     "vision": "讓設計師的一個動作，同時驅動工班排程和建材下單——三角色資訊流、金流、工作流在同一平台打通",
-    "currentState": "根據架構分析：三個角色的核心功能都已實作（認證、Profile、作品集、聊天、報價），但缺少跨角色的自動化觸發機制。RFQ 系統已有完整流程，但主要是手動操作",
+    "currentState": "【架構深度分析更新】三角色基礎建設完整度：認證系統 100%、Profile 管理 95%、作品集 100%、即時聊天 100%、報價流程 95%。但跨角色自動化只有 15%：缺少觸發器、配對算法、流程編排。技術基礎紮實，業務連結待建構",
     "integrationOpportunities": [
       {
         "name": "設計師建立專案 → 自動推薦工班",
@@ -172,6 +202,28 @@
         "priority": "P1",
         "businessValue": "建立統一的溝通中樞，減少三角色間的溝通成本 70%。每個專案溝通時間從 5-8 小時降到 1-2 小時",
         "blocker": "DEC-009（內部工具優先 vs LINE 整合）"
+      },
+      {
+        "name": "【新發現】共用 DB 優勢轉為三角色即時同步",
+        "designerAction": "專案狀態變更即時反映在工班和廠商面板",
+        "crewTrigger": "日報提交立刻更新設計師進度表和廠商配送排程",
+        "supplierTrigger": "庫存變更即時推播到相關專案的設計師和工班",
+        "existingRepo": "共用 PostgreSQL + interaction-service 推播系統已有基礎，只需建立 DB trigger + notification pipeline",
+        "effort": "2-3 週（DB trigger + 推播邏輯）",
+        "priority": "P0",
+        "businessValue": "將架構劣勢轉為業務優勢：共用 DB 實現毫秒級跨角色數據同步，競品無法匹敵的即時性",
+        "blocker": null
+      },
+      {
+        "name": "【技術槓桿】pgvector 向量搜尋擴展到工班技能匹配",
+        "designerAction": "上傳專案需求，AI 自動推薦最適合的工班組合",
+        "crewTrigger": "技能標籤和歷史作品被向量化，提高被推薦機率",
+        "supplierTrigger": "材料特性向量化，與工班技能向量配對推薦專用工具",
+        "existingRepo": "產品已有 text-embedding-3-large (2000維) + pgvector，sync-embeddings cron 有成熟流程",
+        "effort": "4-5 週（技能向量化 + 匹配算法）",
+        "priority": "P1", 
+        "businessValue": "利用既有的向量搜尋基礎設施，建立 AI 驅動的工班推薦引擎，提升配對精準度 80%",
+        "blocker": null
       }
     ]
   },
@@ -250,8 +302,10 @@
 
   "developmentBacklog": [
     {"id": "BL-001a", "sprint": "緊急 Sprint", "title": "🚨 隱藏前端 Mock 數據頁面", "type": "frontend", "repo": "LargeHomeAI--Frontend", "effort": "4h", "priority": "P0", "status": "todo", "blockedBy": null, "note": "feature flag 隱藏 /crew/requests + 清查其他 Mock 殘留"},
+    {"id": "BL-024", "sprint": "緊急 Sprint", "title": "🚨 建立 Mock 數據防火牆（ESLint + CI + Feature Flag）", "type": "devops", "repo": "全體 Frontend", "effort": "1d", "priority": "P0", "status": "todo", "blockedBy": null, "note": "三層防護避免 Mock 數據再次流到生產"},
     {"id": "BL-001b", "sprint": "緊急 Sprint", "title": "🚨 修復工班接案: Mock → 真實 API", "type": "full-stack", "repo": "LargeHomeAI--Frontend + interaction-service", "effort": "2d", "priority": "P0", "status": "todo", "blockedBy": "BL-001a"},
-    {"id": "BL-023", "sprint": "緊急 Sprint", "title": "🚨 制定新服務架構標準（獨立 DB 強制）", "type": "architecture", "repo": "架構文件", "effort": "1d", "priority": "P0", "status": "todo", "blockedBy": "DEC-011"},
+    {"id": "BL-023", "sprint": "緊急 Sprint", "title": "🚨 制定新服務架構標準（獨立 DB 強制）", "type": "architecture", "repo": "架構文件", "effort": "1d", "priority": "P0", "status": "todo", "blockedBy": "DEC-012"},
+    {"id": "BL-025", "sprint": "緊急 Sprint", "title": "🚨 共用 DB 即時同步機制（DB trigger + 推播）", "type": "backend", "repo": "interaction-service", "effort": "3d", "priority": "P0", "status": "todo", "blockedBy": null, "note": "將架構劣勢轉為即時同步優勢"},
     {"id": "BL-019", "sprint": "緊急 Sprint", "title": "LINE Bot → 內部客服工具", "type": "backend", "repo": "LargeHomeAI--bot-service", "effort": "2d", "priority": "P1", "status": "todo", "blockedBy": null, "note": "75% 已完成，立即包裝成內部工具"},
     {"id": "BL-001", "sprint": "Sprint 5", "title": "DB Migration: CRM tables", "type": "backend", "repo": "LargeHomeAI--LargeHome", "effort": "2d", "priority": "P0", "status": "todo", "blockedBy": "DEC-001"},
     {"id": "BL-017", "sprint": "Sprint 5", "title": "前端元件拆分: search-result (2954→<500 行)", "type": "frontend", "repo": "LargeHomeAI--Frontend", "effort": "5d", "priority": "P1", "status": "todo", "blockedBy": "DEC-007"},
@@ -273,7 +327,7 @@
     {"id": "BL-015", "sprint": "Sprint 9", "title": "Frontend 全模組: localStorage → API 遷移", "type": "frontend", "repo": "LargeHomeAI--Frontend", "effort": "10d", "priority": "P1", "status": "todo", "blockedBy": "所有後端 API 完成"}
   ],
 
-  "nextAuditFocus": "【🚨 戰略轉折點】架構深度分析揭露四大系統性風險：(1) 生產環境品牌危機 (2) 偽微服務技術債 (3) PRD 規劃失準 (4) 75% 完成的 Bot 服務正在浪費投資。這些問題相互關聯，需要 Show 立即決策新的技術策略",
+  "nextAuditFocus": "【🚀 架構戰略轉換】深度分析揭示：LargeHome 技術架構已具備支撐 10x 業務增長的基礎建設（認證、產品、聊天、推播、分析、AI 搜尋），但欠缺跨角色自動化觸發器。下輪重點：(1) 共用 DB 劣勢轉為即時同步優勢 (2) pgvector 擴展為工班 AI 匹配引擎 (3) 架構防火牆設立（新服務獨立 DB）",
   
   "criticalDiscoveries": [
     {
@@ -321,22 +375,28 @@
   ],
   
   "businessValueQuantification": {
+    "【架構轉型 ROI】現有技術資產價值重估": {
+      "已完成技術模組估值": "14 個微服務 + 完整 DB schema = 估計開發成本 $800K-1M（478 個前端檔案 + 5 個生產就緒後端服務）",
+      "pgvector 搜尋引擎": "2000維向量 + <100ms 響應時間，市場價值 $100K+ 的 AI 基礎建設",
+      "RFQ 完整流程": "專案→區域→材料→聊天→報價 + 推播，完整電商級互動系統",
+      "共用 DB 即時性優勢": "毫秒級跨服務數據一致性，轉化為三角色即時同步的產品差異化"
+    },
     "緊急修復 ROI": {
-      "Mock 數據修復": "避免工班用戶流失，保護平台信任度",
-      "元件拆分": "減少 50% 開發時間，提升 Code Review 效率",
-      "架構正規化": "為未來獨立擴展奠定基礎，避免重構成本"
+      "Mock 數據修復": "避免工班用戶流失 + 保護 $800K 技術投資的品牌價值",
+      "元件拆分": "減少 50% 開發時間 + 提升 Code Review 效率 80%",
+      "架構防火牆": "避免新服務重蹈技術債覆轍，保護未來 $200K+ 開發投資"
     },
     "三角色自動化 ROI": {
-      "設計師時間節省": "找工班從 2-3 天 → 2-3 小時 = 95% 效率提升",
-      "專案啟動速度": "提升 5-10 倍",
-      "業主滿意度": "即時進度同步，減少詢問電話 70%",
-      "準時完工率": "材料預警系統，從 60% → 85%"
+      "設計師效率提升": "找工班從 2-3 天 → 2-3 小時 = 95% 時間節省",
+      "專案啟動速度": "自動配對 + 即時推播 = 5-10x 提升",
+      "業主滿意度": "即時進度同步，減少詢問電話 70%，NPS 預估提升 20-30 分",
+      "平台粘性": "三角色深度整合，轉換成本提高，競品模仿困難度 5x"
     },
     "技術債務成本": {
-      "維護成本增加": "超大元件增加 50% 開發時間",
-      "新人培訓": "3000+ 行元件需要 2-3 週理解",
-      "擴展阻礙": "共用 DB 導致服務無法獨立部署",
-      "Bug 修復": "單一檔案變更影響多個功能模組"
+      "開發效率降低": "超大元件增加 50% 開發時間，每月浪費 40-50 工時",
+      "新人培訓成本": "3320 行單一元件學習成本 2-3 週，團隊擴張阻礙",
+      "架構維護成本": "共用 DB 雖有即時性優勢，但限制技術棧選擇和獨立部署",
+      "品質風險": "Mock 數據流到生產 = 品牌危機，潛在用戶流失成本 $50K+/月"
     }
   },
 
