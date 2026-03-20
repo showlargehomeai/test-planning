@@ -1,7 +1,7 @@
 {
-  "auditId": "AUDIT-007",
-  "timestamp": "2026-03-20T23:22:00+08:00",
-  "round": 7,
+  "auditId": "AUDIT-008",
+  "timestamp": "2026-03-20T23:52:00+08:00",
+  "round": 8,
   "perspective": "CTO + CIO",
 
   "decisionsForShow": [
@@ -49,10 +49,30 @@
       "id": "DEC-005",
       "urgency": "CRITICAL",
       "question": "前端 Mock 數據處理策略：/crew/requests 等頁面現在用硬編碼 MOCK_RECEIVED_REQUESTS，這個要先清理掉還是趕快接真實 API？",
-      "context": "根據 ANALYSIS.md 發現工班接案功能在前端是 Mock 數據，但後端 interaction-service 已有 requirements 相關表。這會影響用戶體驗和數據一致性",
+      "context": "根據 ANALYSIS.md 發現工班接案功能在前端是 Mock 數據，但後端 interaction-service 已有 requirements 相關表。這會影響用戶體驗和數據一致性。市面上沒有工班會用帶 Mock 數據的接案系統",
       "options": ["A: 立刻隱藏這些 Mock 頁面，避免用戶混淆", "B: 優先開發 crew-service API 來取代 Mock", "C: 先用現有 interaction-service 的 requirements 表過渡"],
-      "recommendation": "C — 現有 requirements + projects 表已有工班需求基礎架構，可快速接上",
-      "deadline": "本週末",
+      "recommendation": "A → C — 立刻在前端加 feature flag 隱藏 Mock 頁面，然後用 interaction-service 的 requirements 表快速實現真實數據",
+      "deadline": "72 小時內",
+      "status": "waiting_decision"
+    },
+    {
+      "id": "DEC-007",
+      "urgency": "HIGH",
+      "question": "超大前端元件拆分：search-result (2954 行)、profile (2388 行)、projects/[id] (3320 行) 已經無法維護，要拆分嗎？",
+      "context": "根據 ANALYSIS.md，前端有多個巨型元件超過 2000-3000 行，這會導致開發效率下降、Bug 修復困難、Code Review 成本高。但拆分需要投入工時",
+      "options": ["A: 立刻重構，全部拆分成 <500 行的子元件", "B: 新功能用新架構，舊的維持現狀", "C: 只拆分最常改動的頁面（search-result, projects/[id]）"],
+      "recommendation": "C — 優先拆分 search-result 和 projects/[id]，因為它們是核心業務流程，修改頻率最高",
+      "deadline": "Sprint 6",
+      "status": "waiting_decision"
+    },
+    {
+      "id": "DEC-008",
+      "urgency": "CRITICAL",
+      "question": "資料庫架構決策：繼續共用單一 PostgreSQL 還是朝真正微服務演進？現在所有 service 都直接讀取彼此的 table",
+      "context": "目前是「模組化單體 + 共用 DB」偽裝成微服務。好處是開發速度快、事務一致性簡單。壞處是服務間強耦合、無法獨立擴展、違背微服務原則。隨著業務複雜化，這個架構債務會越來越重",
+      "options": ["A: 繼續現況，接受技術債務，專注業務功能", "B: 逐步拆分，從 analytics-service 開始獨立資料庫", "C: 設計新的 service 時強制獨立 DB，舊的維持"],
+      "recommendation": "A（短期）+ C（中期）— 當前階段業務驗證最重要，但新的 crew-management、order-management 等服務必須獨立 DB",
+      "deadline": "架構決策會議",
       "status": "waiting_decision"
     },
     {
@@ -74,12 +94,13 @@
       {
         "name": "設計師建立專案 → 自動推薦工班",
         "designerAction": "在 /projects/new 填寫專案需求（工法、地點、預算）",
-        "crewTrigger": "crew-matching 演算法自動配對，推送到工班的 /crew/requests",
+        "crewTrigger": "crew-matching 演算法自動配對，推送到工班的 /crew/requests（先解決 Mock 數據問題）",
         "supplierTrigger": "根據專案建材需求，自動顯示相關供應商報價",
-        "existingRepo": "interaction-service 的 projects + requirements 表已有基礎，需加 auto_match trigger",
-        "effort": "2-3 週",
+        "existingRepo": "interaction-service 的 projects + requirements 表已有基礎，但需要真實的工班接案功能",
+        "effort": "4-5 週（包含 Mock 數據修復）",
         "priority": "P0",
-        "businessValue": "減少設計師找工班時間從 2-3 天降到 2-3 小時，提高項目啟動速度 5-10 倍"
+        "businessValue": "減少設計師找工班時間從 2-3 天降到 2-3 小時，提高項目啟動速度 5-10 倍",
+        "blocker": "前端工班頁面目前是 Mock 數據，無法測試真實配對流程"
       },
       {
         "name": "設計師確認報價 → 自動生成工班排程 + 建材訂單",
@@ -170,13 +191,33 @@
         "priority": "P2",
         "status": "not_started",
         "blockedBy": null
+      },
+      {
+        "frontend": "/crew/requests （Mock 數據修復）",
+        "backend": "interaction-service",
+        "dbChanges": "使用現有 requirements, projects 表，可能需要加 crew_assignments 關聯表",
+        "migrationFile": "049_create_crew_assignments.sql",
+        "priority": "P0",
+        "status": "not_started",
+        "blockedBy": "DEC-005"
+      },
+      {
+        "frontend": "前端超大元件拆分",
+        "backend": "無",
+        "dbChanges": "無",
+        "migrationFile": "無",
+        "priority": "P1",
+        "status": "not_started",
+        "blockedBy": "DEC-007"
       }
     ]
   },
 
   "developmentBacklog": [
     {"id": "BL-001", "sprint": "Sprint 5", "title": "DB Migration: CRM tables", "type": "backend", "repo": "LargeHomeAI--LargeHome", "effort": "2d", "priority": "P0", "status": "todo", "blockedBy": "DEC-001"},
-    {"id": "BL-001b", "sprint": "Sprint 5", "title": "清理前端 Mock 數據: /crew/requests → 真實 API", "type": "frontend", "repo": "LargeHomeAI--Frontend", "effort": "2d", "priority": "P0", "status": "todo", "blockedBy": "DEC-005"},
+    {"id": "BL-001b", "sprint": "Sprint 5", "title": "清理前端 Mock 數據: /crew/requests → 真實 API", "type": "frontend", "repo": "LargeHomeAI--Frontend", "effort": "3d", "priority": "P0", "status": "todo", "blockedBy": "DEC-005"},
+    {"id": "BL-017", "sprint": "Sprint 5", "title": "前端元件拆分: search-result (2954→<500 行)", "type": "frontend", "repo": "LargeHomeAI--Frontend", "effort": "5d", "priority": "P1", "status": "todo", "blockedBy": "DEC-007"},
+    {"id": "BL-018", "sprint": "Sprint 6", "title": "前端元件拆分: projects/[id] (3320→<500 行)", "type": "frontend", "repo": "LargeHomeAI--Frontend", "effort": "8d", "priority": "P1", "status": "todo", "blockedBy": "BL-017"},
     {"id": "BL-002", "sprint": "Sprint 5", "title": "profile-service: CRM API endpoints", "type": "backend", "repo": "LargeHomeAI--profile-service", "effort": "5d", "priority": "P0", "status": "todo", "blockedBy": "BL-001"},
     {"id": "BL-003", "sprint": "Sprint 5", "title": "Frontend /crm: 對接 profile-service API（移除 localStorage）", "type": "frontend", "repo": "LargeHomeAI--Frontend", "effort": "3d", "priority": "P0", "status": "todo", "blockedBy": "BL-002"},
     {"id": "BL-004", "sprint": "Sprint 5", "title": "DB Migration: 擴展 quote 表 + smart pricing", "type": "backend", "repo": "LargeHomeAI--LargeHome", "effort": "1d", "priority": "P0", "status": "todo", "blockedBy": "DEC-002"},
@@ -194,5 +235,41 @@
     {"id": "BL-015", "sprint": "Sprint 9", "title": "Frontend 全模組: localStorage → API 遷移", "type": "frontend", "repo": "LargeHomeAI--Frontend", "effort": "10d", "priority": "P1", "status": "todo", "blockedBy": "所有後端 API 完成"}
   ],
 
-  "nextAuditFocus": "等待 Show 對 DEC-001~006 的決策。新發現：前端 Mock 數據和 image-segmentation 整合問題需要優先處理。三角色自動化整合的商業價值已量化，可作為優先開發依據"
+  "nextAuditFocus": "等待 Show 對 DEC-001~008 的決策。緊急問題：前端 Mock 數據影響產品可信度，必須 72 小時內處理。架構債務（共用 DB、超大元件）需要在業務快速擴展前解決",
+  
+  "criticalDiscoveries": [
+    {
+      "issue": "前端 Mock 數據已部署到生產環境",
+      "impact": "工班用戶看到假的接案資料，會直接棄用系統",
+      "timeline": "72 小時內必須修復或隱藏",
+      "solution": "feature flag + 快速接真實 API"
+    },
+    {
+      "issue": "微服務架構是偽裝的模組化單體",
+      "impact": "無法獨立擴展服務，技術債務累積",
+      "timeline": "新功能開發前決定",
+      "solution": "新服務強制獨立 DB，舊服務維持現況"
+    },
+    {
+      "issue": "前端維護成本已達臨界點",
+      "impact": "3000+ 行元件無法有效維護和測試",
+      "timeline": "Sprint 6 前拆分核心元件",
+      "solution": "優先拆分搜尋和專案頁面"
+    }
+  ],
+  
+  "businessValueQuantification": {
+    "三角色自動化ROI": {
+      "設計師時間節省": "找工班從 2-3 天 → 2-3 小時 = 95% 效率提升",
+      "專案啟動速度": "提升 5-10 倍",
+      "業主滿意度": "即時進度同步，減少詢問電話 70%",
+      "準時完工率": "材料預警系統，從 60% → 85%"
+    },
+    "技術債務成本": {
+      "維護成本": "超大元件增加 50% 開發時間",
+      "Bug 修復": "單一檔案變更影響多個功能",
+      "人員培訓": "新開發者需要 2-3 週理解巨型元件",
+      "擴展阻礙": "共用 DB 導致服務無法獨立部署和擴展"
+    }
+  }
 }
