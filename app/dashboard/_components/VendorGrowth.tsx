@@ -22,18 +22,24 @@ interface VendorData {
   thisMonth: number;
   daily: { date: string; count: number }[];
   cumulative: { date: string; cumulative: number }[];
-  tierDistribution: { tier: string; count: number }[];
+  tierDistribution: { tier: number; count: number }[];
   updatedAt: string;
 }
 
 type TimeRange = "7d" | "30d" | "90d";
 
-const TIER_COLORS: Record<string, string> = {
-  free: "#94a3b8",
-  basic: "#2dd4bf",
-  pro: "#0891b2",
-  enterprise: "#6366f1",
-  none: "#cbd5e1",
+const TIER_LABELS: Record<number, string> = {
+  0: "免費",
+  1: "基礎",
+  2: "進階",
+  3: "企業",
+};
+
+const TIER_COLORS: Record<number, string> = {
+  0: "#94a3b8",
+  1: "#2dd4bf",
+  2: "#0891b2",
+  3: "#6366f1",
 };
 
 function formatDate(dateStr: string) {
@@ -249,8 +255,8 @@ export default function VendorGrowth() {
               const color = TIER_COLORS[t.tier] || "#94a3b8";
               return (
                 <div key={t.tier} className="flex items-center gap-2">
-                  <span className="text-[10px] text-slate-500 w-16 text-right capitalize">
-                    {t.tier}
+                  <span className="text-[10px] text-slate-500 w-16 text-right">
+                    {TIER_LABELS[t.tier] || `Tier ${t.tier}`}
                   </span>
                   <div className="flex-1 h-5 bg-slate-50 rounded-full overflow-hidden">
                     <div

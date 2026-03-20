@@ -79,11 +79,11 @@ export async function GET() {
       // Payment tier distribution
       const tierResult = await client.query(`
         SELECT
-          COALESCE(payment_tier, 'none') AS tier,
+          COALESCE(payment_tier, 0) AS tier,
           COUNT(*) AS count
         FROM vendors
         GROUP BY payment_tier
-        ORDER BY count DESC
+        ORDER BY tier ASC
       `);
 
       return NextResponse.json({
