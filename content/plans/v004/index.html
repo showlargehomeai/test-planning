@@ -1,0 +1,1911 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LargeHome AI 日本站 — 產品需求文件 (PRD)</title>
+<style>
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0f1117; --bg-card: #1a1d2e; --bg-card-alt: #212438;
+  --text: #e2e8f0; --text-muted: #94a3b8; --text-heading: #f8fafc;
+  --red: #e94560; --blue: #3b82f6; --green: #10b981; --gold: #f59e0b;
+  --purple: #a855f7; --cyan: #06b6d4;
+  --border: #2d3148; --radius: 12px;
+}
+html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", "Noto Sans JP", sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.8; font-size: 15px;
+}
+a { color: var(--blue); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== Navigation ===== */
+.nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(15,17,23,.92); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border); padding: 0 24px;
+}
+.nav-inner {
+  max-width: 1200px; margin: 0 auto; display: flex; align-items: center;
+  gap: 8px; overflow-x: auto; padding: 12px 0;
+  scrollbar-width: none;
+}
+.nav-inner::-webkit-scrollbar { display: none; }
+.nav-inner a {
+  white-space: nowrap; font-size: 13px; padding: 6px 14px;
+  border-radius: 20px; color: var(--text-muted); transition: all .2s;
+  border: 1px solid transparent;
+}
+.nav-inner a:hover { color: var(--text); background: var(--bg-card); border-color: var(--border); text-decoration: none; }
+.nav-logo { font-weight: 700; color: var(--red) !important; font-size: 15px !important; margin-right: 8px; }
+
+/* ===== Layout ===== */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+section { padding: 60px 0; }
+section + section { border-top: 1px solid var(--border); }
+
+/* ===== Hero ===== */
+.hero {
+  padding: 100px 0 80px; text-align: center;
+  background: linear-gradient(135deg, rgba(233,69,96,.08) 0%, rgba(59,130,246,.08) 100%);
+}
+.hero h1 { font-size: clamp(28px, 5vw, 48px); color: var(--text-heading); margin-bottom: 16px; font-weight: 800; }
+.hero h1 span { color: var(--red); }
+.hero .subtitle { font-size: 18px; color: var(--text-muted); max-width: 700px; margin: 0 auto 32px; }
+.hero-meta { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; font-size: 13px; color: var(--text-muted); }
+.hero-meta span { display: flex; align-items: center; gap: 6px; }
+
+/* ===== Typography ===== */
+h2 {
+  font-size: 28px; font-weight: 700; color: var(--text-heading); margin-bottom: 12px;
+  display: flex; align-items: center; gap: 12px;
+}
+h2 .num { font-size: 14px; background: var(--red); color: #fff; padding: 4px 12px; border-radius: 20px; }
+h3 { font-size: 20px; font-weight: 600; color: var(--text-heading); margin: 32px 0 12px; }
+h4 { font-size: 16px; font-weight: 600; color: var(--gold); margin: 20px 0 8px; }
+.section-desc { color: var(--text-muted); margin-bottom: 32px; font-size: 15px; }
+p { margin-bottom: 12px; }
+
+/* ===== Cards ===== */
+.card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 28px; margin-bottom: 20px;
+}
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
+.card-sm { padding: 20px; }
+
+/* ===== Badges ===== */
+.badge {
+  display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 10px;
+  border-radius: 12px; text-transform: uppercase; letter-spacing: .5px;
+}
+.badge-red { background: rgba(233,69,96,.15); color: var(--red); }
+.badge-blue { background: rgba(59,130,246,.15); color: var(--blue); }
+.badge-green { background: rgba(16,185,129,.15); color: var(--green); }
+.badge-gold { background: rgba(245,158,11,.15); color: var(--gold); }
+.badge-purple { background: rgba(168,85,247,.15); color: var(--purple); }
+.badge-cyan { background: rgba(6,182,212,.15); color: var(--cyan); }
+
+/* ===== Tables ===== */
+.table-wrap { overflow-x: auto; margin: 20px 0; border-radius: var(--radius); border: 1px solid var(--border); }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead { background: var(--bg-card-alt); }
+th { padding: 12px 14px; text-align: left; font-weight: 600; color: var(--text-heading); white-space: nowrap; border-bottom: 2px solid var(--border); }
+td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+tbody tr:hover { background: rgba(59,130,246,.04); }
+.check { color: var(--green); font-weight: 700; }
+.cross { color: #ef4444; }
+.partial { color: var(--gold); }
+
+/* ===== CSS Charts ===== */
+.bar-chart { display: flex; flex-direction: column; gap: 12px; margin: 20px 0; }
+.bar-row { display: flex; align-items: center; gap: 12px; }
+.bar-label { min-width: 140px; font-size: 13px; text-align: right; color: var(--text-muted); }
+.bar-track { flex: 1; height: 28px; background: var(--bg-card-alt); border-radius: 6px; overflow: hidden; position: relative; }
+.bar-fill { height: 100%; border-radius: 6px; display: flex; align-items: center; padding-left: 10px; font-size: 12px; font-weight: 600; color: #fff; transition: width .6s ease; }
+.bar-fill.red { background: linear-gradient(90deg, var(--red), #ff6b81); }
+.bar-fill.blue { background: linear-gradient(90deg, var(--blue), #60a5fa); }
+.bar-fill.green { background: linear-gradient(90deg, var(--green), #34d399); }
+.bar-fill.gold { background: linear-gradient(90deg, var(--gold), #fbbf24); }
+.bar-fill.purple { background: linear-gradient(90deg, var(--purple), #c084fc); }
+
+/* ===== Timeline ===== */
+.timeline { position: relative; padding-left: 32px; margin: 24px 0; }
+.timeline::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: var(--border); }
+.tl-item { position: relative; margin-bottom: 28px; }
+.tl-item::before {
+  content: ''; position: absolute; left: -28px; top: 6px;
+  width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--red); background: var(--bg);
+}
+.tl-item.active::before { background: var(--red); }
+.tl-date { font-size: 12px; color: var(--red); font-weight: 600; margin-bottom: 4px; }
+
+/* ===== KPI Boxes ===== */
+.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin: 20px 0; }
+.kpi-box {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 20px; text-align: center;
+}
+.kpi-box .kpi-num { font-size: 32px; font-weight: 800; margin-bottom: 4px; }
+.kpi-box .kpi-label { font-size: 13px; color: var(--text-muted); }
+
+/* ===== Lists ===== */
+ul, ol { padding-left: 20px; margin-bottom: 12px; }
+li { margin-bottom: 6px; }
+li::marker { color: var(--red); }
+
+/* ===== Filter Controls ===== */
+.filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.filter-btn {
+  padding: 6px 16px; border-radius: 20px; border: 1px solid var(--border);
+  background: transparent; color: var(--text-muted); font-size: 12px; cursor: pointer;
+  transition: all .2s;
+}
+.filter-btn:hover, .filter-btn.active { background: var(--red); color: #fff; border-color: var(--red); }
+
+/* ===== Risk Matrix ===== */
+.risk-card { border-left: 4px solid var(--red); }
+.risk-card.medium { border-left-color: var(--gold); }
+.risk-card.low { border-left-color: var(--green); }
+
+/* ===== Footer ===== */
+.footer {
+  padding: 40px 0; border-top: 1px solid var(--border); text-align: center;
+  color: var(--text-muted); font-size: 13px;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .card-grid { grid-template-columns: 1fr; }
+  .bar-label { min-width: 100px; font-size: 12px; }
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  h2 { font-size: 22px; }
+  .hero h1 { font-size: 26px; }
+}
+
+/* ===== Glossary Table ===== */
+.glossary td:first-child { font-weight: 600; color: var(--gold); }
+.glossary td:nth-child(2) { color: var(--cyan); }
+
+/* ===== Highlight Box ===== */
+.highlight-box {
+  background: linear-gradient(135deg, rgba(233,69,96,.08), rgba(59,130,246,.08));
+  border: 1px solid rgba(233,69,96,.2); border-radius: var(--radius);
+  padding: 24px; margin: 20px 0;
+}
+
+/* ===== Phase Tag ===== */
+.phase-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 12px; border-radius: 8px; font-size: 12px; font-weight: 600;
+}
+.phase-1 { background: rgba(233,69,96,.12); color: var(--red); }
+.phase-2 { background: rgba(59,130,246,.12); color: var(--blue); }
+.phase-3 { background: rgba(168,85,247,.12); color: var(--purple); }
+</style>
+</head>
+<body>
+
+<!-- ===== Navigation ===== -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#hero" class="nav-logo">🏠 LargeHome AI</a>
+    <a href="#executive">執行摘要</a>
+    <a href="#market">市場分析</a>
+    <a href="#strategy">產品策略</a>
+    <a href="#features">功能規格</a>
+    <a href="#localization">在地化策略</a>
+    <a href="#gtm">市場進入</a>
+    <a href="#tech">技術架構</a>
+    <a href="#risk">風險分析</a>
+    <a href="#kpi">KPI 里程碑</a>
+    <a href="#budget">預算估算</a>
+  </div>
+</nav>
+
+<!-- ===== Hero ===== -->
+<header class="hero" id="hero">
+  <div class="container">
+    <h1><span>LargeHome AI</span> 日本站<br>產品需求文件 (PRD)</h1>
+    <p class="subtitle">日本首個整合設計師、工班、建材商三大角色的裝修產業 SaaS 平台——從台灣出發，征服 ¥17 兆日本翻修市場</p>
+    <div class="hero-meta">
+      <span>📋 版本 v004</span>
+      <span>📅 2026 年 3 月 20 日</span>
+      <span>👤 LargeHome AI Product Team</span>
+      <span>🔒 機密文件</span>
+    </div>
+  </div>
+</header>
+
+<!-- ===================================================================== -->
+<!-- 1. Executive Summary -->
+<!-- ===================================================================== -->
+<section id="executive">
+  <div class="container">
+    <h2><span class="num">01</span> 執行摘要 Executive Summary</h2>
+    <p class="section-desc">為什麼 LargeHome AI 要進入日本市場？核心願景與策略總覽。</p>
+
+    <div class="highlight-box">
+      <h3 style="margin-top:0">🎯 願景聲明</h3>
+      <p style="font-size:18px; color: var(--text-heading); font-weight: 600;">
+        成為日本裝修產業第一個「三位一體」SaaS 平台——同時服務設計師、工班、建材商，打通產業鏈的資訊孤島，用 AI 加速每一個環節。
+      </p>
+    </div>
+
+    <div class="card-grid">
+      <div class="card card-sm">
+        <h4>🇯🇵 為什麼是日本？</h4>
+        <ul>
+          <li><strong>市場規模龐大：</strong>日本住宅翻修市場規模達 ¥17 兆（約 NT$3.4 兆），且每年穩定成長 3-5%</li>
+          <li><strong>數位化落差：</strong>日本建設業 IT 投資僅佔營收 1%，遠低於其他產業的 3-5%，數位化空間巨大</li>
+          <li><strong>高齡化驅動：</strong>65 歲以上人口佔 29%，住宅無障礙改修需求持續攀升</li>
+          <li><strong>政策利多：</strong>日本政府推動「住生活基本計畫」，鼓勵既有住宅翻修而非新建</li>
+          <li><strong>無整合競品：</strong>現有 8 大競爭者皆僅覆蓋 1-2 個角色，無人整合三大角色</li>
+        </ul>
+      </div>
+      <div class="card card-sm">
+        <h4>💡 核心差異化</h4>
+        <ul>
+          <li><strong>三角色整合：</strong>設計師 × 工班 × 建材商，一站式平台</li>
+          <li><strong>AI 跨角色智能：</strong>設計師↔工班配對、建材↔設計風格推薦、報價↔市場價格校準</li>
+          <li><strong>台灣驗證模型：</strong>已在台灣市場驗證的功能直接移植，降低 PMF 風險</li>
+          <li><strong>連接經濟：</strong>每增加一個角色的用戶，其他兩個角色的價值同步提升（網絡效應）</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>⏱ 時程總覽</h3>
+    <div class="timeline">
+      <div class="tl-item active">
+        <div class="tl-date">Phase 1 — M1~M6（台灣移植期）</div>
+        <p>核心功能日本化，在東京、大阪進行封測。目標：500 位設計師註冊、50 組工班入駐。</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">Phase 2 — M7~M12（日本整合期）</div>
+        <p>整合日本在地功能（現場管理、NETIS、日報）、正式上線。目標：2,000 位設計師、200 組工班、100 家建材商。</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">Phase 3 — M13~M24（差異化爆發期）</div>
+        <p>AI 跨角色功能、市場數據平台、成為日本裝修產業基礎設施。目標：10,000+ 用戶、月營收 ¥5,000 萬。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================== -->
+<!-- 2. Market Analysis -->
+<!-- ===================================================================== -->
+<section id="market">
+  <div class="container">
+    <h2><span class="num">02</span> 市場分析 Market Analysis</h2>
+    <p class="section-desc">日本裝修市場的規模、成長動力、競爭版圖與藍海機會。</p>
+
+    <h3>📊 市場規模與成長</h3>
+    <div class="kpi-grid">
+      <div class="kpi-box">
+        <div class="kpi-num" style="color: var(--red);">¥17兆</div>
+        <div class="kpi-label">住宅翻修市場規模（2025）</div>
+      </div>
+      <div class="kpi-box">
+        <div class="kpi-num" style="color: var(--blue);">3.5%</div>
+        <div class="kpi-label">年複合成長率（CAGR）</div>
+      </div>
+      <div class="kpi-box">
+        <div class="kpi-num" style="color: var(--green);">53萬</div>
+        <div class="kpi-label">建設業許可業者數</div>
+      </div>
+      <div class="kpi-box">
+        <div class="kpi-num" style="color: var(--gold);">29%</div>
+        <div class="kpi-label">65 歲以上人口比例</div>
+      </div>
+      <div class="kpi-box">
+        <div class="kpi-num" style="color: var(--purple);">1%</div>
+        <div class="kpi-label">建設業 IT 投資佔營收比</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h4>市場成長驅動力</h4>
+      <div class="bar-chart">
+        <div class="bar-row">
+          <span class="bar-label">高齡化改修需求</span>
+          <div class="bar-track"><div class="bar-fill red" style="width:92%">92%</div></div>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">節能改修政策補助</span>
+          <div class="bar-track"><div class="bar-fill blue" style="width:85%">85%</div></div>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">空屋活用翻修</span>
+          <div class="bar-track"><div class="bar-fill green" style="width:78%">78%</div></div>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">中古住宅流通促進</span>
+          <div class="bar-track"><div class="bar-fill gold" style="width:72%">72%</div></div>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">遠端工作住宅改造</span>
+          <div class="bar-track"><div class="bar-fill purple" style="width:65%">65%</div></div>
+        </div>
+      </div>
+    </div>
+
+    <h3>🏆 競爭版圖分析</h3>
+    <p>以下為日本 8 大競爭者與 LargeHome AI 的功能覆蓋比較：</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>競爭者</th>
+            <th>類型</th>
+            <th>設計師工具</th>
+            <th>工班管理</th>
+            <th>建材市集</th>
+            <th>業主媒合</th>
+            <th>CRM</th>
+            <th>報價系統</th>
+            <th>財務管理</th>
+            <th>AI 功能</th>
+            <th>用戶數</th>
+            <th>定價</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>ANDPAD</strong></td>
+            <td><span class="badge badge-blue">施工管理</span></td>
+            <td class="cross">✗</td>
+            <td class="check">✓</td>
+            <td class="cross">✗</td>
+            <td class="cross">✗</td>
+            <td class="check">✓</td>
+            <td class="check">✓</td>
+            <td class="check">✓</td>
+            <td class="partial">△</td>
+            <td>230K+</td>
+            <td>¥40K+/月</td>
+          </tr>
+          <tr>
+            <td><strong>Houzz Pro</strong></td>
+            <td><span class="badge badge-green">設計行銷</span></td>
+            <td class="check">✓</td>
+            <td class="cross">✗</td>
+            <td class="cross">✗</td>
+            <td class="partial">△</td>
+            <td class="partial">△</td>
+            <td class="check">✓</td>
+            <td class="cross">✗</td>
+            <td class="cross">✗</td>
+            <td>N/A</td>
+            <td>¥6,300/月</td>
+          </tr>
+          <tr>
+            <td><strong>ASCAST</strong></td>
+            <td><span class="badge badge-gold">設計師 SaaS</span></td>
+            <td class="check">✓</td>
+            <td class="cross">✗</td>
+            <td class="partial">△</td>
+            <td class="cross">✗</td>
+            <td class="cross">✗</td>
+            <td class="check">✓</td>
+            <td class="cross">✗</td>
+            <td class="cross">✗</td>
+            <td>N/A</td>
+            <td>N/A</td>
+          </tr>
+          <tr>
+            <td><strong>CraftBank</strong></td>
+            <td><span class="badge badge-purple">工班媒合</span></td>
+            <td class="cross">✗</td>
+            <td class="check">✓</td>
+            <td class="cross">✗</td>
+            <td class="check">✓</td>
+            <td class="partial">△</td>
+            <td class="check">✓</td>
+            <td class="partial">△</td>
+            <td class="cross">✗</td>
+            <td>N/A</td>
+            <td>N/A</td>
+          </tr>
+          <tr>
+            <td><strong>助太刀</strong></td>
+            <td><span class="badge badge-cyan">職人媒合</span></td>
+            <td class="cross">✗</td>
+            <td class="partial">△</td>
+            <td class="cross">✗</td>
+            <td class="check">✓</td>
+            <td class="cross">✗</td>
+            <td class="cross">✗</td>
+            <td class="partial">△</td>
+            <td class="cross">✗</td>
+            <td>170K+</td>
+            <td>Free/Premium</td>
+          </tr>
+          <tr>
+            <td><strong>SAKSAK</strong></td>
+            <td><span class="badge badge-blue">經營管理</span></td>
+            <td class="cross">✗</td>
+            <td class="partial">△</td>
+            <td class="cross">✗</td>
+            <td class="cross">✗</td>
+            <td class="partial">△</td>
+            <td class="check">✓</td>
+            <td class="check">✓</td>
+            <td class="cross">✗</td>
+            <td>N/A</td>
+            <td>N/A</td>
+          </tr>
+          <tr>
+            <td><strong>リノベる</strong></td>
+            <td><span class="badge badge-green">消費者平台</span></td>
+            <td class="cross">✗</td>
+            <td class="cross">✗</td>
+            <td class="cross">✗</td>
+            <td class="partial">△</td>
+            <td class="cross">✗</td>
+            <td class="cross">✗</td>
+            <td class="cross">✗</td>
+            <td class="cross">✗</td>
+            <td>N/A</td>
+            <td>B2C</td>
+          </tr>
+          <tr>
+            <td><strong>SuMiKa</strong></td>
+            <td><span class="badge badge-gold">建築師媒合</span></td>
+            <td class="partial">△</td>
+            <td class="cross">✗</td>
+            <td class="cross">✗</td>
+            <td class="check">✓</td>
+            <td class="cross">✗</td>
+            <td class="cross">✗</td>
+            <td class="cross">✗</td>
+            <td class="cross">✗</td>
+            <td>N/A</td>
+            <td>B2C</td>
+          </tr>
+          <tr style="background: rgba(233,69,96,.06);">
+            <td><strong style="color: var(--red);">LargeHome AI 🏠</strong></td>
+            <td><span class="badge badge-red">三位一體</span></td>
+            <td class="check">✓</td>
+            <td class="check">✓</td>
+            <td class="check">✓</td>
+            <td class="check">✓</td>
+            <td class="check">✓</td>
+            <td class="check">✓</td>
+            <td class="check">✓</td>
+            <td class="check">✓</td>
+            <td>—</td>
+            <td>—</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size: 12px; color: var(--text-muted);">✓ = 完整支援 | △ = 部分支援 | ✗ = 不支援</p>
+
+    <div class="highlight-box">
+      <h4 style="margin-top:0;">🌊 藍海機會：「連接斷層」</h4>
+      <p>日本市場最大的痛點不是「缺乏工具」，而是「工具之間不連通」。設計師用 Houzz Pro 管案件、工班用 ANDPAD 管工地、建材商用傳統 FAX 接單——三者之間完全斷裂。</p>
+      <p><strong>LargeHome AI 的機會：成為三者之間的「連接器」，讓資訊流、金流、工作流在同一個平台上打通。</strong>這不只是功能的加總，而是全新的網絡效應——每多一個設計師加入，工班和建材商的價值就提升；反之亦然。</p>
+    </div>
+
+    <h3>🎯 目標市場區隔</h3>
+    <div class="card-grid">
+      <div class="card card-sm">
+        <h4>Tier 1：獨立室內設計師</h4>
+        <p>日本約有 <strong>12,000+</strong> 間室內設計事務所，多為 1-5 人小型團隊。痛點：接案效率低、報價耗時、建材資訊分散。</p>
+        <span class="badge badge-red">Phase 1 主力</span>
+      </div>
+      <div class="card card-sm">
+        <h4>Tier 2：中小型工務店</h4>
+        <p>日本 53 萬建設業許可業者中，<strong>99%</strong> 為中小企業。痛點：人手不足、排程混亂、缺乏數位工具。</p>
+        <span class="badge badge-blue">Phase 1~2</span>
+      </div>
+      <div class="card card-sm">
+        <h4>Tier 3：建材批發商/製造商</h4>
+        <p>TOTO、LIXIL 等大廠之外，大量中小建材商仍依賴傳統業務模式。痛點：通路單一、缺乏終端需求數據。</p>
+        <span class="badge badge-green">Phase 2~3</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================== -->
+<!-- 3. Product Strategy -->
+<!-- ===================================================================== -->
+<section id="strategy">
+  <div class="container">
+    <h2><span class="num">03</span> 產品策略 Product Strategy</h2>
+    <p class="section-desc">三階段產品策略：台灣移植 → 日本整合 → 差異化爆發。</p>
+
+    <!-- Phase 1 -->
+    <div class="card" style="border-left: 4px solid var(--red);">
+      <h3 style="margin-top:0;"><span class="phase-tag phase-1">Phase 1</span> 台灣移植期（M1~M6）</h3>
+      <p>將台灣已驗證的核心功能移植到日本，進行在地化調整。</p>
+
+      <h4>🔄 直接移植功能（優先度排序）</h4>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>#</th><th>功能</th><th>角色</th><th>優先度</th><th>在地化需求</th><th>競品空白</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td><strong>AI 業主媒合系統</strong><br>AIマッチング</td>
+              <td>設計師</td>
+              <td><span class="badge badge-red">P0</span></td>
+              <td>日文 NLP、日本業主偏好模型、地區特性</td>
+              <td>ANDPAD、SAKSAK 無此功能</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td><strong>智能報價系統</strong><br>AIスマート見積</td>
+              <td>設計師</td>
+              <td><span class="badge badge-red">P0</span></td>
+              <td>日本建材價格 DB、¥ 定價、日本工法單價</td>
+              <td>競品報價無 AI 校準</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td><strong>CRM 客戶管理</strong><br>顧客管理</td>
+              <td>設計師</td>
+              <td><span class="badge badge-red">P0</span></td>
+              <td>敬語範本、日本商務禮儀 UX</td>
+              <td>Houzz Pro 僅有基本 CRM</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td><strong>建材資料庫</strong><br>建材データベース</td>
+              <td>設計師/建材商</td>
+              <td><span class="badge badge-red">P0</span></td>
+              <td>日本建材規格（JIS）、本地供應商</td>
+              <td>ASCAST 部分涵蓋，但不開放</td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td><strong>工班排程管理</strong><br>職人スケジュール</td>
+              <td>工班</td>
+              <td><span class="badge badge-gold">P1</span></td>
+              <td>日本曆法、日本國定假日</td>
+              <td>助太刀僅有簡單配對</td>
+            </tr>
+            <tr>
+              <td>6</td>
+              <td><strong>專案看板 + 甘特圖</strong><br>プロジェクト管理</td>
+              <td>設計師</td>
+              <td><span class="badge badge-gold">P1</span></td>
+              <td>日文 UI、日本工期標準</td>
+              <td>各競品均有，需達到同水準</td>
+            </tr>
+            <tr>
+              <td>7</td>
+              <td><strong>合約管理</strong><br>契約管理</td>
+              <td>設計師</td>
+              <td><span class="badge badge-gold">P1</span></td>
+              <td>日本民法合約範本、印紙稅規則</td>
+              <td>多數競品為基本功能</td>
+            </tr>
+            <tr>
+              <td>8</td>
+              <td><strong>作品集管理</strong><br>ポートフォリオ</td>
+              <td>設計師</td>
+              <td><span class="badge badge-blue">P2</span></td>
+              <td>日本 SEO（Yahoo! Japan）</td>
+              <td>Houzz Pro 強項，需差異化</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Phase 2 -->
+    <div class="card" style="border-left: 4px solid var(--blue);">
+      <h3 style="margin-top:0;"><span class="phase-tag phase-2">Phase 2</span> 日本整合期（M7~M12）</h3>
+      <p>從日本競品中學習最佳實踐，整合進 LargeHome 平台。</p>
+
+      <div class="card-grid" style="margin-top:20px;">
+        <div class="card card-sm" style="border-top: 3px solid var(--blue);">
+          <h4 style="margin-top:0;">📋 學自 ANDPAD</h4>
+          <ul>
+            <li><strong>現場施工管理：</strong>施工照片記錄、品質檢查清單、安全巡檢</li>
+            <li><strong>NETIS 合規：</strong>新技術情報提供系統整合</li>
+            <li><strong>多層承包管理：</strong>元請→下請→孫請的層級管理</li>
+            <li><strong>工程原價管理：</strong>預實對比、成本追蹤</li>
+          </ul>
+        </div>
+        <div class="card card-sm" style="border-top: 3px solid var(--green);">
+          <h4 style="margin-top:0;">🎨 學自 Houzz Pro</h4>
+          <ul>
+            <li><strong>品牌行銷工具：</strong>設計師品牌頁面、作品展示排名</li>
+            <li><strong>消費者評價系統：</strong>評價管理、口碑行銷</li>
+            <li><strong>3D 設計展示：</strong>提案簡報生成器</li>
+            <li><strong>客戶溝通面板：</strong>消費者端即時溝通介面</li>
+          </ul>
+        </div>
+        <div class="card card-sm" style="border-top: 3px solid var(--purple);">
+          <h4 style="margin-top:0;">🔨 學自 CraftBank</h4>
+          <ul>
+            <li><strong>職人配對演算法：</strong>技能、地域、評價多維配對</li>
+            <li><strong>日報系統：</strong>施工日報電子化、照片自動整理</li>
+            <li><strong>保險整合：</strong>勞災保險、賠償責任保險</li>
+            <li><strong>中小企業經營報表：</strong>損益表、現金流分析</li>
+          </ul>
+        </div>
+        <div class="card card-sm" style="border-top: 3px solid var(--gold);">
+          <h4 style="margin-top:0;">🛋 學自 ASCAST</h4>
+          <ul>
+            <li><strong>建材選品流程：</strong>視覺化建材挑選、空間模擬</li>
+            <li><strong>訂購整合：</strong>建材商直接下單、庫存同步</li>
+            <li><strong>提案書生成：</strong>專業提案書自動產生</li>
+            <li><strong>品牌建材目錄：</strong>與 TOTO、LIXIL 等品牌合作</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 3 -->
+    <div class="card" style="border-left: 4px solid var(--purple);">
+      <h3 style="margin-top:0;"><span class="phase-tag phase-3">Phase 3</span> 差異化爆發期（M13~M24）</h3>
+      <p>打造無競品可比的 AI 跨角色功能，建立深層護城河。</p>
+
+      <div class="card-grid" style="margin-top:20px;">
+        <div class="card card-sm">
+          <h4 style="margin-top:0;">🤖 AI 跨角色智能引擎</h4>
+          <ul>
+            <li><strong>設計師↔工班智能配對：</strong>根據設計風格、工法需求、地域、評價自動推薦最佳工班</li>
+            <li><strong>設計↔建材 AI 推薦：</strong>根據設計圖自動推薦建材，含價格比較與替代方案</li>
+            <li><strong>工班↔建材供應鏈優化：</strong>根據施工排程自動安排建材配送時程</li>
+            <li><strong>跨角色異常預警：</strong>工期延遲自動通知設計師、建材缺貨自動尋找替代</li>
+          </ul>
+        </div>
+        <div class="card card-sm">
+          <h4 style="margin-top:0;">📈 市場數據洞察平台</h4>
+          <ul>
+            <li><strong>裝修趨勢指數：</strong>地區別、風格別、工法別的趨勢分析</li>
+            <li><strong>價格指數：</strong>即時建材價格、工資行情追蹤</li>
+            <li><strong>需求預測：</strong>區域翻修需求預測，協助建材商備貨</li>
+            <li><strong>產業報告：</strong>月度/季度產業洞察報告</li>
+          </ul>
+        </div>
+        <div class="card card-sm">
+          <h4 style="margin-top:0;">⚡ 產業 AI 專屬工具</h4>
+          <ul>
+            <li><strong>AI 設計助手：</strong>風格建議、空間配置最佳化</li>
+            <li><strong>AI 報價校準：</strong>根據平台累積數據自動校準報價精準度</li>
+            <li><strong>AI 品質檢測：</strong>施工照片自動判斷品質問題</li>
+            <li><strong>AI 文件生成：</strong>合約、提案書、日報自動生成</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================== -->
+<!-- 4. Feature Specification -->
+<!-- ===================================================================== -->
+<section id="features">
+  <div class="container">
+    <h2><span class="num">04</span> 功能規格 Feature Specification</h2>
+    <p class="section-desc">所有功能的完整規格矩陣——涵蓋三大角色、開發來源、優先度與在地化需求。</p>
+
+    <div class="filter-bar">
+      <button class="filter-btn active" onclick="filterTable('all')">全部</button>
+      <button class="filter-btn" onclick="filterTable('designer')">🎨 設計師</button>
+      <button class="filter-btn" onclick="filterTable('crew')">🔨 工班</button>
+      <button class="filter-btn" onclick="filterTable('supplier')">📦 建材商</button>
+      <button class="filter-btn" onclick="filterTable('cross')">🔗 跨角色</button>
+    </div>
+
+    <div class="table-wrap">
+      <table id="featureTable">
+        <thead>
+          <tr>
+            <th>功能名稱</th>
+            <th>日文名稱</th>
+            <th>角色</th>
+            <th>來源</th>
+            <th>優先度</th>
+            <th>階段</th>
+            <th>競品參考</th>
+            <th>在地化備註</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Designer Features -->
+          <tr data-role="designer">
+            <td><strong>AI 業主媒合</strong></td>
+            <td>AIマッチングシステム</td>
+            <td><span class="badge badge-red">設計師</span></td>
+            <td>台灣移植</td>
+            <td><span class="badge badge-red">P0</span></td>
+            <td><span class="phase-tag phase-1">1</span></td>
+            <td>—（無競品）</td>
+            <td>日文 NLP、日本偏好模型</td>
+          </tr>
+          <tr data-role="designer">
+            <td><strong>智能報價系統</strong></td>
+            <td>AIスマート見積もり</td>
+            <td><span class="badge badge-red">設計師</span></td>
+            <td>台灣移植</td>
+            <td><span class="badge badge-red">P0</span></td>
+            <td><span class="phase-tag phase-1">1</span></td>
+            <td>ANDPAD（基本報價）</td>
+            <td>日本建材單價、消費稅計算</td>
+          </tr>
+          <tr data-role="designer">
+            <td><strong>客戶 CRM</strong></td>
+            <td>顧客管理CRM</td>
+            <td><span class="badge badge-red">設計師</span></td>
+            <td>台灣移植</td>
+            <td><span class="badge badge-red">P0</span></td>
+            <td><span class="phase-tag phase-1">1</span></td>
+            <td>ANDPAD、Houzz Pro</td>
+            <td>敬語模板、名刺管理整合</td>
+          </tr>
+          <tr data-role="designer">
+            <td><strong>專案管理看板</strong></td>
+            <td>プロジェクト管理ボード</td>
+            <td><span class="badge badge-red">設計師</span></td>
+            <td>台灣移植</td>
+            <td><span class="badge badge-gold">P1</span></td>
+            <td><span class="phase-tag phase-1">1</span></td>
+            <td>ANDPAD、Houzz Pro</td>
+            <td>日文 UI、和曆支援</td>
+          </tr>
+          <tr data-role="designer">
+            <td><strong>甘特圖排程</strong></td>
+            <td>ガントチャート工程表</td>
+            <td><span class="badge badge-red">設計師</span></td>
+            <td>台灣移植</td>
+            <td><span class="badge badge-gold">P1</span></td>
+            <td><span class="phase-tag phase-1">1</span></td>
+            <td>ANDPAD</td>
+            <td>日本國定假日、盆暮正月</td>
+          </tr>
+          <tr data-role="designer">
+            <td><strong>合約管理</strong></td>
+            <td>契約管理</td>
+            <td><span class="badge badge-red">設計師</span></td>
+            <td>台灣移植</td>
+            <td><span class="badge badge-gold">P1</span></td>
+            <td><span class="phase-tag phase-1">1</span></td>
+            <td>SAKSAK</td>
+            <td>日本民法合約範本、電子署名</td>
+          </tr>
+          <tr data-role="designer">
+            <td><strong>作品集 + SEO</strong></td>
+            <td>ポートフォリオ＆SEO</td>
+            <td><span class="badge badge-red">設計師</span></td>
+            <td>台灣移植</td>
+            <td><span class="badge badge-blue">P2</span></td>
+            <td><span class="phase-tag phase-1">1</span></td>
+            <td>Houzz Pro</td>
+            <td>Yahoo! Japan SEO、Google Japan</td>
+          </tr>
+          <tr data-role="designer">
+            <td><strong>訊息中心</strong></td>
+            <td>メッセージセンター</td>
+            <td><span class="badge badge-red">設計師</span></td>
+            <td>台灣移植</td>
+            <td><span class="badge badge-gold">P1</span></td>
+            <td><span class="phase-tag phase-1">1</span></td>
+            <td>Houzz Pro</td>
+            <td>LINE 整合、敬語快速回覆</td>
+          </tr>
+          <tr data-role="designer">
+            <td><strong>財務會計模組</strong></td>
+            <td>会計モジュール</td>
+            <td><span class="badge badge-red">設計師</span></td>
+            <td>台灣移植</td>
+            <td><span class="badge badge-blue">P2</span></td>
+            <td><span class="phase-tag phase-2">2</span></td>
+            <td>ANDPAD、SAKSAK</td>
+            <td>日本稅制、freee/MFクラウド連攜</td>
+          </tr>
+          <tr data-role="designer">
+            <td><strong>經營成長顧問</strong></td>
+            <td>経営アドバイザー</td>
+            <td><span class="badge badge-red">設計師</span></td>
+            <td>台灣移植</td>
+            <td><span class="badge badge-blue">P2</span></td>
+            <td><span class="phase-tag phase-2">2</span></td>
+            <td>—（無競品）</td>
+            <td>日本業界 KPI 基準值</td>
+          </tr>
+          <tr data-role="designer">
+            <td><strong>品牌行銷工具</strong></td>
+            <td>ブランドマーケティング</td>
+            <td><span class="badge badge-red">設計師</span></td>
+            <td>日本整合</td>
+            <td><span class="badge badge-gold">P1</span></td>
+            <td><span class="phase-tag phase-2">2</span></td>
+            <td>Houzz Pro</td>
+            <td>日本 SNS（Instagram, X）整合</td>
+          </tr>
+          <tr data-role="designer">
+            <td><strong>提案書生成器</strong></td>
+            <td>提案書ジェネレーター</td>
+            <td><span class="badge badge-red">設計師</span></td>
+            <td>日本整合</td>
+            <td><span class="badge badge-gold">P1</span></td>
+            <td><span class="phase-tag phase-2">2</span></td>
+            <td>ASCAST</td>
+            <td>日式提案書格式、A3 橫向排版</td>
+          </tr>
+          <tr data-role="designer">
+            <td><strong>AI 設計助手</strong></td>
+            <td>AIデザインアシスタント</td>
+            <td><span class="badge badge-red">設計師</span></td>
+            <td>全新開發</td>
+            <td><span class="badge badge-gold">P1</span></td>
+            <td><span class="phase-tag phase-3">3</span></td>
+            <td>—（無競品）</td>
+            <td>日本住宅風格訓練資料</td>
+          </tr>
+
+          <!-- Crew Features -->
+          <tr data-role="crew">
+            <td><strong>工班排程管理</strong></td>
+            <td>職人スケジュール管理</td>
+            <td><span class="badge badge-blue">工班</span></td>
+            <td>台灣移植</td>
+            <td><span class="badge badge-red">P0</span></td>
+            <td><span class="phase-tag phase-1">1</span></td>
+            <td>ANDPAD、助太刀</td>
+            <td>日本曆法、勤怠管理連攜</td>
+          </tr>
+          <tr data-role="crew">
+            <td><strong>施工進度追蹤</strong></td>
+            <td>工事進捗トラッキング</td>
+            <td><span class="badge badge-blue">工班</span></td>
+            <td>台灣移植</td>
+            <td><span class="badge badge-red">P0</span></td>
+            <td><span class="phase-tag phase-1">1</span></td>
+            <td>ANDPAD</td>
+            <td>日本施工標準工程名稱</td>
+          </tr>
+          <tr data-role="crew">
+            <td><strong>收入管理</strong></td>
+            <td>収入管理</td>
+            <td><span class="badge badge-blue">工班</span></td>
+            <td>台灣移植</td>
+            <td><span class="badge badge-gold">P1</span></td>
+            <td><span class="phase-tag phase-1">1</span></td>
+            <td>助太刀</td>
+            <td>日本源泉徵收稅、請求書格式</td>
+          </tr>
+          <tr data-role="crew">
+            <td><strong>PRO 認證系統</strong></td>
+            <td>PRO認定制度</td>
+            <td><span class="badge badge-blue">工班</span></td>
+            <td>台灣移植</td>
+            <td><span class="badge badge-gold">P1</span></td>
+            <td><span class="phase-tag phase-1">1</span></td>
+            <td>CraftBank</td>
+            <td>日本建設業許可證驗證</td>
+          </tr>
+          <tr data-role="crew">
+            <td><strong>現場施工管理</strong></td>
+            <td>現場管理システム</td>
+            <td><span class="badge badge-blue">工班</span></td>
+            <td>日本整合</td>
+            <td><span class="badge badge-red">P0</span></td>
+            <td><span class="phase-tag phase-2">2</span></td>
+            <td>ANDPAD</td>
+            <td>安全衛生法合規、KY 活動</td>
+          </tr>
+          <tr data-role="crew">
+            <td><strong>電子日報系統</strong></td>
+            <td>電子日報</td>
+            <td><span class="badge badge-blue">工班</span></td>
+            <td>日本整合</td>
+            <td><span class="badge badge-gold">P1</span></td>
+            <td><span class="phase-tag phase-2">2</span></td>
+            <td>CraftBank、ANDPAD</td>
+            <td>日本標準日報格式、寫真台帳</td>
+          </tr>
+          <tr data-role="crew">
+            <td><strong>勞災保險整合</strong></td>
+            <td>労災保険連携</td>
+            <td><span class="badge badge-blue">工班</span></td>
+            <td>日本整合</td>
+            <td><span class="badge badge-blue">P2</span></td>
+            <td><span class="phase-tag phase-2">2</span></td>
+            <td>CraftBank</td>
+            <td>日本勞災保險制度、一人親方</td>
+          </tr>
+          <tr data-role="crew">
+            <td><strong>AI 品質檢測</strong></td>
+            <td>AI品質検査</td>
+            <td><span class="badge badge-blue">工班</span></td>
+            <td>全新開發</td>
+            <td><span class="badge badge-blue">P2</span></td>
+            <td><span class="phase-tag phase-3">3</span></td>
+            <td>—（無競品）</td>
+            <td>日本建築基準法檢查項目</td>
+          </tr>
+
+          <!-- Supplier Features -->
+          <tr data-role="supplier">
+            <td><strong>商品刊登系統</strong></td>
+            <td>商品掲載システム</td>
+            <td><span class="badge badge-green">建材商</span></td>
+            <td>台灣移植</td>
+            <td><span class="badge badge-red">P0</span></td>
+            <td><span class="phase-tag phase-1">1</span></td>
+            <td>—（無競品）</td>
+            <td>JIS 規格、日本建材分類</td>
+          </tr>
+          <tr data-role="supplier">
+            <td><strong>搜尋排名優化</strong></td>
+            <td>検索ランキング最適化</td>
+            <td><span class="badge badge-green">建材商</span></td>
+            <td>台灣移植</td>
+            <td><span class="badge badge-gold">P1</span></td>
+            <td><span class="phase-tag phase-1">1</span></td>
+            <td>—（無競品）</td>
+            <td>日文搜尋邏輯、品牌知名度</td>
+          </tr>
+          <tr data-role="supplier">
+            <td><strong>詢價通知系統</strong></td>
+            <td>問い合わせ通知</td>
+            <td><span class="badge badge-green">建材商</span></td>
+            <td>台灣移植</td>
+            <td><span class="badge badge-red">P0</span></td>
+            <td><span class="phase-tag phase-1">1</span></td>
+            <td>—（無競品）</td>
+            <td>LINE 通知、FAX 代替</td>
+          </tr>
+          <tr data-role="supplier">
+            <td><strong>數據報表</strong></td>
+            <td>データレポート</td>
+            <td><span class="badge badge-green">建材商</span></td>
+            <td>台灣移植</td>
+            <td><span class="badge badge-gold">P1</span></td>
+            <td><span class="phase-tag phase-1">1</span></td>
+            <td>—（無競品）</td>
+            <td>日本商業分析指標</td>
+          </tr>
+          <tr data-role="supplier">
+            <td><strong>PRO 認證徽章</strong></td>
+            <td>PRO認定バッジ</td>
+            <td><span class="badge badge-green">建材商</span></td>
+            <td>台灣移植</td>
+            <td><span class="badge badge-gold">P1</span></td>
+            <td><span class="phase-tag phase-1">1</span></td>
+            <td>—（無競品）</td>
+            <td>日本品質認證連結</td>
+          </tr>
+          <tr data-role="supplier">
+            <td><strong>線上訂購整合</strong></td>
+            <td>オンライン発注連携</td>
+            <td><span class="badge badge-green">建材商</span></td>
+            <td>日本整合</td>
+            <td><span class="badge badge-red">P0</span></td>
+            <td><span class="phase-tag phase-2">2</span></td>
+            <td>ASCAST</td>
+            <td>EDI 連攜、掛賣決濟</td>
+          </tr>
+          <tr data-role="supplier">
+            <td><strong>庫存同步</strong></td>
+            <td>在庫同期</td>
+            <td><span class="badge badge-green">建材商</span></td>
+            <td>日本整合</td>
+            <td><span class="badge badge-gold">P1</span></td>
+            <td><span class="phase-tag phase-2">2</span></td>
+            <td>ASCAST</td>
+            <td>日本倉庫管理系統連攜</td>
+          </tr>
+
+          <!-- Cross-role Features -->
+          <tr data-role="cross">
+            <td><strong>設計師↔工班配對</strong></td>
+            <td>デザイナー×職人マッチング</td>
+            <td><span class="badge badge-purple">跨角色</span></td>
+            <td>全新開發</td>
+            <td><span class="badge badge-red">P0</span></td>
+            <td><span class="phase-tag phase-3">3</span></td>
+            <td>—（無競品）</td>
+            <td>日本職人技能分類體系</td>
+          </tr>
+          <tr data-role="cross">
+            <td><strong>建材↔設計推薦</strong></td>
+            <td>建材×デザインAIレコメンド</td>
+            <td><span class="badge badge-purple">跨角色</span></td>
+            <td>全新開發</td>
+            <td><span class="badge badge-gold">P1</span></td>
+            <td><span class="phase-tag phase-3">3</span></td>
+            <td>—（無競品）</td>
+            <td>日本住宅風格資料庫</td>
+          </tr>
+          <tr data-role="cross">
+            <td><strong>供應鏈排程優化</strong></td>
+            <td>サプライチェーン最適化</td>
+            <td><span class="badge badge-purple">跨角色</span></td>
+            <td>全新開發</td>
+            <td><span class="badge badge-gold">P1</span></td>
+            <td><span class="phase-tag phase-3">3</span></td>
+            <td>—（無競品）</td>
+            <td>日本物流特性（時間指定配送）</td>
+          </tr>
+          <tr data-role="cross">
+            <td><strong>跨角色異常預警</strong></td>
+            <td>クロスロールアラート</td>
+            <td><span class="badge badge-purple">跨角色</span></td>
+            <td>全新開發</td>
+            <td><span class="badge badge-blue">P2</span></td>
+            <td><span class="phase-tag phase-3">3</span></td>
+            <td>—（無競品）</td>
+            <td>日文通知範本</td>
+          </tr>
+          <tr data-role="cross">
+            <td><strong>市場數據洞察</strong></td>
+            <td>マーケットインサイト</td>
+            <td><span class="badge badge-purple">跨角色</span></td>
+            <td>全新開發</td>
+            <td><span class="badge badge-gold">P1</span></td>
+            <td><span class="phase-tag phase-3">3</span></td>
+            <td>—（無競品）</td>
+            <td>日本不動產＆建設統計連攜</td>
+          </tr>
+          <tr data-role="cross">
+            <td><strong>AI 文件生成</strong></td>
+            <td>AIドキュメント生成</td>
+            <td><span class="badge badge-purple">跨角色</span></td>
+            <td>全新開發</td>
+            <td><span class="badge badge-blue">P2</span></td>
+            <td><span class="phase-tag phase-3">3</span></td>
+            <td>—（無競品）</td>
+            <td>日文商業文書規範</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="margin-top: 16px;">
+      <h4>功能統計</h4>
+      <div class="kpi-grid">
+        <div class="kpi-box">
+          <div class="kpi-num" style="color: var(--red);">33</div>
+          <div class="kpi-label">總功能數</div>
+        </div>
+        <div class="kpi-box">
+          <div class="kpi-num" style="color: var(--red);">13</div>
+          <div class="kpi-label">設計師功能</div>
+        </div>
+        <div class="kpi-box">
+          <div class="kpi-num" style="color: var(--blue);">8</div>
+          <div class="kpi-label">工班功能</div>
+        </div>
+        <div class="kpi-box">
+          <div class="kpi-num" style="color: var(--green);">7</div>
+          <div class="kpi-label">建材商功能</div>
+        </div>
+        <div class="kpi-box">
+          <div class="kpi-num" style="color: var(--purple);">6</div>
+          <div class="kpi-label">跨角色功能</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================== -->
+<!-- 5. Localization Strategy -->
+<!-- ===================================================================== -->
+<section id="localization">
+  <div class="container">
+    <h2><span class="num">05</span> 在地化策略 Localization Strategy</h2>
+    <p class="section-desc">從語言、法規、文化、支付到系統整合——全方位日本在地化。</p>
+
+    <div class="card-grid">
+      <div class="card card-sm">
+        <h4 style="margin-top:0;">🗾 語言與 UI</h4>
+        <ul>
+          <li><strong>主要語言：</strong>日文優先（日本語ファースト）</li>
+          <li><strong>架構：</strong>支援多語言的 i18n 框架，未來可擴展至其他亞洲市場</li>
+          <li><strong>字型：</strong>Noto Sans JP（Google Fonts）+ 系統字型</li>
+          <li><strong>敬語層級：</strong>系統訊息使用丁寧語（です/ます）、客戶通訊支援敬語範本</li>
+          <li><strong>日期格式：</strong>支援西曆與和曆（令和）雙格式</li>
+        </ul>
+      </div>
+
+      <div class="card card-sm">
+        <h4 style="margin-top:0;">💴 支付方式</h4>
+        <ul>
+          <li><strong>信用卡：</strong>VISA / MasterCard / JCB（日本市佔最高）</li>
+          <li><strong>銀行轉帳：</strong>日本銀行振込（みずほ、三菱 UFJ、三井住友）</li>
+          <li><strong>口座振替：</strong>自動扣款（SaaS 月費主流）</li>
+          <li><strong>請求書払い：</strong>企業間後付決済（Paid、NP 掛け払い）</li>
+          <li><strong>便利商店付款：</strong>コンビニ決済（小型用戶）</li>
+          <li><strong>支付閘道：</strong>Stripe Japan 或 GMO Payment Gateway</li>
+        </ul>
+      </div>
+
+      <div class="card card-sm">
+        <h4 style="margin-top:0;">⚖️ 法規合規</h4>
+        <ul>
+          <li><strong>建設業法：</strong>建設業許可證驗證、主任技術者/監理技術者資格</li>
+          <li><strong>建築基準法：</strong>建築確認申請相關功能合規</li>
+          <li><strong>個人情報保護法：</strong>APPI 合規（日本版 GDPR）</li>
+          <li><strong>下請法：</strong>下請代金支拂遲延等防止法（保護分包商條款）</li>
+          <li><strong>電子帳簿保存法：</strong>電子帳簿/發票保存合規（2024 義務化）</li>
+          <li><strong>インボイス制度：</strong>適格請求書發行事業者登錄番號管理</li>
+        </ul>
+      </div>
+
+      <div class="card card-sm">
+        <h4 style="margin-top:0;">🎌 文化適應</h4>
+        <ul>
+          <li><strong>商務禮儀：</strong>名刺交換流程整合、挨拶文範本</li>
+          <li><strong>溝通風格：</strong>間接表達（「検討させてください」vs「No」）</li>
+          <li><strong>品質意識：</strong>5S（整理、整頓、清掃、清潔、躾）工地管理</li>
+          <li><strong>關係建立：</strong>支援「付き合い」文化的長期關係追蹤</li>
+          <li><strong>決策流程：</strong>根回し（事前協商）、稟議（逐層核准）UX 支援</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>📖 建設用語對照表</h3>
+    <div class="table-wrap">
+      <table class="glossary">
+        <thead>
+          <tr><th>台灣用語</th><th>日本用語</th><th>說明</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>設計師</td><td>インテリアデザイナー / 建築士</td><td>日本分為一級/二級建築士</td></tr>
+          <tr><td>工班</td><td>職人 / 工務店</td><td>職人=個人、工務店=公司</td></tr>
+          <tr><td>建材商</td><td>建材メーカー / 建材卸商</td><td>製造商 vs 批發商區分</td></tr>
+          <tr><td>坪</td><td>坪（つぼ）/ ㎡</td><td>日本仍使用坪但官方用㎡，1坪=3.3㎡</td></tr>
+          <tr><td>業主</td><td>施主（せしゅ）</td><td>日本建設業正式用語</td></tr>
+          <tr><td>報價單</td><td>見積書（みつもりしょ）</td><td>格式有嚴格日本商慣行</td></tr>
+          <tr><td>合約</td><td>請負契約 / 工事契約</td><td>需符合建設業法規定</td></tr>
+          <tr><td>監工</td><td>現場監督 / 現場代理人</td><td>法定資格要求</td></tr>
+          <tr><td>竣工驗收</td><td>竣工検査 / 引渡し</td><td>完工檢查 + 交屋</td></tr>
+          <tr><td>追加工程</td><td>追加工事 / 変更工事</td><td>需書面變更同意</td></tr>
+          <tr><td>木作</td><td>大工工事（だいくこうじ）</td><td>日本大工文化深厚</td></tr>
+          <tr><td>水電</td><td>設備工事（電気・給排水）</td><td>需各別專業資格</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>🔌 系統整合</h3>
+    <div class="card">
+      <div class="card-grid">
+        <div>
+          <h4 style="margin-top:0;">政府系統</h4>
+          <ul>
+            <li><strong>NETIS：</strong>新技術情報提供系統 API</li>
+            <li><strong>CORINS：</strong>工事實績情報服務</li>
+            <li><strong>建設業許可查詢：</strong>國土交通省 DB</li>
+            <li><strong>e-Tax：</strong>電子申告連攜</li>
+          </ul>
+        </div>
+        <div>
+          <h4 style="margin-top:0;">商業服務</h4>
+          <ul>
+            <li><strong>LINE：</strong>LINE Official Account API（日本通訊首選）</li>
+            <li><strong>freee / MFクラウド：</strong>會計軟體連攜</li>
+            <li><strong>CloudSign / GMO Sign：</strong>電子簽約</li>
+            <li><strong>Sansan：</strong>名刺管理連攜</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================== -->
+<!-- 6. Go-to-Market -->
+<!-- ===================================================================== -->
+<section id="gtm">
+  <div class="container">
+    <h2><span class="num">06</span> 市場進入策略 Go-to-Market</h2>
+    <p class="section-desc">從東京出發，逐步擴展至全日本。</p>
+
+    <h3>🗺 地域展開策略</h3>
+    <div class="timeline">
+      <div class="tl-item active">
+        <div class="tl-date">Wave 1（M1~M6）— 東京都 + 神奈川縣</div>
+        <p>聚焦首都圈，裝修需求最密集的地區。目標：港區、渋谷區、世田谷區等高端住宅區。</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">Wave 2（M7~M12）— 大阪 + 名古屋</div>
+        <p>擴展至關西、中部地區。利用 Wave 1 的成功案例作為進入推力。</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">Wave 3（M13~M18）— 福岡 + 札幌 + 仙台</div>
+        <p>覆蓋日本主要都市圈，建立全國網絡。</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">Wave 4（M19~M24）— 全國展開</div>
+        <p>中小城市、地方都市全面覆蓋。此時品牌效應與口碑已建立。</p>
+      </div>
+    </div>
+
+    <h3>💰 定價策略</h3>
+    <p>參考競品定價，採取「中間切入」策略——比 ANDPAD 便宜但功能更多、比 Houzz Pro 貴但三角色整合。</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>方案</th><th>設計師</th><th>工班</th><th>建材商</th><th>定位</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Free</strong></td>
+            <td>基本 CRM + 3 專案</td>
+            <td>排程 + 5 工程</td>
+            <td>50 件商品刊登</td>
+            <td>體驗 & 獲取用戶</td>
+          </tr>
+          <tr>
+            <td><strong>Basic — ¥9,800/月</strong></td>
+            <td>全功能 + 20 專案<br>+ AI 報價</td>
+            <td>全功能 + 30 工程<br>+ 日報</td>
+            <td>500 件商品<br>+ 排名優化</td>
+            <td>個人/小團隊</td>
+          </tr>
+          <tr>
+            <td><strong>Pro — ¥29,800/月</strong></td>
+            <td>無限專案 + AI 媒合<br>+ 品牌行銷</td>
+            <td>無限工程 + 現場管理<br>+ 保險整合</td>
+            <td>無限商品 + 即時通知<br>+ 數據報表</td>
+            <td>成長型企業</td>
+          </tr>
+          <tr>
+            <td><strong>Enterprise — 個別報價</strong></td>
+            <td colspan="3">全功能 + API 整合 + 專屬客服 + SLA 保證 + 客製化</td>
+            <td>大型企業</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card-grid">
+      <div class="card card-sm">
+        <h4 style="margin-top:0;">🤝 合作夥伴策略</h4>
+        <ul>
+          <li><strong>日本建築士會連合會：</strong>全國 47 都道府縣建築士會</li>
+          <li><strong>日本インテリアデザイナー協会（JID）：</strong>室內設計師專業組織</li>
+          <li><strong>全國建設業協會：</strong>中小工務店最大組織</li>
+          <li><strong>日本建材・住宅設備產業協會：</strong>建材商業界團體</li>
+          <li><strong>LIXIL / TOTO / Panasonic：</strong>大型建材品牌策略合作</li>
+        </ul>
+      </div>
+      <div class="card card-sm">
+        <h4 style="margin-top:0;">📣 行銷策略</h4>
+        <ul>
+          <li><strong>展示會：</strong>Japan Home & Building Show、リフォーム産業フェア</li>
+          <li><strong>業界媒體：</strong>日経アーキテクチュア、新建ハウジング</li>
+          <li><strong>數位行銷：</strong>Google Ads Japan、LINE 廣告</li>
+          <li><strong>內容行銷：</strong>日文部落格、成功案例、白皮書</li>
+          <li><strong>KOL 合作：</strong>知名設計師、建築 YouTuber</li>
+          <li><strong>推薦計畫：</strong>既有用戶推薦獎勵（¥5,000 credit）</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>🏢 BD（業務開發）策略</h3>
+    <div class="card">
+      <p>日本 B2B SaaS 銷售的關鍵：<strong>信賴構築</strong>。不同於台灣可以快速 Online 轉換，日本企業重視「顔が見える関係」（看得見臉的關係）。</p>
+      <div class="card-grid" style="margin-top: 16px;">
+        <div>
+          <h4 style="margin-top:0;">Inside Sales</h4>
+          <ul>
+            <li>Web セミナー（線上說明會）每週舉辦</li>
+            <li>免費試用 30 天（日本市場標配）</li>
+            <li>LINE 即時客服</li>
+          </ul>
+        </div>
+        <div>
+          <h4 style="margin-top:0;">Field Sales</h4>
+          <ul>
+            <li>東京 + 大阪設立業務據點</li>
+            <li>客戶拜訪（訪問營業）</li>
+            <li>業界團體推薦信取得</li>
+          </ul>
+        </div>
+        <div>
+          <h4 style="margin-top:0;">Customer Success</h4>
+          <ul>
+            <li>專屬 CS 經理（日本語母語）</li>
+            <li>導入支援（オンボーディング）</li>
+            <li>定期業務檢討會議</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================== -->
+<!-- 7. Technical Architecture -->
+<!-- ===================================================================== -->
+<section id="tech">
+  <div class="container">
+    <h2><span class="num">07</span> 技術架構 Technical Architecture</h2>
+    <p class="section-desc">支撐日本市場的技術基礎建設。</p>
+
+    <div class="card">
+      <h4 style="margin-top:0;">🏗 架構設計原則</h4>
+      <div class="card-grid">
+        <div>
+          <h4>Multi-Tenant 多租戶</h4>
+          <ul>
+            <li>台灣與日本共用核心引擎，數據完全隔離</li>
+            <li>Tenant-level 設定：語言、貨幣、稅率、法規</li>
+            <li>未來可快速擴展至韓國、東南亞</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Data Residency 數據落地</h4>
+          <ul>
+            <li>日本用戶數據必須存放於日本境內</li>
+            <li>主要：AWS Tokyo (ap-northeast-1)</li>
+            <li>備援：Azure Japan East</li>
+            <li>CDN：CloudFront Japan PoP</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h4 style="margin-top:0;">🔧 技術堆疊</h4>
+      <div class="table-wrap" style="margin: 0;">
+        <table>
+          <thead><tr><th>層級</th><th>技術選擇</th><th>日本特殊考量</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>Frontend</strong></td>
+              <td>Next.js 15 + React 19 + TypeScript</td>
+              <td>日文 Web Font 優化、CJK 排版</td>
+            </tr>
+            <tr>
+              <td><strong>Backend</strong></td>
+              <td>Node.js + NestJS / Go microservices</td>
+              <td>日本時區處理（JST UTC+9）</td>
+            </tr>
+            <tr>
+              <td><strong>Database</strong></td>
+              <td>PostgreSQL（主）+ Redis（快取）</td>
+              <td>日文全文檢索（pg_bigm）</td>
+            </tr>
+            <tr>
+              <td><strong>Search</strong></td>
+              <td>Elasticsearch + kuromoji（日文分詞）</td>
+              <td>日文形態素解析、漢字/假名搜尋</td>
+            </tr>
+            <tr>
+              <td><strong>AI/ML</strong></td>
+              <td>OpenAI API + 自訓練模型</td>
+              <td>日文 LLM fine-tuning、建設用語</td>
+            </tr>
+            <tr>
+              <td><strong>Storage</strong></td>
+              <td>S3 (Tokyo) + CloudFront</td>
+              <td>施工照片大量儲存最佳化</td>
+            </tr>
+            <tr>
+              <td><strong>Auth</strong></td>
+              <td>NextAuth.js + OAuth 2.0</td>
+              <td>LINE Login 整合（日本必備）</td>
+            </tr>
+            <tr>
+              <td><strong>Payment</strong></td>
+              <td>Stripe Japan / GMO PG</td>
+              <td>口座振替、請求書払い支援</td>
+            </tr>
+            <tr>
+              <td><strong>Messaging</strong></td>
+              <td>LINE Messaging API + SendGrid</td>
+              <td>LINE 為日本主流通訊工具</td>
+            </tr>
+            <tr>
+              <td><strong>i18n</strong></td>
+              <td>next-intl + ICU MessageFormat</td>
+              <td>複數形、敬語、和曆支援</td>
+            </tr>
+            <tr>
+              <td><strong>Monitoring</strong></td>
+              <td>Datadog / New Relic</td>
+              <td>日本營業時間 SLA 監控</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h4 style="margin-top:0;">🔌 API-First 設計</h4>
+      <p>所有功能以 RESTful API + GraphQL 提供，便於日本第三方整合：</p>
+      <ul>
+        <li><strong>建材商 API：</strong>商品同步、庫存查詢、訂單接收</li>
+        <li><strong>會計軟體 API：</strong>freee、MFクラウド 請求書同步</li>
+        <li><strong>電子簽約 API：</strong>CloudSign、GMO Sign 合約簽署</li>
+        <li><strong>LINE API：</strong>通知、客服、登入整合</li>
+        <li><strong>政府 API：</strong>建設業許可查詢、NETIS 資料取得</li>
+        <li><strong>Webhook：</strong>事件驅動通知，支援自定義 Webhook</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================== -->
+<!-- 8. Risk Analysis -->
+<!-- ===================================================================== -->
+<section id="risk">
+  <div class="container">
+    <h2><span class="num">08</span> 風險分析 Risk Analysis</h2>
+    <p class="section-desc">識別潛在風險，提前制定應對策略。</p>
+
+    <div class="card-grid">
+      <!-- Market Risks -->
+      <div class="card risk-card">
+        <h4 style="margin-top:0;">📉 市場風險</h4>
+        <div class="table-wrap" style="margin: 12px 0 0;">
+          <table>
+            <thead><tr><th>風險</th><th>影響</th><th>機率</th><th>應對策略</th></tr></thead>
+            <tbody>
+              <tr>
+                <td>日本企業對外國 SaaS 信任度低</td>
+                <td><span class="badge badge-red">高</span></td>
+                <td><span class="badge badge-red">高</span></td>
+                <td>設立日本法人、聘用日本籍管理層、取得 ISMS 認證</td>
+              </tr>
+              <tr>
+                <td>ANDPAD 擴展設計師工具</td>
+                <td><span class="badge badge-red">高</span></td>
+                <td><span class="badge badge-gold">中</span></td>
+                <td>搶先建立建材商網絡（ANDPAD 的弱項），深化三角色連接</td>
+              </tr>
+              <tr>
+                <td>日本企業導入速度慢</td>
+                <td><span class="badge badge-gold">中</span></td>
+                <td><span class="badge badge-red">高</span></td>
+                <td>提供充分的導入支援、30 天免費試用、日文教學影片</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Technical Risks -->
+      <div class="card risk-card medium">
+        <h4 style="margin-top:0;">⚙️ 技術風險</h4>
+        <div class="table-wrap" style="margin: 12px 0 0;">
+          <table>
+            <thead><tr><th>風險</th><th>影響</th><th>機率</th><th>應對策略</th></tr></thead>
+            <tbody>
+              <tr>
+                <td>日文 NLP/AI 精準度不足</td>
+                <td><span class="badge badge-red">高</span></td>
+                <td><span class="badge badge-gold">中</span></td>
+                <td>與日本 AI 公司合作、建設專業語料庫訓練</td>
+              </tr>
+              <tr>
+                <td>數據遷移複雜度</td>
+                <td><span class="badge badge-gold">中</span></td>
+                <td><span class="badge badge-gold">中</span></td>
+                <td>提供 CSV/Excel 匯入工具、專人協助遷移</td>
+              </tr>
+              <tr>
+                <td>日本特有系統整合困難</td>
+                <td><span class="badge badge-gold">中</span></td>
+                <td><span class="badge badge-gold">中</span></td>
+                <td>聘用熟悉日本 SaaS 生態的工程師</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Regulatory Risks -->
+      <div class="card risk-card medium">
+        <h4 style="margin-top:0;">📜 法規風險</h4>
+        <div class="table-wrap" style="margin: 12px 0 0;">
+          <table>
+            <thead><tr><th>風險</th><th>影響</th><th>機率</th><th>應對策略</th></tr></thead>
+            <tbody>
+              <tr>
+                <td>APPI（個人情報保護法）合規</td>
+                <td><span class="badge badge-red">高</span></td>
+                <td><span class="badge badge-green">低</span></td>
+                <td>聘請日本隱私法律顧問、定期合規審查</td>
+              </tr>
+              <tr>
+                <td>建設業法規變更</td>
+                <td><span class="badge badge-gold">中</span></td>
+                <td><span class="badge badge-green">低</span></td>
+                <td>加入業界團體取得法規變更資訊、保持系統彈性</td>
+              </tr>
+              <tr>
+                <td>電子帳簿保存法合規</td>
+                <td><span class="badge badge-gold">中</span></td>
+                <td><span class="badge badge-gold">中</span></td>
+                <td>與日本會計師事務所合作確認要件</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Cultural Risks -->
+      <div class="card risk-card low">
+        <h4 style="margin-top:0;">🎌 文化風險</h4>
+        <div class="table-wrap" style="margin: 12px 0 0;">
+          <table>
+            <thead><tr><th>風險</th><th>影響</th><th>機率</th><th>應對策略</th></tr></thead>
+            <tbody>
+              <tr>
+                <td>產品 UX 不符合日本期待</td>
+                <td><span class="badge badge-red">高</span></td>
+                <td><span class="badge badge-gold">中</span></td>
+                <td>聘用日本 UX 設計師、大量用戶訪談（ユーザーインタビュー）</td>
+              </tr>
+              <tr>
+                <td>客服品質未達日本標準</td>
+                <td><span class="badge badge-red">高</span></td>
+                <td><span class="badge badge-gold">中</span></td>
+                <td>全日本語母語客服團隊、CS 回應 SLA（2 小時內）</td>
+              </tr>
+              <tr>
+                <td>業務關係建立耗時</td>
+                <td><span class="badge badge-gold">中</span></td>
+                <td><span class="badge badge-red">高</span></td>
+                <td>提前進入、建立業界人脈、參加展覽會</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight-box">
+      <h4 style="margin-top:0;">🛡 整體風險緩解策略</h4>
+      <ol>
+        <li><strong>日本法人設立：</strong>M1 立即設立日本子公司（株式会社），提升信賴度</li>
+        <li><strong>日本團隊優先：</strong>核心團隊（BD、CS、UX）以日本人為主</li>
+        <li><strong>漸進式展開：</strong>不求快，求穩。先在小範圍驗證再擴大</li>
+        <li><strong>合規第一：</strong>寧可多花時間在合規上，也不要事後修補</li>
+        <li><strong>退出條件：</strong>M6 進行 Go/No-Go 評估，若 PMF 指標未達門檻，調整策略或止損</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================== -->
+<!-- 9. KPIs & Milestones -->
+<!-- ===================================================================== -->
+<section id="kpi">
+  <div class="container">
+    <h2><span class="num">09</span> KPI 與里程碑 KPIs & Milestones</h2>
+    <p class="section-desc">每個階段的量化目標與關鍵里程碑。</p>
+
+    <h3>📊 Phase 別 KPI 目標</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>指標</th><th>Phase 1 (M6)</th><th>Phase 2 (M12)</th><th>Phase 3 (M24)</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>設計師用戶數</strong></td>
+            <td>500</td>
+            <td>2,000</td>
+            <td>8,000</td>
+          </tr>
+          <tr>
+            <td><strong>工班用戶數</strong></td>
+            <td>50</td>
+            <td>200</td>
+            <td>1,500</td>
+          </tr>
+          <tr>
+            <td><strong>建材商用戶數</strong></td>
+            <td>20</td>
+            <td>100</td>
+            <td>500</td>
+          </tr>
+          <tr>
+            <td><strong>月營收（MRR）</strong></td>
+            <td>¥200 萬</td>
+            <td>¥1,500 萬</td>
+            <td>¥5,000 萬</td>
+          </tr>
+          <tr>
+            <td><strong>付費轉換率</strong></td>
+            <td>8%</td>
+            <td>15%</td>
+            <td>25%</td>
+          </tr>
+          <tr>
+            <td><strong>月活躍用戶（MAU）</strong></td>
+            <td>300</td>
+            <td>1,500</td>
+            <td>6,000</td>
+          </tr>
+          <tr>
+            <td><strong>NPS</strong></td>
+            <td>30+</td>
+            <td>40+</td>
+            <td>50+</td>
+          </tr>
+          <tr>
+            <td><strong>Churn Rate（月）</strong></td>
+            <td>&lt; 8%</td>
+            <td>&lt; 5%</td>
+            <td>&lt; 3%</td>
+          </tr>
+          <tr>
+            <td><strong>跨角色交易數/月</strong></td>
+            <td>—</td>
+            <td>100</td>
+            <td>2,000</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>🏁 關鍵里程碑</h3>
+    <div class="timeline">
+      <div class="tl-item active">
+        <div class="tl-date">M1 — 日本法人設立</div>
+        <p>株式会社 LargeHome Japan 設立完成。東京辦公室開設。</p>
+      </div>
+      <div class="tl-item active">
+        <div class="tl-date">M2 — 日本團隊核心到位</div>
+        <p>BD Lead、CS Lead、UX Designer（日本籍）入職。</p>
+      </div>
+      <div class="tl-item active">
+        <div class="tl-date">M3 — Alpha 版上線</div>
+        <p>核心功能（CRM + 報價 + 排程）日文版，10 位 Alpha 用戶測試。</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">M4 — Beta 版公測</div>
+        <p>50 位設計師 Beta 測試，收集反饋迭代。</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">M6 — Phase 1 完成 / Go-No-Go</div>
+        <p>500 用戶、MRR ¥200 萬。進行 Go/No-Go 決策。</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">M8 — 工班模組正式上線</div>
+        <p>現場管理、日報系統上線，工班開始入駐。</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">M10 — 建材商市集上線</div>
+        <p>建材商開始上架商品，首批訂單完成。</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">M12 — Phase 2 完成</div>
+        <p>三角色全上線，2,300+ 用戶，MRR ¥1,500 萬。</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">M15 — AI 跨角色功能上線</div>
+        <p>設計師↔工班配對、建材推薦 AI 正式發布。</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">M18 — 全國展開啟動</div>
+        <p>福岡、札幌、仙台業務啟動。</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">M24 — Phase 3 完成</div>
+        <p>10,000 用戶、MRR ¥5,000 萬。評估 Series A 融資。</p>
+      </div>
+    </div>
+
+    <h3>👥 團隊擴編計畫</h3>
+    <div class="bar-chart">
+      <div class="bar-row">
+        <span class="bar-label">M1~M6（8 人）</span>
+        <div class="bar-track"><div class="bar-fill red" style="width:20%">BD×2 CS×2 Dev×2 UX×1 PM×1</div></div>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">M7~M12（18 人）</span>
+        <div class="bar-track"><div class="bar-fill blue" style="width:45%">+BD×3 +CS×2 +Dev×3 +Marketing×2</div></div>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">M13~M18（30 人）</span>
+        <div class="bar-track"><div class="bar-fill green" style="width:75%">+BD×4 +CS×3 +Dev×3 +AI×2</div></div>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">M19~M24（45 人）</span>
+        <div class="bar-track"><div class="bar-fill purple" style="width:100%">+各部門擴編 +地方據點人員</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================================== -->
+<!-- 10. Budget Estimation -->
+<!-- ===================================================================== -->
+<section id="budget">
+  <div class="container">
+    <h2><span class="num">10</span> 預算估算 Budget Estimation</h2>
+    <p class="section-desc">24 個月投資計畫與預期回報。</p>
+
+    <h3>💴 Phase 別預算</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>項目</th><th>Phase 1 (M1-6)</th><th>Phase 2 (M7-12)</th><th>Phase 3 (M13-24)</th><th>24 個月合計</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>人事費用</strong></td>
+            <td>¥3,600 萬</td>
+            <td>¥8,100 萬</td>
+            <td>¥27,000 萬</td>
+            <td>¥38,700 萬</td>
+          </tr>
+          <tr>
+            <td><strong>開發費用</strong></td>
+            <td>¥2,400 萬</td>
+            <td>¥3,600 萬</td>
+            <td>¥6,000 萬</td>
+            <td>¥12,000 萬</td>
+          </tr>
+          <tr>
+            <td><strong>在地化費用</strong></td>
+            <td>¥1,200 萬</td>
+            <td>¥600 萬</td>
+            <td>¥400 萬</td>
+            <td>¥2,200 萬</td>
+          </tr>
+          <tr>
+            <td><strong>BD/Sales</strong></td>
+            <td>¥800 萬</td>
+            <td>¥2,400 萬</td>
+            <td>¥6,000 萬</td>
+            <td>¥9,200 萬</td>
+          </tr>
+          <tr>
+            <td><strong>行銷費用</strong></td>
+            <td>¥600 萬</td>
+            <td>¥1,800 萬</td>
+            <td>¥4,800 萬</td>
+            <td>¥7,200 萬</td>
+          </tr>
+          <tr>
+            <td><strong>辦公室/設備</strong></td>
+            <td>¥900 萬</td>
+            <td>¥900 萬</td>
+            <td>¥2,400 萬</td>
+            <td>¥4,200 萬</td>
+          </tr>
+          <tr>
+            <td><strong>雲端/基礎設施</strong></td>
+            <td>¥300 萬</td>
+            <td>¥600 萬</td>
+            <td>¥1,800 萬</td>
+            <td>¥2,700 萬</td>
+          </tr>
+          <tr>
+            <td><strong>法務/合規</strong></td>
+            <td>¥500 萬</td>
+            <td>¥300 萬</td>
+            <td>¥400 萬</td>
+            <td>¥1,200 萬</td>
+          </tr>
+          <tr>
+            <td><strong>預備金（10%）</strong></td>
+            <td>¥1,030 萬</td>
+            <td>¥1,830 萬</td>
+            <td>¥4,880 萬</td>
+            <td>¥7,740 萬</td>
+          </tr>
+          <tr style="background: rgba(233,69,96,.08); font-weight: 700;">
+            <td><strong>合計</strong></td>
+            <td><strong>¥11,330 萬</strong></td>
+            <td><strong>¥20,130 萬</strong></td>
+            <td><strong>¥53,680 萬</strong></td>
+            <td style="color: var(--red); font-size: 18px;"><strong>¥85,140 萬</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-box">
+        <div class="kpi-num" style="color: var(--red);">¥8.5億</div>
+        <div class="kpi-label">24 個月總投資</div>
+      </div>
+      <div class="kpi-box">
+        <div class="kpi-num" style="color: var(--green);">¥6億</div>
+        <div class="kpi-label">M24 累積營收預估</div>
+      </div>
+      <div class="kpi-box">
+        <div class="kpi-num" style="color: var(--blue);">M30</div>
+        <div class="kpi-label">預計損益兩平月</div>
+      </div>
+      <div class="kpi-box">
+        <div class="kpi-num" style="color: var(--gold);">¥5,000萬</div>
+        <div class="kpi-label">M24 月營收目標</div>
+      </div>
+    </div>
+
+    <h3>📈 營收成長預測</h3>
+    <div class="card">
+      <div class="bar-chart">
+        <div class="bar-row">
+          <span class="bar-label">M3</span>
+          <div class="bar-track"><div class="bar-fill red" style="width:2%">¥50萬</div></div>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">M6</span>
+          <div class="bar-track"><div class="bar-fill red" style="width:4%">¥200萬</div></div>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">M9</span>
+          <div class="bar-track"><div class="bar-fill blue" style="width:14%">¥700萬</div></div>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">M12</span>
+          <div class="bar-track"><div class="bar-fill blue" style="width:30%">¥1,500萬</div></div>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">M18</span>
+          <div class="bar-track"><div class="bar-fill green" style="width:60%">¥3,000萬</div></div>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">M24</span>
+          <div class="bar-track"><div class="bar-fill purple" style="width:100%">¥5,000萬</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight-box">
+      <h4 style="margin-top:0;">💡 投資回報分析</h4>
+      <ul>
+        <li><strong>第一年（M1-12）投入：</strong>¥3.15 億（含人事、開發、BD、行銷）</li>
+        <li><strong>第一年營收預估：</strong>¥6,000 萬（累積）</li>
+        <li><strong>第二年（M13-24）投入：</strong>¥5.37 億（規模擴大期）</li>
+        <li><strong>第二年營收預估：</strong>¥5.4 億（累積）</li>
+        <li><strong>損益兩平預計：</strong>M30（第 30 個月），月營收穩定 ¥8,000 萬+</li>
+        <li><strong>3 年期 IRR 預估：</strong>35-45%（假設 M24 後持續成長）</li>
+        <li><strong>Series A 時機：</strong>M18-M24，基於 MRR 與用戶成長曲線</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Footer ===== -->
+<footer class="footer">
+  <div class="container">
+    <p style="margin-bottom: 8px;">
+      <strong style="color: var(--red);">LargeHome AI</strong> — 日本站產品需求文件 (PRD)
+    </p>
+    <p>版本 v004 | 2026 年 3 月 20 日 | 機密文件，請勿外傳</p>
+    <p style="margin-top: 12px; font-size: 12px;">
+      © 2026 LargeHome AI. All rights reserved. | 本文件包含商業機密資訊。
+    </p>
+  </div>
+</footer>
+
+<!-- ===== Interactive Filter Script ===== -->
+<script>
+function filterTable(role) {
+  const rows = document.querySelectorAll('#featureTable tbody tr');
+  const buttons = document.querySelectorAll('.filter-btn');
+  
+  buttons.forEach(btn => btn.classList.remove('active'));
+  event.target.classList.add('active');
+  
+  rows.forEach(row => {
+    if (role === 'all') {
+      row.style.display = '';
+    } else {
+      row.style.display = row.dataset.role === role ? '' : 'none';
+    }
+  });
+}
+</script>
+
+</body>
+</html>

@@ -51,5 +51,25 @@
       "businessGoal": "以日本市場為參照，驗證 LargeHome 產品定位的獨特性——連結設計師、工班、建材商三方的整合平台在日本尚無先例",
       "techNotes": "深色主題報告風格，含互動式對照表與競品卡片"
     }
+  },
+  {
+    "version": "v004",
+    "timestamp": "2026-03-20T14:40:00+08:00",
+    "description": "LargeHome AI 日本站 — 產品需求文件 (PRD)",
+    "author": "roger",
+    "files": ["index.html"],
+    "summary": {
+      "overview": "基於台灣產品能力與日本競品分析，產出完整的日本站 PRD，規劃三階段從台灣移植到獨家差異化的產品路線圖",
+      "changes": [
+        { "type": "feature", "text": "完整 10 章節 PRD：執行摘要、市場分析、產品策略、功能規格、在地化、GTM、技術架構、風險、KPI、預算" },
+        { "type": "feature", "text": "33 項功能完整矩陣表：含日文名稱、角色歸屬、來源（台灣移植/日本整合/全新開發）、優先級、對標競品" },
+        { "type": "feature", "text": "三階段產品策略：Phase 1 台灣移植 8 項核心功能 → Phase 2 整合 ANDPAD/Houzz/CraftBank/ASCAST 優勢 → Phase 3 AI 跨角色差異化" },
+        { "type": "feature", "text": "在地化策略：建設用語中日對照表 12 組、日本支付方式、建設業法/建築基準法合規、敬語 UX 設計" },
+        { "type": "feature", "text": "預算估算：24 個月合計 ¥8.5 億投資，含開發/在地化/BD/行銷明細與 ROI 分析" },
+        { "type": "feature", "text": "8 大競品橫向對比矩陣（✓/△/✗ 標記），驗證三角色整合的藍海定位" }
+      ],
+      "businessGoal": "為 LargeHome AI 日本站提供完整的產品規劃藍圖，從功能移植、競品整合到獨家差異化，支撐日本市場進入決策",
+      "techNotes": "深色主題、Sticky 導航、互動篩選表格、CSS 視覺化圖表、響應式設計、1,911 行完整文件"
+    }
   }
 ]
