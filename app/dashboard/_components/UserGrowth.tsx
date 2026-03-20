@@ -68,7 +68,7 @@ export default function UserGrowth() {
 
   useEffect(() => {
     if (!autoRefresh) return;
-    const interval = setInterval(fetchData, 30000);
+    const interval = setInterval(fetchData, 600000);
     return () => clearInterval(interval);
   }, [autoRefresh, fetchData]);
 
@@ -164,7 +164,7 @@ export default function UserGrowth() {
                 : "bg-slate-50 text-slate-500 border border-slate-200"
             }`}
           >
-            {autoRefresh ? "自動 30s" : "已暫停"}
+            {autoRefresh ? "自動 10min" : "已暫停"}
           </button>
           <button
             onClick={fetchData}
