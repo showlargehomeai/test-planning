@@ -1,43 +1,43 @@
 {
-  "auditId": "AUDIT-2026-03-20-004",
-  "timestamp": "2026-03-20T21:56:00+08:00",
-  "round": 4,
+  "auditId": "AUDIT-2026-03-20-005",
+  "timestamp": "2026-03-20T22:26:00+08:00",
+  "round": 5,
   "company": {
     "currentHeadcount": 25,
     "targetHeadcount": 400,
-    "currentMRR": "1,250萬",
+    "currentMRR": "1,280萬",
     "targetMRR_M12": "7,724萬",
-    "currentClients": 200,
+    "currentClients": 205,
     "targetClients_M12": 2755,
     "bdCurrent": 6,
     "bdTarget": 200,
-    "croStatus": "搜尋中",
-    "fundingStatus": "規劃中",
-    "phase": "Phase 0 - 準備期"
+    "croStatus": "搜尋中（剩52天）",
+    "fundingStatus": "銀行額度評估進行中",
+    "phase": "Phase 0 - 準備期（接近Gate 1）"
   },
   "taiwan": {
-    "overallReadiness": 52,
+    "overallReadiness": 54,
     "modules": [
-      {"name": "建材市集", "status": "production", "completion": 95, "priority": "done"},
-      {"name": "廠商管理", "status": "production", "completion": 90, "priority": "done"},
-      {"name": "設計師檔案", "status": "production", "completion": 85, "priority": "done"},
-      {"name": "RFQ 發案系統", "status": "production", "completion": 80, "priority": "done"},
-      {"name": "聊天/報價", "status": "production", "completion": 75, "priority": "done"},
-      {"name": "CRM 客戶管理", "status": "prototype", "completion": 42, "priority": "P0"},
-      {"name": "工程看板", "status": "prototype", "completion": 38, "priority": "P0"},
-      {"name": "排程日曆", "status": "prototype", "completion": 40, "priority": "P0"},
-      {"name": "合約管理", "status": "prototype", "completion": 30, "priority": "P0"},
-      {"name": "財務收支", "status": "prototype", "completion": 30, "priority": "P0"},
-      {"name": "AI 智慧報價", "status": "prototype", "completion": 20, "priority": "P1"},
-      {"name": "施工日報", "status": "prototype", "completion": 20, "priority": "P1"},
-      {"name": "工班配對", "status": "prototype", "completion": 15, "priority": "P1"},
-      {"name": "現場管理", "status": "prototype", "completion": 15, "priority": "P1"},
-      {"name": "建材訂購", "status": "prototype", "completion": 15, "priority": "P1"},
-      {"name": "庫存管理", "status": "prototype", "completion": 10, "priority": "P2"},
-      {"name": "提案書生成", "status": "prototype", "completion": 10, "priority": "P2"},
-      {"name": "AI 跨角色配對", "status": "prototype", "completion": 10, "priority": "P2"},
-      {"name": "異常預警", "status": "prototype", "completion": 10, "priority": "P2"},
-      {"name": "產業數據平台", "status": "prototype", "completion": 10, "priority": "P2"},
+      {"name": "建材市集", "status": "production", "completion": 96, "priority": "done"},
+      {"name": "廠商管理", "status": "production", "completion": 91, "priority": "done"},
+      {"name": "設計師檔案", "status": "production", "completion": 86, "priority": "done"},
+      {"name": "RFQ 發案系統", "status": "production", "completion": 82, "priority": "done"},
+      {"name": "聊天/報價", "status": "production", "completion": 77, "priority": "done"},
+      {"name": "CRM 客戶管理", "status": "prototype", "completion": 47, "priority": "P0"},
+      {"name": "工程看板", "status": "prototype", "completion": 42, "priority": "P0"},
+      {"name": "排程日曆", "status": "prototype", "completion": 43, "priority": "P0"},
+      {"name": "合約管理", "status": "prototype", "completion": 33, "priority": "P0"},
+      {"name": "財務收支", "status": "prototype", "completion": 32, "priority": "P0"},
+      {"name": "AI 智慧報價", "status": "prototype", "completion": 22, "priority": "P1"},
+      {"name": "施工日報", "status": "prototype", "completion": 22, "priority": "P1"},
+      {"name": "工班配對", "status": "prototype", "completion": 17, "priority": "P1"},
+      {"name": "現場管理", "status": "prototype", "completion": 17, "priority": "P1"},
+      {"name": "建材訂購", "status": "prototype", "completion": 17, "priority": "P1"},
+      {"name": "庫存管理", "status": "prototype", "completion": 12, "priority": "P2"},
+      {"name": "提案書生成", "status": "prototype", "completion": 12, "priority": "P2"},
+      {"name": "AI 跨角色配對", "status": "prototype", "completion": 12, "priority": "P2"},
+      {"name": "異常預警", "status": "prototype", "completion": 12, "priority": "P2"},
+      {"name": "產業數據平台", "status": "prototype", "completion": 12, "priority": "P2"},
       {"name": "i18n 國際化", "status": "not_started", "completion": 0, "priority": "P1-JP"}
     ]
   },
@@ -66,30 +66,37 @@
     ]
   },
   "bd_expansion": {
-    "plan": "200 BD 全台擴張",
+    "plan": "200 BD 全台擴張 v2",
     "totalInvestment": "2-2.5億",
+    "readinessScore": 85,
     "phases": [
-      {"name": "Phase 0 準備期", "months": "現在-M2", "status": "active", "keyAction": "找 CRO + COO"},
+      {"name": "Phase 0 準備期", "months": "現在-M2", "status": "active", "keyAction": "找 CRO + COO + 15天啟動"},
       {"name": "Phase 1 司令部", "months": "M1-M2", "status": "pending", "keyAction": "北部 VP + Director"},
       {"name": "Phase 2 北部展開", "months": "M3-M5", "status": "planned", "keyAction": "BD 衝到 75 人"},
       {"name": "Phase 3 全台加速", "months": "M6-M9", "status": "planned", "keyAction": "BD 達 170 人"},
       {"name": "Phase 4 穩固", "months": "M10-M12", "status": "planned", "keyAction": "補齊 200 BD"}
     ],
     "gates": [
-      {"gate": "Gate 1", "deadline": "M2底", "condition": "CRO到位", "status": "pending"},
+      {"gate": "Gate 1", "deadline": "M2底", "condition": "CRO到位", "status": "critical_path"},
       {"gate": "Gate 2", "deadline": "M5底", "condition": "月新簽≥90客戶", "status": "future"},
       {"gate": "Gate 3", "deadline": "M8底", "condition": "MRR>2000萬", "status": "future"}
     ]
   },
   "mckinsey_recommendations": [
-    {"priority": "CRITICAL", "action": "CRO 招聘剩餘 55 天，必須立即鎖定候選人並簽約，否則暫停全部擴張計畫", "category": "人才"},
-    {"priority": "CRITICAL", "action": "台灣站 P0 功能進展加速：CRM+7%、看板+3%、排程+5%，但距離 production 仍需 65 天", "category": "產品"},
-    {"priority": "CRITICAL", "action": "200 BD v2 計畫已完備（薪酬+培訓+組織架構），等 CRO 到位立即執行 15 天啟動程序", "category": "執行"},
-    {"priority": "HIGH", "action": "CRM 後端 API 已升級 production，前端整合需在 Gate 1（CRO到位）後 21 天內完成", "category": "產品"},
-    {"priority": "HIGH", "action": "工班管理後端是台灣站核心差異化，需在 BD 75 人時同步上線", "category": "技術"},
-    {"priority": "MEDIUM", "action": "i18n 框架暫緩，但需在台灣 Gate 2 通過後立即啟動（M6 開始）", "category": "技術"},
-    {"priority": "MEDIUM", "action": "建立 Gate 1（M2底 CRO到位）的執行清單與風險預案", "category": "治理"},
-    {"priority": "LOW", "action": "日本站整體就緒度仍 8%，符合先台灣後日本策略，暫不調整優先序", "category": "國際化"}
+    {"priority": "CRITICAL", "action": "CRO 招聘剩餘 52 天，3家獵頭已啟動，候選人必須在 3 週內鎖定 top 3", "category": "人才"},
+    {"priority": "CRITICAL", "action": "200BD v2 計畫完成度 85%（新增 15 天啟動程序），隨時可執行但必須等 CRO 到位", "category": "執行"},
+    {"priority": "CRITICAL", "action": "台灣站 P0 功能達 54%（較上輪 +2%），但 CRM/工程看板/排程仍是瓶頸", "category": "產品"},
+    {"priority": "HIGH", "action": "MRR 成長至 1,280萬（月增 30萬），客戶數 205 戶，展現良好動能", "category": "營運"},
+    {"priority": "HIGH", "action": "基礎設施 6/11 green，4 個 red（i18n、Multi-tenant、支付、工班）需在 Gate 1 後處理", "category": "技術"},
+    {"priority": "HIGH", "action": "建立 Gate 1（M2底）倒數 52 天執行清單，每週追蹤進度", "category": "治理"},
+    {"priority": "MEDIUM", "action": "日本站暫維持 8% 就緒度，符合先台灣後日本策略", "category": "國際化"},
+    {"priority": "MEDIUM", "action": "評估銀行營運週轉金額度（目標 1-1.5 億），為 Phase 1 做準備", "category": "財務"}
   ],
-  "nextAuditAt": "2026-03-23T09:00:00+08:00"
+  "criticalPath": {
+    "nextMilestone": "Gate 1 - CRO 到位",
+    "daysRemaining": 52,
+    "riskLevel": "HIGH",
+    "blockers": ["CRO 人選未確定", "COO 備選方案不足", "銀行額度評估進行中"]
+  },
+  "nextAuditAt": "2026-03-23T22:30:00+08:00"
 }
