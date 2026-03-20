@@ -3,6 +3,10 @@ import AnalyticsKPIs from "./_components/AnalyticsKPIs";
 import UserGrowth from "./_components/UserGrowth";
 import ProductGrowth from "./_components/ProductGrowth";
 import VendorGrowth from "./_components/VendorGrowth";
+import BrandGrowth from "./_components/BrandGrowth";
+import VendorActivity from "./_components/VendorActivity";
+import CategoryAnalysis from "./_components/CategoryAnalysis";
+import CatalogGrowth from "./_components/CatalogGrowth";
 import RetentionChart from "./_components/RetentionChart";
 
 function KPISkeleton() {
@@ -64,6 +68,26 @@ export default function DashboardPage() {
       {/* Vendor Growth */}
       <Suspense fallback={<ChartSkeleton />}>
         <VendorGrowth />
+      </Suspense>
+
+      {/* Brand Growth */}
+      <Suspense fallback={<ChartSkeleton />}>
+        <BrandGrowth />
+      </Suspense>
+
+      {/* Vendor Activity Heatmap */}
+      <Suspense fallback={<ChartSkeleton />}>
+        <VendorActivity />
+      </Suspense>
+
+      {/* Category Analysis */}
+      <Suspense fallback={<ChartSkeleton />}>
+        <CategoryAnalysis />
+      </Suspense>
+
+      {/* Catalog Growth */}
+      <Suspense fallback={<ChartSkeleton />}>
+        <CatalogGrowth />
       </Suspense>
 
       {/* Retention Chart */}
