@@ -1,102 +1,172 @@
 {
-  "auditId": "AUDIT-2026-03-20-005",
-  "timestamp": "2026-03-20T22:26:00+08:00",
-  "round": 5,
-  "company": {
-    "currentHeadcount": 25,
-    "targetHeadcount": 400,
-    "currentMRR": "1,280萬",
-    "targetMRR_M12": "7,724萬",
-    "currentClients": 205,
-    "targetClients_M12": 2755,
-    "bdCurrent": 6,
-    "bdTarget": 200,
-    "croStatus": "搜尋中（剩52天）",
-    "fundingStatus": "銀行額度評估進行中",
-    "phase": "Phase 0 - 準備期（接近Gate 1）"
-  },
-  "taiwan": {
-    "overallReadiness": 54,
-    "modules": [
-      {"name": "建材市集", "status": "production", "completion": 96, "priority": "done"},
-      {"name": "廠商管理", "status": "production", "completion": 91, "priority": "done"},
-      {"name": "設計師檔案", "status": "production", "completion": 86, "priority": "done"},
-      {"name": "RFQ 發案系統", "status": "production", "completion": 82, "priority": "done"},
-      {"name": "聊天/報價", "status": "production", "completion": 77, "priority": "done"},
-      {"name": "CRM 客戶管理", "status": "prototype", "completion": 47, "priority": "P0"},
-      {"name": "工程看板", "status": "prototype", "completion": 42, "priority": "P0"},
-      {"name": "排程日曆", "status": "prototype", "completion": 43, "priority": "P0"},
-      {"name": "合約管理", "status": "prototype", "completion": 33, "priority": "P0"},
-      {"name": "財務收支", "status": "prototype", "completion": 32, "priority": "P0"},
-      {"name": "AI 智慧報價", "status": "prototype", "completion": 22, "priority": "P1"},
-      {"name": "施工日報", "status": "prototype", "completion": 22, "priority": "P1"},
-      {"name": "工班配對", "status": "prototype", "completion": 17, "priority": "P1"},
-      {"name": "現場管理", "status": "prototype", "completion": 17, "priority": "P1"},
-      {"name": "建材訂購", "status": "prototype", "completion": 17, "priority": "P1"},
-      {"name": "庫存管理", "status": "prototype", "completion": 12, "priority": "P2"},
-      {"name": "提案書生成", "status": "prototype", "completion": 12, "priority": "P2"},
-      {"name": "AI 跨角色配對", "status": "prototype", "completion": 12, "priority": "P2"},
-      {"name": "異常預警", "status": "prototype", "completion": 12, "priority": "P2"},
-      {"name": "產業數據平台", "status": "prototype", "completion": 12, "priority": "P2"},
-      {"name": "i18n 國際化", "status": "not_started", "completion": 0, "priority": "P1-JP"}
-    ]
-  },
-  "japan": {
-    "overallReadiness": 8,
-    "blockers": ["i18n 框架未建立", "Multi-tenant 架構未實作", "日本支付整合未開始", "在地化內容未準備"],
-    "phases": [
-      {"phase": "Phase 1 台灣移植", "target": "M1-M6", "readiness": 25, "status": "blocked_by_infra"},
-      {"phase": "Phase 2 日本整合", "target": "M7-M12", "readiness": 5, "status": "not_started"},
-      {"phase": "Phase 3 差異化", "target": "M13-M24", "readiness": 10, "status": "prototype_only"}
-    ]
-  },
-  "infrastructure": {
-    "items": [
-      {"name": "Azure AKS", "status": "production", "health": "green"},
-      {"name": "PostgreSQL", "status": "production", "health": "green"},
-      {"name": "Azure Blob", "status": "production", "health": "green"},
-      {"name": "Auth (Entra)", "status": "production", "health": "green"},
-      {"name": "CI/CD Pipeline", "status": "production", "health": "green"},
-      {"name": "CosmosDB 向量搜尋", "status": "production", "health": "yellow"},
-      {"name": "i18n 框架", "status": "not_started", "health": "red"},
-      {"name": "Multi-tenant", "status": "not_started", "health": "red"},
-      {"name": "統一支付閘道", "status": "not_started", "health": "red"},
-      {"name": "CRM 後端 API", "status": "production", "health": "green"},
-      {"name": "工班管理後端", "status": "not_started", "health": "red"}
-    ]
-  },
-  "bd_expansion": {
-    "plan": "200 BD 全台擴張 v2",
-    "totalInvestment": "2-2.5億",
-    "readinessScore": 85,
-    "phases": [
-      {"name": "Phase 0 準備期", "months": "現在-M2", "status": "active", "keyAction": "找 CRO + COO + 15天啟動"},
-      {"name": "Phase 1 司令部", "months": "M1-M2", "status": "pending", "keyAction": "北部 VP + Director"},
-      {"name": "Phase 2 北部展開", "months": "M3-M5", "status": "planned", "keyAction": "BD 衝到 75 人"},
-      {"name": "Phase 3 全台加速", "months": "M6-M9", "status": "planned", "keyAction": "BD 達 170 人"},
-      {"name": "Phase 4 穩固", "months": "M10-M12", "status": "planned", "keyAction": "補齊 200 BD"}
-    ],
-    "gates": [
-      {"gate": "Gate 1", "deadline": "M2底", "condition": "CRO到位", "status": "critical_path"},
-      {"gate": "Gate 2", "deadline": "M5底", "condition": "月新簽≥90客戶", "status": "future"},
-      {"gate": "Gate 3", "deadline": "M8底", "condition": "MRR>2000萬", "status": "future"}
-    ]
-  },
-  "mckinsey_recommendations": [
-    {"priority": "CRITICAL", "action": "CRO 招聘剩餘 52 天，3家獵頭已啟動，候選人必須在 3 週內鎖定 top 3", "category": "人才"},
-    {"priority": "CRITICAL", "action": "200BD v2 計畫完成度 85%（新增 15 天啟動程序），隨時可執行但必須等 CRO 到位", "category": "執行"},
-    {"priority": "CRITICAL", "action": "台灣站 P0 功能達 54%（較上輪 +2%），但 CRM/工程看板/排程仍是瓶頸", "category": "產品"},
-    {"priority": "HIGH", "action": "MRR 成長至 1,280萬（月增 30萬），客戶數 205 戶，展現良好動能", "category": "營運"},
-    {"priority": "HIGH", "action": "基礎設施 6/11 green，4 個 red（i18n、Multi-tenant、支付、工班）需在 Gate 1 後處理", "category": "技術"},
-    {"priority": "HIGH", "action": "建立 Gate 1（M2底）倒數 52 天執行清單，每週追蹤進度", "category": "治理"},
-    {"priority": "MEDIUM", "action": "日本站暫維持 8% 就緒度，符合先台灣後日本策略", "category": "國際化"},
-    {"priority": "MEDIUM", "action": "評估銀行營運週轉金額度（目標 1-1.5 億），為 Phase 1 做準備", "category": "財務"}
+  "auditId": "AUDIT-006",
+  "timestamp": "2026-03-20T22:50:00+08:00",
+  "round": 6,
+  "perspective": "CTO + CIO",
+
+  "decisionsForShow": [
+    {
+      "id": "DEC-001",
+      "urgency": "CRITICAL",
+      "question": "CRM 後端要自建還是用 HubSpot/Salesforce API？自建成本高但資料完全掌控；第三方快但月費隨 BD 人數線性增長（200 BD × $50/人 = $10K/月）",
+      "context": "目前 CRM 前端用 localStorage，要上線需要後端。auth-service 已有用戶系統，profile-service 有廠商/設計師資料，可以在上面擴展",
+      "options": ["A: 擴展 profile-service 加 CRM 表（0 月費，開發 3-4 週）", "B: HubSpot API 整合（月費 $3K-10K，開發 1-2 週）", "C: 先 B 再 A（快速上線再逐步遷移）"],
+      "recommendation": "C — 先用 HubSpot Free tier 跑 MVP，同時在 profile-service 建 CRM schema，M3 遷移",
+      "deadline": "需要在 BD 第一批入職前決定（~M2）",
+      "status": "waiting_decision"
+    },
+    {
+      "id": "DEC-002",
+      "urgency": "CRITICAL",
+      "question": "報價系統要整合進現有的 quote_carts/quote_items 表，還是另建新的 smart_quotes 表？",
+      "context": "interaction-service 已有 quotes、quote_items、quote_requests、quote_responses 四張表（migration 026-028）。前端新建的 /smart-quote 用 localStorage，需要對接",
+      "options": ["A: 直接擴展現有 quote 表加 AI 欄位", "B: 另建 smart_quotes 表，用 FK 關聯原有 quote"],
+      "recommendation": "A — 現有 quote 表已有完整架構，只需加 market_avg_price、ai_suggestion、competitiveness 三個欄位",
+      "deadline": "Sprint 下一輪",
+      "status": "waiting_decision"
+    },
+    {
+      "id": "DEC-003",
+      "urgency": "HIGH",
+      "question": "工班管理（日報/現場管理/承包）要放在哪個 service？新建 crew-service 還是擴展 interaction-service？",
+      "context": "interaction-service 已管理 projects、chat、requirements。工班日報和現場管理邏輯上也是「專案互動」的一部分。但 interaction-service 已有 46 files，再加可能太肥",
+      "options": ["A: 擴展 interaction-service（共用 project 關聯）", "B: 新建 crew-service（獨立部署、獨立擴展）", "C: 先 A，量大了再拆 B"],
+      "recommendation": "C — 先在 interaction-service 加 daily_reports、site_inspections 表，共用 projects FK。DB migration 先行，前端對接",
+      "deadline": "本週",
+      "status": "waiting_decision"
+    },
+    {
+      "id": "DEC-004",
+      "urgency": "HIGH",
+      "question": "建材訂購流程是平台內閉環（LargeHome 處理金流）還是導流到廠商（只做詢價/連結）？",
+      "context": "這決定了技術複雜度差 10 倍。閉環需要支付閘道、庫存同步、物流追蹤。導流只需要 inquiry + redirect",
+      "options": ["A: 閉環（平台抽成模式，技術重）", "B: 導流（詢價導流，技術輕）", "C: 先 B 再逐步走 A"],
+      "recommendation": "C — Phase 1 用詢價導流驗證需求，Phase 2 高頻品項再做閉環",
+      "deadline": "M3 前",
+      "status": "waiting_decision"
+    }
   ],
-  "criticalPath": {
-    "nextMilestone": "Gate 1 - CRO 到位",
-    "daysRemaining": 52,
-    "riskLevel": "HIGH",
-    "blockers": ["CRO 人選未確定", "COO 備選方案不足", "銀行額度評估進行中"]
+
+  "threeRoleEcosystem": {
+    "vision": "讓設計師的一個動作，同時驅動工班排程和建材下單——三角色資訊流、金流、工作流在同一平台打通",
+    "currentState": "三個角色的功能目前是孤島。設計師用 RFQ 發案，工班用 requirements 接案，建材商用 product listing 上架。但它們之間沒有自動化連結",
+    "integrationOpportunities": [
+      {
+        "name": "設計師建立專案 → 自動推薦工班",
+        "designerAction": "在 /projects/new 填寫專案需求（工法、地點、預算）",
+        "crewTrigger": "crew-matching 演算法自動配對，推送到工班的 /crew/requests",
+        "supplierTrigger": "根據專案建材需求，自動顯示相關供應商報價",
+        "existingRepo": "interaction-service 的 projects + requirements 表已有基礎，需加 auto_match trigger",
+        "effort": "2-3 週",
+        "priority": "P0"
+      },
+      {
+        "name": "設計師確認報價 → 自動生成工班排程 + 建材訂單",
+        "designerAction": "在 /smart-quote 確認報價並簽約",
+        "crewTrigger": "根據報價工項自動拆分為工班任務，推送到 /kanban",
+        "supplierTrigger": "根據報價建材項目自動生成詢價單，推送到相關廠商",
+        "existingRepo": "interaction-service 的 quote_items 有工項資料，需建 task_generation + inquiry_generation 邏輯",
+        "effort": "4-6 週",
+        "priority": "P1"
+      },
+      {
+        "name": "工班提交日報 → 自動通知設計師 + 觸發下一階段建材配送",
+        "designerAction": "收到施工進度通知，在 dashboard 看到即時進度",
+        "crewTrigger": "工班在 /daily-report 提交完工報告",
+        "supplierTrigger": "下一工序的建材自動觸發配送提醒",
+        "existingRepo": "interaction-service 的 notifications + push_subscriptions 已有推播基礎",
+        "effort": "3-4 週",
+        "priority": "P1"
+      },
+      {
+        "name": "建材缺貨/延遲 → 自動預警設計師和工班",
+        "designerAction": "收到建材延遲預警 + 替代方案建議",
+        "crewTrigger": "收到施工排程調整建議",
+        "supplierTrigger": "庫存低於閾值時觸發",
+        "existingRepo": "product-service 目前沒有庫存欄位，需加 inventory 相關表",
+        "effort": "2-3 週",
+        "priority": "P2"
+      }
+    ]
   },
-  "nextAuditAt": "2026-03-23T22:30:00+08:00"
+
+  "repoIntegrationPlan": {
+    "summary": "21 個前端 prototype 模組需要對接到 5 個後端 service，以下是整合優先順序",
+    "integrations": [
+      {
+        "frontend": "/crm, /contracts",
+        "backend": "profile-service",
+        "dbChanges": "新增 client_contacts, client_activities, contracts, payment_milestones 表",
+        "migrationFile": "049_create_crm_tables.sql",
+        "priority": "P0",
+        "status": "not_started",
+        "blockedBy": "DEC-001（自建 vs 第三方）"
+      },
+      {
+        "frontend": "/smart-quote, /quote-templates, /market-prices",
+        "backend": "interaction-service",
+        "dbChanges": "擴展 quote_items 加 market_avg_price, ai_suggestion 欄位；新增 quote_templates, market_prices 表",
+        "migrationFile": "049_extend_quotes_for_smart_pricing.sql",
+        "priority": "P0",
+        "status": "not_started",
+        "blockedBy": "DEC-002"
+      },
+      {
+        "frontend": "/daily-report, /site-management, /subcontracting",
+        "backend": "interaction-service（或新 crew-service）",
+        "dbChanges": "新增 daily_reports, site_inspections, inspection_checklists, subcontract_layers 表",
+        "migrationFile": "050_create_crew_management_tables.sql",
+        "priority": "P0",
+        "status": "not_started",
+        "blockedBy": "DEC-003"
+      },
+      {
+        "frontend": "/kanban, /schedule, /finance",
+        "backend": "interaction-service",
+        "dbChanges": "新增 kanban_tasks, schedule_events, financial_transactions 表",
+        "migrationFile": "051_create_project_management_tables.sql",
+        "priority": "P1",
+        "status": "not_started",
+        "blockedBy": null
+      },
+      {
+        "frontend": "/material-ordering, /inventory",
+        "backend": "product-service",
+        "dbChanges": "新增 material_orders, order_items, inventory_movements 表；products 加 stock_quantity 欄位",
+        "migrationFile": "052_create_ordering_inventory_tables.sql",
+        "priority": "P1",
+        "status": "not_started",
+        "blockedBy": "DEC-004"
+      },
+      {
+        "frontend": "/crew-matching, /ai-crew-match, /ai-material-recommend",
+        "backend": "新建 ai-service 或擴展 analytics-service",
+        "dbChanges": "新增 match_results, recommendations, match_history 表",
+        "migrationFile": "053_create_ai_matching_tables.sql",
+        "priority": "P2",
+        "status": "not_started",
+        "blockedBy": null
+      }
+    ]
+  },
+
+  "developmentBacklog": [
+    {"id": "BL-001", "sprint": "Sprint 5", "title": "DB Migration: CRM tables", "type": "backend", "repo": "LargeHomeAI--LargeHome", "effort": "2d", "priority": "P0", "status": "todo", "blockedBy": "DEC-001"},
+    {"id": "BL-002", "sprint": "Sprint 5", "title": "profile-service: CRM API endpoints", "type": "backend", "repo": "LargeHomeAI--profile-service", "effort": "5d", "priority": "P0", "status": "todo", "blockedBy": "BL-001"},
+    {"id": "BL-003", "sprint": "Sprint 5", "title": "Frontend /crm: 對接 profile-service API（移除 localStorage）", "type": "frontend", "repo": "LargeHomeAI--Frontend", "effort": "3d", "priority": "P0", "status": "todo", "blockedBy": "BL-002"},
+    {"id": "BL-004", "sprint": "Sprint 5", "title": "DB Migration: 擴展 quote 表 + smart pricing", "type": "backend", "repo": "LargeHomeAI--LargeHome", "effort": "1d", "priority": "P0", "status": "todo", "blockedBy": "DEC-002"},
+    {"id": "BL-005", "sprint": "Sprint 5", "title": "interaction-service: Smart Quote API", "type": "backend", "repo": "LargeHomeAI--interaction-service", "effort": "4d", "priority": "P0", "status": "todo", "blockedBy": "BL-004"},
+    {"id": "BL-006", "sprint": "Sprint 6", "title": "DB Migration: crew management tables", "type": "backend", "repo": "LargeHomeAI--LargeHome", "effort": "2d", "priority": "P0", "status": "todo", "blockedBy": "DEC-003"},
+    {"id": "BL-007", "sprint": "Sprint 6", "title": "interaction-service: Daily Report + Site Inspection API", "type": "backend", "repo": "LargeHomeAI--interaction-service", "effort": "5d", "priority": "P0", "status": "todo", "blockedBy": "BL-006"},
+    {"id": "BL-008", "sprint": "Sprint 6", "title": "DB Migration: kanban + schedule + finance tables", "type": "backend", "repo": "LargeHomeAI--LargeHome", "effort": "2d", "priority": "P1", "status": "todo", "blockedBy": null},
+    {"id": "BL-009", "sprint": "Sprint 6", "title": "interaction-service: Kanban + Schedule API", "type": "backend", "repo": "LargeHomeAI--interaction-service", "effort": "4d", "priority": "P1", "status": "todo", "blockedBy": "BL-008"},
+    {"id": "BL-010", "sprint": "Sprint 7", "title": "三角色自動連結: 專案→工班配對 trigger", "type": "backend", "repo": "LargeHomeAI--interaction-service", "effort": "5d", "priority": "P0", "status": "todo", "blockedBy": "BL-007"},
+    {"id": "BL-011", "sprint": "Sprint 7", "title": "三角色自動連結: 報價確認→任務生成", "type": "backend", "repo": "LargeHomeAI--interaction-service", "effort": "5d", "priority": "P1", "status": "todo", "blockedBy": "BL-005"},
+    {"id": "BL-012", "sprint": "Sprint 7", "title": "product-service: 庫存管理 + 訂購 API", "type": "backend", "repo": "LargeHomeAI--product-service", "effort": "5d", "priority": "P1", "status": "todo", "blockedBy": "DEC-004"},
+    {"id": "BL-013", "sprint": "Sprint 8", "title": "三角色自動連結: 日報→進度通知→建材配送", "type": "backend", "repo": "LargeHomeAI--interaction-service", "effort": "4d", "priority": "P1", "status": "todo", "blockedBy": "BL-010"},
+    {"id": "BL-014", "sprint": "Sprint 8", "title": "AI matching service 建置", "type": "backend", "repo": "LargeHomeAI--analytics-service", "effort": "10d", "priority": "P2", "status": "todo", "blockedBy": null},
+    {"id": "BL-015", "sprint": "Sprint 9", "title": "Frontend 全模組: localStorage → API 遷移", "type": "frontend", "repo": "LargeHomeAI--Frontend", "effort": "10d", "priority": "P1", "status": "todo", "blockedBy": "所有後端 API 完成"}
+  ],
+
+  "nextAuditFocus": "等待 Show 對 DEC-001~004 的決策，才能 unblock 後端開發。同時評估是否需要新增 crew-service 微服務"
 }
