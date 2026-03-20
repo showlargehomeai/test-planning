@@ -1,7 +1,7 @@
 {
-  "auditId": "AUDIT-006",
-  "timestamp": "2026-03-20T22:50:00+08:00",
-  "round": 6,
+  "auditId": "AUDIT-007",
+  "timestamp": "2026-03-20T23:22:00+08:00",
+  "round": 7,
   "perspective": "CTO + CIO",
 
   "decisionsForShow": [
@@ -44,6 +44,26 @@
       "recommendation": "C — Phase 1 用詢價導流驗證需求，Phase 2 高頻品項再做閉環",
       "deadline": "M3 前",
       "status": "waiting_decision"
+    },
+    {
+      "id": "DEC-005",
+      "urgency": "CRITICAL",
+      "question": "前端 Mock 數據處理策略：/crew/requests 等頁面現在用硬編碼 MOCK_RECEIVED_REQUESTS，這個要先清理掉還是趕快接真實 API？",
+      "context": "根據 ANALYSIS.md 發現工班接案功能在前端是 Mock 數據，但後端 interaction-service 已有 requirements 相關表。這會影響用戶體驗和數據一致性",
+      "options": ["A: 立刻隱藏這些 Mock 頁面，避免用戶混淆", "B: 優先開發 crew-service API 來取代 Mock", "C: 先用現有 interaction-service 的 requirements 表過渡"],
+      "recommendation": "C — 現有 requirements + projects 表已有工班需求基礎架構，可快速接上",
+      "deadline": "本週末",
+      "status": "waiting_decision"
+    },
+    {
+      "id": "DEC-006",
+      "urgency": "HIGH",
+      "question": "image-segmentation 服務要整合進 AKS ingress 嗎？現在是獨立運行，但建材選品流程（空間模擬）需要它。",
+      "context": "SAM 2.1 圖片分割已開發完成，但沒有整合到 K8s。如果要做「空間建材模擬」功能，需要決定部署方式",
+      "options": ["A: 整合進 AKS + 加入 ingress 路由", "B: 保持獨立部署，Frontend 直接調用", "C: 暫緩整合，等空間模擬 PRD 確定後再做"],
+      "recommendation": "A — 統一在 AKS 管理，方便 scaling 和監控",
+      "deadline": "Sprint 下一輪",
+      "status": "waiting_decision"
     }
   ],
 
@@ -58,7 +78,8 @@
         "supplierTrigger": "根據專案建材需求，自動顯示相關供應商報價",
         "existingRepo": "interaction-service 的 projects + requirements 表已有基礎，需加 auto_match trigger",
         "effort": "2-3 週",
-        "priority": "P0"
+        "priority": "P0",
+        "businessValue": "減少設計師找工班時間從 2-3 天降到 2-3 小時，提高項目啟動速度 5-10 倍"
       },
       {
         "name": "設計師確認報價 → 自動生成工班排程 + 建材訂單",
@@ -67,7 +88,8 @@
         "supplierTrigger": "根據報價建材項目自動生成詢價單，推送到相關廠商",
         "existingRepo": "interaction-service 的 quote_items 有工項資料，需建 task_generation + inquiry_generation 邏輯",
         "effort": "4-6 週",
-        "priority": "P1"
+        "priority": "P1",
+        "businessValue": "一鍵報價確認自動生成完整施工計劃+材料採購單，節省設計師 80% 專案管理時間"
       },
       {
         "name": "工班提交日報 → 自動通知設計師 + 觸發下一階段建材配送",
@@ -76,7 +98,8 @@
         "supplierTrigger": "下一工序的建材自動觸發配送提醒",
         "existingRepo": "interaction-service 的 notifications + push_subscriptions 已有推播基礎",
         "effort": "3-4 週",
-        "priority": "P1"
+        "priority": "P1",
+        "businessValue": "即時進度同步讓業主滿意度提升，減少進度詢問電話 70%，提高設計師專業形象"
       },
       {
         "name": "建材缺貨/延遲 → 自動預警設計師和工班",
@@ -85,7 +108,8 @@
         "supplierTrigger": "庫存低於閾值時觸發",
         "existingRepo": "product-service 目前沒有庫存欄位，需加 inventory 相關表",
         "effort": "2-3 週",
-        "priority": "P2"
+        "priority": "P2",
+        "businessValue": "避免材料延誤導致工期展延，提高專案準時完工率從 60% 到 85%"
       }
     ]
   },
@@ -152,6 +176,7 @@
 
   "developmentBacklog": [
     {"id": "BL-001", "sprint": "Sprint 5", "title": "DB Migration: CRM tables", "type": "backend", "repo": "LargeHomeAI--LargeHome", "effort": "2d", "priority": "P0", "status": "todo", "blockedBy": "DEC-001"},
+    {"id": "BL-001b", "sprint": "Sprint 5", "title": "清理前端 Mock 數據: /crew/requests → 真實 API", "type": "frontend", "repo": "LargeHomeAI--Frontend", "effort": "2d", "priority": "P0", "status": "todo", "blockedBy": "DEC-005"},
     {"id": "BL-002", "sprint": "Sprint 5", "title": "profile-service: CRM API endpoints", "type": "backend", "repo": "LargeHomeAI--profile-service", "effort": "5d", "priority": "P0", "status": "todo", "blockedBy": "BL-001"},
     {"id": "BL-003", "sprint": "Sprint 5", "title": "Frontend /crm: 對接 profile-service API（移除 localStorage）", "type": "frontend", "repo": "LargeHomeAI--Frontend", "effort": "3d", "priority": "P0", "status": "todo", "blockedBy": "BL-002"},
     {"id": "BL-004", "sprint": "Sprint 5", "title": "DB Migration: 擴展 quote 表 + smart pricing", "type": "backend", "repo": "LargeHomeAI--LargeHome", "effort": "1d", "priority": "P0", "status": "todo", "blockedBy": "DEC-002"},
@@ -165,8 +190,9 @@
     {"id": "BL-012", "sprint": "Sprint 7", "title": "product-service: 庫存管理 + 訂購 API", "type": "backend", "repo": "LargeHomeAI--product-service", "effort": "5d", "priority": "P1", "status": "todo", "blockedBy": "DEC-004"},
     {"id": "BL-013", "sprint": "Sprint 8", "title": "三角色自動連結: 日報→進度通知→建材配送", "type": "backend", "repo": "LargeHomeAI--interaction-service", "effort": "4d", "priority": "P1", "status": "todo", "blockedBy": "BL-010"},
     {"id": "BL-014", "sprint": "Sprint 8", "title": "AI matching service 建置", "type": "backend", "repo": "LargeHomeAI--analytics-service", "effort": "10d", "priority": "P2", "status": "todo", "blockedBy": null},
+    {"id": "BL-016", "sprint": "Sprint 6", "title": "image-segmentation 整合進 AKS ingress", "type": "backend", "repo": "LargeHomeAI--image-segmentation", "effort": "3d", "priority": "P2", "status": "todo", "blockedBy": "DEC-006"},
     {"id": "BL-015", "sprint": "Sprint 9", "title": "Frontend 全模組: localStorage → API 遷移", "type": "frontend", "repo": "LargeHomeAI--Frontend", "effort": "10d", "priority": "P1", "status": "todo", "blockedBy": "所有後端 API 完成"}
   ],
 
-  "nextAuditFocus": "等待 Show 對 DEC-001~004 的決策，才能 unblock 後端開發。同時評估是否需要新增 crew-service 微服務"
+  "nextAuditFocus": "等待 Show 對 DEC-001~006 的決策。新發現：前端 Mock 數據和 image-segmentation 整合問題需要優先處理。三角色自動化整合的商業價值已量化，可作為優先開發依據"
 }
