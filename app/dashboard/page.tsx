@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import StrategicAudit from "./_components/StrategicAudit";
 import AnalyticsKPIs from "./_components/AnalyticsKPIs";
 import UserGrowth from "./_components/UserGrowth";
 import ProductGrowth from "./_components/ProductGrowth";
@@ -49,6 +50,11 @@ export default function DashboardPage() {
           即時數據分析 — LargeHome（資料來源：PostgreSQL 真實用戶數據）
         </p>
       </div>
+
+      {/* Strategic Audit */}
+      <Suspense fallback={<ChartSkeleton />}>
+        <StrategicAudit compact />
+      </Suspense>
 
       {/* KPI Row: DAU / WAU / MAU */}
       <Suspense fallback={<KPISkeleton />}>

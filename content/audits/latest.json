@@ -1,0 +1,93 @@
+{
+  "auditId": "AUDIT-2026-03-20-001",
+  "timestamp": "2026-03-20T18:30:00+08:00",
+  "round": 1,
+  "company": {
+    "currentHeadcount": 25,
+    "targetHeadcount": 400,
+    "currentMRR": "1,250萬",
+    "targetMRR_M12": "7,724萬",
+    "currentClients": 200,
+    "targetClients_M12": 2755,
+    "bdCurrent": 6,
+    "bdTarget": 200,
+    "croStatus": "搜尋中",
+    "fundingStatus": "規劃中",
+    "phase": "Phase 0 - 準備期"
+  },
+  "taiwan": {
+    "overallReadiness": 45,
+    "modules": [
+      {"name": "建材市集", "status": "production", "completion": 95, "priority": "done"},
+      {"name": "廠商管理", "status": "production", "completion": 90, "priority": "done"},
+      {"name": "設計師檔案", "status": "production", "completion": 85, "priority": "done"},
+      {"name": "RFQ 發案系統", "status": "production", "completion": 80, "priority": "done"},
+      {"name": "聊天/報價", "status": "production", "completion": 75, "priority": "done"},
+      {"name": "CRM 客戶管理", "status": "prototype", "completion": 30, "priority": "P0"},
+      {"name": "工程看板", "status": "prototype", "completion": 30, "priority": "P0"},
+      {"name": "排程日曆", "status": "prototype", "completion": 30, "priority": "P0"},
+      {"name": "合約管理", "status": "prototype", "completion": 25, "priority": "P0"},
+      {"name": "財務收支", "status": "prototype", "completion": 25, "priority": "P0"},
+      {"name": "AI 智慧報價", "status": "prototype", "completion": 20, "priority": "P1"},
+      {"name": "施工日報", "status": "prototype", "completion": 20, "priority": "P1"},
+      {"name": "工班配對", "status": "prototype", "completion": 15, "priority": "P1"},
+      {"name": "現場管理", "status": "prototype", "completion": 15, "priority": "P1"},
+      {"name": "建材訂購", "status": "prototype", "completion": 15, "priority": "P1"},
+      {"name": "庫存管理", "status": "prototype", "completion": 10, "priority": "P2"},
+      {"name": "提案書生成", "status": "prototype", "completion": 10, "priority": "P2"},
+      {"name": "AI 跨角色配對", "status": "prototype", "completion": 10, "priority": "P2"},
+      {"name": "異常預警", "status": "prototype", "completion": 10, "priority": "P2"},
+      {"name": "產業數據平台", "status": "prototype", "completion": 10, "priority": "P2"},
+      {"name": "i18n 國際化", "status": "not_started", "completion": 0, "priority": "P1-JP"}
+    ]
+  },
+  "japan": {
+    "overallReadiness": 12,
+    "blockers": ["i18n 框架未建立", "Multi-tenant 架構未實作", "日本支付整合未開始", "在地化內容未準備"],
+    "phases": [
+      {"phase": "Phase 1 台灣移植", "target": "M1-M6", "readiness": 25, "status": "blocked_by_infra"},
+      {"phase": "Phase 2 日本整合", "target": "M7-M12", "readiness": 5, "status": "not_started"},
+      {"phase": "Phase 3 差異化", "target": "M13-M24", "readiness": 10, "status": "prototype_only"}
+    ]
+  },
+  "infrastructure": {
+    "items": [
+      {"name": "Azure AKS", "status": "production", "health": "green"},
+      {"name": "PostgreSQL", "status": "production", "health": "green"},
+      {"name": "Azure Blob", "status": "production", "health": "green"},
+      {"name": "Auth (Entra)", "status": "production", "health": "green"},
+      {"name": "CI/CD Pipeline", "status": "production", "health": "green"},
+      {"name": "CosmosDB 向量搜尋", "status": "production", "health": "yellow"},
+      {"name": "i18n 框架", "status": "not_started", "health": "red"},
+      {"name": "Multi-tenant", "status": "not_started", "health": "red"},
+      {"name": "統一支付閘道", "status": "not_started", "health": "red"},
+      {"name": "CRM 後端 API", "status": "not_started", "health": "red"},
+      {"name": "工班管理後端", "status": "not_started", "health": "red"}
+    ]
+  },
+  "bd_expansion": {
+    "plan": "200 BD 全台擴張",
+    "totalInvestment": "2-2.5億",
+    "phases": [
+      {"name": "Phase 0 準備期", "months": "現在-M2", "status": "active", "keyAction": "找 CRO + COO"},
+      {"name": "Phase 1 司令部", "months": "M1-M2", "status": "pending", "keyAction": "北部 VP + Director"},
+      {"name": "Phase 2 北部展開", "months": "M3-M5", "status": "planned", "keyAction": "BD 衝到 75 人"},
+      {"name": "Phase 3 全台加速", "months": "M6-M9", "status": "planned", "keyAction": "BD 達 170 人"},
+      {"name": "Phase 4 穩固", "months": "M10-M12", "status": "planned", "keyAction": "補齊 200 BD"}
+    ],
+    "gates": [
+      {"gate": "Gate 1", "deadline": "M2底", "condition": "CRO到位", "status": "pending"},
+      {"gate": "Gate 2", "deadline": "M5底", "condition": "月新簽≥90客戶", "status": "future"},
+      {"gate": "Gate 3", "deadline": "M8底", "condition": "MRR>2000萬", "status": "future"}
+    ]
+  },
+  "mckinsey_recommendations": [
+    {"priority": "CRITICAL", "action": "CRO 招聘必須在 60 天內完成，否則暫停全部擴張計畫", "category": "人才"},
+    {"priority": "CRITICAL", "action": "台灣站 P0 功能（CRM/看板/合約/財務/排程）需在 3 個月內從 prototype 升級到 production", "category": "產品"},
+    {"priority": "HIGH", "action": "i18n 框架是日本站的前置條件，建議立即啟動", "category": "技術"},
+    {"priority": "HIGH", "action": "BD 薪酬制度和培訓體系需在招聘前完成設計", "category": "組織"},
+    {"priority": "MEDIUM", "action": "工班 SaaS 模組（日報/現場管理/配對）是日本站 ANDPAD 對標的關鍵差異化", "category": "產品"},
+    {"priority": "MEDIUM", "action": "建立月度 Go/No-Go 機制，每個 Gate 嚴格執行", "category": "治理"}
+  ],
+  "nextAuditAt": "2026-03-20T19:00:00+08:00"
+}
