@@ -1,0 +1,1513 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>方案 D：自建 CRM + M365 整合 — LargeHome AI</title>
+<style>
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0f1117; --bg-card: #1a1d2e; --bg-card-alt: #212438;
+  --text: #e2e8f0; --text-muted: #94a3b8; --text-heading: #f8fafc;
+  --red: #e94560; --blue: #3b82f6; --green: #10b981; --gold: #f59e0b;
+  --purple: #a855f7; --cyan: #06b6d4;
+  --border: #2d3148; --radius: 12px;
+}
+html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.8; font-size: 15px;
+}
+a { color: var(--blue); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== Navigation ===== */
+.nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(15,17,23,.92); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border); padding: 0 24px;
+}
+.nav-inner {
+  max-width: 1200px; margin: 0 auto; display: flex; align-items: center;
+  gap: 8px; overflow-x: auto; padding: 12px 0;
+  scrollbar-width: none;
+}
+.nav-inner::-webkit-scrollbar { display: none; }
+.nav-inner a {
+  white-space: nowrap; font-size: 13px; padding: 6px 14px;
+  border-radius: 20px; color: var(--text-muted); transition: all .2s;
+  border: 1px solid transparent;
+}
+.nav-inner a:hover { color: var(--text); background: var(--bg-card); border-color: var(--border); text-decoration: none; }
+.nav-logo { font-weight: 700; color: var(--red) !important; font-size: 15px !important; margin-right: 8px; }
+
+/* ===== Layout ===== */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+section { padding: 60px 0; }
+section + section { border-top: 1px solid var(--border); }
+
+/* ===== Hero ===== */
+.hero {
+  padding: 100px 0 80px; text-align: center;
+  background: linear-gradient(135deg, rgba(233,69,96,.08) 0%, rgba(59,130,246,.08) 100%);
+}
+.hero h1 { font-size: clamp(28px, 5vw, 48px); color: var(--text-heading); margin-bottom: 16px; font-weight: 800; }
+.hero h1 span { color: var(--red); }
+.hero .subtitle { font-size: 18px; color: var(--text-muted); max-width: 700px; margin: 0 auto 32px; }
+.hero-meta { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; font-size: 13px; color: var(--text-muted); }
+.hero-meta span { display: flex; align-items: center; gap: 6px; }
+
+/* ===== Typography ===== */
+h2 {
+  font-size: 28px; font-weight: 700; color: var(--text-heading); margin-bottom: 12px;
+  display: flex; align-items: center; gap: 12px;
+}
+h2 .num { font-size: 14px; background: var(--red); color: #fff; padding: 4px 12px; border-radius: 20px; }
+h3 { font-size: 20px; font-weight: 600; color: var(--text-heading); margin: 32px 0 12px; }
+h4 { font-size: 16px; font-weight: 600; color: var(--gold); margin: 20px 0 8px; }
+.section-desc { color: var(--text-muted); margin-bottom: 32px; font-size: 15px; }
+p { margin-bottom: 12px; }
+
+/* ===== Cards ===== */
+.card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 28px; margin-bottom: 20px;
+}
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
+.card-grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+.card-sm { padding: 20px; }
+
+/* ===== Badges ===== */
+.badge {
+  display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 10px;
+  border-radius: 12px; text-transform: uppercase; letter-spacing: .5px;
+}
+.badge-red { background: rgba(233,69,96,.15); color: var(--red); }
+.badge-blue { background: rgba(59,130,246,.15); color: var(--blue); }
+.badge-green { background: rgba(16,185,129,.15); color: var(--green); }
+.badge-gold { background: rgba(245,158,11,.15); color: var(--gold); }
+.badge-purple { background: rgba(168,85,247,.15); color: var(--purple); }
+.badge-cyan { background: rgba(6,182,212,.15); color: var(--cyan); }
+
+/* ===== Tables ===== */
+.table-wrap { overflow-x: auto; margin: 20px 0; border-radius: var(--radius); border: 1px solid var(--border); }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead { background: var(--bg-card-alt); }
+th { padding: 12px 14px; text-align: left; font-weight: 600; color: var(--text-heading); white-space: nowrap; border-bottom: 2px solid var(--border); }
+td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+tbody tr:hover { background: rgba(59,130,246,.04); }
+.check { color: var(--green); font-weight: 700; }
+.cross { color: #ef4444; }
+
+/* ===== KPI Boxes ===== */
+.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin: 20px 0; }
+.kpi-box {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 20px; text-align: center;
+}
+.kpi-box .kpi-num { font-size: 32px; font-weight: 800; margin-bottom: 4px; }
+.kpi-box .kpi-label { font-size: 13px; color: var(--text-muted); }
+
+/* ===== Bar Charts ===== */
+.bar-chart { display: flex; flex-direction: column; gap: 12px; margin: 20px 0; }
+.bar-row { display: flex; align-items: center; gap: 12px; }
+.bar-label { min-width: 140px; font-size: 13px; text-align: right; color: var(--text-muted); }
+.bar-track { flex: 1; height: 28px; background: var(--bg-card-alt); border-radius: 6px; overflow: hidden; position: relative; }
+.bar-fill { height: 100%; border-radius: 6px; display: flex; align-items: center; padding-left: 10px; font-size: 12px; font-weight: 600; color: #fff; transition: width .6s ease; }
+.bar-fill.red { background: linear-gradient(90deg, var(--red), #ff6b81); }
+.bar-fill.blue { background: linear-gradient(90deg, var(--blue), #60a5fa); }
+.bar-fill.green { background: linear-gradient(90deg, var(--green), #34d399); }
+.bar-fill.gold { background: linear-gradient(90deg, var(--gold), #fbbf24); }
+.bar-fill.purple { background: linear-gradient(90deg, var(--purple), #c084fc); }
+
+/* ===== Architecture Diagram ===== */
+.arch-diagram {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 32px; margin: 24px 0; overflow-x: auto;
+}
+.arch-layer {
+  display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; margin-bottom: 8px;
+}
+.arch-box {
+  background: var(--bg-card-alt); border: 1px solid var(--border); border-radius: 8px;
+  padding: 16px 20px; text-align: center; min-width: 140px; flex: 1; max-width: 200px;
+}
+.arch-box h5 { font-size: 14px; color: var(--text-heading); margin-bottom: 4px; }
+.arch-box p { font-size: 11px; color: var(--text-muted); margin: 0; line-height: 1.4; }
+.arch-box.accent-red { border-color: var(--red); border-width: 2px; }
+.arch-box.accent-blue { border-color: var(--blue); border-width: 2px; }
+.arch-box.accent-green { border-color: var(--green); border-width: 2px; }
+.arch-box.accent-gold { border-color: var(--gold); border-width: 2px; }
+.arch-box.accent-purple { border-color: var(--purple); border-width: 2px; }
+.arch-connector {
+  text-align: center; padding: 8px 0; color: var(--text-muted); font-size: 20px;
+  letter-spacing: 12px;
+}
+.arch-header {
+  background: linear-gradient(135deg, rgba(59,130,246,.12), rgba(168,85,247,.12));
+  border: 2px solid var(--blue); border-radius: var(--radius);
+  padding: 20px; text-align: center; margin-bottom: 8px;
+}
+.arch-header h4 { color: var(--blue); margin: 0 0 4px; font-size: 18px; }
+.arch-header p { color: var(--text-muted); font-size: 13px; margin: 0; }
+.arch-platform {
+  border: 2px solid var(--green); border-radius: var(--radius);
+  padding: 24px; margin-top: 0;
+}
+.arch-platform-title {
+  text-align: center; margin-bottom: 16px; font-size: 18px; font-weight: 700; color: var(--green);
+}
+.arch-db {
+  background: linear-gradient(135deg, rgba(233,69,96,.08), rgba(245,158,11,.08));
+  border: 2px solid var(--gold); border-radius: var(--radius);
+  padding: 16px 20px; text-align: center; margin-top: 8px;
+}
+.arch-db h5 { color: var(--gold); font-size: 15px; margin-bottom: 4px; }
+.arch-db p { font-size: 12px; color: var(--text-muted); margin: 0; }
+
+/* ===== Flow Diagrams ===== */
+.flow-container { margin: 20px 0; }
+.flow-steps { display: flex; flex-direction: column; gap: 0; padding-left: 24px; position: relative; }
+.flow-steps::before { content: ''; position: absolute; left: 8px; top: 12px; bottom: 12px; width: 2px; background: var(--border); }
+.flow-step {
+  position: relative; padding: 12px 0 12px 24px;
+}
+.flow-step::before {
+  content: ''; position: absolute; left: -20px; top: 18px;
+  width: 12px; height: 12px; border-radius: 50%; background: var(--red); border: 2px solid var(--bg);
+}
+.flow-step.step-blue::before { background: var(--blue); }
+.flow-step.step-green::before { background: var(--green); }
+.flow-step.step-gold::before { background: var(--gold); }
+.flow-step .flow-action { font-weight: 600; color: var(--text-heading); font-size: 14px; }
+.flow-step .flow-detail { font-size: 13px; color: var(--text-muted); }
+.flow-arrow { color: var(--red); font-size: 18px; padding-left: 24px; }
+
+/* ===== Schema Code ===== */
+.schema-block {
+  background: var(--bg-card-alt); border: 1px solid var(--border); border-radius: 8px;
+  padding: 20px; margin: 12px 0; font-family: "SF Mono", "Fira Code", monospace; font-size: 12px;
+  line-height: 1.7; overflow-x: auto; color: var(--text-muted);
+}
+.schema-block .table-name { color: var(--red); font-weight: 700; }
+.schema-block .col-name { color: var(--cyan); }
+.schema-block .col-type { color: var(--gold); }
+.schema-block .col-comment { color: #6b7280; font-style: italic; }
+
+/* ===== Gantt Chart ===== */
+.gantt { margin: 24px 0; overflow-x: auto; }
+.gantt-row { display: flex; align-items: center; margin-bottom: 8px; }
+.gantt-label { min-width: 200px; font-size: 13px; color: var(--text-muted); padding-right: 16px; text-align: right; }
+.gantt-track { flex: 1; display: flex; gap: 2px; min-width: 400px; }
+.gantt-cell {
+  height: 32px; border-radius: 4px; display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 600; color: #fff; flex: 1;
+}
+.gantt-cell.empty { background: var(--bg-card-alt); }
+.gantt-cell.active-red { background: var(--red); }
+.gantt-cell.active-blue { background: var(--blue); }
+.gantt-cell.active-green { background: var(--green); }
+.gantt-cell.active-gold { background: var(--gold); }
+.gantt-cell.active-purple { background: var(--purple); }
+.gantt-header { display: flex; margin-bottom: 4px; }
+.gantt-header-label { min-width: 200px; }
+.gantt-header-cells { flex: 1; display: flex; gap: 2px; min-width: 400px; }
+.gantt-header-cells span { flex: 1; text-align: center; font-size: 11px; color: var(--text-muted); font-weight: 600; }
+
+/* ===== Risk Cards ===== */
+.risk-card { border-left: 4px solid var(--red); }
+.risk-card.medium { border-left-color: var(--gold); }
+.risk-card.low { border-left-color: var(--green); }
+
+/* ===== Lists ===== */
+ul, ol { padding-left: 20px; margin-bottom: 12px; }
+li { margin-bottom: 6px; }
+li::marker { color: var(--red); }
+
+/* ===== Highlight Box ===== */
+.highlight-box {
+  background: linear-gradient(135deg, rgba(233,69,96,.08), rgba(59,130,246,.08));
+  border: 1px solid var(--red); border-radius: var(--radius);
+  padding: 24px; margin: 24px 0;
+}
+.highlight-box h4 { color: var(--red); margin-top: 0; }
+
+/* ===== Compare Highlight ===== */
+.compare-winner { background: rgba(16,185,129,.08) !important; }
+.compare-winner td { font-weight: 600; }
+
+/* ===== Footer ===== */
+.footer {
+  padding: 40px 0; border-top: 1px solid var(--border); text-align: center;
+  color: var(--text-muted); font-size: 13px;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .hero { padding: 60px 0 40px; }
+  h2 { font-size: 22px; }
+  .card { padding: 20px; }
+  .card-grid, .card-grid-3 { grid-template-columns: 1fr; }
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  .bar-label { min-width: 100px; font-size: 12px; }
+  .gantt-label { min-width: 120px; font-size: 11px; }
+  .arch-layer { flex-direction: column; align-items: center; }
+  .arch-box { max-width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== Navigation ===== -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">LargeHome AI</a>
+    <a href="#summary">執行摘要</a>
+    <a href="#assets">現有資產</a>
+    <a href="#architecture">整合架構</a>
+    <a href="#schema">DB Schema</a>
+    <a href="#graph-api">Graph API</a>
+    <a href="#sprints">開發任務</a>
+    <a href="#flows">三角色流程</a>
+    <a href="#cost">成本分析</a>
+    <a href="#risks">風險對策</a>
+    <a href="#timeline">時程總覽</a>
+  </div>
+</nav>
+
+<!-- ===== Hero ===== -->
+<header class="hero" id="top">
+  <div class="container">
+    <h1>方案 D：<span>自建 CRM</span> + M365 整合</h1>
+    <p class="subtitle">
+      用已購買的 M365 當通訊 / 協作層，自建裝修產業垂直 CRM<br>
+      零額外月費 × 三角色打通 × 日本站共用
+    </p>
+    <div class="hero-meta">
+      <span>📋 Plan v006</span>
+      <span>🏢 LargeHome AI</span>
+      <span>👥 25 → 400 人規模</span>
+      <span>⏱️ 約 15 天開發</span>
+      <span>💰 年省 480–1,080 萬</span>
+    </div>
+  </div>
+</header>
+
+<!-- ===== 1. 執行摘要 ===== -->
+<section id="summary">
+  <div class="container">
+    <h2><span class="num">01</span>執行摘要</h2>
+    <p class="section-desc">方案 D 的核心邏輯：不買第三方 CRM，在既有微服務架構上自建裝修產業垂直 CRM，M365 只當通訊 / 協作層。</p>
+
+    <div class="highlight-box">
+      <h4>💡 為什麼不用 Salesforce / HubSpot / Dynamics 365？</h4>
+      <div class="card-grid" style="margin-top:16px">
+        <div>
+          <p><strong style="color:var(--red)">成本爆炸</strong></p>
+          <p>200 BD × $1,500–$4,500/月 = 年費 360–1,080 萬，還不含客製費</p>
+        </div>
+        <div>
+          <p><strong style="color:var(--red)">平台綁架</strong></p>
+          <p>資料在對方 DB，換平台等於從零開始。日本站需要另付費</p>
+        </div>
+        <div>
+          <p><strong style="color:var(--red)">垂直整合不可能</strong></p>
+          <p>裝修產業的「設計師 × 工班 × 建材商」三角關係，通用 CRM 打不通</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-box">
+        <div class="kpi-num" style="color:var(--green)">$0</div>
+        <div class="kpi-label">額外月費</div>
+      </div>
+      <div class="kpi-box">
+        <div class="kpi-num" style="color:var(--blue)">~15天</div>
+        <div class="kpi-label">開發時間</div>
+      </div>
+      <div class="kpi-box">
+        <div class="kpi-num" style="color:var(--red)">480–1,080萬</div>
+        <div class="kpi-label">年省授權費</div>
+      </div>
+      <div class="kpi-box">
+        <div class="kpi-num" style="color:var(--gold)">✅</div>
+        <div class="kpi-label">三角色垂直整合</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h4>方案 D 一句話</h4>
+      <p style="font-size:17px;color:var(--text-heading)">
+        每個 BD 每月只花 <strong style="color:var(--green)">$150 TWD</strong> 的 M365 Business Basic 費用，
+        就得到 SSO + Outlook 郵件追蹤 + Teams 通知 + Calendar 同步 + Power Automate 自動化，
+        CRM 核心邏輯全在自家 PostgreSQL，三角色資料一次打通，日本站直接共用。
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 2. 現有資產盤點 ===== -->
+<section id="assets">
+  <div class="container">
+    <h2><span class="num">02</span>現有資產盤點</h2>
+    <p class="section-desc">LargeHome AI 已擁有完整的微服務架構和前端原型，CRM 只需「接上去」而非「從零建」。</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>資產</th>
+            <th>說明</th>
+            <th>CRM 用途</th>
+            <th>狀態</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>auth-service</strong></td>
+            <td>Entra External ID + JWT</td>
+            <td>BD SSO 登入，跟 M365 同一套</td>
+            <td><span class="badge badge-green">已完成</span></td>
+          </tr>
+          <tr>
+            <td><strong>profile-service</strong></td>
+            <td>用戶/廠商/設計師/工班 CRUD</td>
+            <td>客戶資料主表</td>
+            <td><span class="badge badge-green">已完成</span></td>
+          </tr>
+          <tr>
+            <td><strong>interaction-service</strong></td>
+            <td>專案/聊天/報價/通知</td>
+            <td>活動追蹤、跟進記錄</td>
+            <td><span class="badge badge-green">已完成</span></td>
+          </tr>
+          <tr>
+            <td><strong>product-service</strong></td>
+            <td>產品/品牌/型錄</td>
+            <td>建材商客戶的產品資料</td>
+            <td><span class="badge badge-green">已完成</span></td>
+          </tr>
+          <tr>
+            <td><strong>bot-service</strong></td>
+            <td>LINE Bot + AI 搜尋</td>
+            <td>可擴展為 Teams Bot</td>
+            <td><span class="badge badge-green">已完成</span></td>
+          </tr>
+          <tr>
+            <td><strong>Frontend /crm</strong></td>
+            <td>CRM UI 原型（localStorage）</td>
+            <td>改接 API 即可</td>
+            <td><span class="badge badge-gold">原型</span></td>
+          </tr>
+          <tr>
+            <td><strong>Frontend /contracts</strong></td>
+            <td>合約管理 UI 原型</td>
+            <td>改接 API 即可</td>
+            <td><span class="badge badge-gold">原型</span></td>
+          </tr>
+          <tr>
+            <td><strong>Frontend /kanban</strong></td>
+            <td>工程看板 UI 原型</td>
+            <td>改接 API 即可</td>
+            <td><span class="badge badge-gold">原型</span></td>
+          </tr>
+          <tr>
+            <td><strong>Frontend /schedule</strong></td>
+            <td>排程管理 UI 原型</td>
+            <td>改接 API + Calendar 同步</td>
+            <td><span class="badge badge-gold">原型</span></td>
+          </tr>
+          <tr>
+            <td><strong>Frontend /finance</strong></td>
+            <td>財務管理 UI 原型</td>
+            <td>改接 API 即可</td>
+            <td><span class="badge badge-gold">原型</span></td>
+          </tr>
+          <tr>
+            <td><strong>PostgreSQL</strong></td>
+            <td>50+ 表，48 migrations</td>
+            <td>CRM 表直接加在同一 DB</td>
+            <td><span class="badge badge-green">已完成</span></td>
+          </tr>
+          <tr>
+            <td><strong>Novu (推播)</strong></td>
+            <td>Web Push 通知</td>
+            <td>BD 客戶跟進提醒</td>
+            <td><span class="badge badge-green">已完成</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card" style="margin-top:24px">
+      <h4>📊 資產就緒率</h4>
+      <div class="bar-chart">
+        <div class="bar-row">
+          <span class="bar-label">後端微服務</span>
+          <div class="bar-track"><div class="bar-fill green" style="width:100%">5/5 完成</div></div>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">前端 UI 原型</span>
+          <div class="bar-track"><div class="bar-fill gold" style="width:80%">5/5 原型完成，需接 API</div></div>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">資料庫</span>
+          <div class="bar-track"><div class="bar-fill green" style="width:90%">50+ 表，需新增 CRM 表</div></div>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">M365 整合</span>
+          <div class="bar-track"><div class="bar-fill blue" style="width:30%">SSO 完成，其他待開發</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 3. M365 整合架構圖 ===== -->
+<section id="architecture">
+  <div class="container">
+    <h2><span class="num">03</span>M365 整合架構圖</h2>
+    <p class="section-desc">M365 Business Basic 作為通訊/協作層，Graph API 作為統一整合入口。</p>
+
+    <div class="arch-diagram">
+      <!-- M365 Layer -->
+      <div class="arch-header">
+        <h4>☁️ M365 Business Basic — $150/人/月（已購買）</h4>
+        <p>每位 BD 都有完整的 M365 帳號</p>
+      </div>
+
+      <div class="arch-layer" style="margin-top:16px">
+        <div class="arch-box accent-blue">
+          <h5>🔐 Entra ID</h5>
+          <p>SSO 單一登入</p>
+        </div>
+        <div class="arch-box accent-blue">
+          <h5>📧 Outlook</h5>
+          <p>郵件追蹤</p>
+        </div>
+        <div class="arch-box accent-blue">
+          <h5>💬 Teams</h5>
+          <p>即時通知</p>
+        </div>
+        <div class="arch-box accent-blue">
+          <h5>📅 Calendar</h5>
+          <p>排程同步</p>
+        </div>
+        <div class="arch-box accent-purple">
+          <h5>⚡ Power Automate</h5>
+          <p>自動化流程</p>
+        </div>
+      </div>
+
+      <div class="arch-connector">▼ ▼ ▼ ▼ ▼</div>
+      <div style="text-align:center;margin-bottom:12px">
+        <span class="badge badge-blue" style="font-size:14px;padding:6px 20px">Microsoft Graph API（統一入口）</span>
+      </div>
+      <div class="arch-connector">▼ ▼ ▼ ▼ ▼</div>
+
+      <!-- Platform Layer -->
+      <div class="arch-platform">
+        <div class="arch-platform-title">🏠 LargeHome CRM Platform</div>
+
+        <div class="arch-layer">
+          <div class="arch-box accent-red">
+            <h5>👤 profile-service</h5>
+            <p>客戶資料<br>BD 績效<br>CRM 核心</p>
+          </div>
+          <div class="arch-box accent-green">
+            <h5>🤝 interaction-service</h5>
+            <p>活動/報價/聊天<br>工班管理<br>合約/看板</p>
+          </div>
+          <div class="arch-box accent-gold">
+            <h5>📦 product-service</h5>
+            <p>建材/型錄/庫存<br>訂購追蹤</p>
+          </div>
+        </div>
+
+        <div class="arch-layer" style="margin-top:16px">
+          <div class="arch-box">
+            <h5>🔑 auth-service</h5>
+            <p>Entra SSO</p>
+          </div>
+          <div class="arch-box">
+            <h5>🤖 bot-service</h5>
+            <p>LINE + Teams Bot</p>
+          </div>
+          <div class="arch-box">
+            <h5>⏰ cron-jobs</h5>
+            <p>自動化提醒<br>報表/同步</p>
+          </div>
+        </div>
+
+        <!-- DB Layer -->
+        <div class="arch-db" style="margin-top:16px">
+          <h5>🗄️ Azure PostgreSQL (largehomedb)</h5>
+          <p>新增：crm_contacts · crm_activities · crm_pipelines · contracts · payment_milestones · kanban_tasks · schedule_events · daily_reports · financial_txns</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:24px">
+      <h4>🔗 資料流向說明</h4>
+      <ul>
+        <li><strong>SSO 登入：</strong>BD 用 M365 帳號 → Entra ID → auth-service → JWT → 所有微服務</li>
+        <li><strong>郵件追蹤：</strong>BD 寄/收郵件 → Graph API Webhook → interaction-service → crm_activities</li>
+        <li><strong>Teams 通知：</strong>CRM 事件觸發 → interaction-service → Teams Incoming Webhook → 通知 Channel</li>
+        <li><strong>Calendar 同步：</strong>/schedule 事件 ↔ Graph API Calendar ↔ Outlook Calendar（雙向）</li>
+        <li><strong>自動化：</strong>CRM 狀態變更 → Power Automate → Teams 通知 / Email 提醒</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 4. DB Schema 設計 ===== -->
+<section id="schema">
+  <div class="container">
+    <h2><span class="num">04</span>DB Schema 設計</h2>
+    <p class="section-desc">在現有 PostgreSQL 新增 9 張表，分由 profile-service 和 interaction-service 管理。</p>
+
+    <h3>🔴 CRM 核心表（profile-service 管理）</h3>
+
+    <div class="schema-block">
+      <span class="table-name">crm_contacts</span><br>
+      ├─ <span class="col-name">id</span> <span class="col-type">UUID PK</span><br>
+      ├─ <span class="col-name">vendor_id</span> <span class="col-type">UUID? FK</span> <span class="col-comment">-- 關聯建材商</span><br>
+      ├─ <span class="col-name">designer_id</span> <span class="col-type">UUID? FK</span> <span class="col-comment">-- 關聯設計師</span><br>
+      ├─ <span class="col-name">name</span> <span class="col-type">VARCHAR(100)</span><br>
+      ├─ <span class="col-name">company</span> <span class="col-type">VARCHAR(200)</span><br>
+      ├─ <span class="col-name">phone</span> <span class="col-type">VARCHAR(20)</span><br>
+      ├─ <span class="col-name">email</span> <span class="col-type">VARCHAR(200)</span><br>
+      ├─ <span class="col-name">grade</span> <span class="col-type">ENUM(S,A,B,C)</span> <span class="col-comment">-- 客戶等級</span><br>
+      ├─ <span class="col-name">source</span> <span class="col-type">VARCHAR(50)</span> <span class="col-comment">-- 來源管道</span><br>
+      ├─ <span class="col-name">assigned_bd_id</span> <span class="col-type">UUID FK</span> <span class="col-comment">-- 負責 BD</span><br>
+      ├─ <span class="col-name">pipeline_stage</span> <span class="col-type">VARCHAR(30)</span><br>
+      ├─ <span class="col-name">total_revenue</span> <span class="col-type">DECIMAL(12,2)</span><br>
+      ├─ <span class="col-name">last_contact_at</span> <span class="col-type">TIMESTAMPTZ</span><br>
+      ├─ <span class="col-name">next_followup_at</span> <span class="col-type">TIMESTAMPTZ</span><br>
+      ├─ <span class="col-name">tags</span> <span class="col-type">TEXT[]</span><br>
+      └─ <span class="col-name">created_at</span> <span class="col-type">TIMESTAMPTZ DEFAULT NOW()</span>
+    </div>
+
+    <div class="schema-block">
+      <span class="table-name">crm_activities</span><br>
+      ├─ <span class="col-name">id</span> <span class="col-type">UUID PK</span><br>
+      ├─ <span class="col-name">contact_id</span> <span class="col-type">UUID FK → crm_contacts</span><br>
+      ├─ <span class="col-name">bd_user_id</span> <span class="col-type">UUID FK</span><br>
+      ├─ <span class="col-name">type</span> <span class="col-type">ENUM(call, meeting, email, note, deal)</span><br>
+      ├─ <span class="col-name">content</span> <span class="col-type">TEXT</span><br>
+      ├─ <span class="col-name">outcome</span> <span class="col-type">VARCHAR(100)</span><br>
+      ├─ <span class="col-name">duration_min</span> <span class="col-type">INTEGER</span><br>
+      └─ <span class="col-name">created_at</span> <span class="col-type">TIMESTAMPTZ DEFAULT NOW()</span>
+    </div>
+
+    <div class="schema-block">
+      <span class="table-name">crm_pipelines</span><br>
+      ├─ <span class="col-name">id</span> <span class="col-type">UUID PK</span><br>
+      ├─ <span class="col-name">contact_id</span> <span class="col-type">UUID FK → crm_contacts</span><br>
+      ├─ <span class="col-name">stage</span> <span class="col-type">ENUM(lead, qualified, proposal, negotiation, closed_won, closed_lost)</span><br>
+      ├─ <span class="col-name">deal_value</span> <span class="col-type">DECIMAL(12,2)</span><br>
+      ├─ <span class="col-name">probability</span> <span class="col-type">INTEGER</span> <span class="col-comment">-- 0-100%</span><br>
+      ├─ <span class="col-name">expected_close_date</span> <span class="col-type">DATE</span><br>
+      └─ <span class="col-name">actual_close_date</span> <span class="col-type">DATE?</span>
+    </div>
+
+    <div class="schema-block">
+      <span class="table-name">bd_performance</span><br>
+      ├─ <span class="col-name">id</span> <span class="col-type">UUID PK</span><br>
+      ├─ <span class="col-name">bd_user_id</span> <span class="col-type">UUID FK</span><br>
+      ├─ <span class="col-name">month</span> <span class="col-type">DATE</span> <span class="col-comment">-- 月份（每月 1 號）</span><br>
+      ├─ <span class="col-name">new_contacts</span> <span class="col-type">INTEGER</span><br>
+      ├─ <span class="col-name">meetings</span> <span class="col-type">INTEGER</span><br>
+      ├─ <span class="col-name">proposals</span> <span class="col-type">INTEGER</span><br>
+      ├─ <span class="col-name">deals_won</span> <span class="col-type">INTEGER</span><br>
+      ├─ <span class="col-name">deals_lost</span> <span class="col-type">INTEGER</span><br>
+      ├─ <span class="col-name">revenue</span> <span class="col-type">DECIMAL(12,2)</span><br>
+      └─ <span class="col-name">target_revenue</span> <span class="col-type">DECIMAL(12,2)</span>
+    </div>
+
+    <h3>🟢 合約表（interaction-service 管理）</h3>
+
+    <div class="schema-block">
+      <span class="table-name">contracts</span><br>
+      ├─ <span class="col-name">id</span> <span class="col-type">UUID PK</span><br>
+      ├─ <span class="col-name">project_id</span> <span class="col-type">UUID FK</span><br>
+      ├─ <span class="col-name">contact_id</span> <span class="col-type">UUID FK → crm_contacts</span><br>
+      ├─ <span class="col-name">type</span> <span class="col-type">VARCHAR(50)</span> <span class="col-comment">-- 設計/施工/供貨</span><br>
+      ├─ <span class="col-name">status</span> <span class="col-type">ENUM(draft, pending, active, completed, cancelled)</span><br>
+      ├─ <span class="col-name">total_amount</span> <span class="col-type">DECIMAL(12,2)</span><br>
+      ├─ <span class="col-name">signed_date</span> <span class="col-type">DATE</span><br>
+      ├─ <span class="col-name">start_date</span> <span class="col-type">DATE</span><br>
+      └─ <span class="col-name">end_date</span> <span class="col-type">DATE</span>
+    </div>
+
+    <div class="schema-block">
+      <span class="table-name">payment_milestones</span><br>
+      ├─ <span class="col-name">id</span> <span class="col-type">UUID PK</span><br>
+      ├─ <span class="col-name">contract_id</span> <span class="col-type">UUID FK → contracts</span><br>
+      ├─ <span class="col-name">name</span> <span class="col-type">VARCHAR(100)</span> <span class="col-comment">-- 階段名稱</span><br>
+      ├─ <span class="col-name">percentage</span> <span class="col-type">DECIMAL(5,2)</span><br>
+      ├─ <span class="col-name">amount</span> <span class="col-type">DECIMAL(12,2)</span><br>
+      ├─ <span class="col-name">due_date</span> <span class="col-type">DATE</span><br>
+      ├─ <span class="col-name">status</span> <span class="col-type">ENUM(pending, invoiced, paid, overdue)</span><br>
+      └─ <span class="col-name">paid_date</span> <span class="col-type">DATE?</span>
+    </div>
+
+    <h3>🔵 專案管理表（interaction-service 管理）</h3>
+
+    <div class="schema-block">
+      <span class="table-name">kanban_tasks</span><br>
+      ├─ <span class="col-name">id</span> <span class="col-type">UUID PK</span><br>
+      ├─ <span class="col-name">project_id</span> <span class="col-type">UUID FK</span><br>
+      ├─ <span class="col-name">title</span> <span class="col-type">VARCHAR(200)</span><br>
+      ├─ <span class="col-name">phase</span> <span class="col-type">VARCHAR(50)</span> <span class="col-comment">-- 拆除/水電/泥作/木作/油漆...</span><br>
+      ├─ <span class="col-name">status</span> <span class="col-type">ENUM(todo, in_progress, review, done)</span><br>
+      ├─ <span class="col-name">priority</span> <span class="col-type">ENUM(low, medium, high, urgent)</span><br>
+      ├─ <span class="col-name">assignee_id</span> <span class="col-type">UUID FK</span><br>
+      ├─ <span class="col-name">due_date</span> <span class="col-type">DATE</span><br>
+      └─ <span class="col-name">order</span> <span class="col-type">INTEGER</span>
+    </div>
+
+    <div class="schema-block">
+      <span class="table-name">schedule_events</span><br>
+      ├─ <span class="col-name">id</span> <span class="col-type">UUID PK</span><br>
+      ├─ <span class="col-name">user_id</span> <span class="col-type">UUID FK</span><br>
+      ├─ <span class="col-name">project_id</span> <span class="col-type">UUID FK?</span><br>
+      ├─ <span class="col-name">title</span> <span class="col-type">VARCHAR(200)</span><br>
+      ├─ <span class="col-name">type</span> <span class="col-type">ENUM(meeting, site_visit, deadline, reminder)</span><br>
+      ├─ <span class="col-name">start_time</span> <span class="col-type">TIMESTAMPTZ</span><br>
+      ├─ <span class="col-name">end_time</span> <span class="col-type">TIMESTAMPTZ</span><br>
+      ├─ <span class="col-name">location</span> <span class="col-type">VARCHAR(300)</span><br>
+      └─ <span class="col-name">outlook_event_id</span> <span class="col-type">VARCHAR(200)?</span> <span class="col-comment">-- Graph API 同步用</span>
+    </div>
+
+    <div class="schema-block">
+      <span class="table-name">daily_reports</span><br>
+      ├─ <span class="col-name">id</span> <span class="col-type">UUID PK</span><br>
+      ├─ <span class="col-name">project_id</span> <span class="col-type">UUID FK</span><br>
+      ├─ <span class="col-name">submitted_by</span> <span class="col-type">UUID FK</span><br>
+      ├─ <span class="col-name">date</span> <span class="col-type">DATE</span><br>
+      ├─ <span class="col-name">weather</span> <span class="col-type">VARCHAR(20)</span><br>
+      ├─ <span class="col-name">worker_count</span> <span class="col-type">INTEGER</span><br>
+      ├─ <span class="col-name">description</span> <span class="col-type">TEXT</span><br>
+      ├─ <span class="col-name">materials_used</span> <span class="col-type">JSONB</span><br>
+      ├─ <span class="col-name">issues</span> <span class="col-type">TEXT</span><br>
+      ├─ <span class="col-name">photos</span> <span class="col-type">TEXT[]</span><br>
+      └─ <span class="col-name">status</span> <span class="col-type">ENUM(draft, submitted, approved)</span>
+    </div>
+
+    <div class="card" style="margin-top:24px">
+      <h4>📐 Schema 設計原則</h4>
+      <ul>
+        <li><strong>UUID 主鍵：</strong>方便微服務間資料同步、日本站共用</li>
+        <li><strong>TIMESTAMPTZ：</strong>所有時間都帶時區，支援台灣 + 日本雙站</li>
+        <li><strong>FK 到既有表：</strong>crm_contacts 可選連結 vendor_id 或 designer_id，打通三角色</li>
+        <li><strong>JSONB 彈性欄位：</strong>daily_reports.materials_used 用 JSONB，方便擴展</li>
+        <li><strong>outlook_event_id：</strong>schedule_events 多一欄紀錄 Graph API 的 event ID，實現雙向同步</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 5. M365 Graph API 整合 ===== -->
+<section id="graph-api">
+  <div class="container">
+    <h2><span class="num">05</span>M365 Graph API 整合詳細計畫</h2>
+    <p class="section-desc">透過 Microsoft Graph API 統一整合 Outlook、Teams、Calendar，充分利用已購買的 M365 授權。</p>
+
+    <!-- 5.1 SSO -->
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+        <span class="badge badge-green">已完成</span>
+        <h3 style="margin:0">5.1 Entra ID SSO</h3>
+      </div>
+      <ul>
+        <li>auth-service 已整合 Entra External ID</li>
+        <li>BD 用公司 M365 帳號直接登入 LargeHome</li>
+        <li>零額外開發 — <strong style="color:var(--green)">這步已經做完了！</strong></li>
+      </ul>
+      <div style="margin-top:12px;padding:12px 16px;background:var(--bg-card-alt);border-radius:8px;font-size:13px;color:var(--text-muted)">
+        <strong>技術細節：</strong>Entra External ID → OIDC → auth-service 產生 JWT → 所有微服務驗證
+      </div>
+    </div>
+
+    <!-- 5.2 Outlook -->
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+        <span class="badge badge-blue">待開發 2天</span>
+        <h3 style="margin:0">5.2 Outlook 郵件追蹤</h3>
+      </div>
+      <p>用 Microsoft Graph API 的 Mail Webhooks，BD 寄/收的客戶郵件自動歸檔到 crm_activities。</p>
+      <div style="margin-top:16px;padding:16px;background:var(--bg-card-alt);border-radius:8px;font-size:13px">
+        <strong style="color:var(--cyan)">技術流程：</strong><br>
+        <code style="color:var(--text-muted)">
+          Graph API Subscription（Mail.Read） → Webhook 通知<br>
+          → interaction-service 接收 → 比對客戶 email<br>
+          → INSERT crm_activities（type='email'）<br>
+          → 更新 crm_contacts.last_contact_at
+        </code>
+      </div>
+      <div style="margin-top:12px">
+        <p><strong>需要：</strong></p>
+        <ul>
+          <li>Azure AD App Registration</li>
+          <li>Permission: <code>Mail.Read</code>（委派或應用程式）</li>
+          <li>Webhook endpoint（HTTPS）</li>
+          <li>Subscription 每 3 天自動續訂</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 5.3 Teams -->
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+        <span class="badge badge-purple">待開發 0.5–3天</span>
+        <h3 style="margin:0">5.3 Teams 通知整合</h3>
+      </div>
+      <div class="card-grid">
+        <div class="card card-sm" style="border-color:var(--green)">
+          <h4 style="color:var(--green);margin-top:0">方案 1：Incoming Webhook</h4>
+          <span class="badge badge-green">推薦先做</span>
+          <span class="badge badge-blue" style="margin-left:4px">1 天</span>
+          <ul style="margin-top:12px">
+            <li>建一個「CRM 通知」Channel</li>
+            <li>用 Webhook URL 推送通知</li>
+            <li>新客戶、跟進提醒、成交通知</li>
+            <li>零 Bot 註冊，最簡單</li>
+          </ul>
+        </div>
+        <div class="card card-sm">
+          <h4 style="margin-top:0">方案 2：Teams Bot</h4>
+          <span class="badge badge-gold">進階</span>
+          <span class="badge badge-blue" style="margin-left:4px">3 天</span>
+          <ul style="margin-top:12px">
+            <li>用現有 bot-service 擴展</li>
+            <li>BD 可在 Teams 查詢客戶</li>
+            <li><code>@LargeHome 查 客戶名</code></li>
+            <li>回傳 Adaptive Card 客戶卡片</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5.4 Calendar -->
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+        <span class="badge badge-blue">待開發 2天</span>
+        <h3 style="margin:0">5.4 Calendar 雙向同步</h3>
+      </div>
+      <p>BD 在 /schedule 建立的事件自動同步到 Outlook Calendar，反向亦然。</p>
+      <div style="margin-top:16px;padding:16px;background:var(--bg-card-alt);border-radius:8px;font-size:13px">
+        <strong style="color:var(--cyan)">雙向同步流程：</strong><br>
+        <code style="color:var(--text-muted)">
+          LargeHome → Outlook：新增/修改事件 → Graph API POST/PATCH /events<br>
+          Outlook → LargeHome：Graph Subscription（Calendar webhook）→ interaction-service 更新
+        </code>
+      </div>
+      <ul style="margin-top:12px">
+        <li>Permission: <code>Calendars.ReadWrite</code></li>
+        <li>用 <code>outlook_event_id</code> 欄位追蹤同步狀態</li>
+        <li>衝突解決：以最後修改時間為準</li>
+      </ul>
+    </div>
+
+    <!-- 5.5 Power Automate -->
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+        <span class="badge badge-green">免費</span>
+        <h3 style="margin:0">5.5 Power Automate 加值</h3>
+      </div>
+      <p>M365 Business Basic 含 Power Automate 基本版，可建立自動化流程：</p>
+      <div class="card-grid-3" style="margin-top:16px">
+        <div class="card card-sm" style="border-color:var(--green)">
+          <h4 style="color:var(--green);margin-top:0">🆕 新客戶通知</h4>
+          <p style="font-size:13px">新客戶入 CRM → 自動發 Teams 通知給 Team Lead</p>
+        </div>
+        <div class="card card-sm" style="border-color:var(--gold)">
+          <h4 style="color:var(--gold);margin-top:0">⏰ 跟進提醒</h4>
+          <p style="font-size:13px">客戶 7 天沒跟進 → 自動提醒負責 BD</p>
+        </div>
+        <div class="card card-sm" style="border-color:var(--red)">
+          <h4 style="color:var(--red);margin-top:0">🎉 成交慶祝</h4>
+          <p style="font-size:13px">成交 → 通知財務 + 發送祝賀訊息到 Teams</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 6. 開發任務清單 ===== -->
+<section id="sprints">
+  <div class="container">
+    <h2><span class="num">06</span>開發任務清單（5 個 Sprint）</h2>
+    <p class="section-desc">共 25 個任務，分 5 個 Sprint，預估 15 個工作天完成。</p>
+
+    <!-- Sprint A -->
+    <h3>🅰️ Sprint A：DB Foundation（Week 1）</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Task</th><th>工作內容</th><th>Repo</th><th>時間</th><th>負責</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="badge badge-red">A-1</span></td>
+            <td>CRM 核心表 migration（crm_contacts, crm_activities, crm_pipelines, bd_performance）</td>
+            <td><code>database</code></td>
+            <td>1d</td>
+            <td>Backend</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-red">A-2</span></td>
+            <td>合約/專案管理表 migration（contracts, milestones, kanban, schedule, daily_reports）</td>
+            <td><code>database</code></td>
+            <td>1d</td>
+            <td>Backend</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-red">A-3</span></td>
+            <td>SQLAlchemy models for CRM tables</td>
+            <td><code>profile-service</code></td>
+            <td>1d</td>
+            <td>Backend</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-red">A-4</span></td>
+            <td>SQLAlchemy models for project mgmt tables</td>
+            <td><code>interaction-service</code></td>
+            <td>1d</td>
+            <td>Backend</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Sprint B -->
+    <h3>🅱️ Sprint B：CRM API（Week 2）</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Task</th><th>工作內容</th><th>Repo</th><th>時間</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="badge badge-blue">B-1</span></td>
+            <td>profile-service: CRM Contacts CRUD API（搜尋、篩選、分頁）</td>
+            <td><code>profile-service</code></td>
+            <td>2d</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-blue">B-2</span></td>
+            <td>profile-service: CRM Activities API（新增、查詢、統計）</td>
+            <td><code>profile-service</code></td>
+            <td>1d</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-blue">B-3</span></td>
+            <td>profile-service: CRM Pipeline API（階段轉換、漏斗統計）</td>
+            <td><code>profile-service</code></td>
+            <td>1d</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-blue">B-4</span></td>
+            <td>profile-service: BD Performance API（月報、排行榜、目標達成率）</td>
+            <td><code>profile-service</code></td>
+            <td>1d</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Sprint C -->
+    <h3>©️ Sprint C：專案管理 API（Week 2–3）</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Task</th><th>工作內容</th><th>Repo</th><th>時間</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="badge badge-green">C-1</span></td>
+            <td>interaction-service: Contracts + Milestones API（CRUD、狀態追蹤、付款提醒）</td>
+            <td><code>interaction-service</code></td>
+            <td>2d</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-green">C-2</span></td>
+            <td>interaction-service: Kanban Tasks API（拖拉排序、狀態更新）</td>
+            <td><code>interaction-service</code></td>
+            <td>1d</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-green">C-3</span></td>
+            <td>interaction-service: Schedule Events API（CRUD + Outlook 同步預留）</td>
+            <td><code>interaction-service</code></td>
+            <td>1d</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-green">C-4</span></td>
+            <td>interaction-service: Daily Reports API（含照片上傳、審批流程）</td>
+            <td><code>interaction-service</code></td>
+            <td>2d</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-green">C-5</span></td>
+            <td>interaction-service: Financial Transactions API（收支記錄、報表匯出）</td>
+            <td><code>interaction-service</code></td>
+            <td>1d</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Sprint D -->
+    <h3>🅳 Sprint D：M365 整合（Week 3）</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Task</th><th>工作內容</th><th>Repo / 平台</th><th>時間</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="badge badge-purple">D-1</span></td>
+            <td>Azure AD App Registration for Graph API（設定 permission、secret）</td>
+            <td>Azure Portal</td>
+            <td>0.5d</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-purple">D-2</span></td>
+            <td>Outlook 郵件 Webhook → crm_activities 自動歸檔</td>
+            <td><code>auth-service / new</code></td>
+            <td>2d</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-purple">D-3</span></td>
+            <td>Teams Incoming Webhook 通知（CRM 事件推送到 Teams Channel）</td>
+            <td><code>interaction-service</code></td>
+            <td>0.5d</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-purple">D-4</span></td>
+            <td>Calendar 雙向同步（Graph API Subscription + Event CRUD）</td>
+            <td><code>interaction-service</code></td>
+            <td>2d</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-purple">D-5</span></td>
+            <td>Power Automate 3 個基礎流程（新客戶通知、跟進提醒、成交通知）</td>
+            <td>M365 Admin</td>
+            <td>0.5d</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Sprint E -->
+    <h3>🅴 Sprint E：Frontend 對接（Week 3–4）</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Task</th><th>工作內容</th><th>時間</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="badge badge-gold">E-1</span></td>
+            <td>/crm：localStorage → profile-service API（客戶列表、詳情、活動記錄）</td>
+            <td>2d</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-gold">E-2</span></td>
+            <td>/contracts：localStorage → interaction-service API（合約 CRUD、里程碑追蹤）</td>
+            <td>1d</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-gold">E-3</span></td>
+            <td>/kanban：localStorage → interaction-service API（拖拉看板、狀態同步）</td>
+            <td>1d</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-gold">E-4</span></td>
+            <td>/schedule：localStorage → interaction-service API + Calendar 同步</td>
+            <td>2d</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-gold">E-5</span></td>
+            <td>/daily-report：localStorage → interaction-service API（日報提交、審核）</td>
+            <td>1d</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-gold">E-6</span></td>
+            <td>/finance：localStorage → interaction-service API（財務報表、收支記錄）</td>
+            <td>1d</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card" style="margin-top:24px">
+      <h4>📊 任務量統計</h4>
+      <div class="kpi-grid">
+        <div class="kpi-box">
+          <div class="kpi-num" style="color:var(--red)">25</div>
+          <div class="kpi-label">總任務數</div>
+        </div>
+        <div class="kpi-box">
+          <div class="kpi-num" style="color:var(--blue)">5</div>
+          <div class="kpi-label">Sprint 數</div>
+        </div>
+        <div class="kpi-box">
+          <div class="kpi-num" style="color:var(--green)">~15天</div>
+          <div class="kpi-label">預估工時</div>
+        </div>
+        <div class="kpi-box">
+          <div class="kpi-num" style="color:var(--gold)">3</div>
+          <div class="kpi-label">可並行 Sprint</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 7. 三角色 CRM 整合流程 ===== -->
+<section id="flows">
+  <div class="container">
+    <h2><span class="num">07</span>三角色 CRM 整合流程</h2>
+    <p class="section-desc">CRM 不只管客戶，而是打通「設計師 × 工班 × 建材商」三角生態的核心樞紐。</p>
+
+    <div class="card-grid">
+      <!-- Flow 1 -->
+      <div class="card">
+        <h4 style="color:var(--red);margin-top:0">🏭 Flow 1：BD 簽約建材商</h4>
+        <div class="flow-container">
+          <div class="flow-steps">
+            <div class="flow-step">
+              <div class="flow-action">BD 在 CRM 將建材商移至「closed_won」</div>
+              <div class="flow-detail">Pipeline stage: negotiation → closed_won</div>
+            </div>
+            <div class="flow-step step-blue">
+              <div class="flow-action">自動建立 Vendor Profile</div>
+              <div class="flow-detail">profile-service 自動建立廠商資料</div>
+            </div>
+            <div class="flow-step step-gold">
+              <div class="flow-action">郵件邀請上架產品</div>
+              <div class="flow-detail">via Outlook Graph API 發送邀請函</div>
+            </div>
+            <div class="flow-step step-blue">
+              <div class="flow-action">Teams 通知產品團隊</div>
+              <div class="flow-detail">Incoming Webhook → 產品團隊 Channel</div>
+            </div>
+            <div class="flow-step step-green">
+              <div class="flow-action">設計師搜尋到新建材商 ✅</div>
+              <div class="flow-detail">平台建材搜尋自動包含新廠商</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Flow 2 -->
+      <div class="card">
+        <h4 style="color:var(--blue);margin-top:0">🎨 Flow 2：BD 簽約設計師</h4>
+        <div class="flow-container">
+          <div class="flow-steps">
+            <div class="flow-step">
+              <div class="flow-action">BD 在 CRM 簽下設計師</div>
+              <div class="flow-detail">Pipeline stage → closed_won</div>
+            </div>
+            <div class="flow-step step-blue">
+              <div class="flow-action">自動建立 Designer Profile</div>
+              <div class="flow-detail">profile-service 建立設計師帳號</div>
+            </div>
+            <div class="flow-step step-gold">
+              <div class="flow-action">開通工作台功能</div>
+              <div class="flow-detail">CRM / 報價 / 看板 / 日報功能全開</div>
+            </div>
+            <div class="flow-step step-green">
+              <div class="flow-action">推薦配對工班 + 建材商 ✅</div>
+              <div class="flow-detail">AI 推薦最適合的合作夥伴</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Flow 3 -->
+    <div class="card" style="margin-top:20px">
+      <h4 style="color:var(--green);margin-top:0">🔄 Flow 3：設計師發案 → BD 全程追蹤</h4>
+      <div style="display:flex;flex-wrap:wrap;gap:16px;margin-top:16px">
+        <div style="flex:1;min-width:200px;text-align:center;padding:16px;background:var(--bg-card-alt);border-radius:8px">
+          <div style="font-size:32px;margin-bottom:8px">📋</div>
+          <div style="font-weight:600;color:var(--text-heading);font-size:14px">設計師發案</div>
+          <div style="font-size:12px;color:var(--text-muted)">/projects 建立新專案</div>
+        </div>
+        <div style="display:flex;align-items:center;color:var(--red);font-size:24px">→</div>
+        <div style="flex:1;min-width:200px;text-align:center;padding:16px;background:var(--bg-card-alt);border-radius:8px">
+          <div style="font-size:32px;margin-bottom:8px">📊</div>
+          <div style="font-weight:600;color:var(--text-heading);font-size:14px">CRM 自動建立</div>
+          <div style="font-size:12px;color:var(--text-muted)">Pipeline Opportunity</div>
+        </div>
+        <div style="display:flex;align-items:center;color:var(--red);font-size:24px">→</div>
+        <div style="flex:1;min-width:200px;text-align:center;padding:16px;background:var(--bg-card-alt);border-radius:8px">
+          <div style="font-size:32px;margin-bottom:8px">🔗</div>
+          <div style="font-weight:600;color:var(--text-heading);font-size:14px">配對工班 + 建材</div>
+          <div style="font-size:12px;color:var(--text-muted)">AI 推薦最佳組合</div>
+        </div>
+        <div style="display:flex;align-items:center;color:var(--red);font-size:24px">→</div>
+        <div style="flex:1;min-width:200px;text-align:center;padding:16px;background:var(--bg-card-alt);border-radius:8px">
+          <div style="font-size:32px;margin-bottom:8px">👁️</div>
+          <div style="font-weight:600;color:var(--text-heading);font-size:14px">BD 追蹤進展</div>
+          <div style="font-size:12px;color:var(--text-muted)">CRM 全程可見</div>
+        </div>
+        <div style="display:flex;align-items:center;color:var(--red);font-size:24px">→</div>
+        <div style="flex:1;min-width:200px;text-align:center;padding:16px;background:rgba(16,185,129,.1);border-radius:8px;border:1px solid var(--green)">
+          <div style="font-size:32px;margin-bottom:8px">🎯</div>
+          <div style="font-weight:600;color:var(--green);font-size:14px">成交更新績效</div>
+          <div style="font-size:12px;color:var(--text-muted)">自動更新 BD KPI</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight-box" style="margin-top:24px">
+      <h4>💡 三角色打通的商業價值</h4>
+      <p>通用 CRM（Salesforce / HubSpot）只能管「客戶」，但 LargeHome 的價值在於<strong>連接三個角色</strong>。自建 CRM 可以：</p>
+      <ul>
+        <li><strong>建材商上架 →</strong> 設計師立刻能搜到並報價 → 工班能看到施工規格</li>
+        <li><strong>設計師發案 →</strong> 自動配對工班 → BD 追蹤全案 → 建材商接到訂單</li>
+        <li><strong>所有資料都在自己 DB</strong> → 可以做 AI 推薦、數據分析、跨角色關聯</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 8. 成本分析 ===== -->
+<section id="cost">
+  <div class="container">
+    <h2><span class="num">08</span>成本分析</h2>
+    <p class="section-desc">方案 D vs. 三大 CRM 平台的全面成本比較。</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>比較項目</th>
+            <th>Salesforce</th>
+            <th>Dynamics 365</th>
+            <th>HubSpot Pro</th>
+            <th style="background:rgba(16,185,129,.15)">方案 D（自建）</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>月費/人</strong></td>
+            <td>$4,500</td>
+            <td>$2,000</td>
+            <td>$1,500</td>
+            <td class="compare-winner" style="background:rgba(16,185,129,.08)"><strong style="color:var(--green)">$0</strong></td>
+          </tr>
+          <tr>
+            <td><strong>200 BD 月費</strong></td>
+            <td style="color:var(--red)">90 萬</td>
+            <td style="color:var(--gold)">40 萬</td>
+            <td style="color:var(--gold)">30 萬</td>
+            <td style="background:rgba(16,185,129,.08)"><strong style="color:var(--green)">0</strong></td>
+          </tr>
+          <tr>
+            <td><strong>年費</strong></td>
+            <td style="color:var(--red)">1,080 萬</td>
+            <td style="color:var(--gold)">480 萬</td>
+            <td style="color:var(--gold)">360 萬</td>
+            <td style="background:rgba(16,185,129,.08)"><strong style="color:var(--green)">0</strong></td>
+          </tr>
+          <tr>
+            <td><strong>一次性開發</strong></td>
+            <td>客製 50 萬+</td>
+            <td>客製 30 萬+</td>
+            <td>客製 20 萬+</td>
+            <td style="background:rgba(16,185,129,.08)"><strong>內部 15 天</strong></td>
+          </tr>
+          <tr>
+            <td><strong>資料掌控</strong></td>
+            <td><span class="cross">❌ 在對方</span></td>
+            <td><span class="cross">❌ 在對方</span></td>
+            <td><span class="cross">❌ 在對方</span></td>
+            <td style="background:rgba(16,185,129,.08)"><span class="check">✅ 自己 DB</span></td>
+          </tr>
+          <tr>
+            <td><strong>垂直整合</strong></td>
+            <td><span class="cross">❌ 通用</span></td>
+            <td><span class="cross">❌ 通用</span></td>
+            <td><span class="cross">❌ 通用</span></td>
+            <td style="background:rgba(16,185,129,.08)"><span class="check">✅ 三角色打通</span></td>
+          </tr>
+          <tr>
+            <td><strong>日本站共用</strong></td>
+            <td>另付費</td>
+            <td>另付費</td>
+            <td>另付費</td>
+            <td style="background:rgba(16,185,129,.08)"><span class="check">✅ 直接共用</span></td>
+          </tr>
+          <tr style="font-size:15px;font-weight:700">
+            <td><strong>3 年總成本</strong></td>
+            <td style="color:var(--red)">3,240 萬+</td>
+            <td style="color:var(--gold)">1,440 萬+</td>
+            <td style="color:var(--gold)">1,080 萬+</td>
+            <td style="background:rgba(16,185,129,.12);color:var(--green)">≈ $0</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>💰 3 年成本比較</h3>
+    <div class="bar-chart">
+      <div class="bar-row">
+        <span class="bar-label">Salesforce</span>
+        <div class="bar-track"><div class="bar-fill red" style="width:100%">3,240 萬+</div></div>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">Dynamics 365</span>
+        <div class="bar-track"><div class="bar-fill gold" style="width:44%">1,440 萬+</div></div>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">HubSpot Pro</span>
+        <div class="bar-track"><div class="bar-fill gold" style="width:33%">1,080 萬+</div></div>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label" style="color:var(--green);font-weight:700">方案 D（自建）</span>
+        <div class="bar-track"><div class="bar-fill green" style="width:2%">≈ $0</div></div>
+      </div>
+    </div>
+
+    <div class="kpi-grid" style="margin-top:32px">
+      <div class="kpi-box" style="border-color:var(--green);border-width:2px">
+        <div class="kpi-num" style="color:var(--green)">$150</div>
+        <div class="kpi-label">每人每月 M365 費用（已購買）</div>
+      </div>
+      <div class="kpi-box">
+        <div class="kpi-num" style="color:var(--red)">3,240萬</div>
+        <div class="kpi-label">3 年最多省下（vs Salesforce）</div>
+      </div>
+      <div class="kpi-box">
+        <div class="kpi-num" style="color:var(--blue)">15天</div>
+        <div class="kpi-label">一次性開發投入</div>
+      </div>
+      <div class="kpi-box">
+        <div class="kpi-num" style="color:var(--gold)">∞</div>
+        <div class="kpi-label">ROI（除以零 = 無限）</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 9. 風險 & 對策 ===== -->
+<section id="risks">
+  <div class="container">
+    <h2><span class="num">09</span>風險 & 對策</h2>
+    <p class="section-desc">自建方案的三大風險及其具體對策。</p>
+
+    <div class="card risk-card" style="margin-bottom:20px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+        <span class="badge badge-red">高風險</span>
+        <h4 style="margin:0;color:var(--text-heading)">風險 1：自建 CRM 功能不夠強</h4>
+      </div>
+      <p><strong>情境：</strong>BD 覺得自建 CRM 比不上 Salesforce 的功能豐富度。</p>
+      <div style="margin-top:12px;padding:12px 16px;background:rgba(16,185,129,.06);border-radius:8px;border-left:3px solid var(--green)">
+        <strong style="color:var(--green)">對策：</strong>
+        <ul style="margin-top:8px">
+          <li>先做核心功能（客戶管理、Pipeline、活動記錄、績效）</li>
+          <li>Week 4 讓 BD 實際使用，收集反饋</li>
+          <li>每週迭代一次，快速補功能</li>
+          <li>裝修產業的垂直功能（工程看板、日報、三角色配對）是通用 CRM 根本沒有的——這是差異化優勢</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card risk-card medium" style="margin-bottom:20px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+        <span class="badge badge-gold">中風險</span>
+        <h4 style="margin:0;color:var(--text-heading)">風險 2：M365 Graph API 限流</h4>
+      </div>
+      <p><strong>情境：</strong>200 BD 同時觸發郵件追蹤 / Calendar 同步，Graph API 被限流。</p>
+      <div style="margin-top:12px;padding:12px 16px;background:rgba(16,185,129,.06);border-radius:8px;border-left:3px solid var(--green)">
+        <strong style="color:var(--green)">對策：</strong>
+        <ul style="margin-top:8px">
+          <li>批次處理（Batch request）：Graph API 支援 $batch，一次送 20 個請求</li>
+          <li>Redis 快取：Calendar 資料快取 5 分鐘，減少 API 呼叫</li>
+          <li>Webhook 優先：用推送而非輪詢，大幅降低 API 呼叫量</li>
+          <li>Graph API 限制：10,000 req / 10 min / app，200 BD 綽綽有餘</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card risk-card low" style="margin-bottom:20px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+        <span class="badge badge-green">低風險</span>
+        <h4 style="margin:0;color:var(--text-heading)">風險 3：開發時間超估</h4>
+      </div>
+      <p><strong>情境：</strong>15 天不夠，某些 Sprint 延遲。</p>
+      <div style="margin-top:12px;padding:12px 16px;background:rgba(16,185,129,.06);border-radius:8px;border-left:3px solid var(--green)">
+        <strong style="color:var(--green)">對策：</strong>
+        <ul style="margin-top:8px">
+          <li>優先順序明確：Sprint A + B（CRM 核心）先上線，Week 2 底 BD 就能用</li>
+          <li>M365 整合（Sprint D）獨立於 CRM 核心，可以延後不影響主功能</li>
+          <li>Frontend 對接（Sprint E）因為已有 UI 原型，只是改資料來源，風險最低</li>
+          <li>最壞情況：Week 2 底有可用 CRM，Week 6 才完成 M365 整合，仍然可接受</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 10. 時程總覽 ===== -->
+<section id="timeline">
+  <div class="container">
+    <h2><span class="num">10</span>時程總覽</h2>
+    <p class="section-desc">4 週完成全部開發，Sprint B/C 可並行，最快 Week 2 底 BD 就能開始用 CRM。</p>
+
+    <!-- Gantt Chart -->
+    <div class="card">
+      <h4>📅 Gantt Chart</h4>
+      <div class="gantt">
+        <div class="gantt-header">
+          <div class="gantt-header-label"></div>
+          <div class="gantt-header-cells">
+            <span>W1-前</span><span>W1-後</span><span>W2-前</span><span>W2-後</span><span>W3-前</span><span>W3-後</span><span>W4-前</span><span>W4-後</span>
+          </div>
+        </div>
+        <div class="gantt-row">
+          <div class="gantt-label">🅰️ DB Foundation</div>
+          <div class="gantt-track">
+            <div class="gantt-cell active-red">A1-2</div>
+            <div class="gantt-cell active-red">A3-4</div>
+            <div class="gantt-cell empty"></div>
+            <div class="gantt-cell empty"></div>
+            <div class="gantt-cell empty"></div>
+            <div class="gantt-cell empty"></div>
+            <div class="gantt-cell empty"></div>
+            <div class="gantt-cell empty"></div>
+          </div>
+        </div>
+        <div class="gantt-row">
+          <div class="gantt-label">🅱️ CRM API</div>
+          <div class="gantt-track">
+            <div class="gantt-cell empty"></div>
+            <div class="gantt-cell empty"></div>
+            <div class="gantt-cell active-blue">B1</div>
+            <div class="gantt-cell active-blue">B2-4</div>
+            <div class="gantt-cell empty"></div>
+            <div class="gantt-cell empty"></div>
+            <div class="gantt-cell empty"></div>
+            <div class="gantt-cell empty"></div>
+          </div>
+        </div>
+        <div class="gantt-row">
+          <div class="gantt-label">©️ 專案管理 API</div>
+          <div class="gantt-track">
+            <div class="gantt-cell empty"></div>
+            <div class="gantt-cell empty"></div>
+            <div class="gantt-cell active-green">C1</div>
+            <div class="gantt-cell active-green">C2-3</div>
+            <div class="gantt-cell active-green">C4-5</div>
+            <div class="gantt-cell empty"></div>
+            <div class="gantt-cell empty"></div>
+            <div class="gantt-cell empty"></div>
+          </div>
+        </div>
+        <div class="gantt-row">
+          <div class="gantt-label">🅳 M365 整合</div>
+          <div class="gantt-track">
+            <div class="gantt-cell empty"></div>
+            <div class="gantt-cell empty"></div>
+            <div class="gantt-cell empty"></div>
+            <div class="gantt-cell empty"></div>
+            <div class="gantt-cell active-purple">D1-2</div>
+            <div class="gantt-cell active-purple">D3-5</div>
+            <div class="gantt-cell empty"></div>
+            <div class="gantt-cell empty"></div>
+          </div>
+        </div>
+        <div class="gantt-row">
+          <div class="gantt-label">🅴 Frontend 對接</div>
+          <div class="gantt-track">
+            <div class="gantt-cell empty"></div>
+            <div class="gantt-cell empty"></div>
+            <div class="gantt-cell empty"></div>
+            <div class="gantt-cell empty"></div>
+            <div class="gantt-cell active-gold">E1-2</div>
+            <div class="gantt-cell active-gold">E3-4</div>
+            <div class="gantt-cell active-gold">E5-6</div>
+            <div class="gantt-cell empty"></div>
+          </div>
+        </div>
+        <div class="gantt-row">
+          <div class="gantt-label">🧪 測試 + 培訓</div>
+          <div class="gantt-track">
+            <div class="gantt-cell empty"></div>
+            <div class="gantt-cell empty"></div>
+            <div class="gantt-cell empty"></div>
+            <div class="gantt-cell empty"></div>
+            <div class="gantt-cell empty"></div>
+            <div class="gantt-cell empty"></div>
+            <div class="gantt-cell active-cyan">測試</div>
+            <div class="gantt-cell active-cyan">培訓</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-grid" style="margin-top:24px">
+      <div class="card card-sm" style="border-left:4px solid var(--red)">
+        <h4 style="color:var(--red);margin-top:0">Week 1</h4>
+        <p style="font-size:15px;font-weight:600;color:var(--text-heading)">DB Schema + Models</p>
+        <p style="font-size:13px;color:var(--text-muted)">建立所有新表、SQLAlchemy models，為後續 API 打基礎</p>
+      </div>
+      <div class="card card-sm" style="border-left:4px solid var(--blue)">
+        <h4 style="color:var(--blue);margin-top:0">Week 2</h4>
+        <p style="font-size:15px;font-weight:600;color:var(--text-heading)">CRM + 專案管理 API</p>
+        <p style="font-size:13px;color:var(--text-muted)">Sprint B + C 並行開發，Week 2 底 CRM 核心 API 可用</p>
+      </div>
+      <div class="card card-sm" style="border-left:4px solid var(--purple)">
+        <h4 style="color:var(--purple);margin-top:0">Week 3</h4>
+        <p style="font-size:15px;font-weight:600;color:var(--text-heading)">M365 整合 + Frontend</p>
+        <p style="font-size:13px;color:var(--text-muted)">Graph API 接入、Frontend localStorage → API 對接</p>
+      </div>
+      <div class="card card-sm" style="border-left:4px solid var(--cyan)">
+        <h4 style="color:var(--cyan);margin-top:0">Week 4</h4>
+        <p style="font-size:15px;font-weight:600;color:var(--text-heading)">測試 + 微調 + BD 培訓</p>
+        <p style="font-size:13px;color:var(--text-muted)">端到端測試、修 bug、BD 培訓上線</p>
+      </div>
+    </div>
+
+    <div class="highlight-box" style="margin-top:32px">
+      <h4>🏁 里程碑</h4>
+      <div class="bar-chart">
+        <div class="bar-row">
+          <span class="bar-label">Week 1 底</span>
+          <div class="bar-track"><div class="bar-fill red" style="width:25%">DB Ready</div></div>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Week 2 底</span>
+          <div class="bar-track"><div class="bar-fill blue" style="width:50%">CRM API 可用，BD 可開始測試</div></div>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Week 3 底</span>
+          <div class="bar-track"><div class="bar-fill purple" style="width:80%">M365 整合完成 + Frontend 上線</div></div>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Week 4 底</span>
+          <div class="bar-track"><div class="bar-fill green" style="width:100%">✅ 全功能上線 + BD 培訓完成</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Footer ===== -->
+<footer class="footer">
+  <div class="container">
+    <p>LargeHome AI — 方案 D：自建 CRM + M365 整合 &nbsp;|&nbsp; Plan v006</p>
+    <p style="margin-top:8px">CTO-Level Technical Architecture Document &nbsp;·&nbsp; 2025</p>
+  </div>
+</footer>
+
+</body>
+</html>

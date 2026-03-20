@@ -4,13 +4,24 @@
     "timestamp": "2026-03-17T13:10:00+08:00",
     "description": "裝修產業平台 — 商業規劃（全可能性矩陣 + ROI試算 + 開發優先序）",
     "author": "brighten",
-    "files": ["index.html"],
+    "files": [
+      "index.html"
+    ],
     "summary": {
       "overview": "首版商業規劃，以全可能性矩陣展示裝修產業平台的功能方向與 ROI 試算",
       "changes": [
-        { "type": "feature", "text": "建立功能可能性矩陣，涵蓋設計師/供應商/工班三大角色" },
-        { "type": "feature", "text": "ROI 投資回報分析，含收入預測與成本計算" },
-        { "type": "feature", "text": "功能開發優先排序表，含評分權重與視覺化" }
+        {
+          "type": "feature",
+          "text": "建立功能可能性矩陣，涵蓋設計師/供應商/工班三大角色"
+        },
+        {
+          "type": "feature",
+          "text": "ROI 投資回報分析，含收入預測與成本計算"
+        },
+        {
+          "type": "feature",
+          "text": "功能開發優先排序表，含評分權重與視覺化"
+        }
       ],
       "businessGoal": "全景式評估裝修產業平台的所有可能功能方向，供商業決策參考",
       "techNotes": "純 HTML 靜態頁面，深色主題"
@@ -21,14 +32,28 @@
     "timestamp": "2026-03-18T10:27:00+08:00",
     "description": "樂居空間選材 — 完整策略總覽（BD方案）",
     "author": "show",
-    "files": ["index.html"],
+    "files": [
+      "index.html"
+    ],
     "summary": {
       "overview": "從功能矩陣收斂為「樂居空間選材」品牌策略，聚焦 BD 方案與商業模式",
       "changes": [
-        { "type": "breaking", "text": "品牌定位從泛用平台收斂為「樂居空間選材」，明確商業名稱" },
-        { "type": "feature", "text": "完整 BD 策略方案，含供應商分級與合作模式" },
-        { "type": "feature", "text": "商業模式設計：免費/基礎/進階/企業四級定價" },
-        { "type": "improvement", "text": "視覺風格從深色改為淺色商務風格，更適合對外展示" }
+        {
+          "type": "breaking",
+          "text": "品牌定位從泛用平台收斂為「樂居空間選材」，明確商業名稱"
+        },
+        {
+          "type": "feature",
+          "text": "完整 BD 策略方案，含供應商分級與合作模式"
+        },
+        {
+          "type": "feature",
+          "text": "商業模式設計：免費/基礎/進階/企業四級定價"
+        },
+        {
+          "type": "improvement",
+          "text": "視覺風格從深色改為淺色商務風格，更適合對外展示"
+        }
       ],
       "businessGoal": "建立可對外展示的完整策略文件，用於 BD 拜訪與投資人溝通",
       "techNotes": "淺色主題，適合列印與投影展示"
@@ -39,14 +64,28 @@
     "timestamp": "2026-03-20T14:19:00+08:00",
     "description": "日本競品分析報告 — 裝修產業SaaS平台",
     "author": "show",
-    "files": ["index.html"],
+    "files": [
+      "index.html"
+    ],
     "summary": {
       "overview": "新增日本市場競品深度分析，驗證產品定位的市場獨特性",
       "changes": [
-        { "type": "feature", "text": "分析 8 大日本競品：ANDPAD、Houzz Pro、ASCAST、CraftBank、助太刀、SAKSAK、Renoveru、SuMiKa" },
-        { "type": "feature", "text": "核心功能對照表：橫向比較各競品在設計師/工班/建材商三大面向的覆蓋度" },
-        { "type": "feature", "text": "關鍵發現分析：沒有完全一樣的競品、各領域有強者、『連結』是藍海" },
-        { "type": "feature", "text": "市場規模估算與進入策略建議" }
+        {
+          "type": "feature",
+          "text": "分析 8 大日本競品：ANDPAD、Houzz Pro、ASCAST、CraftBank、助太刀、SAKSAK、Renoveru、SuMiKa"
+        },
+        {
+          "type": "feature",
+          "text": "核心功能對照表：橫向比較各競品在設計師/工班/建材商三大面向的覆蓋度"
+        },
+        {
+          "type": "feature",
+          "text": "關鍵發現分析：沒有完全一樣的競品、各領域有強者、『連結』是藍海"
+        },
+        {
+          "type": "feature",
+          "text": "市場規模估算與進入策略建議"
+        }
       ],
       "businessGoal": "以日本市場為參照，驗證 LargeHome 產品定位的獨特性——連結設計師、工班、建材商三方的整合平台在日本尚無先例",
       "techNotes": "深色主題報告風格，含互動式對照表與競品卡片"
@@ -57,16 +96,36 @@
     "timestamp": "2026-03-20T14:40:00+08:00",
     "description": "LargeHome AI 日本站 — 產品需求文件 (PRD)",
     "author": "roger",
-    "files": ["index.html"],
+    "files": [
+      "index.html"
+    ],
     "summary": {
       "overview": "基於台灣產品能力與日本競品分析，產出完整的日本站 PRD，規劃三階段從台灣移植到獨家差異化的產品路線圖",
       "changes": [
-        { "type": "feature", "text": "完整 10 章節 PRD：執行摘要、市場分析、產品策略、功能規格、在地化、GTM、技術架構、風險、KPI、預算" },
-        { "type": "feature", "text": "33 項功能完整矩陣表：含日文名稱、角色歸屬、來源（台灣移植/日本整合/全新開發）、優先級、對標競品" },
-        { "type": "feature", "text": "三階段產品策略：Phase 1 台灣移植 8 項核心功能 → Phase 2 整合 ANDPAD/Houzz/CraftBank/ASCAST 優勢 → Phase 3 AI 跨角色差異化" },
-        { "type": "feature", "text": "在地化策略：建設用語中日對照表 12 組、日本支付方式、建設業法/建築基準法合規、敬語 UX 設計" },
-        { "type": "feature", "text": "預算估算：24 個月合計 ¥8.5 億投資，含開發/在地化/BD/行銷明細與 ROI 分析" },
-        { "type": "feature", "text": "8 大競品橫向對比矩陣（✓/△/✗ 標記），驗證三角色整合的藍海定位" }
+        {
+          "type": "feature",
+          "text": "完整 10 章節 PRD：執行摘要、市場分析、產品策略、功能規格、在地化、GTM、技術架構、風險、KPI、預算"
+        },
+        {
+          "type": "feature",
+          "text": "33 項功能完整矩陣表：含日文名稱、角色歸屬、來源（台灣移植/日本整合/全新開發）、優先級、對標競品"
+        },
+        {
+          "type": "feature",
+          "text": "三階段產品策略：Phase 1 台灣移植 8 項核心功能 → Phase 2 整合 ANDPAD/Houzz/CraftBank/ASCAST 優勢 → Phase 3 AI 跨角色差異化"
+        },
+        {
+          "type": "feature",
+          "text": "在地化策略：建設用語中日對照表 12 組、日本支付方式、建設業法/建築基準法合規、敬語 UX 設計"
+        },
+        {
+          "type": "feature",
+          "text": "預算估算：24 個月合計 ¥8.5 億投資，含開發/在地化/BD/行銷明細與 ROI 分析"
+        },
+        {
+          "type": "feature",
+          "text": "8 大競品橫向對比矩陣（✓/△/✗ 標記），驗證三角色整合的藍海定位"
+        }
       ],
       "businessGoal": "為 LargeHome AI 日本站提供完整的產品規劃藍圖，從功能移植、競品整合到獨家差異化，支撐日本市場進入決策",
       "techNotes": "深色主題、Sticky 導航、互動篩選表格、CSS 視覺化圖表、響應式設計、1,911 行完整文件"
@@ -77,19 +136,79 @@
     "timestamp": "2026-03-20T14:59:00+08:00",
     "description": "台日共用模組反推分析 — 台灣站功能缺口與開發路線圖",
     "author": "roger",
-    "files": ["index.html"],
+    "files": [
+      "index.html"
+    ],
     "summary": {
       "overview": "從日本站 PRD 反推台灣站必須補齊的功能缺口，規劃共用模組架構以實現「開發一次、部署兩地」",
       "changes": [
-        { "type": "breaking", "text": "揭露台灣產品嚴重偏科：設計師覆蓋 92%、工班僅 25%、建材商 40%、跨角色 0%" },
-        { "type": "feature", "text": "39 項功能差距矩陣表：台灣現狀 vs 日本需求，含互動篩選（已建成/需擴充/未建置/跨角色）" },
-        { "type": "feature", "text": "8 大必須新增模組：P0 工班升級+建材訂購+i18n、P1 跨角色 AI+提案書+統一系統、P2 市場數據+AI 進階" },
-        { "type": "feature", "text": "四層共用架構設計：Core→Shared→Adapter→App 分離，含 Monorepo 資料夾結構建議" },
-        { "type": "feature", "text": "12 個月甘特圖與團隊配置（10→13→15 人），4 個關鍵里程碑" },
-        { "type": "feature", "text": "投資效益分析：共用模組省 36.6%（$1.44M vs $2.27M 獨立開發），含 ROI 回收曲線" }
+        {
+          "type": "breaking",
+          "text": "揭露台灣產品嚴重偏科：設計師覆蓋 92%、工班僅 25%、建材商 40%、跨角色 0%"
+        },
+        {
+          "type": "feature",
+          "text": "39 項功能差距矩陣表：台灣現狀 vs 日本需求，含互動篩選（已建成/需擴充/未建置/跨角色）"
+        },
+        {
+          "type": "feature",
+          "text": "8 大必須新增模組：P0 工班升級+建材訂購+i18n、P1 跨角色 AI+提案書+統一系統、P2 市場數據+AI 進階"
+        },
+        {
+          "type": "feature",
+          "text": "四層共用架構設計：Core→Shared→Adapter→App 分離，含 Monorepo 資料夾結構建議"
+        },
+        {
+          "type": "feature",
+          "text": "12 個月甘特圖與團隊配置（10→13→15 人），4 個關鍵里程碑"
+        },
+        {
+          "type": "feature",
+          "text": "投資效益分析：共用模組省 36.6%（$1.44M vs $2.27M 獨立開發），含 ROI 回收曲線"
+        }
       ],
       "businessGoal": "確保台灣開發投資能同時支撐日本擴張，避免技術債與程式碼分叉，最大化研發 ROI",
       "techNotes": "深色主題、互動篩選表格、CSS 甘特圖與進度條、響應式設計、1,767 行"
+    }
+  },
+  {
+    "version": "v006",
+    "timestamp": "2026-03-20T23:21:00+08:00",
+    "description": "方案 D: 自建 CRM + M365 整合完整報告",
+    "author": "roger",
+    "files": [
+      "index.html"
+    ],
+    "summary": {
+      "overview": "基於 M365 Business Basic 生態，自建垂直 CRM 取代 Salesforce/Dynamics，年省 480-1,080 萬授權費",
+      "changes": [
+        {
+          "type": "feature",
+          "text": "完整 DB Schema 設計：9 張新表（crm_contacts/activities/pipelines/bd_performance/contracts/milestones/kanban/schedule/daily_reports）"
+        },
+        {
+          "type": "feature",
+          "text": "M365 Graph API 整合計畫：Outlook 郵件追蹤、Teams 通知、Calendar 雙向同步、Power Automate 自動化"
+        },
+        {
+          "type": "feature",
+          "text": "25 項開發任務分 5 個 Sprint（4 週完成），對應 5 個 backend service"
+        },
+        {
+          "type": "feature",
+          "text": "三角色 CRM 整合流程：BD 簽約→自動觸發建材上架/設計師開通/工班配對"
+        },
+        {
+          "type": "feature",
+          "text": "成本對比：Salesforce 3 年 3,240 萬 vs 自建 /bin/zsh 月費"
+        },
+        {
+          "type": "feature",
+          "text": "風險對策 + 4 週甘特圖時程"
+        }
+      ],
+      "businessGoal": "用 M365 已購買的基礎設施 + 自有工程團隊，打造裝修產業垂直 CRM，省下巨額授權費的同時實現三角色深度整合",
+      "techNotes": "深色主題、1,513 行、10 章節、含架構圖和 DB schema"
     }
   }
 ]
