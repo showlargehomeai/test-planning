@@ -71,5 +71,25 @@
       "businessGoal": "為 LargeHome AI 日本站提供完整的產品規劃藍圖，從功能移植、競品整合到獨家差異化，支撐日本市場進入決策",
       "techNotes": "深色主題、Sticky 導航、互動篩選表格、CSS 視覺化圖表、響應式設計、1,911 行完整文件"
     }
+  },
+  {
+    "version": "v005",
+    "timestamp": "2026-03-20T14:59:00+08:00",
+    "description": "台日共用模組反推分析 — 台灣站功能缺口與開發路線圖",
+    "author": "roger",
+    "files": ["index.html"],
+    "summary": {
+      "overview": "從日本站 PRD 反推台灣站必須補齊的功能缺口，規劃共用模組架構以實現「開發一次、部署兩地」",
+      "changes": [
+        { "type": "breaking", "text": "揭露台灣產品嚴重偏科：設計師覆蓋 92%、工班僅 25%、建材商 40%、跨角色 0%" },
+        { "type": "feature", "text": "39 項功能差距矩陣表：台灣現狀 vs 日本需求，含互動篩選（已建成/需擴充/未建置/跨角色）" },
+        { "type": "feature", "text": "8 大必須新增模組：P0 工班升級+建材訂購+i18n、P1 跨角色 AI+提案書+統一系統、P2 市場數據+AI 進階" },
+        { "type": "feature", "text": "四層共用架構設計：Core→Shared→Adapter→App 分離，含 Monorepo 資料夾結構建議" },
+        { "type": "feature", "text": "12 個月甘特圖與團隊配置（10→13→15 人），4 個關鍵里程碑" },
+        { "type": "feature", "text": "投資效益分析：共用模組省 36.6%（$1.44M vs $2.27M 獨立開發），含 ROI 回收曲線" }
+      ],
+      "businessGoal": "確保台灣開發投資能同時支撐日本擴張，避免技術債與程式碼分叉，最大化研發 ROI",
+      "techNotes": "深色主題、互動篩選表格、CSS 甘特圖與進度條、響應式設計、1,767 行"
+    }
   }
 ]

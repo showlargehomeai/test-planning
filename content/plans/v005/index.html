@@ -1,0 +1,1768 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LargeHome — 台日共用模組反推分析報告 v005</title>
+<style>
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0f1117; --bg-card: #1a1d2e; --bg-card-alt: #212438;
+  --text: #e2e8f0; --text-muted: #94a3b8; --text-heading: #f8fafc;
+  --red: #e94560; --blue: #3b82f6; --green: #10b981; --gold: #f59e0b;
+  --purple: #a855f7; --cyan: #06b6d4; --orange: #f97316;
+  --border: #2d3148; --radius: 12px;
+}
+html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.8; font-size: 15px;
+}
+a { color: var(--blue); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== Navigation ===== */
+.nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(15,17,23,.92); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border); padding: 0 24px;
+}
+.nav-inner {
+  max-width: 1280px; margin: 0 auto; display: flex; align-items: center;
+  gap: 6px; overflow-x: auto; padding: 12px 0;
+  scrollbar-width: none;
+}
+.nav-inner::-webkit-scrollbar { display: none; }
+.nav-inner a {
+  white-space: nowrap; font-size: 13px; padding: 6px 14px;
+  border-radius: 20px; color: var(--text-muted); transition: all .2s;
+  border: 1px solid transparent;
+}
+.nav-inner a:hover, .nav-inner a.active { color: var(--text); background: var(--bg-card); border-color: var(--border); text-decoration: none; }
+.nav-logo { font-weight: 700; color: var(--red) !important; font-size: 15px !important; margin-right: 12px; }
+
+/* ===== Layout ===== */
+.container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+section { padding: 60px 0; }
+section + section { border-top: 1px solid var(--border); }
+
+/* ===== Hero ===== */
+.hero {
+  padding: 100px 0 80px; text-align: center;
+  background: linear-gradient(135deg, rgba(233,69,96,.1) 0%, rgba(59,130,246,.08) 50%, rgba(16,185,129,.06) 100%);
+}
+.hero h1 { font-size: clamp(26px, 4.5vw, 44px); color: var(--text-heading); margin-bottom: 16px; font-weight: 800; line-height: 1.3; }
+.hero h1 span { color: var(--red); }
+.hero h1 .blue { color: var(--blue); }
+.hero .subtitle { font-size: 18px; color: var(--text-muted); max-width: 780px; margin: 0 auto 32px; line-height: 1.7; }
+.hero-meta { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; font-size: 13px; color: var(--text-muted); }
+.hero-meta span { display: flex; align-items: center; gap: 6px; }
+.hero-badges { display: flex; gap: 10px; justify-content: center; margin-top: 24px; flex-wrap: wrap; }
+
+/* ===== Typography ===== */
+h2 {
+  font-size: 28px; font-weight: 700; color: var(--text-heading); margin-bottom: 12px;
+  display: flex; align-items: center; gap: 12px;
+}
+h2 .num { font-size: 13px; background: var(--red); color: #fff; padding: 4px 12px; border-radius: 20px; font-weight: 600; }
+h3 { font-size: 20px; font-weight: 600; color: var(--text-heading); margin: 28px 0 12px; }
+h4 { font-size: 16px; font-weight: 600; color: var(--gold); margin: 20px 0 8px; }
+.section-desc { color: var(--text-muted); margin-bottom: 32px; font-size: 15px; }
+p { margin-bottom: 12px; }
+
+/* ===== Cards ===== */
+.card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 28px; margin-bottom: 20px;
+}
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px; }
+.card-grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+
+/* ===== Badges ===== */
+.badge {
+  display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 10px;
+  border-radius: 12px; text-transform: uppercase; letter-spacing: .5px;
+}
+.badge-red { background: rgba(233,69,96,.15); color: var(--red); }
+.badge-blue { background: rgba(59,130,246,.15); color: var(--blue); }
+.badge-green { background: rgba(16,185,129,.15); color: var(--green); }
+.badge-gold { background: rgba(245,158,11,.15); color: var(--gold); }
+.badge-purple { background: rgba(168,85,247,.15); color: var(--purple); }
+.badge-cyan { background: rgba(6,182,212,.15); color: var(--cyan); }
+.badge-orange { background: rgba(249,115,22,.15); color: var(--orange); }
+
+/* ===== Tables ===== */
+.table-wrap { overflow-x: auto; margin: 20px 0; border-radius: var(--radius); border: 1px solid var(--border); }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead { background: var(--bg-card-alt); }
+th { padding: 12px 14px; text-align: left; font-weight: 600; color: var(--text-heading); white-space: nowrap; border-bottom: 2px solid var(--border); }
+td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+tbody tr:hover { background: rgba(59,130,246,.04); }
+
+/* Status icons in table */
+.st-done { color: var(--green); font-weight: 700; }
+.st-expand { color: var(--gold); font-weight: 700; }
+.st-miss { color: #ef4444; font-weight: 700; }
+.st-cross { color: var(--purple); font-weight: 700; }
+
+/* ===== Progress Bars ===== */
+.progress-bar { background: var(--bg-card-alt); border-radius: 8px; height: 28px; overflow: hidden; position: relative; margin: 8px 0; }
+.progress-fill { height: 100%; border-radius: 8px; display: flex; align-items: center; padding: 0 12px; font-size: 12px; font-weight: 600; color: #fff; transition: width .6s ease; }
+.progress-fill.red { background: linear-gradient(90deg, var(--red), #f87171); }
+.progress-fill.blue { background: linear-gradient(90deg, var(--blue), #60a5fa); }
+.progress-fill.green { background: linear-gradient(90deg, var(--green), #34d399); }
+.progress-fill.gold { background: linear-gradient(90deg, var(--gold), #fbbf24); }
+.progress-fill.purple { background: linear-gradient(90deg, var(--purple), #c084fc); }
+
+/* ===== Gantt Chart ===== */
+.gantt { margin: 24px 0; overflow-x: auto; }
+.gantt-row { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; min-width: 900px; }
+.gantt-label { width: 200px; min-width: 200px; font-size: 13px; color: var(--text); text-align: right; padding-right: 12px; }
+.gantt-track { flex: 1; height: 32px; position: relative; background: rgba(255,255,255,.02); border-radius: 6px; }
+.gantt-bar { position: absolute; height: 100%; border-radius: 6px; display: flex; align-items: center; padding: 0 10px; font-size: 11px; font-weight: 600; color: #fff; white-space: nowrap; }
+.gantt-bar.p0 { background: linear-gradient(90deg, var(--red), #f87171); }
+.gantt-bar.p1 { background: linear-gradient(90deg, var(--blue), #60a5fa); }
+.gantt-bar.p2 { background: linear-gradient(90deg, var(--green), #34d399); }
+.gantt-bar.infra { background: linear-gradient(90deg, var(--gold), #fbbf24); }
+.gantt-months { display: flex; gap: 0; min-width: 900px; }
+.gantt-months .label-row { display: flex; width: 100%; padding-left: 212px; }
+.gantt-months .m-label { flex: 1; font-size: 11px; color: var(--text-muted); text-align: center; border-left: 1px solid var(--border); padding: 4px 0; }
+
+/* ===== Architecture Diagram ===== */
+.arch-diagram { margin: 24px 0; padding: 32px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); overflow-x: auto; }
+.arch-layer { margin-bottom: 24px; }
+.arch-layer-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; padding: 4px 12px; border-radius: 4px; display: inline-block; }
+.arch-layer-title.core { background: rgba(233,69,96,.15); color: var(--red); }
+.arch-layer-title.shared { background: rgba(59,130,246,.15); color: var(--blue); }
+.arch-layer-title.adapter { background: rgba(16,185,129,.15); color: var(--green); }
+.arch-layer-title.app { background: rgba(245,158,11,.15); color: var(--gold); }
+.arch-boxes { display: flex; flex-wrap: wrap; gap: 10px; }
+.arch-box { padding: 10px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; border: 1px solid; }
+.arch-box.core { background: rgba(233,69,96,.08); border-color: rgba(233,69,96,.3); color: var(--red); }
+.arch-box.shared { background: rgba(59,130,246,.08); border-color: rgba(59,130,246,.3); color: var(--blue); }
+.arch-box.adapter { background: rgba(16,185,129,.08); border-color: rgba(16,185,129,.3); color: var(--green); }
+.arch-box.app { background: rgba(245,158,11,.08); border-color: rgba(245,158,11,.3); color: var(--gold); }
+
+/* ===== KPI / Stats ===== */
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin: 24px 0; }
+.stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; text-align: center; }
+.stat-number { font-size: 36px; font-weight: 800; margin-bottom: 4px; }
+.stat-number.red { color: var(--red); }
+.stat-number.blue { color: var(--blue); }
+.stat-number.green { color: var(--green); }
+.stat-number.gold { color: var(--gold); }
+.stat-number.purple { color: var(--purple); }
+.stat-label { font-size: 13px; color: var(--text-muted); }
+
+/* ===== Priority Tags ===== */
+.priority-tag { display: inline-flex; align-items: center; gap: 6px; padding: 6px 16px; border-radius: 20px; font-size: 14px; font-weight: 700; margin-bottom: 16px; }
+.priority-tag.p0 { background: rgba(233,69,96,.15); color: var(--red); border: 1px solid rgba(233,69,96,.3); }
+.priority-tag.p1 { background: rgba(59,130,246,.15); color: var(--blue); border: 1px solid rgba(59,130,246,.3); }
+.priority-tag.p2 { background: rgba(16,185,129,.15); color: var(--green); border: 1px solid rgba(16,185,129,.3); }
+
+/* ===== Lists ===== */
+.feature-list { list-style: none; padding: 0; }
+.feature-list li { padding: 8px 0 8px 24px; position: relative; color: var(--text); font-size: 14px; }
+.feature-list li::before { content: '→'; position: absolute; left: 0; color: var(--red); font-weight: 700; }
+.reason { background: rgba(245,158,11,.08); border-left: 3px solid var(--gold); padding: 12px 16px; margin: 12px 0 20px; border-radius: 0 8px 8px 0; font-size: 14px; color: var(--gold); }
+.reason strong { color: var(--text-heading); }
+
+/* ===== Cost Comparison ===== */
+.cost-compare { display: grid; grid-template-columns: 1fr 60px 1fr; gap: 20px; align-items: start; margin: 24px 0; }
+.cost-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; }
+.cost-box.bad { border-color: rgba(239,68,68,.3); }
+.cost-box.good { border-color: rgba(16,185,129,.3); }
+.cost-vs { display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 800; color: var(--text-muted); }
+.cost-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.cost-title.bad { color: #ef4444; }
+.cost-title.good { color: var(--green); }
+.cost-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
+.cost-total { display: flex; justify-content: space-between; padding: 12px 0 0; font-size: 18px; font-weight: 700; color: var(--text-heading); }
+
+/* ===== Folder Structure ===== */
+.folder-tree { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 13px; line-height: 2; color: var(--text); overflow-x: auto; }
+.folder-tree .dir { color: var(--blue); font-weight: 600; }
+.folder-tree .file { color: var(--text-muted); }
+.folder-tree .comment { color: var(--green); font-style: italic; }
+.folder-tree .indent { padding-left: 24px; }
+
+/* ===== Risk Matrix ===== */
+.risk-card { padding: 20px; border-radius: var(--radius); margin-bottom: 16px; }
+.risk-card.high { background: rgba(239,68,68,.08); border: 1px solid rgba(239,68,68,.2); }
+.risk-card.medium { background: rgba(245,158,11,.08); border: 1px solid rgba(245,158,11,.2); }
+.risk-card.low { background: rgba(16,185,129,.08); border: 1px solid rgba(16,185,129,.2); }
+.risk-title { font-weight: 700; margin-bottom: 8px; }
+.risk-card.high .risk-title { color: #ef4444; }
+.risk-card.medium .risk-title { color: var(--gold); }
+.risk-card.low .risk-title { color: var(--green); }
+
+/* ===== Callout ===== */
+.callout { padding: 20px 24px; border-radius: var(--radius); margin: 24px 0; }
+.callout.insight { background: rgba(59,130,246,.08); border: 1px solid rgba(59,130,246,.2); }
+.callout.warning { background: rgba(233,69,96,.08); border: 1px solid rgba(233,69,96,.2); }
+.callout.success { background: rgba(16,185,129,.08); border: 1px solid rgba(16,185,129,.2); }
+.callout-title { font-weight: 700; margin-bottom: 8px; font-size: 15px; }
+.callout.insight .callout-title { color: var(--blue); }
+.callout.warning .callout-title { color: var(--red); }
+.callout.success .callout-title { color: var(--green); }
+
+/* ===== Team Allocation ===== */
+.team-bar { display: flex; height: 40px; border-radius: 8px; overflow: hidden; margin: 8px 0; }
+.team-segment { display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: #fff; }
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .card-grid, .card-grid-3 { grid-template-columns: 1fr; }
+  .cost-compare { grid-template-columns: 1fr; }
+  .cost-vs { transform: rotate(90deg); }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  h2 { font-size: 22px; }
+  .gantt-row, .gantt-months .label-row { min-width: 700px; }
+}
+
+/* ===== Print ===== */
+@media print {
+  .nav { position: static; }
+  section { break-inside: avoid; }
+}
+
+/* ===== Summary Box ===== */
+.summary-box { background: linear-gradient(135deg, rgba(233,69,96,.06), rgba(59,130,246,.06)); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; margin: 32px 0; }
+.summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px; margin-top: 20px; }
+.summary-item { }
+.summary-item h4 { color: var(--text-heading); font-size: 15px; margin: 0 0 8px; }
+.summary-item p { color: var(--text-muted); font-size: 14px; margin: 0; }
+
+/* ===== Filter Tabs (Interactive) ===== */
+.filter-tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+.filter-tab { padding: 6px 16px; border-radius: 20px; font-size: 13px; cursor: pointer; border: 1px solid var(--border); background: transparent; color: var(--text-muted); transition: all .2s; }
+.filter-tab:hover, .filter-tab.active { background: var(--bg-card); color: var(--text); border-color: var(--blue); }
+.filter-tab[data-filter="all"].active { border-color: var(--text-muted); }
+.filter-tab[data-filter="done"].active { border-color: var(--green); color: var(--green); }
+.filter-tab[data-filter="expand"].active { border-color: var(--gold); color: var(--gold); }
+.filter-tab[data-filter="miss"].active { border-color: #ef4444; color: #ef4444; }
+.filter-tab[data-filter="cross"].active { border-color: var(--purple); color: var(--purple); }
+
+/* ===== Connector Lines ===== */
+.connector { text-align: center; padding: 16px 0; }
+.connector .arrow { display: inline-block; color: var(--text-muted); font-size: 24px; animation: bounce 2s infinite; }
+@keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
+</style>
+</head>
+<body>
+
+<!-- ===== NAVIGATION ===== -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#top" class="nav-logo">🏠 LargeHome v005</a>
+    <a href="#summary">反推總結</a>
+    <a href="#gap">差距分析</a>
+    <a href="#modules">必須新增模組</a>
+    <a href="#architecture">架構設計</a>
+    <a href="#roadmap">開發路線圖</a>
+    <a href="#roi">投資效益</a>
+  </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<header class="hero" id="top">
+  <div class="container">
+    <h1>台日共用模組 <span>反推分析報告</span></h1>
+    <p class="subtitle">
+      從日本站 PRD（v004）反推台灣站必須新建的模組，實現<strong>「Build Once, Deploy Twice」</strong>的共用架構策略
+    </p>
+    <div class="hero-meta">
+      <span>📄 版本 v005</span>
+      <span>📅 2025-03-20</span>
+      <span>🎯 CTO 級工程規劃文件</span>
+      <span>🏗️ 基於 v004 日本 PRD 反推</span>
+    </div>
+    <div class="hero-badges" style="margin-top: 24px;">
+      <span class="badge badge-red">P0 — 3 項核心模組</span>
+      <span class="badge badge-blue">P1 — 3 項次優先</span>
+      <span class="badge badge-green">P2 — 2 項長期建設</span>
+      <span class="badge badge-gold">預估節省 40% 開發成本</span>
+    </div>
+  </div>
+</header>
+
+<!-- ===== SECTION 1: 反推分析總結 ===== -->
+<section id="summary">
+  <div class="container">
+    <h2><span class="num">01</span>反推分析總結</h2>
+    <p class="section-desc">一頁看懂：台灣產品現狀、日本需求缺口、共用模組策略</p>
+
+    <div class="callout warning">
+      <div class="callout-title">⚠️ 核心發現：台灣產品嚴重偏科</div>
+      <p>台灣站目前 13 個主要功能模組中，<strong>100% 圍繞設計師角色</strong>。工班僅有 3 個基礎功能，建材商依賴 BD 合作而非 SaaS。日本市場需要<strong>三角色均衡覆蓋</strong>，且最大競爭對手 ANDPAD 是以工班管理起家。若不補齊工班與建材商 SaaS，日本站將無法與本土競爭者抗衡。</p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number red">13</div>
+        <div class="stat-label">設計師功能模組（已建成）</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number gold">3</div>
+        <div class="stat-label">工班功能（僅基礎）</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number gold">5</div>
+        <div class="stat-label">建材商功能（BD 導向）</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" style="color:#ef4444">0</div>
+        <div class="stat-label">跨角色功能（完全空白）</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number purple">8</div>
+        <div class="stat-label">必須新增的共用模組</div>
+      </div>
+    </div>
+
+    <div class="summary-box">
+      <h3 style="margin-top:0;">🎯 Build Once, Deploy Twice — 核心原則</h3>
+      <div class="summary-grid">
+        <div class="summary-item">
+          <h4>🔴 問題</h4>
+          <p>台灣站是設計師工具，日本市場需要三角色平台。如果分別為兩地開發，成本翻倍、架構分裂。</p>
+        </div>
+        <div class="summary-item">
+          <h4>🔵 策略</h4>
+          <p>先在台灣站補齊共用核心模組（工班 SaaS、建材訂購、i18n），再透過 Adapter 層適配日本在地需求。</p>
+        </div>
+        <div class="summary-item">
+          <h4>🟢 效益</h4>
+          <p>預估節省 40% 開發成本（相較各自獨立開發）。台灣站同時獲得功能升級，一箭雙鵰。</p>
+        </div>
+        <div class="summary-item">
+          <h4>🟡 風險</h4>
+          <p>若不走共用模組路線，12 個月後台日程式碼將完全分裂，維護成本指數級增長。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Role Coverage Visualization -->
+    <h3>角色覆蓋度分析</h3>
+    <div class="card">
+      <div style="margin-bottom: 20px;">
+        <div style="display:flex; justify-content:space-between; margin-bottom: 4px;">
+          <span style="font-size:14px; font-weight:600;">🎨 設計師 SaaS</span>
+          <span style="font-size:13px; color:var(--green);">覆蓋率 92%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill green" style="width:92%;">13/14 功能已建成</div>
+        </div>
+      </div>
+      <div style="margin-bottom: 20px;">
+        <div style="display:flex; justify-content:space-between; margin-bottom: 4px;">
+          <span style="font-size:14px; font-weight:600;">🔨 工班 SaaS</span>
+          <span style="font-size:13px; color:var(--red);">覆蓋率 25%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill red" style="width:25%;">3/12 功能（僅基礎）</div>
+        </div>
+      </div>
+      <div style="margin-bottom: 20px;">
+        <div style="display:flex; justify-content:space-between; margin-bottom: 4px;">
+          <span style="font-size:14px; font-weight:600;">🏭 建材商 SaaS</span>
+          <span style="font-size:13px; color:var(--gold);">覆蓋率 40%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill gold" style="width:40%;">5/12 功能（BD 導向）</div>
+        </div>
+      </div>
+      <div style="margin-bottom: 8px;">
+        <div style="display:flex; justify-content:space-between; margin-bottom: 4px;">
+          <span style="font-size:14px; font-weight:600;">🔗 跨角色功能</span>
+          <span style="font-size:13px; color:#ef4444;">覆蓋率 0%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill red" style="width:3%;">0/5</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===== SECTION 2: 差距分析 ===== -->
+<section id="gap">
+  <div class="container">
+    <h2><span class="num">02</span>台灣現有 vs 日本需求 — 差距分析</h2>
+    <p class="section-desc">完整功能矩陣：每項功能的台灣現狀、日本需求、是否可共用、優先級</p>
+
+    <!-- Legend -->
+    <div style="display:flex; gap:16px; flex-wrap:wrap; margin-bottom:20px; font-size:13px;">
+      <span><span class="st-done">✅</span> 已建成</span>
+      <span><span class="st-expand">🔨</span> 需擴充</span>
+      <span><span class="st-miss">❌</span> 未建置</span>
+      <span><span class="st-cross">🔗</span> 新跨角色</span>
+    </div>
+
+    <!-- Filter Tabs -->
+    <div class="filter-tabs">
+      <button class="filter-tab active" data-filter="all" onclick="filterTable('all')">全部</button>
+      <button class="filter-tab" data-filter="done" onclick="filterTable('done')">✅ 已建成</button>
+      <button class="filter-tab" data-filter="expand" onclick="filterTable('expand')">🔨 需擴充</button>
+      <button class="filter-tab" data-filter="miss" onclick="filterTable('miss')">❌ 未建置</button>
+      <button class="filter-tab" data-filter="cross" onclick="filterTable('cross')">🔗 跨角色</button>
+    </div>
+
+    <!-- ===== Designer Features ===== -->
+    <h3>🎨 設計師功能模組</h3>
+    <div class="table-wrap">
+      <table id="featureTable">
+        <thead>
+          <tr>
+            <th style="width:60px;">狀態</th>
+            <th>功能模組</th>
+            <th>台灣現狀</th>
+            <th>日本需求</th>
+            <th style="width:80px;">共用？</th>
+            <th style="width:60px;">優先級</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr data-status="done">
+            <td><span class="st-done">✅</span></td>
+            <td><strong>Dashboard 儀表板</strong></td>
+            <td>營收、待辦、專案進度</td>
+            <td>相同需求，需 i18n</td>
+            <td>✅ 共用</td>
+            <td><span class="badge badge-green">低</span></td>
+          </tr>
+          <tr data-status="done">
+            <td><span class="st-done">✅</span></td>
+            <td><strong>AI 業主媒合</strong></td>
+            <td>匹配分數、AI 推薦</td>
+            <td>相同架構，日本調整權重</td>
+            <td>✅ 共用</td>
+            <td><span class="badge badge-green">低</span></td>
+          </tr>
+          <tr data-status="done">
+            <td><span class="st-done">✅</span></td>
+            <td><strong>作品集管理</strong></td>
+            <td>SEO 優化、上傳管理</td>
+            <td>相同需求</td>
+            <td>✅ 共用</td>
+            <td><span class="badge badge-green">低</span></td>
+          </tr>
+          <tr data-status="done">
+            <td><span class="st-done">✅</span></td>
+            <td><strong>CRM 客戶管理</strong></td>
+            <td>A/B/C 分級、追蹤</td>
+            <td>相同需求</td>
+            <td>✅ 共用</td>
+            <td><span class="badge badge-green">低</span></td>
+          </tr>
+          <tr data-status="done">
+            <td><span class="st-done">✅</span></td>
+            <td><strong>智慧報價</strong></td>
+            <td>AI 估價引擎</td>
+            <td>需日本單價資料</td>
+            <td>✅ 共用</td>
+            <td><span class="badge badge-green">低</span></td>
+          </tr>
+          <tr data-status="done">
+            <td><span class="st-done">✅</span></td>
+            <td><strong>建材資料庫</strong></td>
+            <td>供應商比較</td>
+            <td>需日本品牌資料</td>
+            <td>✅ 共用</td>
+            <td><span class="badge badge-green">低</span></td>
+          </tr>
+          <tr data-status="done">
+            <td><span class="st-done">✅</span></td>
+            <td><strong>工班管理</strong></td>
+            <td>可用性日曆</td>
+            <td>需大幅擴充（見工班 SaaS）</td>
+            <td>✅ 共用</td>
+            <td><span class="badge badge-gold">中</span></td>
+          </tr>
+          <tr data-status="done">
+            <td><span class="st-done">✅</span></td>
+            <td><strong>專案管理</strong></td>
+            <td>Kanban、Gantt、里程碑</td>
+            <td>相同需求</td>
+            <td>✅ 共用</td>
+            <td><span class="badge badge-green">低</span></td>
+          </tr>
+          <tr data-status="done">
+            <td><span class="st-done">✅</span></td>
+            <td><strong>合約管理</strong></td>
+            <td>模板、追蹤</td>
+            <td>需日本法規模板</td>
+            <td>✅ 共用</td>
+            <td><span class="badge badge-green">低</span></td>
+          </tr>
+          <tr data-status="done">
+            <td><span class="st-done">✅</span></td>
+            <td><strong>排程日曆</strong></td>
+            <td>衝突偵測</td>
+            <td>相同需求</td>
+            <td>✅ 共用</td>
+            <td><span class="badge badge-green">低</span></td>
+          </tr>
+          <tr data-status="done">
+            <td><span class="st-done">✅</span></td>
+            <td><strong>訊息中心</strong></td>
+            <td>站內通訊</td>
+            <td>需整合 LINE/推播</td>
+            <td>✅ 共用</td>
+            <td><span class="badge badge-blue">中</span></td>
+          </tr>
+          <tr data-status="done">
+            <td><span class="st-done">✅</span></td>
+            <td><strong>財務模組</strong></td>
+            <td>收支管理</td>
+            <td>需日本稅制適配</td>
+            <td>✅ 共用</td>
+            <td><span class="badge badge-green">低</span></td>
+          </tr>
+          <tr data-status="done">
+            <td><span class="st-done">✅</span></td>
+            <td><strong>成長顧問</strong></td>
+            <td>數據分析、建議</td>
+            <td>相同架構</td>
+            <td>✅ 共用</td>
+            <td><span class="badge badge-green">低</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ===== Crew Features ===== -->
+    <h3>🔨 工班功能模組</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:60px;">狀態</th>
+            <th>功能模組</th>
+            <th>台灣現狀</th>
+            <th>日本需求</th>
+            <th style="width:80px;">共用？</th>
+            <th style="width:60px;">優先級</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr data-status="done">
+            <td><span class="st-done">✅</span></td>
+            <td><strong>工作管理</strong></td>
+            <td>基礎任務追蹤</td>
+            <td>需深化為現場管理</td>
+            <td>✅ 共用</td>
+            <td><span class="badge badge-gold">中</span></td>
+          </tr>
+          <tr data-status="done">
+            <td><span class="st-done">✅</span></td>
+            <td><strong>排程管理</strong></td>
+            <td>基礎行事曆</td>
+            <td>需整合多層承包</td>
+            <td>✅ 共用</td>
+            <td><span class="badge badge-gold">中</span></td>
+          </tr>
+          <tr data-status="done">
+            <td><span class="st-done">✅</span></td>
+            <td><strong>收入管理</strong></td>
+            <td>基礎收支</td>
+            <td>需日本稅制</td>
+            <td>✅ 共用</td>
+            <td><span class="badge badge-green">低</span></td>
+          </tr>
+          <tr data-status="miss">
+            <td><span class="st-miss">❌</span></td>
+            <td><strong>施工現場管理</strong></td>
+            <td>未建置</td>
+            <td>照片記錄、品質清單、安全巡檢</td>
+            <td>✅ 共用</td>
+            <td><span class="badge badge-red">P0</span></td>
+          </tr>
+          <tr data-status="miss">
+            <td><span class="st-miss">❌</span></td>
+            <td><strong>電子日報系統</strong></td>
+            <td>未建置</td>
+            <td>標準化報告、照片整理</td>
+            <td>✅ 共用</td>
+            <td><span class="badge badge-red">P0</span></td>
+          </tr>
+          <tr data-status="miss">
+            <td><span class="st-miss">❌</span></td>
+            <td><strong>多層承包管理</strong></td>
+            <td>未建置</td>
+            <td>主包→分包→再分包層級</td>
+            <td>✅ 共用</td>
+            <td><span class="badge badge-red">P0</span></td>
+          </tr>
+          <tr data-status="miss">
+            <td><span class="st-miss">❌</span></td>
+            <td><strong>職人配對演算法</strong></td>
+            <td>未建置</td>
+            <td>技能/地區/評分多維匹配</td>
+            <td>✅ 共用</td>
+            <td><span class="badge badge-red">P0</span></td>
+          </tr>
+          <tr data-status="miss">
+            <td><span class="st-miss">❌</span></td>
+            <td><strong>保險整合</strong></td>
+            <td>未建置</td>
+            <td>職業保險追蹤</td>
+            <td>⚙️ 適配</td>
+            <td><span class="badge badge-blue">P1</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ===== Supplier Features ===== -->
+    <h3>🏭 建材商功能模組</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:60px;">狀態</th>
+            <th>功能模組</th>
+            <th>台灣現狀</th>
+            <th>日本需求</th>
+            <th style="width:80px;">共用？</th>
+            <th style="width:60px;">優先級</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr data-status="done">
+            <td><span class="st-done">✅</span></td>
+            <td><strong>商品上架</strong></td>
+            <td>分級上架（50/500/無限）</td>
+            <td>相同需求</td>
+            <td>✅ 共用</td>
+            <td><span class="badge badge-green">低</span></td>
+          </tr>
+          <tr data-status="done">
+            <td><span class="st-done">✅</span></td>
+            <td><strong>搜尋排名</strong></td>
+            <td>已有排名機制</td>
+            <td>相同需求</td>
+            <td>✅ 共用</td>
+            <td><span class="badge badge-green">低</span></td>
+          </tr>
+          <tr data-status="done">
+            <td><span class="st-done">✅</span></td>
+            <td><strong>詢價通知</strong></td>
+            <td>基礎通知</td>
+            <td>需整合統一通知</td>
+            <td>✅ 共用</td>
+            <td><span class="badge badge-gold">中</span></td>
+          </tr>
+          <tr data-status="done">
+            <td><span class="st-done">✅</span></td>
+            <td><strong>數據分析</strong></td>
+            <td>基礎數據</td>
+            <td>需深化為市場數據</td>
+            <td>✅ 共用</td>
+            <td><span class="badge badge-gold">中</span></td>
+          </tr>
+          <tr data-status="expand">
+            <td><span class="st-expand">🔨</span></td>
+            <td><strong>PRO 認證</strong></td>
+            <td>3 層認證</td>
+            <td>需統一認證系統</td>
+            <td>✅ 共用</td>
+            <td><span class="badge badge-blue">P1</span></td>
+          </tr>
+          <tr data-status="miss">
+            <td><span class="st-miss">❌</span></td>
+            <td><strong>線上訂購整合</strong></td>
+            <td>未建置（依賴電話/LINE）</td>
+            <td>直接訂購、庫存同步</td>
+            <td>✅ 共用</td>
+            <td><span class="badge badge-red">P0</span></td>
+          </tr>
+          <tr data-status="miss">
+            <td><span class="st-miss">❌</span></td>
+            <td><strong>建材選品流程</strong></td>
+            <td>未建置</td>
+            <td>視覺選品、空間模擬</td>
+            <td>✅ 共用</td>
+            <td><span class="badge badge-blue">P1</span></td>
+          </tr>
+          <tr data-status="miss">
+            <td><span class="st-miss">❌</span></td>
+            <td><strong>提案書生成器</strong></td>
+            <td>未建置</td>
+            <td>專業提案自動生成</td>
+            <td>✅ 共用</td>
+            <td><span class="badge badge-blue">P1</span></td>
+          </tr>
+          <tr data-status="miss">
+            <td><span class="st-miss">❌</span></td>
+            <td><strong>品牌建材目錄</strong></td>
+            <td>未建置</td>
+            <td>大品牌合作整合</td>
+            <td>⚙️ 適配</td>
+            <td><span class="badge badge-blue">P1</span></td>
+          </tr>
+          <tr data-status="miss">
+            <td><span class="st-miss">❌</span></td>
+            <td><strong>庫存管理系統</strong></td>
+            <td>未建置</td>
+            <td>即時庫存追蹤</td>
+            <td>✅ 共用</td>
+            <td><span class="badge badge-red">P0</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ===== Cross-role Features ===== -->
+    <h3>🔗 跨角色功能模組</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:60px;">狀態</th>
+            <th>功能模組</th>
+            <th>台灣現狀</th>
+            <th>日本需求</th>
+            <th style="width:80px;">共用？</th>
+            <th style="width:60px;">優先級</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr data-status="cross">
+            <td><span class="st-cross">🔗</span></td>
+            <td><strong>設計師↔工班 AI 配對</strong></td>
+            <td>完全未建置</td>
+            <td>技能匹配、智能推薦</td>
+            <td>✅ 共用</td>
+            <td><span class="badge badge-blue">P1</span></td>
+          </tr>
+          <tr data-status="cross">
+            <td><span class="st-cross">🔗</span></td>
+            <td><strong>設計↔建材 AI 推薦</strong></td>
+            <td>完全未建置</td>
+            <td>設計風格→建材推薦</td>
+            <td>✅ 共用</td>
+            <td><span class="badge badge-blue">P1</span></td>
+          </tr>
+          <tr data-status="cross">
+            <td><span class="st-cross">🔗</span></td>
+            <td><strong>工班↔建材供應鏈優化</strong></td>
+            <td>完全未建置</td>
+            <td>備料計畫、配送優化</td>
+            <td>✅ 共用</td>
+            <td><span class="badge badge-blue">P1</span></td>
+          </tr>
+          <tr data-status="cross">
+            <td><span class="st-cross">🔗</span></td>
+            <td><strong>跨角色異常預警</strong></td>
+            <td>完全未建置</td>
+            <td>進度延遲、成本超支預警</td>
+            <td>✅ 共用</td>
+            <td><span class="badge badge-purple">P2</span></td>
+          </tr>
+          <tr data-status="cross">
+            <td><span class="st-cross">🔗</span></td>
+            <td><strong>市場數據平台</strong></td>
+            <td>完全未建置</td>
+            <td>價格指數、需求預測、產業報告</td>
+            <td>✅ 共用</td>
+            <td><span class="badge badge-purple">P2</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ===== Platform Infrastructure ===== -->
+    <h3>⚙️ 平台基礎設施</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:60px;">狀態</th>
+            <th>功能模組</th>
+            <th>台灣現狀</th>
+            <th>日本需求</th>
+            <th style="width:80px;">共用？</th>
+            <th style="width:60px;">優先級</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr data-status="miss">
+            <td><span class="st-miss">❌</span></td>
+            <td><strong>i18n 國際化框架</strong></td>
+            <td>硬編碼中文</td>
+            <td>多語系、多幣別、多單位</td>
+            <td>✅ 核心</td>
+            <td><span class="badge badge-red">P0</span></td>
+          </tr>
+          <tr data-status="miss">
+            <td><span class="st-miss">❌</span></td>
+            <td><strong>Multi-tenant 架構</strong></td>
+            <td>單一租戶</td>
+            <td>多區域資料隔離</td>
+            <td>✅ 核心</td>
+            <td><span class="badge badge-red">P0</span></td>
+          </tr>
+          <tr data-status="miss">
+            <td><span class="st-miss">❌</span></td>
+            <td><strong>統一通知系統</strong></td>
+            <td>基礎站內通知</td>
+            <td>Push/Email/LINE/SMS 統一</td>
+            <td>✅ 共用</td>
+            <td><span class="badge badge-blue">P1</span></td>
+          </tr>
+          <tr data-status="miss">
+            <td><span class="st-miss">❌</span></td>
+            <td><strong>統一支付閘道</strong></td>
+            <td>未建置</td>
+            <td>台灣綠界/藍新、日本 Stripe/GMO</td>
+            <td>⚙️ 適配</td>
+            <td><span class="badge badge-blue">P1</span></td>
+          </tr>
+          <tr data-status="expand">
+            <td><span class="st-expand">🔨</span></td>
+            <td><strong>統一認證系統</strong></td>
+            <td>各角色獨立認證</td>
+            <td>跨角色統一 PRO 認證</td>
+            <td>✅ 共用</td>
+            <td><span class="badge badge-blue">P1</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ===== AI Features ===== -->
+    <h3>🤖 AI 進階功能</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:60px;">狀態</th>
+            <th>功能模組</th>
+            <th>台灣現狀</th>
+            <th>日本需求</th>
+            <th style="width:80px;">共用？</th>
+            <th style="width:60px;">優先級</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr data-status="expand">
+            <td><span class="st-expand">🔨</span></td>
+            <td><strong>AI 報價校準</strong></td>
+            <td>基礎 AI 估價</td>
+            <td>使用平台數據校準</td>
+            <td>✅ 共用</td>
+            <td><span class="badge badge-purple">P2</span></td>
+          </tr>
+          <tr data-status="miss">
+            <td><span class="st-miss">❌</span></td>
+            <td><strong>AI 品質檢測</strong></td>
+            <td>未建置</td>
+            <td>施工照片品質偵測</td>
+            <td>✅ 共用</td>
+            <td><span class="badge badge-purple">P2</span></td>
+          </tr>
+          <tr data-status="miss">
+            <td><span class="st-miss">❌</span></td>
+            <td><strong>AI 文件生成</strong></td>
+            <td>未建置</td>
+            <td>合約/提案/日報自動生成</td>
+            <td>✅ 共用</td>
+            <td><span class="badge badge-purple">P2</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Gap Summary Stats -->
+    <div class="callout insight" style="margin-top: 32px;">
+      <div class="callout-title">📊 差距分析統計</div>
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap:16px; margin-top:12px;">
+        <div><strong style="color:var(--green); font-size:24px;">16</strong><br><span style="font-size:13px; color:var(--text-muted);">已建成功能</span></div>
+        <div><strong style="color:var(--gold); font-size:24px;">3</strong><br><span style="font-size:13px; color:var(--text-muted);">需要擴充</span></div>
+        <div><strong style="color:#ef4444; font-size:24px;">15</strong><br><span style="font-size:13px; color:var(--text-muted);">完全未建置</span></div>
+        <div><strong style="color:var(--purple); font-size:24px;">5</strong><br><span style="font-size:13px; color:var(--text-muted);">新跨角色功能</span></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===== SECTION 3: 必須新增模組 ===== -->
+<section id="modules">
+  <div class="container">
+    <h2><span class="num">03</span>台灣站必須新增的模組</h2>
+    <p class="section-desc">依優先級排序的 8 大共用模組，含開發理由、功能範疇、預估工期</p>
+
+    <!-- ===== P0 ===== -->
+    <div class="priority-tag p0">🔴 P0 — 立即開發（共用核心）｜0-3 個月</div>
+
+    <!-- Module 1 -->
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:start; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+        <h3 style="margin:0;">① 工班 SaaS 全面升級</h3>
+        <div style="display:flex; gap:8px;">
+          <span class="badge badge-red">P0</span>
+          <span class="badge badge-orange">預估 8-10 週</span>
+        </div>
+      </div>
+      <p>台灣工班功能僅有基礎的工作/排程/收入管理，無法支撐日本市場需求。日本最大競爭對手 ANDPAD 以施工現場管理起家，CraftBank 專攻工班配對。<strong>若不升級工班 SaaS，日本站無法上線。</strong></p>
+
+      <div class="card-grid" style="margin-top:20px;">
+        <div class="card" style="border-color:rgba(233,69,96,.3);">
+          <h4 style="margin-top:0;">📸 施工現場管理模組</h4>
+          <ul class="feature-list">
+            <li>施工照片記錄與時間戳定位</li>
+            <li>品質檢查清單（可自訂模板）</li>
+            <li>安全巡檢表（法規合規）</li>
+            <li>施工進度里程碑追蹤</li>
+            <li>業主可見的進度報告</li>
+          </ul>
+        </div>
+        <div class="card" style="border-color:rgba(233,69,96,.3);">
+          <h4 style="margin-top:0;">📋 電子日報系統</h4>
+          <ul class="feature-list">
+            <li>標準化每日施工報告模板</li>
+            <li>照片自動分類整理</li>
+            <li>出工人數/工時自動統計</li>
+            <li>異常事件記錄與通報</li>
+            <li>歷史日報搜尋與匯出</li>
+          </ul>
+        </div>
+        <div class="card" style="border-color:rgba(233,69,96,.3);">
+          <h4 style="margin-top:0;">🏗️ 多層承包管理</h4>
+          <ul class="feature-list">
+            <li>主包→分包→再分包層級結構</li>
+            <li>工程款逐層分配與追蹤</li>
+            <li>各層進度同步可視化</li>
+            <li>承包商資質認證管理</li>
+            <li>合約與付款條件管理</li>
+          </ul>
+        </div>
+        <div class="card" style="border-color:rgba(233,69,96,.3);">
+          <h4 style="margin-top:0;">🎯 職人配對演算法</h4>
+          <ul class="feature-list">
+            <li>技能標籤體系（水電/木工/泥作…）</li>
+            <li>地區可服務範圍設定</li>
+            <li>評分與歷史表現權重</li>
+            <li>檔期即時可用性查詢</li>
+            <li>多維度智能匹配排序</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="reason">
+        <strong>為什麼是 P0？</strong> 日本室內裝修市場最大痛點是工班管理效率低落。ANDPAD 年營收超過 80 億日圓，證明這是剛需。台灣工班目前也依賴 LINE 群組管理，升級後台灣站同步受益。
+      </div>
+    </div>
+
+    <!-- Module 2 -->
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:start; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+        <h3 style="margin:0;">② 建材商訂購整合</h3>
+        <div style="display:flex; gap:8px;">
+          <span class="badge badge-red">P0</span>
+          <span class="badge badge-orange">預估 6-8 週</span>
+        </div>
+      </div>
+      <p>目前建材商功能以「展示」為主，無法完成從選品到下單的完整流程。台灣建材商仍依賴電話、LINE、甚至傳真下單——這是雙方市場的共同痛點。</p>
+
+      <div class="card-grid">
+        <div class="card" style="border-color:rgba(233,69,96,.3);">
+          <h4 style="margin-top:0;">🛒 線上訂購流程</h4>
+          <ul class="feature-list">
+            <li>購物車 + 詢價/報價工作流</li>
+            <li>訂單管理（建立/確認/出貨/到貨）</li>
+            <li>批量下單（設計師大量備料）</li>
+            <li>訂單歷史與重複訂購</li>
+            <li>退貨/換貨流程</li>
+          </ul>
+        </div>
+        <div class="card" style="border-color:rgba(233,69,96,.3);">
+          <h4 style="margin-top:0;">📦 庫存同步系統</h4>
+          <ul class="feature-list">
+            <li>即時庫存數量追蹤</li>
+            <li>低庫存自動預警</li>
+            <li>多倉庫管理</li>
+            <li>庫存變動歷史記錄</li>
+            <li>API 整合供應商 ERP</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="reason">
+        <strong>為什麼是 P0？</strong> 交易閉環是平台商業模式的核心。沒有訂購功能，平台只是「目錄網站」，無法收取交易佣金。台灣建材商也迫切需要數位化訂購流程。
+      </div>
+    </div>
+
+    <!-- Module 3 -->
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:start; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+        <h3 style="margin:0;">③ i18n 國際化框架 + Multi-tenant</h3>
+        <div style="display:flex; gap:8px;">
+          <span class="badge badge-red">P0</span>
+          <span class="badge badge-orange">預估 4-6 週</span>
+        </div>
+      </div>
+      <p><strong>這是所有共用模組的前提條件。</strong>若不先完成國際化框架，後續所有功能開發都會包含硬編碼的在地化內容，未來抽離成本極高。</p>
+
+      <div class="card-grid">
+        <div class="card" style="border-color:rgba(233,69,96,.3);">
+          <h4 style="margin-top:0;">🌍 i18n 框架</h4>
+          <ul class="feature-list">
+            <li>所有字串外部化（key-value）</li>
+            <li>日期/時間格式化（TW: 民國/西元, JP: 令和/西暦）</li>
+            <li>貨幣格式化（TWD/JPY）</li>
+            <li>度量單位切換（坪/㎡/畳）</li>
+            <li>語系檔熱切換機制</li>
+          </ul>
+        </div>
+        <div class="card" style="border-color:rgba(233,69,96,.3);">
+          <h4 style="margin-top:0;">🏢 Multi-tenant 架構</h4>
+          <ul class="feature-list">
+            <li>區域級資料隔離（TW/JP 資料庫分離）</li>
+            <li>共用認證層（SSO 跨區域）</li>
+            <li>區域 Feature Flag（功能漸進式上線）</li>
+            <li>環境設定抽象化</li>
+            <li>部署管線（單 codebase → 多區域部署）</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="reason">
+        <strong>為什麼是 P0？</strong> 這是「Build Once, Deploy Twice」的技術前提。必須在其他功能開發之前或同步完成。每多寫一行硬編碼中文，未來國際化成本就多一分。建議第一個月就啟動。
+      </div>
+    </div>
+
+    <div class="connector"><span class="arrow">▼ ▼ ▼</span></div>
+
+    <!-- ===== P1 ===== -->
+    <div class="priority-tag p1">🔵 P1 — 次要優先（6 個月內）</div>
+
+    <!-- Module 4 -->
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:start; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+        <h3 style="margin:0;">④ 跨角色 AI 引擎</h3>
+        <div style="display:flex; gap:8px;">
+          <span class="badge badge-blue">P1</span>
+          <span class="badge badge-orange">預估 8-10 週</span>
+        </div>
+      </div>
+      <p>這是 LargeHome 對比所有日本競爭對手的<strong>第一差異化優勢</strong>。ANDPAD 只做工班、CraftBank 只做配對、Houzz 只做設計師。沒有任何平台將三個角色 AI 串聯。</p>
+
+      <div class="card-grid-3">
+        <div class="card" style="border-color:rgba(59,130,246,.3);">
+          <h4 style="margin-top:0;">🎨↔🔨 設計師↔工班 AI 配對</h4>
+          <ul class="feature-list">
+            <li>設計風格→適合工班推薦</li>
+            <li>專案規模→工班能力匹配</li>
+            <li>歷史合作數據學習</li>
+            <li>雙向評分與回饋</li>
+          </ul>
+        </div>
+        <div class="card" style="border-color:rgba(59,130,246,.3);">
+          <h4 style="margin-top:0;">🎨↔🏭 設計↔建材 AI 推薦</h4>
+          <ul class="feature-list">
+            <li>設計圖→建材自動推薦</li>
+            <li>預算約束智能選材</li>
+            <li>替代品推薦引擎</li>
+            <li>視覺模擬預覽</li>
+          </ul>
+        </div>
+        <div class="card" style="border-color:rgba(59,130,246,.3);">
+          <h4 style="margin-top:0;">🔨↔🏭 工班↔建材供應鏈</h4>
+          <ul class="feature-list">
+            <li>施工進度→備料計畫</li>
+            <li>就近供應商推薦</li>
+            <li>批量採購優惠媒合</li>
+            <li>配送時程優化</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="reason">
+        <strong>為什麼是 P1？</strong> 需要先有足夠的工班與建材商數據才能訓練 AI 模型。因此排在 P0 之後。但這是長期競爭壁壘，必須在日本站上線前完成 MVP。
+      </div>
+    </div>
+
+    <!-- Module 5 -->
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:start; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+        <h3 style="margin:0;">⑤ 提案書/報告生成器</h3>
+        <div style="display:flex; gap:8px;">
+          <span class="badge badge-blue">P1</span>
+          <span class="badge badge-orange">預估 4-6 週</span>
+        </div>
+      </div>
+      <p>專業提案書是設計師接案、建材商銷售的關鍵工具。目前台灣設計師用 PowerPoint/Canva 手動製作，耗時且品質不一。</p>
+
+      <ul class="feature-list">
+        <li>多模板系統（設計提案/建材報價/施工計畫）</li>
+        <li>自動帶入專案數據（尺寸、預算、材料清單）</li>
+        <li>品牌化客製（LOGO、配色、風格）</li>
+        <li>PDF/線上分享雙模式</li>
+        <li>區域適配（台灣/日本不同模板庫）</li>
+      </ul>
+
+      <div class="reason">
+        <strong>為什麼是 P1？</strong> 提升用戶黏著度的關鍵功能。自動化文件生成可節省設計師 30% 的行政時間，也是 SaaS 付費意願的重要推動力。
+      </div>
+    </div>
+
+    <!-- Module 6 -->
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:start; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+        <h3 style="margin:0;">⑥ 統一通知/支付/認證系統</h3>
+        <div style="display:flex; gap:8px;">
+          <span class="badge badge-blue">P1</span>
+          <span class="badge badge-orange">預估 6-8 週</span>
+        </div>
+      </div>
+      <p>平台基礎設施層，確保不同區域共用同一套核心服務但透過 Adapter 適配在地化需求。</p>
+
+      <div class="card-grid-3">
+        <div class="card" style="border-color:rgba(59,130,246,.3);">
+          <h4 style="margin-top:0;">🔔 統一通知系統</h4>
+          <ul class="feature-list">
+            <li>通知事件匯流排（Event Bus）</li>
+            <li>多通道配送（Push/Email/SMS）</li>
+            <li>台灣：LINE 整合</li>
+            <li>日本：LINE + SMS 整合</li>
+            <li>用戶偏好設定</li>
+          </ul>
+        </div>
+        <div class="card" style="border-color:rgba(59,130,246,.3);">
+          <h4 style="margin-top:0;">💳 統一支付閘道</h4>
+          <ul class="feature-list">
+            <li>抽象支付介面</li>
+            <li>台灣 Adapter：綠界/藍新</li>
+            <li>日本 Adapter：Stripe/GMO</li>
+            <li>訂閱計費管理</li>
+            <li>發票/請求書自動生成</li>
+          </ul>
+        </div>
+        <div class="card" style="border-color:rgba(59,130,246,.3);">
+          <h4 style="margin-top:0;">🏅 統一認證系統</h4>
+          <ul class="feature-list">
+            <li>跨角色 PRO 認證框架</li>
+            <li>認證等級定義（區域可配）</li>
+            <li>證書/資格驗證流程</li>
+            <li>認證徽章顯示系統</li>
+            <li>年度續認審核</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="reason">
+        <strong>為什麼是 P1？</strong> 支付和通知是營收變現的基礎。台灣站目前依賴外部工具處理支付，不僅體驗差，也無法追蹤交易數據。統一後可支撐訂閱制 + 交易佣金雙營收模式。
+      </div>
+    </div>
+
+    <div class="connector"><span class="arrow">▼ ▼ ▼</span></div>
+
+    <!-- ===== P2 ===== -->
+    <div class="priority-tag p2">🟢 P2 — 長期建設（12 個月內）</div>
+
+    <!-- Module 7 -->
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:start; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+        <h3 style="margin:0;">⑦ 市場數據平台</h3>
+        <div style="display:flex; gap:8px;">
+          <span class="badge badge-green">P2</span>
+          <span class="badge badge-orange">預估 8-12 週</span>
+        </div>
+      </div>
+
+      <ul class="feature-list">
+        <li><strong>價格指數追蹤</strong> — 建材/工資即時行情、趨勢分析</li>
+        <li><strong>需求預測</strong> — 區域裝修需求熱力圖、季節性預測</li>
+        <li><strong>產業報告</strong> — 自動生成月度/季度市場分析報告</li>
+        <li><strong>競品情報</strong> — 市場定價參考、趨勢預警</li>
+      </ul>
+
+      <div class="reason">
+        <strong>為什麼是 P2？</strong> 需要大量平台交易數據累積後才有意義。但這是長期的數據護城河，可作為高價值付費功能。
+      </div>
+    </div>
+
+    <!-- Module 8 -->
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:start; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+        <h3 style="margin:0;">⑧ AI 進階功能</h3>
+        <div style="display:flex; gap:8px;">
+          <span class="badge badge-green">P2</span>
+          <span class="badge badge-orange">預估 10-14 週</span>
+        </div>
+      </div>
+
+      <div class="card-grid-3">
+        <div class="card" style="border-color:rgba(16,185,129,.3);">
+          <h4 style="margin-top:0;">📸 AI 品質檢測</h4>
+          <ul class="feature-list">
+            <li>施工照片自動品質評分</li>
+            <li>瑕疵偵測與標記</li>
+            <li>合規性自動檢查</li>
+          </ul>
+        </div>
+        <div class="card" style="border-color:rgba(16,185,129,.3);">
+          <h4 style="margin-top:0;">📄 AI 文件生成</h4>
+          <ul class="feature-list">
+            <li>合約自動草擬</li>
+            <li>施工日報自動摘要</li>
+            <li>提案書內容生成</li>
+          </ul>
+        </div>
+        <div class="card" style="border-color:rgba(16,185,129,.3);">
+          <h4 style="margin-top:0;">💰 AI 報價校準</h4>
+          <ul class="feature-list">
+            <li>平台歷史數據訓練</li>
+            <li>區域差異自動校正</li>
+            <li>異常報價預警</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="reason">
+        <strong>為什麼是 P2？</strong> 需要 P0/P1 的數據基礎設施先就位。AI 模型需要大量訓練數據，預計上線 6-9 個月後才有足夠數據量。
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===== SECTION 4: 架構設計 ===== -->
+<section id="architecture">
+  <div class="container">
+    <h2><span class="num">04</span>共用模組架構設計建議</h2>
+    <p class="section-desc">模組分層架構、Core vs Adapter 劃分、建議資料夾結構</p>
+
+    <!-- Architecture Diagram -->
+    <h3>模組分層架構</h3>
+    <div class="arch-diagram">
+      <div class="arch-layer">
+        <div class="arch-layer-title app">APPLICATION LAYER — 區域前端應用</div>
+        <div class="arch-boxes">
+          <div class="arch-box app">🇹🇼 台灣站前端</div>
+          <div class="arch-box app">🇯🇵 日本站前端</div>
+          <div class="arch-box app">📱 Mobile App（未來）</div>
+        </div>
+      </div>
+
+      <div style="text-align:center; padding: 8px 0; color: var(--text-muted);">↕ API Gateway / BFF ↕</div>
+
+      <div class="arch-layer">
+        <div class="arch-layer-title adapter">ADAPTER LAYER — 區域適配器（在地化）</div>
+        <div class="arch-boxes">
+          <div class="arch-box adapter">💳 支付適配（綠界/Stripe）</div>
+          <div class="arch-box adapter">🔔 通知適配（LINE/SMS）</div>
+          <div class="arch-box adapter">📋 法規模板（合約/保險）</div>
+          <div class="arch-box adapter">🌍 i18n 語系檔</div>
+          <div class="arch-box adapter">📊 稅制適配（營業稅/消費稅）</div>
+        </div>
+      </div>
+
+      <div style="text-align:center; padding: 8px 0; color: var(--text-muted);">↕ Adapter Interface ↕</div>
+
+      <div class="arch-layer">
+        <div class="arch-layer-title shared">SHARED MODULE LAYER — 共用商業邏輯</div>
+        <div class="arch-boxes">
+          <div class="arch-box shared">🎨 設計師 SaaS</div>
+          <div class="arch-box shared">🔨 工班 SaaS</div>
+          <div class="arch-box shared">🏭 建材商 SaaS</div>
+          <div class="arch-box shared">🔗 跨角色 AI 引擎</div>
+          <div class="arch-box shared">📄 文件生成器</div>
+          <div class="arch-box shared">🏅 認證系統</div>
+        </div>
+      </div>
+
+      <div style="text-align:center; padding: 8px 0; color: var(--text-muted);">↕ Service Interface ↕</div>
+
+      <div class="arch-layer">
+        <div class="arch-layer-title core">CORE LAYER — 平台核心基礎設施</div>
+        <div class="arch-boxes">
+          <div class="arch-box core">🔐 Auth / Multi-tenant</div>
+          <div class="arch-box core">🌍 i18n Engine</div>
+          <div class="arch-box core">💳 Payment Gateway</div>
+          <div class="arch-box core">🔔 Notification Bus</div>
+          <div class="arch-box core">📊 Analytics Engine</div>
+          <div class="arch-box core">🗄️ Data Layer / ORM</div>
+          <div class="arch-box core">📁 File Storage</div>
+          <div class="arch-box core">🤖 AI/ML Pipeline</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Core vs Adapter -->
+    <h3>Core vs Adapter 劃分原則</h3>
+    <div class="card-grid">
+      <div class="card" style="border-color:rgba(233,69,96,.3);">
+        <h4 style="margin-top:0; color:var(--red);">🔴 Core（核心層）— 絕對不能有區域特定程式碼</h4>
+        <ul class="feature-list">
+          <li>認證/授權邏輯</li>
+          <li>多租戶資料隔離</li>
+          <li>i18n 引擎（非語系檔）</li>
+          <li>通知事件匯流排</li>
+          <li>支付抽象介面</li>
+          <li>資料存取層（ORM/Repository）</li>
+          <li>AI/ML 管線框架</li>
+        </ul>
+      </div>
+      <div class="card" style="border-color:rgba(59,130,246,.3);">
+        <h4 style="margin-top:0; color:var(--blue);">🔵 Shared（共用層）— 商業邏輯共用，參數可配</h4>
+        <ul class="feature-list">
+          <li>設計師 SaaS 全功能</li>
+          <li>工班 SaaS 全功能</li>
+          <li>建材商 SaaS 全功能</li>
+          <li>跨角色 AI 引擎</li>
+          <li>提案書/報告生成器</li>
+          <li>統一認證系統</li>
+        </ul>
+      </div>
+      <div class="card" style="border-color:rgba(16,185,129,.3);">
+        <h4 style="margin-top:0; color:var(--green);">🟢 Adapter（適配層）— 區域特定實作</h4>
+        <ul class="feature-list">
+          <li>支付閘道實作（綠界 vs Stripe）</li>
+          <li>通知通道（LINE/SMS 各區實作）</li>
+          <li>法規合約模板</li>
+          <li>語系翻譯檔</li>
+          <li>稅制計算規則</li>
+          <li>保險整合（各國不同）</li>
+          <li>品牌建材目錄（各國供應商）</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Folder Structure -->
+    <h3>建議資料夾結構</h3>
+    <div class="folder-tree">
+<span class="dir">largehome/</span><br>
+<span class="indent"><span class="dir">packages/</span> <span class="comment"># Monorepo 套件</span></span><br>
+<span class="indent"><span class="indent"><span class="dir">core/</span> <span class="comment"># 平台核心</span></span></span><br>
+<span class="indent"><span class="indent"><span class="indent"><span class="dir">auth/</span> <span class="comment"># 認證/授權/Multi-tenant</span></span></span></span><br>
+<span class="indent"><span class="indent"><span class="indent"><span class="dir">i18n/</span> <span class="comment"># 國際化引擎</span></span></span></span><br>
+<span class="indent"><span class="indent"><span class="indent"><span class="dir">payment/</span> <span class="comment"># 支付抽象層</span></span></span></span><br>
+<span class="indent"><span class="indent"><span class="indent"><span class="dir">notification/</span> <span class="comment"># 通知事件匯流排</span></span></span></span><br>
+<span class="indent"><span class="indent"><span class="indent"><span class="dir">storage/</span> <span class="comment"># 檔案儲存抽象</span></span></span></span><br>
+<span class="indent"><span class="indent"><span class="indent"><span class="dir">analytics/</span> <span class="comment"># 數據分析引擎</span></span></span></span><br>
+<span class="indent"><span class="indent"><span class="indent"><span class="dir">ai-pipeline/</span> <span class="comment"># AI/ML 管線框架</span></span></span></span><br>
+<span class="indent"><span class="indent"><span class="dir">shared/</span> <span class="comment"># 共用商業邏輯</span></span></span><br>
+<span class="indent"><span class="indent"><span class="indent"><span class="dir">designer-saas/</span> <span class="comment"># 設計師 SaaS 模組</span></span></span></span><br>
+<span class="indent"><span class="indent"><span class="indent"><span class="dir">crew-saas/</span> <span class="comment"># 工班 SaaS 模組</span></span></span></span><br>
+<span class="indent"><span class="indent"><span class="indent"><span class="indent"><span class="file">site-management/</span></span></span></span></span><br>
+<span class="indent"><span class="indent"><span class="indent"><span class="indent"><span class="file">daily-report/</span></span></span></span></span><br>
+<span class="indent"><span class="indent"><span class="indent"><span class="indent"><span class="file">subcontracting/</span></span></span></span></span><br>
+<span class="indent"><span class="indent"><span class="indent"><span class="indent"><span class="file">crew-matching/</span></span></span></span></span><br>
+<span class="indent"><span class="indent"><span class="indent"><span class="dir">supplier-saas/</span> <span class="comment"># 建材商 SaaS 模組</span></span></span></span><br>
+<span class="indent"><span class="indent"><span class="indent"><span class="indent"><span class="file">ordering/</span></span></span></span></span><br>
+<span class="indent"><span class="indent"><span class="indent"><span class="indent"><span class="file">inventory/</span></span></span></span></span><br>
+<span class="indent"><span class="indent"><span class="indent"><span class="indent"><span class="file">catalog/</span></span></span></span></span><br>
+<span class="indent"><span class="indent"><span class="indent"><span class="dir">cross-role/</span> <span class="comment"># 跨角色 AI 引擎</span></span></span></span><br>
+<span class="indent"><span class="indent"><span class="indent"><span class="dir">doc-generator/</span> <span class="comment"># 文件生成器</span></span></span></span><br>
+<span class="indent"><span class="indent"><span class="indent"><span class="dir">certification/</span> <span class="comment"># 統一認證系統</span></span></span></span><br>
+<span class="indent"><span class="indent"><span class="dir">adapters/</span> <span class="comment"># 區域適配器</span></span></span><br>
+<span class="indent"><span class="indent"><span class="indent"><span class="dir">tw/</span> <span class="comment"># 台灣特定</span></span></span></span><br>
+<span class="indent"><span class="indent"><span class="indent"><span class="indent"><span class="file">payment-ecpay/</span> <span class="comment"># 綠界支付</span></span></span></span></span><br>
+<span class="indent"><span class="indent"><span class="indent"><span class="indent"><span class="file">payment-newebpay/</span> <span class="comment"># 藍新支付</span></span></span></span></span><br>
+<span class="indent"><span class="indent"><span class="indent"><span class="indent"><span class="file">notification-line/</span> <span class="comment"># LINE 通知</span></span></span></span></span><br>
+<span class="indent"><span class="indent"><span class="indent"><span class="indent"><span class="file">tax-tw/</span> <span class="comment"># 台灣稅制</span></span></span></span></span><br>
+<span class="indent"><span class="indent"><span class="indent"><span class="indent"><span class="file">locales/zh-TW/</span> <span class="comment"># 繁體中文語系</span></span></span></span></span><br>
+<span class="indent"><span class="indent"><span class="indent"><span class="dir">jp/</span> <span class="comment"># 日本特定</span></span></span></span><br>
+<span class="indent"><span class="indent"><span class="indent"><span class="indent"><span class="file">payment-stripe/</span> <span class="comment"># Stripe 支付</span></span></span></span></span><br>
+<span class="indent"><span class="indent"><span class="indent"><span class="indent"><span class="file">payment-gmo/</span> <span class="comment"># GMO 支付</span></span></span></span></span><br>
+<span class="indent"><span class="indent"><span class="indent"><span class="indent"><span class="file">notification-line-jp/</span></span></span></span></span><br>
+<span class="indent"><span class="indent"><span class="indent"><span class="indent"><span class="file">tax-jp/</span> <span class="comment"># 日本稅制</span></span></span></span></span><br>
+<span class="indent"><span class="indent"><span class="indent"><span class="indent"><span class="file">insurance-jp/</span> <span class="comment"># 日本保險整合</span></span></span></span></span><br>
+<span class="indent"><span class="indent"><span class="indent"><span class="indent"><span class="file">locales/ja/</span> <span class="comment"># 日本語語系</span></span></span></span></span><br>
+<span class="indent"><span class="dir">apps/</span> <span class="comment"># 前端應用</span></span><br>
+<span class="indent"><span class="indent"><span class="dir">web-tw/</span> <span class="comment"># 台灣站 Next.js App</span></span></span><br>
+<span class="indent"><span class="indent"><span class="dir">web-jp/</span> <span class="comment"># 日本站 Next.js App</span></span></span><br>
+<span class="indent"><span class="indent"><span class="dir">admin/</span> <span class="comment"># 管理後台</span></span></span><br>
+<span class="indent"><span class="dir">infra/</span> <span class="comment"># 基礎設施（Terraform/K8s）</span></span><br>
+    </div>
+
+    <div class="callout success" style="margin-top: 24px;">
+      <div class="callout-title">💡 架構設計原則</div>
+      <p><strong>Dependency Rule：</strong>Core ← Shared ← Adapter ← App。內層不依賴外層，外層透過介面使用內層。</p>
+      <p><strong>Monorepo + Turborepo：</strong>建議使用 pnpm workspace + Turborepo 管理套件依賴與建構流程。</p>
+      <p><strong>Feature Flag：</strong>每個功能模組都支援 Feature Flag，可依區域/用戶層級漸進式開放。</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===== SECTION 5: 開發路線圖 ===== -->
+<section id="roadmap">
+  <div class="container">
+    <h2><span class="num">05</span>開發路線圖</h2>
+    <p class="section-desc">12 個月月度甘特圖、團隊配置建議</p>
+
+    <!-- Gantt Header -->
+    <h3>12 個月甘特圖</h3>
+    <div class="card" style="padding: 20px; overflow-x: auto;">
+      <!-- Month Labels -->
+      <div class="gantt-months">
+        <div class="label-row">
+          <div class="m-label">M1</div><div class="m-label">M2</div><div class="m-label">M3</div>
+          <div class="m-label">M4</div><div class="m-label">M5</div><div class="m-label">M6</div>
+          <div class="m-label">M7</div><div class="m-label">M8</div><div class="m-label">M9</div>
+          <div class="m-label">M10</div><div class="m-label">M11</div><div class="m-label">M12</div>
+        </div>
+      </div>
+
+      <!-- Gantt Bars -->
+      <div class="gantt" style="margin-top: 8px;">
+        <div class="gantt-row">
+          <div class="gantt-label">③ i18n + Multi-tenant</div>
+          <div class="gantt-track">
+            <div class="gantt-bar infra" style="left:0%; width:25%;">M1-M3</div>
+          </div>
+        </div>
+        <div class="gantt-row">
+          <div class="gantt-label">① 工班 SaaS 升級</div>
+          <div class="gantt-track">
+            <div class="gantt-bar p0" style="left:8.3%; width:25%;">M2-M4</div>
+          </div>
+        </div>
+        <div class="gantt-row">
+          <div class="gantt-label">② 建材訂購整合</div>
+          <div class="gantt-track">
+            <div class="gantt-bar p0" style="left:16.6%; width:20.8%;">M3-M5</div>
+          </div>
+        </div>
+        <div class="gantt-row">
+          <div class="gantt-label">⑥ 統一通知/支付/認證</div>
+          <div class="gantt-track">
+            <div class="gantt-bar p1" style="left:33.3%; width:20.8%;">M5-M7</div>
+          </div>
+        </div>
+        <div class="gantt-row">
+          <div class="gantt-label">④ 跨角色 AI 引擎</div>
+          <div class="gantt-track">
+            <div class="gantt-bar p1" style="left:41.6%; width:25%;">M6-M8</div>
+          </div>
+        </div>
+        <div class="gantt-row">
+          <div class="gantt-label">⑤ 提案書生成器</div>
+          <div class="gantt-track">
+            <div class="gantt-bar p1" style="left:50%; width:16.6%;">M7-M8</div>
+          </div>
+        </div>
+        <div class="gantt-row">
+          <div class="gantt-label">⑦ 市場數據平台</div>
+          <div class="gantt-track">
+            <div class="gantt-bar p2" style="left:66.6%; width:20.8%;">M9-M11</div>
+          </div>
+        </div>
+        <div class="gantt-row">
+          <div class="gantt-label">⑧ AI 進階功能</div>
+          <div class="gantt-track">
+            <div class="gantt-bar p2" style="left:75%; width:25%;">M10-M12</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Legend -->
+      <div style="display:flex; gap:20px; margin-top:16px; font-size:12px; flex-wrap:wrap;">
+        <span style="display:flex; align-items:center; gap:6px;"><span style="width:16px;height:16px;border-radius:4px;background:linear-gradient(90deg,var(--gold),#fbbf24);display:inline-block;"></span> 基礎設施</span>
+        <span style="display:flex; align-items:center; gap:6px;"><span style="width:16px;height:16px;border-radius:4px;background:linear-gradient(90deg,var(--red),#f87171);display:inline-block;"></span> P0 核心</span>
+        <span style="display:flex; align-items:center; gap:6px;"><span style="width:16px;height:16px;border-radius:4px;background:linear-gradient(90deg,var(--blue),#60a5fa);display:inline-block;"></span> P1 次優先</span>
+        <span style="display:flex; align-items:center; gap:6px;"><span style="width:16px;height:16px;border-radius:4px;background:linear-gradient(90deg,var(--green),#34d399);display:inline-block;"></span> P2 長期</span>
+      </div>
+    </div>
+
+    <!-- Milestone -->
+    <h3>關鍵里程碑</h3>
+    <div class="card-grid">
+      <div class="card" style="border-left: 4px solid var(--red);">
+        <h4 style="margin-top:0; color:var(--red);">🔴 M3 — 共用基礎就位</h4>
+        <ul class="feature-list">
+          <li>i18n 框架完成，所有字串外部化</li>
+          <li>Multi-tenant 資料隔離上線</li>
+          <li>工班 SaaS v1 完成（現場管理 + 日報）</li>
+        </ul>
+      </div>
+      <div class="card" style="border-left: 4px solid var(--gold);">
+        <h4 style="margin-top:0; color:var(--gold);">🟡 M5 — 交易閉環完成</h4>
+        <ul class="feature-list">
+          <li>建材訂購 + 庫存系統上線</li>
+          <li>工班 SaaS v2（多層承包 + 配對）</li>
+          <li>台灣站功能完整升級上線</li>
+        </ul>
+      </div>
+      <div class="card" style="border-left: 4px solid var(--blue);">
+        <h4 style="margin-top:0; color:var(--blue);">🔵 M8 — 日本站 MVP 就緒</h4>
+        <ul class="feature-list">
+          <li>統一通知/支付/認證上線</li>
+          <li>跨角色 AI 引擎 MVP</li>
+          <li>日本 Adapter 完成</li>
+          <li>日本站 Beta 版可部署</li>
+        </ul>
+      </div>
+      <div class="card" style="border-left: 4px solid var(--green);">
+        <h4 style="margin-top:0; color:var(--green);">🟢 M12 — 全平台成熟</h4>
+        <ul class="feature-list">
+          <li>市場數據平台上線</li>
+          <li>AI 進階功能完成</li>
+          <li>日本站正式上線運營</li>
+          <li>台日雙站共用架構穩定</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Team Allocation -->
+    <h3>團隊配置建議</h3>
+    <div class="card">
+      <p style="margin-bottom:16px;">建議團隊規模：<strong>12-15 人</strong>（含跨時區協作）</p>
+
+      <div style="margin-bottom: 20px;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:4px; font-size:14px;">
+          <span><strong>Phase 1（M1-M5）</strong>— 基礎 + P0</span>
+          <span>10 人</span>
+        </div>
+        <div class="team-bar">
+          <div class="team-segment" style="width:30%; background:var(--red);">後端 3</div>
+          <div class="team-segment" style="width:20%; background:var(--blue);">前端 2</div>
+          <div class="team-segment" style="width:20%; background:var(--gold);">Infra 2</div>
+          <div class="team-segment" style="width:10%; background:var(--green);">QA 1</div>
+          <div class="team-segment" style="width:10%; background:var(--purple);">PM 1</div>
+          <div class="team-segment" style="width:10%; background:var(--cyan);">設計 1</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:4px; font-size:14px;">
+          <span><strong>Phase 2（M5-M8）</strong>— P1 + 日本適配</span>
+          <span>13 人</span>
+        </div>
+        <div class="team-bar">
+          <div class="team-segment" style="width:23%; background:var(--red);">後端 3</div>
+          <div class="team-segment" style="width:23%; background:var(--blue);">前端 3</div>
+          <div class="team-segment" style="width:15%; background:var(--gold);">AI/ML 2</div>
+          <div class="team-segment" style="width:8%; background:var(--green);">QA 1</div>
+          <div class="team-segment" style="width:15%; background:var(--orange);">JP Adapter 2</div>
+          <div class="team-segment" style="width:8%; background:var(--purple);">PM 1</div>
+          <div class="team-segment" style="width:8%; background:var(--cyan);">設計 1</div>
+        </div>
+      </div>
+
+      <div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:4px; font-size:14px;">
+          <span><strong>Phase 3（M9-M12）</strong>— P2 + 優化</span>
+          <span>15 人</span>
+        </div>
+        <div class="team-bar">
+          <div class="team-segment" style="width:20%; background:var(--red);">後端 3</div>
+          <div class="team-segment" style="width:13%; background:var(--blue);">前端 2</div>
+          <div class="team-segment" style="width:20%; background:var(--gold);">AI/ML 3</div>
+          <div class="team-segment" style="width:13%; background:var(--green);">Data 2</div>
+          <div class="team-segment" style="width:13%; background:var(--orange);">JP Ops 2</div>
+          <div class="team-segment" style="width:7%; background:var(--purple);">QA 1</div>
+          <div class="team-segment" style="width:7%; background:var(--cyan);">PM 1</div>
+          <div class="team-segment" style="width:7%; background:var(--text-muted);">設計 1</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===== SECTION 6: 投資效益 ===== -->
+<section id="roi">
+  <div class="container">
+    <h2><span class="num">06</span>投資效益分析</h2>
+    <p class="section-desc">共用模組 vs 獨立開發成本對比、ROI 分析、不做的風險</p>
+
+    <!-- Cost Comparison -->
+    <h3>開發成本對比</h3>
+    <div class="cost-compare">
+      <div class="cost-box bad">
+        <div class="cost-title bad">❌ 方案 A：各自獨立開發</div>
+        <div class="cost-item"><span>工班 SaaS（TW）</span><span>$280K</span></div>
+        <div class="cost-item"><span>工班 SaaS（JP）</span><span>$320K</span></div>
+        <div class="cost-item"><span>建材訂購（TW）</span><span>$180K</span></div>
+        <div class="cost-item"><span>建材訂購（JP）</span><span>$200K</span></div>
+        <div class="cost-item"><span>跨角色 AI（TW）</span><span>$250K</span></div>
+        <div class="cost-item"><span>跨角色 AI（JP）</span><span>$280K</span></div>
+        <div class="cost-item"><span>基礎設施 ×2</span><span>$400K</span></div>
+        <div class="cost-item"><span>維護成本（年）×2</span><span>$360K</span></div>
+        <div class="cost-total"><span>總計</span><span style="color:#ef4444;">$2,270K</span></div>
+      </div>
+
+      <div class="cost-vs">VS</div>
+
+      <div class="cost-box good">
+        <div class="cost-title good">✅ 方案 B：共用模組架構</div>
+        <div class="cost-item"><span>工班 SaaS（共用）</span><span>$350K</span></div>
+        <div class="cost-item"><span>建材訂購（共用）</span><span>$220K</span></div>
+        <div class="cost-item"><span>跨角色 AI（共用）</span><span>$300K</span></div>
+        <div class="cost-item"><span>基礎設施（共用）</span><span>$250K</span></div>
+        <div class="cost-item"><span>JP Adapter 層</span><span>$120K</span></div>
+        <div class="cost-item"><span>維護成本（年）</span><span>$200K</span></div>
+        <div class="cost-item"><span>&nbsp;</span><span>&nbsp;</span></div>
+        <div class="cost-item"><span>&nbsp;</span><span>&nbsp;</span></div>
+        <div class="cost-total"><span>總計</span><span style="color:var(--green);">$1,440K</span></div>
+      </div>
+    </div>
+
+    <!-- Savings -->
+    <div class="stats-grid">
+      <div class="stat-card" style="border-color:rgba(16,185,129,.3);">
+        <div class="stat-number green">$830K</div>
+        <div class="stat-label">絕對節省金額</div>
+      </div>
+      <div class="stat-card" style="border-color:rgba(16,185,129,.3);">
+        <div class="stat-number green">36.6%</div>
+        <div class="stat-label">成本節省比例</div>
+      </div>
+      <div class="stat-card" style="border-color:rgba(59,130,246,.3);">
+        <div class="stat-number blue">50%</div>
+        <div class="stat-label">維護成本節省</div>
+      </div>
+      <div class="stat-card" style="border-color:rgba(168,85,247,.3);">
+        <div class="stat-number purple">∞</div>
+        <div class="stat-label">第三區域邊際成本趨近零</div>
+      </div>
+    </div>
+
+    <!-- ROI Timeline -->
+    <h3>ROI 回收曲線</h3>
+    <div class="card">
+      <p style="margin-bottom: 20px;">共用模組前期投入略高（+15% 架構設計成本），但在第 6 個月開始回收，18 個月後累計 ROI 超過 200%。</p>
+
+      <div style="margin-bottom:16px;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:4px; font-size:13px;">
+          <span>M3 — 基礎完成</span>
+          <span style="color:var(--gold);">投入階段（-15%）</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill gold" style="width:15%;">-15%</div></div>
+      </div>
+      <div style="margin-bottom:16px;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:4px; font-size:13px;">
+          <span>M6 — 台灣站升級上線</span>
+          <span style="color:var(--blue);">開始回收（+5%）</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill blue" style="width:30%;">+5% 淨收益</div></div>
+      </div>
+      <div style="margin-bottom:16px;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:4px; font-size:13px;">
+          <span>M8 — 日本站上線</span>
+          <span style="color:var(--blue);">加速回收（+80%）</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill blue" style="width:55%;">+80% 累計 ROI</div></div>
+      </div>
+      <div style="margin-bottom:16px;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:4px; font-size:13px;">
+          <span>M12 — 全平台成熟</span>
+          <span style="color:var(--green);">ROI 爆發（+200%）</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill green" style="width:80%;">+200% 累計 ROI</div></div>
+      </div>
+      <div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:4px; font-size:13px;">
+          <span>M18 — 第三區域擴展</span>
+          <span style="color:var(--green);">邊際成本趨零（+400%+）</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill green" style="width:95%;">+400%+ 長期 ROI</div></div>
+      </div>
+    </div>
+
+    <!-- Risk Analysis -->
+    <h3>不做共用模組的風險</h3>
+    <div class="risk-card high">
+      <div class="risk-title">🔴 高風險：程式碼分裂（Code Divergence）</div>
+      <p>台日獨立開發 6 個月後，同一功能將有 2 套完全不同的實作。Bug 修復需要改兩次，功能迭代速度降為一半。12 個月後合併成本將超過重寫成本。</p>
+      <p><strong>發生機率：95%</strong> ｜ <strong>影響：團隊效率降低 40-60%</strong></p>
+    </div>
+    <div class="risk-card high">
+      <div class="risk-title">🔴 高風險：日本站延期上線</div>
+      <p>若不先在台灣站建好工班 SaaS，日本站需要從零開發所有工班功能，預估延遲 4-6 個月。錯過日本裝修旺季（3-5月），第一年營收將減少 50%+。</p>
+      <p><strong>發生機率：85%</strong> ｜ <strong>影響：營收損失 ¥5,000 萬+</strong></p>
+    </div>
+    <div class="risk-card medium">
+      <div class="risk-title">🟡 中風險：人才瓶頸</div>
+      <p>獨立開發需要 2 倍工程師，但同時找到足夠的 React/Node.js 且懂日本市場的工程師極度困難。共用架構可讓台灣團隊同時服務兩個市場。</p>
+      <p><strong>發生機率：70%</strong> ｜ <strong>影響：招聘成本 +$200K</strong></p>
+    </div>
+    <div class="risk-card medium">
+      <div class="risk-title">🟡 中風險：用戶體驗不一致</div>
+      <p>獨立開發的兩個站會逐漸在 UI/UX 上分歧。品牌識別混亂，用戶跨區域使用時產生困惑。</p>
+      <p><strong>發生機率：60%</strong> ｜ <strong>影響：品牌價值受損</strong></p>
+    </div>
+    <div class="risk-card low">
+      <div class="risk-title">🟢 低風險：過度抽象化</div>
+      <p>共用模組設計過度泛化，導致開發速度反而降低。<strong>緩解方式：</strong>先以台灣+日本兩國為唯二適配目標設計介面，避免預設未來擴展。YAGNI 原則。</p>
+      <p><strong>發生機率：30%</strong> ｜ <strong>影響：初期開發速度降低 10-15%</strong></p>
+    </div>
+
+    <!-- Final Recommendation -->
+    <div class="callout success" style="margin-top: 32px;">
+      <div class="callout-title">🎯 結論與建議</div>
+      <p style="font-size:16px; line-height:1.8;">
+        <strong>共用模組架構是唯一可行的路線。</strong>
+        台灣站目前的「設計師偏科」問題，恰好與日本站的「三角色均衡」需求互補。
+        先在台灣補齊工班 SaaS 和建材訂購，不僅是為日本做準備，也是台灣站本身必須的產品升級。
+      </p>
+      <p style="font-size:16px; line-height:1.8;">
+        <strong>立即行動項：</strong><br>
+        1️⃣ 第一週：啟動 i18n 框架重構，所有新功能強制使用 i18n<br>
+        2️⃣ 第二週：工班 SaaS 團隊組建，開始施工現場管理模組<br>
+        3️⃣ 第四週：建材訂購流程設計完成，進入開發<br>
+        4️⃣ 持續：每個 Sprint 確保 Core/Shared/Adapter 三層清晰分離
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===== Footer ===== -->
+<footer style="padding: 40px 24px; border-top: 1px solid var(--border); text-align: center; color: var(--text-muted); font-size: 13px;">
+  <p>LargeHome AI — 台日共用模組反推分析報告 v005</p>
+  <p>Build Once, Deploy Twice — 為台灣升級產品，為日本準備基礎</p>
+  <p style="margin-top: 8px;">Generated 2025-03-20 ｜ CTO Engineering Planning Document</p>
+</footer>
+
+<!-- ===== Interactive JS ===== -->
+<script>
+function filterTable(status) {
+  // Update active tab
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+  document.querySelector('[data-filter="'+status+'"]').classList.add('active');
+  // Filter rows
+  document.querySelectorAll('tr[data-status]').forEach(row => {
+    if (status === 'all' || row.dataset.status === status) {
+      row.style.display = '';
+    } else {
+      row.style.display = 'none';
+    }
+  });
+}
+
+// Smooth scroll for nav
+document.querySelectorAll('.nav-inner a').forEach(a => {
+  a.addEventListener('click', function(e) {
+    const href = this.getAttribute('href');
+    if (href && href.startsWith('#')) {
+      e.preventDefault();
+      const target = document.querySelector(href);
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+});
+
+// Highlight active nav on scroll
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-inner a:not(.nav-logo)');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 100) current = s.id;
+  });
+  navLinks.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+});
+</script>
+</body>
+</html>
