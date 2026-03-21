@@ -1,6 +1,6 @@
 {
-  "lastUpdated": "2026-03-21T18:00:00+08:00",
-  "updatedBy": "cto-audit-round-16",
+  "lastUpdated": "2026-03-21T18:26:00+08:00",
+  "updatedBy": "sprint-P-011-completed",
   "context": "基於 Production codebase 實際狀態建立的開發佇列",
   "tasks": [
     {
@@ -177,12 +177,13 @@
       "repo": "LargeHomeAI--Frontend",
       "description": "BUILD 失敗：app/projects/[id]/inspections/page.tsx 有 2 個 @typescript-eslint/no-explicit-any 錯誤在 line 87, 118。需要將 'any' type 改為具體型別定義。",
       "files": [
-        "app/projects/[id]/inspections/page.tsx"
+        "app/projects/[id]/inspections/page.tsx",
+        "app/types/site-inspections.ts"
       ],
       "priority": "P0",
-      "status": "ready",
+      "status": "done",
       "dependencies": [],
-      "notes": "CRITICAL: Build 無法通過，阻止部署。需要修復 any types。"
+      "notes": "✅ 已修復：(1) 修正 ChecklistItem 型別定義，增加 'pending' 狀態 (2) 移除未使用的變數 router, isMobile (3) 修復 useEffect 依賴問題 (4) Build 成功，無 TypeScript 錯誤，僅剩 img 標籤 warnings（不影響功能）。"
     },
     {
       "id": "P-012",
