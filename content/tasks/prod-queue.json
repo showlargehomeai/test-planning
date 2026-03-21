@@ -1,6 +1,6 @@
 {
-  "lastUpdated": "2026-03-21T14:30:00+08:00",
-  "updatedBy": "cron-cto-audit",
+  "lastUpdated": "2026-03-21T15:01:00+08:00",
+  "updatedBy": "cto-audit-round-N",
   "context": "基於 Production codebase 實際狀態建立的開發佇列",
   "tasks": [
     {
@@ -60,9 +60,9 @@
         "app/types/contracts.ts"
       ],
       "priority": "P0",
-      "status": "partial",
+      "status": "done",
       "dependencies": [],
-      "notes": "🚧 部分完成：app/contracts/page.tsx + API client 已建立。待完成：app/contracts/[id]/page.tsx (合約詳情頁)。後端 model: Contract + PaymentMilestone。"
+      "notes": "✅ 已完成：(1) app/contracts/page.tsx 合約列表頁 (2) app/contracts/[id]/page.tsx 合約詳情頁含付款里程碑時間軸 (3) API client + 型別定義完整。使用 shadcn/ui 時間軸元件展示付款進度。"
     },
     {
       "id": "P-004",
@@ -110,7 +110,36 @@
         "P-004",
         "P-005"
       ],
-      "notes": "專案頁面已有基本資訊展示，需要加入子頁面導航。合約可能是獨立路由不掛在 project 下。依賴 P-002(已完成), P-004, P-005。"
+      "notes": "專案頁面已有基本資訊展示，需要加入子頁面導航。合約可能是獨立路由不掛在 project 下。依賴 P-002(已完成), P-004(已完成), P-005。"
+    },
+    {
+      "id": "P-009",
+      "title": "🚨 TypeScript Build 錯誤修復",
+      "repo": "LargeHomeAI--Frontend",
+      "description": "CRITICAL: Build 有多個 TypeScript 錯誤需修復：(1) app/lib/api/daily-reports.ts 和 material-inquiries.ts 中的 Unexpected any 錯誤 (2) 移除未使用的變數避免 lint 警告影響 build。優先修復阻止 build 的 error，warning 可後續處理。",
+      "files": [
+        "app/lib/api/daily-reports.ts",
+        "app/lib/api/material-inquiries.ts"
+      ],
+      "priority": "P0",
+      "status": "ready",
+      "dependencies": [],
+      "notes": "Build 失敗，需要立即修復。主要是 any 型別問題，需改為具體型別定義。"
+    },
+    {
+      "id": "P-010",
+      "title": "工地巡檢前端頁面實作",
+      "repo": "LargeHomeAI--Frontend",
+      "description": "P-005 更新：建立 app/projects/[id]/inspections/page.tsx，功能：巡檢列表、新增巡檢（類型quality/safety/progress、checklist JSONB、整體狀態、備註、照片上傳）。後端 API 已確認存在於 interaction-service。",
+      "files": [
+        "app/projects/[id]/inspections/page.tsx",
+        "app/lib/api/site-inspections.ts",
+        "app/types/site-inspections.ts"
+      ],
+      "priority": "P0",
+      "status": "ready",
+      "dependencies": [],
+      "notes": "後端 model SiteInspection(project_id, inspector_id, inspection_date, type, checklist(JSONB), overall_status, notes, photos)。參考 daily-reports 和 inquiries 頁面的設計模式。"
     },
     {
       "id": "P-007",
@@ -138,9 +167,9 @@
         "app/types/contracts.ts"
       ],
       "priority": "P0",
-      "status": "ready",
+      "status": "done",
       "dependencies": ["P-003"],
-      "notes": "拆分自 P-003。需要整合現有 contracts API，展示 PaymentMilestone 資料。"
+      "notes": "✅ 已完成：併入 P-003。app/contracts/[id]/page.tsx 已建立，包含合約詳情、付款里程碑時間軸、支付狀態更新功能。"
     }
   ],
   "rules": {
