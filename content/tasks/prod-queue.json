@@ -75,9 +75,9 @@
         "app/types/material-inquiries.ts"
       ],
       "priority": "P0",
-      "status": "ready",
+      "status": "done",
       "dependencies": [],
-      "notes": "待開發：後端 model MaterialInquiry(project_id, requester_id, vendor_id, product_id, product_name, specification, quantity, unit, budget_hint, message, status, vendor_reply, vendor_price)"
+      "notes": "✅ 已完成：(1) 建立 API client (app/lib/api/material-inquiries.ts) (2) 型別已存在 (app/types/material-inquiries.ts) (3) 完整詢價頁面包含列表、新增表單、狀態篩選、廠商/產品選擇、規格輸入、廠商回覆顯示等功能。使用 shadcn/ui + Tailwind + Modal 風格，含 Mock 資料fallback。"
     },
     {
       "id": "P-005",
