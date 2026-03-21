@@ -1,6 +1,6 @@
 {
-  "lastUpdated": "2026-03-21T21:30:00+08:00",
-  "updatedBy": "cto-audit-prod",
+  "lastUpdated": "2026-03-21T22:00:00+08:00",
+  "updatedBy": "cto-audit-prod-P24",
   "context": "基於 Production codebase (~/largehomeai-repos/LargeHomeAI--Frontend) 開發。所有任務都在 production repo 寫 code，不在 test-planning。",
   "tasks": [
     {
@@ -338,6 +338,23 @@
       "status": "ready",
       "dependencies": [],
       "notes": "product-service 已有 thisWeek/thisMonth 統計。LINE 推播用現有 NovuService。"
+    },
+    {
+      "id": "P-024",
+      "title": "🚨 SEO & 效能優化檢查",
+      "repo": "LargeHomeAI--Frontend", 
+      "description": "審計發現：(1) 產品詳情頁已有完整 SSR、ISR、JSON-LD structured data、SEO friendly URLs、301 redirects (2) Vendors 頁面新增：統計整合、驗證標記、產品圖片預覽、篩選系統 (3) TopNav 檔案有變更：確認導航選單功能完整性 (4) package.json 更新：確認依賴版本一致性",
+      "files": [
+        "app/product-detail/[id]/page.tsx",
+        "app/product-detail/[id]/metadata.ts", 
+        "app/vendors/page.tsx",
+        "app/components/TopNav.tsx",
+        "package.json"
+      ],
+      "priority": "P1",
+      "status": "done",
+      "dependencies": [],
+      "notes": "✅ 審計確認：(1) 產品頁 SEO 最佳化完整：SSR + ISR + JSON-LD + 301 重定向 (2) 廠商頁功能豐富：統計整合 + 驗證標記 + 篩選系統 (3) TopNav 功能完整 (4) 新檔案架構良好，符合 Next.js 15 最佳實踐。效能與 SEO 優化到位。"
     }
   ],
   "rules": {
