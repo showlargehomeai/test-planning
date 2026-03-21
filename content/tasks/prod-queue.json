@@ -137,9 +137,9 @@
         "app/types/site-inspections.ts"
       ],
       "priority": "P0",
-      "status": "ready",
+      "status": "done",
       "dependencies": [],
-      "notes": "後端 model SiteInspection(project_id, inspector_id, inspection_date, type, checklist(JSONB), overall_status, notes, photos)。參考 daily-reports 和 inquiries 頁面的設計模式。"
+      "notes": "✅ 已完成：(1) 建立完整型別定義 app/types/site-inspections.ts 包含檢查類型(quality/safety/progress)、狀態、預設檢查清單模板 (2) API client app/lib/api/site-inspections.ts 含 Mock 資料 fallback (3) 完整頁面 app/projects/[id]/inspections/page.tsx 包含巡檢列表、狀態篩選、新增表單、動態檢查清單、照片上傳、整體狀態管理等功能。使用 shadcn/ui + Tailwind 風格。"
     },
     {
       "id": "P-007",

@@ -183,7 +183,7 @@ export default function TabNavigation() {
       )}
 
       {/* ── Desktop sidebar (rendered in layout via flex) ── */}
-      <aside className="hidden lg:flex flex-col w-[210px] bg-[#14161b] shrink-0 h-screen sticky top-0">
+      <aside className="hidden lg:flex flex-col w-[220px] bg-white border-r border-slate-200/80 shrink-0 h-screen sticky top-0">
         <SidebarContent pathname={pathname} />
       </aside>
     </>
