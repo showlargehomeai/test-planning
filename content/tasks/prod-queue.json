@@ -1,6 +1,6 @@
 {
-  "lastUpdated": "2026-03-21T13:31:00+08:00",
-  "updatedBy": "cto-audit-Round6",
+  "lastUpdated": "2026-03-21T13:36:00+08:00",
+  "updatedBy": "cron-dev-sprint",
   "context": "基於 Production codebase 實際狀態建立的開發佇列",
   "tasks": [
     {
@@ -43,9 +43,9 @@
         "app/types/daily-reports.ts"
       ],
       "priority": "P0",
-      "status": "ready",
+      "status": "done",
       "dependencies": [],
-      "notes": "後端 model: DailyReport(project_id, submitted_by, report_date, weather, worker_count, work_description, materials_used(JSONB), issues, photos, status, approved_by)"
+      "notes": "已完成：(1) 建立 API client (app/lib/api/daily-reports.ts) (2) 型別定義 (app/types/daily-reports.ts) (3) 完整頁面 (app/projects/[id]/daily-reports/page.tsx) 包含日報列表、新增/編輯表單、狀態篩選、照片上傳、材料使用記錄等功能。使用 shadcn/ui + Tailwind 風格，符合現有設計系統。"
     },
     {
       "id": "P-003",
