@@ -1,6 +1,6 @@
 {
-  "lastUpdated": "2026-03-22T00:00:20+08:00",
-  "updatedBy": "cto-audit-cron",
+  "lastUpdated": "2026-03-22T00:06:45+08:00",
+  "updatedBy": "P-022-onboarding-dev",
   "context": "基於 Production codebase (~/largehomeai-repos/LargeHomeAI--Frontend) 開發。所有任務都在 production repo 寫 code，不在 test-planning。",
   "tasks": [
     {
@@ -197,12 +197,16 @@
       "repo": "LargeHomeAI--Frontend",
       "description": "註冊後的引導流程：選品類偏好 → 選服務區域 → 立刻顯示相關建材/工班。已有 OnboardingContext.tsx 和 onboarding/ 元件資料夾，在此基礎上擴展。",
       "files": [
-        "app/components/onboarding/"
+        "app/components/onboarding/CategorySelection.tsx",
+        "app/components/onboarding/AreaSelection.tsx", 
+        "app/components/onboarding/RecommendationResults.tsx",
+        "app/types/preferences.ts",
+        "app/lib/api/recommendations.ts"
       ],
       "priority": "P0",
-      "status": "ready",
+      "status": "done",
       "dependencies": [],
-      "notes": "已有 OnboardingProvider + OnboardingChecklist。需要加: 品類偏好選擇 + 區域選擇 + 首次推薦結果頁"
+      "notes": "✅ 已完成：(1) 新增品類偏好選擇 CategorySelection.tsx，支援8個建材品類選擇 (2) 新增服務區域選擇 AreaSelection.tsx，包含台灣主要城市/區域 (3) 新增推薦結果頁 RecommendationResults.tsx，根據偏好推薦建材/工班/設計師 (4) 建立 preferences.ts 型別定義 (5) 建立 recommendations.ts API client 含 Mock 資料 (6) 更新 OnboardingModal 整合新步驟 (7) 擴展 IconMap 支援建材品類圖示 (8) 環境變數配置完成。Build 通過驗證。"
     },
     {
       "id": "P-023",
