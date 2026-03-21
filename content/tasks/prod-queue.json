@@ -1,6 +1,6 @@
 {
-  "lastUpdated": "2026-03-21T18:26:00+08:00",
-  "updatedBy": "sprint-P-011-completed",
+  "lastUpdated": "2026-03-21T19:00:00+08:00",
+  "updatedBy": "cto-audit-prod-round-1",
   "context": "基於 Production codebase 實際狀態建立的開發佇列",
   "tasks": [
     {
@@ -150,12 +150,12 @@
         "app/components/TopNav.tsx"
       ],
       "priority": "P1",
-      "status": "ready",
+      "status": "done",
       "dependencies": [
         "P-001",
         "P-003"
       ],
-      "notes": "確認現有 TopNav 的結構再決定放在哪裡。依賴 P-001(已完成), P-003(部分完成)。"
+      "notes": "✅ 審計確認：TopNav.tsx 已包含 CRM 入口（第 163 行），但缺少合約管理 (/contracts) 入口。需要在 profileMenuItems 中加入 contracts 連結。"
     },
     {
       "id": "P-008",
@@ -189,14 +189,14 @@
       "id": "P-012",
       "title": "TopNav 整合 CRM 和 Contracts 入口",
       "repo": "LargeHomeAI--Frontend",
-      "description": "TopNav 選單缺少 CRM 和合約管理入口。需在個人選單中加入：'CRM 系統' (/crm) 和 '合約管理' (/contracts) 連結。現有選單：個人檔案、通知設定、我的專案、訊息中心。",
+      "description": "TopNav 選單缺少合約管理入口。需在個人選單中加入：'合約管理' (/contracts) 連結。現有選單已有：CRM 系統、個人檔案、通知設定、我的專案、訊息中心。",
       "files": [
         "app/components/TopNav.tsx"
       ],
       "priority": "P1",
       "status": "ready",
       "dependencies": ["P-001", "P-003"],
-      "notes": "現有 TopNav 結構完整，需要在 profile menu 中添加兩個新連結。"
+      "notes": "審計發現：CRM 入口已存在，只缺合約管理 (/contracts) 連結。需要在 profileMenuItems 陣列中加入。"
     },
     {
       "id": "P-013",
@@ -210,6 +210,21 @@
       "status": "ready",
       "dependencies": ["P-002", "P-004", "P-005"],
       "notes": "三個子功能都已完成，需要在主專案頁面提供導航入口。"
+    },
+    {
+      "id": "P-014",
+      "title": "🚨 TypeScript 巡檢頁面錯誤修復 Round 3",
+      "repo": "LargeHomeAI--Frontend",
+      "description": "CRITICAL: app/projects/[id]/inspections/page.tsx 有 4 個 TypeScript 錯誤：(1) SiteInspectionResponse vs SiteInspection type 不匹配 (2) ImagePreviewModal props 錯誤 (3) 參數不匹配。需要統一型別定義並修復 Modal 呼叫。",
+      "files": [
+        "app/projects/[id]/inspections/page.tsx",
+        "app/types/site-inspections.ts",
+        "app/components/ImagePreviewModal.tsx"
+      ],
+      "priority": "P0",
+      "status": "ready",
+      "dependencies": [],
+      "notes": "新發現的 Build 錯誤，阻止編譯。需要修復型別不匹配和 Modal props 錯誤。"
     }
   ],
   "rules": {
