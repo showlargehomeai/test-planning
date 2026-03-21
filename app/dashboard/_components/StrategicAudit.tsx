@@ -258,7 +258,20 @@ export default function StrategicAudit({ compact = false }: { compact?: boolean 
     );
   }
 
-  const { company, taiwan, japan, infrastructure, bd_expansion, mckinsey_recommendations } = data;
+  const { company, taiwan, japan, infrastructure, bd_expansion, mckinsey_recommendations } = data || {};
+
+  // Guard: if audit data schema changed (cron may update), show raw summary
+  if (!taiwan?.modules || !company) {
+    return (
+      <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+        <h2 className="text-lg font-bold text-slate-900 mb-3">🎯 戰略審計 Round {data?.round || '?'}</h2>
+        <p className="text-sm text-slate-600 mb-2">{data?.timestamp ? new Date(data.timestamp).toLocaleString('zh-TW') : ''}</p>
+        {data?.executionStatus && <p className="text-sm text-slate-700 mb-2">📋 {typeof data.executionStatus === 'string' ? data.executionStatus : JSON.stringify(data.executionStatus)}</p>}
+        {data?.criticalRecommendation && <p className="text-sm text-amber-700 bg-amber-50 rounded-lg p-3">⚠️ {typeof data.criticalRecommendation === 'string' ? data.criticalRecommendation : JSON.stringify(data.criticalRecommendation)}</p>}
+        {data?.businessActionPlan && <pre className="text-xs text-slate-500 mt-3 whitespace-pre-wrap">{JSON.stringify(data.businessActionPlan, null, 2)}</pre>}
+      </div>
+    );
+  }
 
   /* Group Taiwan modules by priority */
   const priorityGroups: Record<string, typeof taiwan.modules> = {};

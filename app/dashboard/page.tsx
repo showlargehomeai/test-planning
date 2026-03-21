@@ -1,14 +1,18 @@
+"use client";
+
+import dynamic from "next/dynamic";
 import { Suspense } from "react";
-import StrategicAudit from "./_components/StrategicAudit";
-import AnalyticsKPIs from "./_components/AnalyticsKPIs";
-import UserGrowth from "./_components/UserGrowth";
-import ProductGrowth from "./_components/ProductGrowth";
-import VendorGrowth from "./_components/VendorGrowth";
-import BrandGrowth from "./_components/BrandGrowth";
-import VendorActivity from "./_components/VendorActivity";
-import CategoryAnalysis from "./_components/CategoryAnalysis";
-import CatalogGrowth from "./_components/CatalogGrowth";
-import RetentionChart from "./_components/RetentionChart";
+
+const StrategicAudit = dynamic(() => import("./_components/StrategicAudit"), { ssr: false });
+const AnalyticsKPIs = dynamic(() => import("./_components/AnalyticsKPIs"), { ssr: false });
+const UserGrowth = dynamic(() => import("./_components/UserGrowth"), { ssr: false });
+const ProductGrowth = dynamic(() => import("./_components/ProductGrowth"), { ssr: false });
+const VendorGrowth = dynamic(() => import("./_components/VendorGrowth"), { ssr: false });
+const BrandGrowth = dynamic(() => import("./_components/BrandGrowth"), { ssr: false });
+const VendorActivity = dynamic(() => import("./_components/VendorActivity"), { ssr: false });
+const CategoryAnalysis = dynamic(() => import("./_components/CategoryAnalysis"), { ssr: false });
+const CatalogGrowth = dynamic(() => import("./_components/CatalogGrowth"), { ssr: false });
+const RetentionChart = dynamic(() => import("./_components/RetentionChart"), { ssr: false });
 
 function KPISkeleton() {
   return (
@@ -41,7 +45,6 @@ function ChartSkeleton() {
 export default function DashboardPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
-      {/* Header */}
       <div>
         <h1 className="text-xl sm:text-2xl font-bold text-slate-900">
           戰情室
@@ -51,52 +54,42 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      {/* Strategic Audit */}
       <Suspense fallback={<ChartSkeleton />}>
         <StrategicAudit compact />
       </Suspense>
 
-      {/* KPI Row: DAU / WAU / MAU */}
       <Suspense fallback={<KPISkeleton />}>
         <AnalyticsKPIs />
       </Suspense>
 
-      {/* User Growth with Time Range Switch */}
       <Suspense fallback={<ChartSkeleton />}>
         <UserGrowth />
       </Suspense>
 
-      {/* Product Growth */}
       <Suspense fallback={<ChartSkeleton />}>
         <ProductGrowth />
       </Suspense>
 
-      {/* Vendor Growth */}
       <Suspense fallback={<ChartSkeleton />}>
         <VendorGrowth />
       </Suspense>
 
-      {/* Brand Growth */}
       <Suspense fallback={<ChartSkeleton />}>
         <BrandGrowth />
       </Suspense>
 
-      {/* Vendor Activity Heatmap */}
       <Suspense fallback={<ChartSkeleton />}>
         <VendorActivity />
       </Suspense>
 
-      {/* Category Analysis */}
       <Suspense fallback={<ChartSkeleton />}>
         <CategoryAnalysis />
       </Suspense>
 
-      {/* Catalog Growth */}
       <Suspense fallback={<ChartSkeleton />}>
         <CatalogGrowth />
       </Suspense>
 
-      {/* Retention Chart */}
       <Suspense fallback={<ChartSkeleton />}>
         <RetentionChart />
       </Suspense>
