@@ -172,11 +172,11 @@
         "app/types/compare.ts"
       ],
       "priority": "P1",
-      "status": "audit-needed",
+      "status": "done",
       "dependencies": [
         "P-020"
       ],
-      "notes": "🔍 需要深度審計：確認比價引擎資料流完整性、與 product-service 同步機制、計算邏輯正確性。"
+      "notes": "✅ 審計完成：比價引擎整合度優良。(1) API 路徑一致 /api/v1/products/search 符合 product-service (2) Mock 資料完整含價格歷史、用量計算、規格資訊等 958行代碼 (3) 與批次詢價無縫整合：選產品→一鍵詢價→批次送出→狀態追蹤 (4) 價格歷史視覺化含統計、趨勢圖、歷史低價比較 (5) 用量計算器支援磁磚60x60/80x80規格、坪數換算、耗損率計算、建議數量 (6) 環境變數 NEXT_PUBLIC_COMPARE_USE_MOCK=true 配置正確 (7) 與 compare.ts API client 使用統一 endpoints 路徑 (8) 型別定義完整包含 CompareProduct/PriceHistory/UsageCalculation/BatchInquiry 等。整體架構設計優良，功能完整且整合良好。"
     },
     {
       "id": "P-028",
