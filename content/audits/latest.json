@@ -1,642 +1,84 @@
 {
-  "auditId": "AUDIT-018",
-  "timestamp": "2026-03-21T09:31:00+08:00",
-  "round": 20,
-  "perspective": "CTO + CIO",
+  "auditId": "AUDIT-019",
+  "timestamp": "2026-03-21T10:00:00+08:00",
+  "round": 21,
+  "perspective": "CTO 代碼實作追蹤",
 
-  "decisionsForShow": [
-    {
-      "id": "DEC-001",
-      "urgency": "CRITICAL",
-      "question": "CRM 後端要自建還是用 HubSpot/Salesforce API？自建成本高但資料完全掌控；第三方快但月費隨 BD 人數線性增長（200 BD × $50/人 = $10K/月）",
-      "context": "根據 ANALYSIS.md 確認：目前 CRM 前端用 localStorage，程式碼中「完全沒有 CRM 模組」。auth-service 已有用戶系統，profile-service 有廠商/設計師資料，可以在上面擴展",
-      "options": ["A: 擴展 profile-service 加 CRM 表（0 月費，開發 3-4 週）", "B: HubSpot API 整合（月費 $3K-10K，開發 1-2 週）", "C: 先 B 再 A（快速上線再逐步遷移）"],
-      "recommendation": "【確認】A — 架構分析確實證明 profile-service 是完美基礎（已有用戶管理+Role 分離）。BD 月費成本線性增長會成為現金流殺手，自建 CRM 投資回報率在 6 個月就回本。技術風險可控",
-      "deadline": "需要在 BD 第一批入職前決定（~M2）",
-      "status": "waiting_decision"
-    },
-    {
-      "id": "DEC-002",
-      "urgency": "CRITICAL",
-      "question": "報價系統要整合進現有的 quote_carts/quote_items 表，還是另建新的 smart_quotes 表？",
-      "context": "interaction-service 已有 quotes、quote_items、quote_requests、quote_responses 四張表（migration 026-028）。前端新建的 /smart-quote 用 localStorage，需要對接",
-      "options": ["A: 直接擴展現有 quote 表加 AI 欄位", "B: 另建 smart_quotes 表，用 FK 關聯原有 quote"],
-      "recommendation": "A — 現有 quote 表已有完整架構（migration 026-028 已建立 4 張關聯表），只需加 market_avg_price、ai_suggestion、competitiveness 三個欄位即可完美支持智慧報價",
-      "deadline": "Sprint 下一輪",
-      "status": "waiting_decision"
-    },
-    {
-      "id": "DEC-003",
-      "urgency": "CRITICAL",
-      "question": "工班管理（日報/現場管理/承包）要放在哪個 service？新建 crew-service 還是擴展 interaction-service？",
-      "context": "interaction-service 已管理 projects、chat、requirements（46 files）。工班日報和現場管理邏輯上也是「專案互動」的一部分。但再加功能可能讓服務過於肥胖",
-      "options": ["A: 擴展 interaction-service（共用 project 關聯）", "B: 新建 crew-service（獨立部署、獨立擴展）", "C: 先 A，量大了再拆 B"],
-      "recommendation": "C — 先在 interaction-service 加 daily_reports、site_inspections 表，共用 projects FK。根據架構現況，這是最快的實現路徑。當工班管理複雜度提升時再拆分獨立服務",
-      "deadline": "本週",
-      "status": "waiting_decision"
-    },
-    {
-      "id": "DEC-004",
-      "urgency": "HIGH",
-      "question": "建材訂購流程是平台內閉環（LargeHome 處理金流）還是導流到廠商（只做詢價/連結）？",
-      "context": "這決定了技術複雜度差 10 倍。閉環需要支付閘道、庫存同步、物流追蹤。導流只需要 inquiry + redirect。根據 ANALYSIS.md，程式碼中「完全沒有訂購/庫存功能」",
-      "options": ["A: 閉環（平台抽成模式，技術重）", "B: 導流（詢價導流，技術輕）", "C: 先 B 再逐步走 A"],
-      "recommendation": "C — Phase 1 用詢價導流驗證需求，同時在 product-service 建立 inventory 基礎。Phase 2 高頻品項再做閉環電商",
-      "deadline": "M3 前",
-      "status": "waiting_decision"
-    },
-    {
-      "id": "DEC-005",
-      "urgency": "CRITICAL",
-      "question": "前端 Mock 數據處理策略：/crew/requests 等頁面現在用硬編碼 MOCK_RECEIVED_REQUESTS，這個要先清理掉還是趕快接真實 API？",
-      "context": "根據 ANALYSIS.md 確認：工班接案功能在前端是 Mock 數據（MOCK_RECEIVED_REQUESTS），但後端 interaction-service 已有 requirements 相關表。這會影響用戶體驗和產品可信度",
-      "options": ["A: 立刻隱藏這些 Mock 頁面，避免用戶混淆", "B: 優先開發 crew-service API 來取代 Mock", "C: 先用現有 interaction-service 的 requirements 表過渡"],
-      "recommendation": "【品牌危機升級 → 立即行動決策】A+C 緊急執行：(1) feature flag 隱藏所有含 Mock 數據的頁面 (2) 緊急用 interaction-service 的 requirements 表建立真實 API (3) ESLint + CI 防火牆防止 Mock 再次流入生產。已確認：工班用戶會直接看到假的接案請求，正在流失用戶信任。時間成本：等待決策的每一小時都可能導致更多用戶流失",
-      "deadline": "24 小時內（加急）",
-      "status": "approved_for_execution"
-    },
-    {
-      "id": "DEC-007",
-      "urgency": "HIGH",
-      "question": "超大前端元件拆分：search-result (2954 行)、profile (2388 行)、projects/[id] (3320 行) 已經無法維護，要拆分嗎？",
-      "context": "根據 ANALYSIS.md，前端有多個巨型元件超過 2000-3000 行，這會導致開發效率下降、Bug 修復困難、Code Review 成本高。維護成本已增加 50%",
-      "options": ["A: 立刻重構，全部拆分成 <500 行的子元件", "B: 新功能用新架構，舊的維持現狀", "C: 只拆分最常改動的頁面（search-result, projects/[id]）"],
-      "recommendation": "C — 優先拆分 search-result (2954→<500 行) 和 projects/[id] (3320→<500 行)，因為它們是核心業務流程，修改頻率最高。profile 頁面可暫緩",
-      "deadline": "Sprint 6",
-      "status": "waiting_decision"
-    },
-    {
-      "id": "DEC-008",
-      "urgency": "HIGH",
-      "question": "資料庫架構決策：繼續共用單一 PostgreSQL 還是朝真正微服務演進？現在所有 service 都直接讀取彼此的 table",
-      "context": "根據 ANALYSIS.md 確認：目前是「模組化單體 + 共用 DB」偽裝成微服務。所有服務共用 Azure PostgreSQL (largehome-pg)，透過直接讀取其他服務的 table 來通訊。這違背微服務核心原則",
-      "options": ["A: 繼續現況，接受技術債務，專注業務功能", "B: 逐步拆分，從 analytics-service 開始獨立資料庫", "C: 設計新的 service 時強制獨立 DB，舊的維持"],
-      "recommendation": "【架構升級】A（短期）+ C（中期）— 當前階段業務驗證最重要，但新的 CRM、crew-management、order-management 等服務必須設計為獨立 DB，避免債務累積",
-      "deadline": "新服務架構設計時強制執行",
-      "status": "waiting_decision"
-    },
-    {
-      "id": "DEC-006",
-      "urgency": "MEDIUM",
-      "question": "image-segmentation 服務要整合進 AKS ingress 嗎？現在是獨立運行，但建材選品流程（空間模擬）需要它。",
-      "context": "SAM 2.1 圖片分割已開發完成（5 files），但沒有整合到 K8s。如果要做「空間建材模擬」功能，需要決定部署方式",
-      "options": ["A: 整合進 AKS + 加入 ingress 路由", "B: 保持獨立部署，Frontend 直接調用", "C: 暫緩整合，等空間模擬 PRD 確定後再做"],
-      "recommendation": "A — 統一在 AKS 管理，方便 scaling 和監控。image-segmentation 已開發完成，只需要 K8s 部署配置",
-      "deadline": "Sprint 下一輪",
-      "status": "waiting_decision"
-    },
-    {
-      "id": "DEC-009",
-      "urgency": "HIGH",
-      "question": "根據架構分析發現的新問題：LINE Bot 服務完成度只有 75%，LangChain agents 已完成但 LINE 整合卡在 Phase 4。這個要優先完成還是暫緩？",
-      "context": "bot-service 有完整的向量搜尋能力（pgvector 2000維 <100ms），AI Pipeline: intent_chain → search_chain → response_chain 都已實作。但缺少 LINE Platform 整合，無法對外服務",
-      "options": ["A: 立刻完成 LINE 整合，讓 Bot 上線服務用戶", "B: 先專注核心業務（CRM/工班管理），Bot 暫緩", "C: 轉為內部工具，給客服或 BD 團隊使用"],
-      "recommendation": "【推進】C 立即執行 — 技術架構已完成 75%，立即包裝成內部客服系統可以：(1) 即時產生商業價值 (2) 減少客服查詢時間 80% (3) 為未來 LINE 整合提供測試數據。技術門檻低，商業價值高",
-      "deadline": "一週內",
-      "status": "waiting_decision"
-    },
-    {
-      "id": "DEC-010",
-      "urgency": "HIGH",
-      "question": "PRD vs 實作缺口：PRD v005 標示「已完成」的功能在程式碼中實際不存在（CRM、合約管理、財務模組、收入管理）。要先澄清 PRD 狀態還是按程式碼現況規劃？",
-      "context": "ANALYSIS.md 發現：PRD 列出 39 項功能，只有 33% 真正實作完成，46% 完全未開始。PRD 可能包含了設計階段的功能而非已完成實作",
-      "options": ["A: 按 PRD 繼續開發缺失功能", "B: 重新盤點 PRD，標示正確的完成狀態", "C: 並行：澄清 PRD + 繼續開發核心缺口"],
-      "recommendation": "C — 並行處理。立即更新 PRD 狀態（避免誤導），同時開發 P0 缺口：施工現場管理、電子日報、線上訂購。這樣既修正了規劃也推進了實作",
-      "deadline": "PRD 澄清：一週內；P0 開發：M3 前",
-      "status": "waiting_decision"
-    },
-    {
-      "id": "DEC-011",
-      "urgency": "CRITICAL",
-      "question": "【新發現】架構技術債務達到臨界點：所有微服務共用單一 PostgreSQL，透過直接讀取其他服務的表來通訊，這是反微服務模式。繼續這樣架構會阻礙未來擴展。要現在重構還是繼續債務？",
-      "context": "ANALYSIS.md 確認：目前是「模組化單體 + 共用 DB」偽裝成微服務。所有服務（auth、product、profile、interaction、analytics）都直接存取彼此的資料表，違背微服務核心原則。新服務開發會被這個架構束縛",
-      "options": ["A: 立即重構，所有服務獨立 DB + API 通訊（大工程）", "B: 接受現況，專注業務功能開發", "C: 新服務強制獨立 DB，舊服務維持現狀", "D: 階段性重構：先拆分 analytics + bot，再逐步遷移"],
-      "recommendation": "【新策略】C（短期）+ D（中期）— 當前業務驗證階段，共用 DB 的開發速度優勢更重要。但設立鐵律：所有新開發服務（CRM、工班管理、庫存系統）必須獨立 DB + API 通訊。避免債務繼續擴大",
-      "deadline": "新服務開發時立即執行",
-      "status": "waiting_decision"
-    },
-    {
-      "id": "DEC-012",
-      "urgency": "HIGH",
-      "question": "【架構升級】微服務間通訊模式：繼續共用 DB 直接存取，還是建立 API 通訊？現況：所有服務能讀取彼此的表，技術上是分布式單體架構",
-      "context": "深度分析確認：14 個微服務全部共用 Azure PostgreSQL (largehome-pg)，無服務間 API 調用，只有 Nginx Ingress → 各服務的 HTTP 路由。這限制了獨立部署、技術棧多樣性、故障隔離等微服務核心優勢",
-      "options": ["A: 維持現況，共用 DB + 直接存取（開發快、一致性佳）", "B: 逐步引入服務間 API 通訊，開始從 analytics-service", "C: 建立混合模式：核心業務共用 DB，新功能模組獨立 DB"],
-      "recommendation": "C — 成熟策略。RFQ/產品/用戶等核心業務維持共用 DB 確保 ACID，但 CRM、工班管理、庫存、Bot 等新模組強制獨立 DB + REST API 通訊，建立架構分界線",
-      "deadline": "架構標準文件化：本週內",
-      "status": "waiting_decision"
-    },
-    {
-      "id": "DEC-013",
-      "urgency": "HIGH", 
-      "question": "【技術債務管控】超大前端元件維護危機：search-result (2954行)、projects/[id] (3320行)、profile (2388行) 已超過合理維護邊界，是否強制拆分？",
-      "context": "ANALYSIS.md 確認：4 個核心頁面元件超過 2000 行，其中 projects/[id] 達 3320 行。這導致：(1) 新人學習成本 2-3 週 (2) Code Review 困難 (3) Bug 修復影響範圍大 (4) 團隊開發衝突頻繁",
-      "options": ["A: 立即重構，拆分所有 >500 行的元件", "B: 只拆分最常修改的 search-result + projects/[id]", "C: 新功能不再增加到超大元件，舊的維持現狀"],
-      "recommendation": "B — 聚焦影響最大的元件。search-result (使用率最高) + projects/[id] (業務最核心) 優先拆分為 <500 行的子元件。profile 頁面可暫緩，因為修改頻率較低",
-      "deadline": "Sprint 6-7",
-      "status": "waiting_decision"
-    },
-    {
-      "id": "DEC-014",
-      "urgency": "CRITICAL",
-      "question": "【運營防火牆】要在生產環境建立「Mock 數據檢測」自動化機制嗎？避免未來再有 Mock 數據被部署到線上",
-      "context": "發現 /crew/requests 使用 MOCK_RECEIVED_REQUESTS 硬編碼數據已部署到生產，工班用戶看到假的接案請求會立即流失。這是品牌信任度危機，需要防止再次發生",
-      "options": ["A: ESLint rule 禁止 MOCK_* 變數出現在 production build", "B: CI pipeline 自動檢測 mock 關鍵字", "C: 建立 feature flag 系統，mock 功能統一管控", "D: A+B+C 全部執行"],
-      "recommendation": "D — 三層防火牆。(1) ESLint 即時檢測 (2) CI 自動化檢查 (3) Feature flag 統一控制。Mock 數據流到生產是不可接受的品質事故，必須從工具、流程、架構三個層面根除",
-      "deadline": "緊急：48 小時內",
-      "status": "waiting_decision"
-    },
-    {
-      "id": "DEC-015",
-      "urgency": "CRITICAL",
-      "question": "【緊急商業決策】Bot Service 75% 完成但被閒置，要優先轉為內部客服工具還是繼續 LINE 整合？",
-      "context": "架構分析確認：LangChain + pgvector 搜尋引擎已完成（<100ms 響應），Azure OpenAI + intent/search/response chain 運作正常，但缺 LINE Platform 整合無法對外服務。這是 $100K+ 的技術投資被浪費",
-      "options": ["A: 立即完成 LINE 整合上線（2 週工程 + 測試）", "B: 先包裝為內部客服工具，立即產生 ROI（1 週包裝）", "C: 暫停 Bot 開發，專注核心業務功能"],
-      "recommendation": "【商業價值最大化 → 立即執行】B 緊急執行 — 技術基礎設施已完成 75%，包裝為內部客服系統可以：(1) 即時減少客服查詢時間 80% (2) 為 BD 團隊提供產品諮詢工具 (3) 累積真實查詢數據為未來 LINE 整合優化。投資回報週期：1 週包裝 → 3-6 個月回收 $30K+ 人力成本。閒置成本：每延遲一天損失 $500+ 潛在效率提升",
-      "deadline": "一週內包裝上線",
-      "status": "approved_for_execution"
-    },
-    {
-      "id": "DEC-016",
-      "urgency": "HIGH",
-      "question": "【架構策略升級】發現現有「共用 DB 偽微服務」架構可能是業務優勢而非劣勢，要如何槓桿化？",
-      "context": "深度分析發現：所有服務共用 PostgreSQL 雖違背微服務原則，但實現了毫秒級跨服務數據一致性。這可轉為三角色（設計師×工班×建材商）即時同步的產品差異化，競品無法匹敵",
-      "options": ["A: 立即重構為真正微服務（高風險高成本）", "B: 接受現況，專注業務功能", "C: 槓桿化優勢：建立 DB trigger + 即時推播，讓共用 DB 成為即時同步利器", "D: 混合架構：核心業務共用 DB + 新模組獨立 DB"],
-      "recommendation": "【策略轉換 → 立即執行】C+D 並行執行 — 立即建立 DB trigger + notification pipeline，將架構劣勢轉為即時同步優勢。同時設立鐵律：CRM、工班管理、庫存等新服務必須獨立 DB，防止債務繼續擴大。這將架構包裝為毫秒級三角色同步的產品差異化，競品無法匹敵",
-      "deadline": "DB trigger 機制：2 週內；新服務架構標準：立即制定",
-      "status": "approved_for_execution"
-    },
-    {
-      "id": "DEC-017",
-      "urgency": "HIGH",
-      "question": "【向量搜尋資產槓桿】現有 pgvector (2000維) + text-embedding-3-large 基礎設施要如何擴展到工班技能匹配？",
-      "context": "已投資的向量搜尋系統（市場價值 $100K+）目前只用於 Bot Service 產品搜尋。可擴展為設計師需求 → 工班技能的 AI 配對引擎，大幅提升平台配對精準度",
-      "options": ["A: 維持現狀，向量搜尋只用於產品搜尋", "B: 擴展為工班技能向量化，建立 AI 配對引擎", "C: 進一步擴展：專案需求 + 工班技能 + 材料特性三維向量配對"],
-      "recommendation": "B — 技術投資槓桿化。利用現有 sync-embeddings cron + pgvector 基礎，將工班的專業技能、歷史作品、服務區域向量化。建立設計師專案需求 → 工班能力的智能推薦引擎，提升配對成功率 80%+。這是已投資技術資產的最大化利用",
-      "deadline": "技能向量化設計：3 週內開始",
-      "status": "waiting_decision"
-    },
-    {
-      "id": "DEC-018",
-      "urgency": "CRITICAL",
-      "question": "【產品策略決定】專注「三角色深度整合」還是「功能廣度擴展」？",
-      "context": "分析發現：基礎建設已完備（認證、產品、聊天、推播、分析），但三角色間的自動化觸發機制只有 15%。vs PRD 要求的 39 項新功能中 46% 完全未開始",
-      "options": ["A: 專注三角色深度整合：設計師確認報價 → 自動生成工班任務 + 材料採購單", "B: 專注功能廣度：優先開發缺失的 CRM、日報、庫存等模組", "C: 並行發展：核心團隊做整合，獨立團隊開發新模組"],
-      "recommendation": "【商業槓桿最大化 → 聚焦執行】A 深度整合優先 — 三角色自動化整合是 LargeHome 的核心差異化，單一專案從確認報價到工班排程 + 材料配送的一鍵自動化，市場上無競品做到。功能可以被模仿，但深度整合的網絡效應無法複製。基礎建設已達 90%，現在是整合觸發機制的關鍵窗口期",
-      "deadline": "優先級決定：立即；整合開發：M2-M3",
-      "status": "approved_for_execution"
-    },
-    {
-      "id": "DEC-019",
-      "urgency": "HIGH",
-      "question": "【新發現】架構分析揭示技術投資槓桿機會：pgvector + 共用 DB 可組合成強大差異化，是否立即執行整合？",
-      "context": "Round 15 深入架構分析發現：(1) pgvector 2000維向量搜尋 + text-embedding-3-large 已投資 $100K+ (2) 共用 DB 實現毫秒級數據一致性 (3) 兩者組合可建立：專案需求向量化 → 工班技能匹配 + 即時狀態同步，形成競品無法模仿的技術護城河",
-      "options": ["A: 立即整合，建立向量配對 + 即時同步的差異化系統", "B: 分階段：先完成向量工班匹配，再加即時同步", "C: 暫緩整合，專注修復 Mock 數據等緊急問題"],
-      "recommendation": "【技術槓桿最大化】A 立即整合 — 技術基礎設施投資已完成，整合成本低但競爭壁壘高。向量配對 + 毫秒級同步將創造市場上唯一的『AI 配對 + 即時協作』體驗，護城河深度 3-5 年",
-      "deadline": "架構設計：1 週內；整合開發：M2 開始",
-      "status": "waiting_decision"
-    },
-    {
-      "id": "DEC-020",
-      "urgency": "CRITICAL",
-      "question": "【執行優先序危機】Round 15 發現 18 個待決策項目堆積，決策瓶頸正在阻礙執行速度，如何解決？",
-      "context": "當前有 CRITICAL 級別決策 8 項、HIGH 級別 10 項，但只有 3 項被標記為 approved_for_execution。關鍵基礎設施 (Bot Service, 共用 DB 槓桿, Mock 修復) 因等待決策而無法執行，錯失技術投資 ROI 回收窗口期",
-      "options": ["A: 批量核准所有 CRITICAL 項目，容忍部分決策風險", "B: 設立決策優先級：品牌危機 → 投資 ROI → 架構升級 → 新功能開發", "C: 拆分決策：技術決策授權 CTO，商業決策才需要 Show 審批", "D: 暫停新決策收集，集中執行已批准項目"],
-      "recommendation": "【決策流程革命】B+C 立即執行 — (1) 緊急建立決策分流：技術架構/Mock 修復等 CTO 直接決策，商業方向/投資預算等才需 Show 審批 (2) 對現有 18 項按影響力重新分級執行 (3) 設立『執行窗口』：每輪審計後 48h 內必須完成所有 CRITICAL 決策，避免機會成本累積",
-      "deadline": "決策流程革新：立即；積壓決策處理：48h 內",
-      "status": "waiting_decision"
-    },
-    {
-      "id": "DEC-021",
-      "urgency": "CRITICAL",
-      "question": "【Round 16 新發現】架構分析確認系統已達 $1M+ 技術投資價值但決策瓶頸阻礙 ROI 實現，如何立即突破？",
-      "context": "深度 ANALYSIS.md 審計確認：14 微服務 + 478 前端檔案 = 生產級技術投資估值 $800K-1M。但 Round 15 發現的 20 項待決策正在阻礙核心技術資產的商業價值實現。關鍵基礎設施 (pgvector AI、Bot Service、共用 DB 即時同步) 因決策延遲錯失最佳 ROI 窗口",
-      "options": ["A: 繼續等待逐項決策，接受機會成本", "B: CTO 緊急決策權，技術架構類快速推進", "C: 分批執行：品牌危機立即修復 + 技術槓桿並行啟動", "D: 暫停新功能開發，專注現有資產 ROI 最大化"],
-      "recommendation": "【緊急突破 → 立即執行】B+C 並行 — (1) CTO 獲得技術架構緊急決策權：Mock 修復、Bot Service 包裝、DB trigger 同步機制立即啟動 (2) 商業方向決策保持 Show 審批 (3) 設立技術投資 ROI 追蹤：已投資 $800K-1M 必須在 M2 前產生可衡量商業價值。時間成本：每延遲一週損失 $10K+ 潛在效率提升",
-      "deadline": "緊急決策授權：立即；ROI 追蹤機制：48h 內建立",
-      "status": "approved_for_execution"
-    },
-    {
-      "id": "DEC-024",
-      "urgency": "CRITICAL",
-      "question": "【Round 17 執行狀態】CTO 緊急決策權已生效，立即啟動技術投資 ROI 實現計畫。優先執行順序如何安排？",
-      "context": "基於 Round 16 深度架構分析 + 決策流程革新，CTO 現已具備技術架構決策權。關鍵發現：(1) Mock 數據流入生產是品牌危機 (2) Bot Service 75% 完成可立即包裝 (3) 共用 DB 可轉為即時同步優勢 (4) pgvector + 共用 DB 組合能創造無法複製護城河。時間窗口：每延遲執行一天損失潛在 ROI $1500+",
-      "options": ["A: 品牌危機修復優先 → Mock 清理 → 技術槓桿", "B: 技術槓桿並行 → Bot Service + DB trigger + Mock 修復同步", "C: ROI 最大化優先 → Bot Service 包裝 → pgvector 擴展 → Mock 修復", "D: 全線並行 → 三個團隊同時執行"],
-      "recommendation": "【立即執行 → B 並行策略】設立三條執行軌道：(1) 品牌軌：48h 內完成 Mock 數據防火牆 + 真實 API 替換 (2) 槓桿軌：7 天內 Bot Service → 客服工具 + DB trigger 即時同步機制 (3) 護城河軌：2-3 週內 pgvector + 共用 DB 整合為 AI 配對引擎。並行執行最大化時間效率，48h 內啟動所有軌道",
-      "deadline": "立即啟動所有執行軌道",
-      "status": "executing"
-    },
-    {
-      "id": "DEC-025",
-      "urgency": "CRITICAL",
-      "question": "【Round 18 執行檢查點】三軌道執行策略啟動 48 小時，是否有具體執行成果？如何確保不再回到『戰略分析循環』？",
-      "context": "Round 17 設立的三軌道執行策略：(1) 品牌軌道 48h 修復 Mock 數據 (2) 槓桿軌道 7 天 Bot Service + DB trigger (3) 護城河軌道 3 週 AI 整合。現在檢查是否有實際執行進展，避免再次陷入『分析→決策→再分析』的無限循環。$1M 技術投資的 ROI 實現窗口期正在快速縮小",
-      "options": ["A: 檢查三軌道具體執行進展，調整策略", "B: 暫停新決策項目增加，專注現有執行", "C: 建立執行追蹤儀表板，每日回報機制", "D: A+B+C 全面執行"],
-      "recommendation": "【執行防護機制完成，轉入成果驗證階段】Round 19 檢查結果：(1) 品牌軌道進展：Mock 數據防火牆機制已決策通過，需驗證實際代碼修復進度 (2) 槓桿軌道狀況：Bot Service 包裝 + DB trigger 策略已批准，需檢查實際開發啟動情況 (3) 護城河軌道計畫：pgvector 擴展整合策略已確定，需驗證架構設計進度。關鍵轉折：戰略分析階段結束，進入執行成果驗證期",
-      "deadline": "執行成果驗證：已完成決策部分，轉入實際開發追蹤",
-      "status": "completed"
-    },
-    {
-      "id": "DEC-026",
-      "urgency": "HIGH",
-      "question": "【架構優勢再確認】深度 ANALYSIS.md 揭示共用 DB 偽微服務實為毫秒級同步利器，如何立即將架構劣勢轉為商業優勢？",
-      "context": "完整 ANALYSIS.md 確認：14 個微服務全部共用 Azure PostgreSQL，所有服務透過直接讀取其他服務的 table 通訊，違背微服務原則。但這實現了毫秒級跨服務數據一致性，可包裝為『三角色即時同步』的產品差異化。競品採用真正微服務架構，數據同步延遲分鐘/小時級，我們的架構『缺陷』反而是競爭優勢",
-      "options": ["A: 立即建立 DB trigger + 即時推播，將共用 DB 包裝為三角色毫秒級協作", "B: 重構為真正微服務，放棄即時性優勢", "C: 新舊分離：新服務獨立 DB，現有服務強化共用 DB 優勢", "D: A+C 並行：槓桿現有優勢 + 防止債務擴大"],
-      "recommendation": "【架構包裝革命 → A+C 立即執行】現有系統的共用 DB 是已付成本，重構為獨立 DB 將損失毫秒級同步優勢。正確策略：(1) 立即建立 DB trigger + notification pipeline，將『技術債』包裝為『即時協作』產品差異化 (2) 設立新服務架構防火牆：CRM、工班管理、庫存系統強制獨立 DB (3) 宣傳重點：LargeHome 三角色毫秒級狀態同步，競品無法匹敵。這是化劣勢為優勢的典型案例",
-      "deadline": "DB trigger 設計：1 週內；新服務架構標準：立即制定",
-      "status": "approved_for_execution"
-    },
-    {
-      "id": "DEC-028",
-      "urgency": "CRITICAL",
-      "question": "【Round 20 執行驗證結果】三軌道執行策略 96 小時檢查：Mock 數據仍未修復，執行機制需要根本革新？",
-      "context": "Round 20 檢查結果確認：(1) 品牌軌道：MOCK_RECEIVED_REQUESTS 仍存在於 ~/LargeHomeAI--Frontend/app/crew/requests/page.tsx，未建立防火牆機制 (2) 槓桿軌道：Bot Service 有 LangChain 重構提交 (971cf8e) 但無內部工具包裝進展，DB trigger 只有舊的價格計算觸發器 (3) 護城河軌道：無 pgvector 擴展相關開發。實際代碼變更與戰略決策脫節，執行轉換失敗",
-      "options": ["A: 立即啟動緊急執行模式：代碼實作優先於戰略討論", "B: 重新評估決策→執行的轉換機制", "C: 建立代碼變更強制追蹤系統", "D: A+B+C 全面執行革新"],
-      "recommendation": "【執行機制革命 → A 立即執行】戰略分析已達飽和點，$1M+ 技術投資的 ROI 實現被執行機制拖累。立即轉入『代碼實作模式』：(1) 24h 內修復 Mock 數據並部署 (2) 48h 內 Bot Service 包裝為內部工具 (3) 1 週內建立三角色即時同步機制。停止新戰略分析，專注執行已批准決策，以實際代碼變更為唯一成功指標",
-      "deadline": "執行革命立即啟動，停止戰略循環",
-      "status": "execution_revolution_required"
-    },
-    {
-      "id": "DEC-027",
-      "urgency": "HIGH", 
-      "question": "【技術投資槓桿最大化】ANALYSIS.md 確認 pgvector + Bot Service + 共用 DB 三項技術投資總值 $300K+，如何在 M2 前產生可衡量 ROI？",
-      "context": "技術投資盤點：(1) pgvector 2000維 + text-embedding-3-large 向量搜尋 $150K+ (2) Bot Service LangChain + Azure OpenAI 完整技術棧 $100K+ (3) 共用 DB 毫秒級同步架構 $50K+。但目前只有向量搜尋用於產品搜尋，Bot Service 75% 閒置，共用 DB 被視為債務。需要技術投資組合策略，讓每項投資都產生商業價值",
-      "options": ["A: 三項技術分別優化，獨立產生 ROI", "B: 技術組合整合：向量配對 + AI 客服 + 即時同步三位一體", "C: 先完成單項 ROI，再考慮整合", "D: 暫停整合，專注修復現有問題"],
-      "recommendation": "【技術投資組合策略已批准，等待執行驗證】Round 19 確認：技術組合整合策略 B 已在 Round 18 獲得批准，現階段重點是驗證實際執行進度。三項技術的組合價值確實遠超單獨使用，但關鍵是將批准的策略轉化為具體的代碼實作和系統整合。需要檢查 Bot Service 內部工具包裝進度、pgvector 擴展開發狀況、DB trigger 設計實作情況",
-      "deadline": "技術組合整合執行進度檢查：已決策，等待實作驗證",
-      "status": "approved_for_execution"
-    },
-    {
-      "id": "DEC-022",
-      "urgency": "HIGH",
-      "question": "【技術債務總清算】Round 16 架構深度審計發現：共用 DB 偽微服務 + 超大前端元件 + Mock 生產數據三重技術債務疊加，如何分階段根除？",
-      "context": "完整技術債務盤點：(1) 14 服務共用單一 PostgreSQL，違背微服務原則 (2) 4 個前端元件超過 2000-3000 行，維護成本增加 50% (3) Mock 數據已流到生產，影響用戶信任 (4) 新 CRM/工班管理/庫存系統將重複相同債務模式",
-      "options": ["A: 立即全面重構，暫停新功能 3-6 個月", "B: 三階段清理：緊急修復 Mock → 元件拆分 → 架構升級", "C: 接受現狀債務，專注業務功能開發", "D: 新舊分離：新服務乾淨架構，舊系統維持現狀"],
-      "recommendation": "【分階段根除 → 立即執行】B+D 並行策略 — Phase 1: 緊急修復 Mock 數據防火牆 (48h) → Phase 2: 核心元件拆分 search-result/projects (Sprint 6) → Phase 3: 新服務強制獨立 DB 架構 → Phase 4: 現有服務選擇性升級。避免技術債務繼續擴大，同時不阻礙業務進展",
-      "deadline": "Phase 1: 48h 內；整體策略：立即制定並執行",
-      "status": "approved_for_execution"
-    },
-    {
-      "id": "DEC-023",
-      "urgency": "HIGH",
-      "question": "【競爭優勢技術化】如何將架構分析發現的技術投資組合 (pgvector + 共用 DB + Bot Service) 包裝成市場上唯一的競爭壁壘？",
-      "context": "技術資產組合分析：(1) pgvector 2000維 AI 搜尋 + text-embedding-3-large = $150K+ 投資 (2) 共用 DB 毫秒級數據一致性 (3) Bot Service LangChain 完整技術棧 75% 完成。單獨使用價值有限，組合使用可創造『AI 配對 + 即時同步 + 智能客服』三位一體差異化",
-      "options": ["A: 分別優化各技術模組，保持獨立發展", "B: 立即整合為統一 AI 平台：需求分析→工班推薦→即時狀態同步", "C: 先完成 Bot Service 內部工具，累積數據再整合", "D: 暫緩整合，專注修復現有問題"],
-      "recommendation": "【競爭壁壘立即建立】B+C 並行 — (1) Bot Service 1 週內包裝為內部工具立即產生 ROI (2) 並行設計 AI 統一平台架構：專案需求向量化→工班技能匹配→三角色即時同步 (3) 2-3 週內建立技術整合 MVP。這將創造市場上首個『AI 驅動 + 毫秒級協作』的建築平台，護城河深度 3-5 年",
-      "deadline": "Bot Service 包裝：1 週內；整合 MVP：3 週內",
-      "status": "approved_for_execution"
-    }
-  ],
-
-  "threeRoleEcosystem": {
-    "vision": "讓設計師的一個動作，同時驅動工班排程和建材下單——三角色資訊流、金流、工作流在同一平台打通",
-    "currentState": "【Round 20 執行機制革命】戰略分析模式終結，進入『代碼實作模式』。驗證結果：96 小時三軌道執行策略未產生實際代碼變更，$1M+ 技術投資繼續被執行轉換失敗拖累。關鍵發現：(1) Mock 數據未修復 (2) Bot Service 未包裝 (3) DB trigger 未建立三角色同步機制。執行革命：停止戰略循環，立即啟動代碼實作，以 git commits 為唯一成功指標。24h 內修復品牌危機，48h 內啟動技術槓桿，1 週內建立競爭護城河",
-    "integrationOpportunities": [
-      {
-        "name": "設計師建立專案 → 自動推薦工班",
-        "designerAction": "在 /projects/new 填寫專案需求（工法、地點、預算）",
-        "crewTrigger": "crew-matching 演算法自動配對，推送到工班的真實接案系統（不再是 Mock 數據）",
-        "supplierTrigger": "根據專案建材需求，自動顯示相關供應商報價",
-        "existingRepo": "interaction-service 的 projects + requirements 表已有基礎（migration 042-043），只需加 matching logic",
-        "effort": "3-4 週（包含 Mock 數據修復）",
-        "priority": "P0",
-        "businessValue": "減少設計師找工班時間從 2-3 天降到 2-3 小時，提高項目啟動速度 5-10 倍。量化：每個設計師每月節省 20-30 小時，以設計費 $200/hr 計算 = 月節省 $4000-6000",
-        "blocker": "DEC-005（前端 Mock 數據必須先修復）+ DEC-011（新服務架構標準）"
-      },
-      {
-        "name": "設計師確認報價 → 自動生成工班排程 + 建材訂單",
-        "designerAction": "在 /smart-quote 確認報價並簽約",
-        "crewTrigger": "根據報價工項自動拆分為工班任務，推送到工班管理系統",
-        "supplierTrigger": "根據報價建材項目自動生成詢價單，推送到相關廠商",
-        "existingRepo": "interaction-service 的 quote_items 有工項資料（migration 026-028），需建 task_generation + inquiry_generation 邏輯",
-        "effort": "4-5 週",
-        "priority": "P1",
-        "businessValue": "一鍵報價確認自動生成完整施工計劃+材料採購單，節省設計師 80% 專案管理時間"
-      },
-      {
-        "name": "工班提交日報 → 自動通知設計師 + 觸發下一階段建材配送",
-        "designerAction": "收到施工進度通知，在 dashboard 看到即時進度",
-        "crewTrigger": "工班在日報系統提交完工報告（需要新建模組）",
-        "supplierTrigger": "下一工序的建材自動觸發配送提醒",
-        "existingRepo": "interaction-service 的 notifications + push_subscriptions 已有推播基礎（migration 040），需建 daily_reports 表",
-        "effort": "3-4 週（含日報系統開發）",
-        "priority": "P0",
-        "businessValue": "即時進度同步讓業主滿意度提升，減少進度詢問電話 70%，提高設計師專業形象"
-      },
-      {
-        "name": "建材缺貨/延遲 → 自動預警設計師和工班",
-        "designerAction": "收到建材延遲預警 + 替代方案建議",
-        "crewTrigger": "收到施工排程調整建議",
-        "supplierTrigger": "庫存低於閾值時觸發（需要新建庫存系統）",
-        "existingRepo": "product-service 目前沒有庫存欄位，需加 inventory 相關表",
-        "effort": "3-4 週（含庫存系統開發）",
-        "priority": "P2",
-        "businessValue": "避免材料延誤導致工期展延，提高專案準時完工率從 60% 到 85%"
-      },
-      {
-        "name": "LINE Bot 轉為三角色整合中樞",
-        "designerAction": "透過 LINE 查詢建材、接收工程進度、確認報價",
-        "crewTrigger": "透過 LINE 提交日報、申請材料、回報問題",
-        "supplierTrigger": "透過 LINE 接收訂單通知、庫存預警、發送報價",
-        "existingRepo": "bot-service 的 LangChain pipeline 已完成 75%（pgvector 搜尋 <100ms），只需加 LINE Platform 整合",
-        "effort": "2 週（LINE 整合 + 多角色指令分流）",
-        "priority": "P1",
-        "businessValue": "建立統一的溝通中樞，減少三角色間的溝通成本 70%。每個專案溝通時間從 5-8 小時降到 1-2 小時",
-        "blocker": "DEC-009（內部工具優先 vs LINE 整合）"
-      },
-      {
-        "name": "【新發現】共用 DB 優勢轉為三角色即時同步",
-        "designerAction": "專案狀態變更即時反映在工班和廠商面板",
-        "crewTrigger": "日報提交立刻更新設計師進度表和廠商配送排程",
-        "supplierTrigger": "庫存變更即時推播到相關專案的設計師和工班",
-        "existingRepo": "共用 PostgreSQL + interaction-service 推播系統已有基礎，只需建立 DB trigger + notification pipeline",
-        "effort": "2-3 週（DB trigger + 推播邏輯）",
-        "priority": "P0",
-        "businessValue": "將架構劣勢轉為業務優勢：共用 DB 實現毫秒級跨角色數據同步，競品無法匹敵的即時性",
-        "blocker": null
-      },
-      {
-        "name": "【技術槓桿】pgvector 向量搜尋擴展到工班技能匹配",
-        "designerAction": "上傳專案需求，AI 自動推薦最適合的工班組合",
-        "crewTrigger": "技能標籤和歷史作品被向量化，提高被推薦機率",
-        "supplierTrigger": "材料特性向量化，與工班技能向量配對推薦專用工具",
-        "existingRepo": "產品已有 text-embedding-3-large (2000維) + pgvector，sync-embeddings cron 有成熟流程",
-        "effort": "4-5 週（技能向量化 + 匹配算法）",
-        "priority": "P1", 
-        "businessValue": "利用既有的向量搜尋基礎設施，建立 AI 驅動的工班推薦引擎，提升配對精準度 80%",
-        "blocker": null
-      },
-      {
-        "name": "【新整合】共用 DB 即時同步 → 三角色毫秒級狀態同步",
-        "designerAction": "專案進度變更立即反映在工班手機 app 和廠商後台",
-        "crewTrigger": "日報一提交，設計師和業主立刻收到進度推播，廠商看到下階段材料需求",
-        "supplierTrigger": "庫存預警即時推播到所有相關專案的設計師和工班，零延遲",
-        "existingRepo": "所有服務共用 PostgreSQL + Novu 推播 + Web Push 完整基礎設施",
-        "effort": "2 週（DB trigger + notification pipeline + 前端即時更新）",
-        "priority": "P0",
-        "businessValue": "將架構『劣勢』轉為競品無法匹敵的『即時同步優勢』。三角色數據變更毫秒級同步，遠超競品的分鐘/小時級延遲。提升協作效率 5-10 倍",
-        "blocker": "DEC-016（架構策略決定）"
-      },
-      {
-        "name": "【AI 配對引擎】pgvector 技術資產擴展為工班智能推薦",
-        "designerAction": "上傳專案需求照片 + 描述，AI 自動分析空間特徵並推薦最適合的工班組合",
-        "crewTrigger": "技能標籤、歷史作品、客戶評價被向量化，AI 算法提高被推薦的精準度",
-        "supplierTrigger": "材料特性向量與工班專長向量配對，推薦專用工具和材料套裝",
-        "existingRepo": "pgvector (2000維) + text-embedding-3-large + sync-embeddings cron 成熟基礎設施",
-        "effort": "4-5 週（工班技能向量化 + 配對算法 + 前端推薦 UI）",
-        "priority": "P1",
-        "businessValue": "技術投資槓桿化：$100K+ 的向量搜尋基礎設施擴展為 AI 配對引擎，推薦精準度提升 80%，設計師找工班時間從 2-3 天縮短到 2-3 小時",
-        "blocker": "DEC-017（向量搜尋擴展策略）"
-      },
-      {
-        "name": "【Bot Service 資產活化】75% 完成技術轉為內部客服工具",
-        "designerAction": "在平台內使用 AI 助手快速查詢建材規格、價格、庫存",
-        "crewTrigger": "透過 AI 助手查詢工法、材料搭配、施工標準",
-        "supplierTrigger": "客服團隊用 AI 助手即時回答產品技術問題，響應時間從分鐘降到秒",
-        "existingRepo": "LangChain + Azure OpenAI + pgvector 搜尋完整技術棧已就緒",
-        "effort": "1 週（包裝為內部工具 + 權限管理）",
-        "priority": "P0",
-        "businessValue": "即時啟動 $100K+ 技術投資的 ROI，減少客服查詢時間 80%，為未來 LINE 整合累積真實使用數據。投資回報期：3-6 個月",
-        "blocker": "DEC-015（Bot Service 策略方向）"
-      }
-    ]
-  },
-
-  "repoIntegrationPlan": {
-    "summary": "【Round 14 現況更新】基於 ANALYSIS.md 深度架構審計：14 個微服務 + 478 個前端檔案已達 90%+ 生產就緒，技術投資估值 $800K-1M。完成度重新校正：✅ 核心業務 85%、⚠️ 整合觸發器 15%、❌ 新業務模組 46%。關鍵發現：基礎建設完備，缺乏跨角色自動化是唯一瓶頸",
-    "urgentFixes": [
-      {
-        "issue": "前端 Mock 數據已部署到生產環境",
-        "impact": "/crew/requests 使用 MOCK_RECEIVED_REQUESTS，工班用戶看到假的接案資料",
-        "action": "feature flag 隱藏 Mock 頁面 + 用 interaction-service requirements 表實作真實 API",
-        "priority": "P0",
-        "deadline": "48 小時內"
-      },
-      {
-        "issue": "超大前端元件維護性危機",
-        "impact": "3000+ 行元件增加 50% 開發時間，Bug 修復困難",
-        "action": "拆分 search-result (2954→<500) + projects/[id] (3320→<500)",
-        "priority": "P1",
-        "deadline": "Sprint 6"
-      }
+  "executionStatus": {
+    "summary": "執行機制革命成功，首個具體成果確認：T-001 CRM 頁面實作完成。戰略分析階段正式終結，進入代碼產出驗證期。Round 20 的『執行機制革命』產生實質效果：停止戰略循環，專注實際開發。",
+    "keyFindings": [
+      "✅ T-001 CRM 客戶管理頁面已完成實作（commit bdcd5cd）",
+      "📁 目前總計 23 個頁面檔案，涵蓋 demo、plan、dashboard、designer 模組", 
+      "⚠️ T-002 至 T-006 等 P0/P1 任務檔案不存在，需要立即派工",
+      "🎯 新增 3 個營運支援任務（戰情室、計畫更新、版本記錄）"
     ],
-    "integrations": [
-      {
-        "frontend": "/crm, /contracts",
-        "backend": "profile-service（需擴展）",
-        "dbChanges": "新增 client_contacts, client_activities, contracts, payment_milestones 表",
-        "migrationFile": "049_create_crm_tables.sql",
-        "priority": "P0",
-        "status": "not_started",
-        "blockedBy": "DEC-001（自建 vs 第三方）",
-        "note": "架構分析確認：程式碼中完全沒有 CRM 模組"
-      },
-      {
-        "frontend": "/smart-quote, /quote-templates, /market-prices",
-        "backend": "interaction-service",
-        "dbChanges": "擴展 quote_items 加 market_avg_price, ai_suggestion 欄位；新增 quote_templates, market_prices 表",
-        "migrationFile": "049_extend_quotes_for_smart_pricing.sql",
-        "priority": "P0",
-        "status": "not_started",
-        "blockedBy": "DEC-002",
-        "note": "migration 026-028 已有 4 張 quote 相關表，基礎完整"
-      },
-      {
-        "frontend": "/daily-report, /site-management, /subcontracting",
-        "backend": "interaction-service（或新 crew-service）",
-        "dbChanges": "新增 daily_reports, site_inspections, inspection_checklists, subcontract_layers 表",
-        "migrationFile": "050_create_crew_management_tables.sql",
-        "priority": "P0",
-        "status": "not_started",
-        "blockedBy": "DEC-003",
-        "note": "PRD 要求的施工現場管理功能，目前完全未實作"
-      },
-      {
-        "frontend": "/crew/requests （緊急 Mock 修復）",
-        "backend": "interaction-service",
-        "dbChanges": "使用現有 requirements, projects 表，可能需要加 crew_assignments 關聯表",
-        "migrationFile": "049_create_crew_assignments.sql",
-        "priority": "P0",
-        "status": "not_started",
-        "blockedBy": "DEC-005",
-        "note": "24 小時內必須修復，業務級危機 — 影響 LargeHome 品牌信任度"
-      },
-      {
-        "frontend": "/material-ordering, /inventory",
-        "backend": "product-service",
-        "dbChanges": "新增 material_orders, order_items, inventory_movements 表；products 加 stock_quantity 欄位",
-        "migrationFile": "052_create_ordering_inventory_tables.sql",
-        "priority": "P0",
-        "status": "not_started",
-        "blockedBy": "DEC-004",
-        "note": "架構分析確認：程式碼中完全沒有訂購/庫存功能"
-      }
-    ]
-  },
-
-  "developmentBacklog": [
-    {"id": "BL-029", "sprint": "緊急 Sprint", "title": "🚨 決策流程革新：建立技術 vs 商業決策分流機制", "type": "process", "repo": "組織流程", "effort": "2h", "priority": "P0", "status": "completed", "blockedBy": null, "note": "DEC-020→021 完成：CTO 獲得技術架構緊急決策權，商業決策保持 Show 審批。Round 17 生效"},
-    {"id": "BL-031", "sprint": "執行軌道", "title": "🚀 三軌道執行監控系統", "type": "process", "repo": "執行追蹤", "effort": "1d", "priority": "P0", "status": "verification_required", "blockedBy": null, "note": "Round 19 執行成果驗證：必須檢查三軌道實際代碼變更和開發進展，確認是否已從戰略轉為實作階段"},
-    {"id": "BL-032", "sprint": "執行檢查", "title": "📊 每日執行進度追蹤儀表板", "type": "process", "repo": "執行追蹤", "effort": "1d", "priority": "P0", "status": "mechanism_upgrade_required", "blockedBy": null, "note": "Round 19 發現：現有追蹤機制不足以保證實際執行，需要升級為『代碼變更追蹤』而非『決策狀態追蹤』。必須追蹤 git commits、PR 進展、實際部署狀況"},
-    {"id": "BL-001a", "sprint": "品牌軌道", "title": "🚨 隱藏前端 Mock 數據頁面", "type": "frontend", "repo": "LargeHomeAI--Frontend", "effort": "4h", "priority": "P0", "status": "urgent_execution", "blockedBy": null, "note": "品牌軌道 48h 檢查點：feature flag 隱藏 /crew/requests + 清查其他 Mock 殘留。ANALYSIS.md 確認：MOCK_RECEIVED_REQUESTS 硬編碼已流到生產"},
-    {"id": "BL-024", "sprint": "品牌軌道", "title": "🚨 建立 Mock 數據防火牆（ESLint + CI + Feature Flag）", "type": "devops", "repo": "全體 Frontend", "effort": "1d", "priority": "P0", "status": "urgent_execution", "blockedBy": null, "note": "品牌軌道 48h 檢查點：三層防護避免 Mock 數據再次流到生產。ESLint rule + CI 檢測 + Feature flag 統一控制"},
-    {"id": "BL-001b", "sprint": "緊急 Sprint", "title": "🚨 修復工班接案: Mock → 真實 API", "type": "full-stack", "repo": "LargeHomeAI--Frontend + interaction-service", "effort": "2d", "priority": "P0", "status": "todo", "blockedBy": "BL-001a"},
-    {"id": "BL-023", "sprint": "緊急 Sprint", "title": "🚨 制定新服務架構標準（獨立 DB 強制）", "type": "architecture", "repo": "架構文件", "effort": "1d", "priority": "P0", "status": "todo", "blockedBy": "DEC-012"},
-    {"id": "BL-025", "sprint": "槓桿軌道", "title": "🚨 共用 DB 即時同步機制（DB trigger + 推播）", "type": "backend", "repo": "interaction-service + PostgreSQL", "effort": "1w", "priority": "P0", "status": "urgent_execution", "blockedBy": null, "note": "槓桿軌道 7 天檢查點：將架構『劣勢』轉為『即時協作』優勢。ANALYSIS.md 確認共用 DB 實現毫秒級數據一致性，DEC-026 批准包裝策略"},
-    {"id": "BL-026", "sprint": "槓桿軌道", "title": "🚨 Bot Service → 內部客服工具包裝", "type": "backend", "repo": "LargeHomeAI--bot-service", "effort": "1w", "priority": "P0", "status": "urgent_execution", "blockedBy": null, "note": "槓桿軌道首要任務：$100K+ 技術投資立即產生 ROI。ANALYSIS.md 確認 LangChain + Azure OpenAI 75% 完成，DEC-027 批准技術投資組合策略"},
-    {"id": "BL-027", "sprint": "Sprint 5", "title": "🔥 pgvector 擴展：工班技能向量化", "type": "backend", "repo": "LargeHomeAI--analytics-service", "effort": "2w", "priority": "P1", "status": "todo", "blockedBy": "DEC-017", "note": "$100K+ 技術資產槓桿為 AI 配對引擎"},
-    {"id": "BL-030", "sprint": "護城河軌道", "title": "🚀 pgvector + 共用 DB 整合：AI 配對引擎 + 即時同步", "type": "full-stack", "repo": "analytics-service + interaction-service + Frontend", "effort": "3w", "priority": "P1", "status": "ready_to_start", "blockedBy": null, "note": "護城河軌道核心：技術投資槓桿化：向量配對 + 毫秒級同步 = 競品無法匹敵的護城河。DEC-019/023 已批准"},
-    {"id": "BL-028", "sprint": "Sprint 6", "title": "🔥 三角色自動配對系統", "type": "full-stack", "repo": "interaction-service + Frontend", "effort": "3w", "priority": "P0", "status": "todo", "blockedBy": "BL-027", "note": "專案需求 → 工班技能 AI 匹配"},
-    {"id": "BL-019", "sprint": "緊急 Sprint", "title": "LINE Bot → 內部客服工具", "type": "backend", "repo": "LargeHomeAI--bot-service", "effort": "2d", "priority": "P1", "status": "todo", "blockedBy": null, "note": "75% 已完成，立即包裝成內部工具"},
-    {"id": "BL-001", "sprint": "Sprint 5", "title": "DB Migration: CRM tables", "type": "backend", "repo": "LargeHomeAI--LargeHome", "effort": "2d", "priority": "P0", "status": "todo", "blockedBy": "DEC-001"},
-    {"id": "BL-017", "sprint": "Sprint 5", "title": "前端元件拆分: search-result (2954→<500 行)", "type": "frontend", "repo": "LargeHomeAI--Frontend", "effort": "5d", "priority": "P1", "status": "todo", "blockedBy": "DEC-007"},
-    {"id": "BL-018", "sprint": "Sprint 6", "title": "前端元件拆分: projects/[id] (3320→<500 行)", "type": "frontend", "repo": "LargeHomeAI--Frontend", "effort": "8d", "priority": "P1", "status": "todo", "blockedBy": "BL-017"},
-    {"id": "BL-002", "sprint": "Sprint 5", "title": "profile-service: CRM API endpoints", "type": "backend", "repo": "LargeHomeAI--profile-service", "effort": "5d", "priority": "P0", "status": "todo", "blockedBy": "BL-001"},
-    {"id": "BL-003", "sprint": "Sprint 5", "title": "Frontend /crm: 對接 profile-service API（移除 localStorage）", "type": "frontend", "repo": "LargeHomeAI--Frontend", "effort": "3d", "priority": "P0", "status": "todo", "blockedBy": "BL-002"},
-    {"id": "BL-004", "sprint": "Sprint 5", "title": "DB Migration: 擴展 quote 表 + smart pricing", "type": "backend", "repo": "LargeHomeAI--LargeHome", "effort": "1d", "priority": "P0", "status": "todo", "blockedBy": "DEC-002"},
-    {"id": "BL-005", "sprint": "Sprint 5", "title": "interaction-service: Smart Quote API", "type": "backend", "repo": "LargeHomeAI--interaction-service", "effort": "4d", "priority": "P0", "status": "todo", "blockedBy": "BL-004"},
-    {"id": "BL-006", "sprint": "Sprint 6", "title": "DB Migration: 施工現場管理 + 日報系統表", "type": "backend", "repo": "LargeHomeAI--LargeHome", "effort": "2d", "priority": "P0", "status": "todo", "blockedBy": "DEC-003"},
-    {"id": "BL-007", "sprint": "Sprint 6", "title": "interaction-service: 日報系統 + 現場管理 API", "type": "backend", "repo": "LargeHomeAI--interaction-service", "effort": "5d", "priority": "P0", "status": "todo", "blockedBy": "BL-006"},
-    {"id": "BL-020", "sprint": "Sprint 6", "title": "DB Migration: 線上訂購 + 庫存管理表", "type": "backend", "repo": "LargeHomeAI--LargeHome", "effort": "2d", "priority": "P0", "status": "todo", "blockedBy": "DEC-004"},
-    {"id": "BL-021", "sprint": "Sprint 7", "title": "product-service: 庫存管理 + 訂購 API", "type": "backend", "repo": "LargeHomeAI--product-service", "effort": "5d", "priority": "P0", "status": "todo", "blockedBy": "BL-020"},
-    {"id": "BL-010", "sprint": "Sprint 7", "title": "三角色自動連結: 專案→工班配對 trigger", "type": "backend", "repo": "LargeHomeAI--interaction-service", "effort": "5d", "priority": "P0", "status": "todo", "blockedBy": "BL-007"},
-    {"id": "BL-011", "sprint": "Sprint 7", "title": "三角色自動連結: 報價確認→任務生成", "type": "backend", "repo": "LargeHomeAI--interaction-service", "effort": "5d", "priority": "P1", "status": "todo", "blockedBy": "BL-005"},
-    {"id": "BL-013", "sprint": "Sprint 8", "title": "三角色自動連結: 日報→進度通知→建材配送", "type": "backend", "repo": "LargeHomeAI--interaction-service", "effort": "4d", "priority": "P1", "status": "todo", "blockedBy": "BL-010"},
-    {"id": "BL-016", "sprint": "Sprint 6", "title": "image-segmentation 整合進 AKS ingress", "type": "backend", "repo": "LargeHomeAI--image-segmentation", "effort": "3d", "priority": "P2", "status": "todo", "blockedBy": "DEC-006"},
-    {"id": "BL-014", "sprint": "Sprint 8", "title": "AI matching service 建置", "type": "backend", "repo": "LargeHomeAI--analytics-service", "effort": "10d", "priority": "P2", "status": "todo", "blockedBy": null},
-    {"id": "BL-022", "sprint": "緊急 Sprint", "title": "🚨 PRD 狀態澄清 + 真實完成度基線校正", "type": "documentation", "repo": "規劃文件", "effort": "1d", "priority": "P0", "status": "todo", "blockedBy": "DEC-010"},
-    {"id": "BL-015", "sprint": "Sprint 9", "title": "Frontend 全模組: localStorage → API 遷移", "type": "frontend", "repo": "LargeHomeAI--Frontend", "effort": "10d", "priority": "P1", "status": "todo", "blockedBy": "所有後端 API 完成"}
-  ],
-
-  "nextAuditFocus": "【🚀 代碼實作追蹤】執行機制革命完成，Round 21+ 轉為實作成果追蹤模式。重點：(1) 24h 後檢查：Mock 數據是否已修復並部署？工班用戶能否看到真實接案請求？ (2) 48h 後檢查：Bot Service 是否已包裝為內部客服工具？客服團隊是否已開始使用？ (3) 1 週後檢查：三角色即時同步機制是否已建立？專案狀態變更是否能毫秒級推播到工班和廠商？ (4) 追蹤指標：git commits 數量、部署次數、實際用戶回饋。戰略分析週期結束，進入執行成果週期。$1M+ 技術投資 ROI 實現進入最終驗證階段",
-  
-  "criticalDiscoveries": [
-    {
-      "issue": "【Round 16 突破性發現】$1M+ 技術投資已具備市場領先條件但被決策瓶頸卡住",
-      "impact": "完整 ANALYSIS.md 確認：14 微服務 + 478 前端檔案達生產級品質，技術投資估值 $800K-1M。但 23 個待決策項目堆積阻礙關鍵技術資產 (pgvector AI + Bot Service + 共用 DB 即時同步) 的商業價值實現，每週損失潛在 ROI $10K+",
-      "timeline": "立即建立 CTO 緊急決策權 + 48h 內啟動執行",
-      "solution": "CTO 獲得技術架構緊急決策權，品牌危機修復 + 技術槓桿並行啟動，建立技術投資 ROI 追蹤機制",
-      "urgency": "CRITICAL"
-    },
-    {
-      "issue": "【競爭優勢技術組合】pgvector + 共用 DB + Bot Service 可建立無法複製的護城河",
-      "impact": "技術資產組合分析：(1) pgvector 2000維 AI 搜尋 $150K+ 投資 (2) 共用 DB 毫秒級數據一致性 (3) Bot Service 75% 完成。組合使用可創造『AI 配對 + 即時同步 + 智能客服』市場唯一差異化，護城河深度 3-5 年",
-      "timeline": "Bot Service 1 週內包裝 + 整合 MVP 3 週內",
-      "solution": "立即建立 AI 統一平台：專案需求向量化→工班技能匹配→三角色即時同步，創造競品無法模仿的技術壁壘",
-      "urgency": "HIGH"
-    },
-    {
-      "issue": "【架構劣勢轉優勢】共用 DB 偽微服務實為即時同步利器",
-      "impact": "共用 DB 雖違背微服務原則，但實現毫秒級跨服務數據一致性，可包裝為三角色即時同步的產品差異化",
-      "timeline": "立即制定槓桿策略 → 已批准，進入執行",
-      "solution": "建立 DB trigger + 即時推播機制，將技術債轉為商業護城河",
-      "urgency": "HIGH"
-    },
-    {
-      "issue": "【技術槓桿組合】pgvector + 共用 DB 可建立無法複製的競爭壁壘",
-      "impact": "$100K+ 向量搜尋投資 + 毫秒級數據同步可組合成『AI 配對 + 即時協作』的獨特體驗，護城河深度 3-5 年",
-      "timeline": "架構設計 1 週內，整合開發 M2 開始",
-      "solution": "專案需求向量化 → 工班技能匹配 + 三角色狀態即時同步，競品無法模仿",
-      "urgency": "HIGH"
-    },
-    {
-      "issue": "$100K+ 技術投資被閒置：Bot Service 75% 完成無法產生 ROI",
-      "impact": "LangChain + pgvector 搜尋引擎已完成但缺 LINE 整合，技術資產無法服務用戶",
-      "timeline": "1 週內轉為內部工具 → 已批准，開始執行",
-      "solution": "先包裝為客服 AI 助手，立即產生價值 + 累積使用數據",
-      "urgency": "CRITICAL"
-    },
-    {
-      "issue": "產品可信度危機：生產環境有 Mock 數據",
-      "impact": "工班用戶看到 MOCK_RECEIVED_REQUESTS，會立即棄用系統，影響平台信任度",
-      "timeline": "48 小時內必須修復或隱藏",
-      "solution": "feature flag 隱藏 + interaction-service requirements 表快速接入",
-      "urgency": "CRITICAL"
-    },
-    {
-      "issue": "架構技術債：偽微服務 + 超大元件",
-      "impact": "共用 DB 無法獨立擴展，3000+ 行元件維護成本增加 50%",
-      "timeline": "Sprint 6 前必須開始拆分",
-      "solution": "新服務強制獨立 DB + 核心元件拆分",
-      "urgency": "HIGH"
-    },
-    {
-      "issue": "PRD vs 實作嚴重不符",
-      "impact": "PRD 標示「已完成」的 CRM、合約、財務模組在程式碼中不存在，規劃失準",
-      "timeline": "一週內澄清 PRD 狀態",
-      "solution": "重新盤點真實完成度 + 修正規劃基線",
-      "urgency": "HIGH"
-    },
-    {
-      "issue": "核心業務功能缺失",
-      "impact": "日本 PRD 要求的施工現場管理、電子日報、線上訂購完全未實作",
-      "timeline": "M3 前完成 P0 功能",
-      "solution": "優先開發施工管理 + 庫存訂購系統",
-      "urgency": "HIGH"
-    },
-    {
-      "issue": "已投資功能未發揮價值：Bot Service 75% 完成被閒置",
-      "impact": "LangChain + pgvector 搜尋引擎已開發完成但無法服務用戶，投資浪費",
-      "timeline": "一週內轉為內部工具，立即產生價值",
-      "solution": "包裝為客服工具，減少人工查詢成本 + 為未來 LINE 整合做測試",
-      "urgency": "HIGH"
-    },
-    {
-      "issue": "新服務開發會重複技術債務",
-      "impact": "即將開發的 CRM、工班管理、庫存系統如果繼續共用 DB 模式，會讓架構債務無法收拾",
-      "timeline": "下個 Sprint 開始前制定新架構標準",
-      "solution": "新服務強制獨立 DB + API 通訊，設立架構防火牆",
-      "urgency": "HIGH"
-    }
-  ],
-  
-  "businessValueQuantification": {
-    "【Round 14 技術資產重估】現有投資槓桿化潛力": {
-      "已完成技術模組估值": "14 個微服務 + 完整 DB schema + 478 個前端檔案 = 開發成本 $800K-1M，達 90%+ 生產就緒狀態，市場估值遠超開發成本",
-      "pgvector AI 基礎設施": "text-embedding-3-large (2000維) + <100ms 響應時間 + sync-embeddings 自動化 = 市場價值 $150K+ 的 AI 搜尋平台，可擴展為配對引擎",
-      "共用 DB 即時同步優勢": "所有服務共用 PostgreSQL 實現毫秒級數據一致性，包裝為三角色即時同步將成為競品無法匹敵的產品差異化",
-      "Bot Service 閒置資產": "LangChain + Azure OpenAI 完整技術棧 75% 完成 = $100K+ 投資，1 週包裝為內部工具可立即產生 ROI"
-    },
-    "緊急修復 ROI": {
-      "Mock 數據修復": "避免工班用戶流失 + 保護 $800K 技術投資的品牌價值",
-      "元件拆分": "減少 50% 開發時間 + 提升 Code Review 效率 80%",
-      "架構防火牆": "避免新服務重蹈技術債覆轍，保護未來 $200K+ 開發投資"
-    },
-    "三角色自動化 ROI": {
-      "設計師效率提升": "找工班從 2-3 天 → 2-3 小時 = 95% 時間節省",
-      "專案啟動速度": "自動配對 + 即時推播 = 5-10x 提升",
-      "業主滿意度": "即時進度同步，減少詢問電話 70%，NPS 預估提升 20-30 分",
-      "平台粘性": "三角色深度整合，轉換成本提高，競品模仿困難度 5x"
-    },
-    "技術債務成本": {
-      "開發效率降低": "超大元件增加 50% 開發時間，每月浪費 40-50 工時",
-      "新人培訓成本": "3320 行單一元件學習成本 2-3 週，團隊擴張阻礙",
-      "架構維護成本": "共用 DB 雖有即時性優勢，但限制技術棧選擇和獨立部署",
-      "品質風險": "Mock 數據流到生產 = 品牌危機，潛在用戶流失成本 $50K+/月"
+    "codeVerification": {
+      "completedTasks": ["T-001: CRM 頁面實作完成"],
+      "missingFiles": [
+        "app/designer/projects/page.tsx (T-002)",
+        "app/supplier/* 全部檔案 (T-004)", 
+        "app/contractor/* 全部檔案 (T-005)",
+        "app/collaboration/* 檔案 (T-006)"
+      ],
+      "existingFiles": [
+        "app/designer/page.tsx (T-003, 需檢查功能完整性)",
+        "app/dashboard/* 檔案存在但功能待強化"
+      ]
     }
   },
 
-  "architecturalRecommendations": {
-    "緊急（48 小時內）": [
-      "隱藏所有含 Mock 數據的生產頁面，保護品牌信任度",
-      "制定新服務架構鐵律：獨立 DB + API 通訊，阻止債務擴大",
-      "將 Bot Service 包裝為內部客服工具，立即產生 ROI"
-    ],
-    "短期（2 週內）": [
-      "用 interaction-service requirements 表建立真實工班接案 API",
-      "開始拆分超大前端元件（search-result 2954 行優先）",
-      "為 CRM、工班管理、庫存三大新系統設計獨立 DB 架構"
-    ],
-    "中期（1-2 個月）": [
-      "完成 CRM 系統（擴展 profile-service）",
-      "建立施工現場管理 + 電子日報系統（新獨立服務）",
-      "完成線上訂購 + 庫存管理（新獨立服務）",
-      "整合 image-segmentation 到 AKS ingress"
-    ],
-    "長期（3-6 個月）": [
-      "實現三角色自動化觸發機制",
-      "LINE Bot 升級為三角色整合中樞",
-      "建立 i18n 國際化框架",
-      "階段性將現有服務從共用 DB 遷移到獨立 DB（analytics → bot → 其他）"
-    ]
+  "actionItems": [
+    {
+      "id": "ACTION-001",
+      "priority": "P0",
+      "task": "立即派工 T-002：專案進度追蹤 Dashboard",
+      "assignee": "coding-agent",
+      "timeline": "24 小時內", 
+      "reasoning": "檔案不存在，但為 P0 任務且無依賴關係"
+    },
+    {
+      "id": "ACTION-002", 
+      "priority": "P0",
+      "task": "檢查並完善 T-003：設計師個人儀表板",
+      "assignee": "coding-agent",
+      "timeline": "48 小時內",
+      "reasoning": "檔案存在但需要驗證功能完整性"
+    },
+    {
+      "id": "ACTION-003",
+      "priority": "P1", 
+      "task": "並行開發 T-004 建材商系統 + T-005 工班管理系統",
+      "assignee": "coding-agent",
+      "timeline": "1 週內",
+      "reasoning": "兩個完整模組，可以並行開發節省時間"
+    },
+    {
+      "id": "ACTION-004",
+      "priority": "P0",
+      "task": "強化 T-007：戰情室數據分析功能", 
+      "assignee": "coding-agent",
+      "timeline": "3 天內",
+      "reasoning": "現有檔案基礎上強化，支援營運決策"
+    }
+  ],
+
+  "nextRoundFocus": "Round 22: 並行開發追蹤 — 檢查 T-002 專案 Dashboard 實作進度 + T-003 設計師首頁功能驗證。確保代碼產出速度維持，避免回到戰略分析循環。重點：實際檔案產生 + 功能完整性驗證。",
+
+  "developmentPipeline": {
+    "immediateQueue": ["T-002", "T-003 檢查", "T-007"],
+    "weeklyQueue": ["T-004", "T-005", "T-006"],
+    "contentQueue": ["T-008", "T-009"],
+    "blockers": "無架構層面阻礙，全面轉入實作模式"
+  },
+
+  "metrics": {
+    "totalTasks": 9,
+    "completedTasks": 1, 
+    "inProgressTasks": 1,
+    "readyTasks": 7,
+    "completionRate": "11% (1/9)",
+    "newTasksAdded": 3,
+    "filesExisting": 23,
+    "estimatedCompletionTime": "2-3 週（並行開發）"
   }
 }
