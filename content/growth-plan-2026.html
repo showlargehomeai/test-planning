@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LargeHome AI — 流量快速增長計畫</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, 'Segoe UI', sans-serif; background: #f8fafc; color: #1e293b; line-height: 1.7; }
+  .hero { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0d9488 100%); color: white; padding: 50px 24px; }
+  .hero h1 { font-size: 2rem; font-weight: 800; margin-bottom: 8px; }
+  .hero p { font-size: 1rem; opacity: 0.8; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+  .section { margin: 40px 0; }
+  .section-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 20px; padding-bottom: 8px; border-bottom: 3px solid #0d9488; display: inline-block; }
+  .card { background: white; border-radius: 16px; padding: 24px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; }
+  .card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 12px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; }
+  @media (max-width: 768px) { .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } }
+  .kpi-card { background: linear-gradient(135deg, #f0fdfa, #ecfdf5); border-radius: 12px; padding: 20px; text-align: center; border: 1px solid #d1fae5; }
+  .kpi-card .num { font-size: 2rem; font-weight: 800; color: #0d9488; }
+  .kpi-card .label { font-size: 0.85rem; color: #64748b; margin-top: 4px; }
+  .kpi-bad { background: linear-gradient(135deg, #fef2f2, #fff1f2); border-color: #fecaca; }
+  .kpi-bad .num { color: #dc2626; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+  th { background: #f1f5f9; padding: 10px 12px; text-align: left; font-weight: 600; border-bottom: 2px solid #e2e8f0; }
+  td { padding: 10px 12px; border-bottom: 1px solid #f1f5f9; }
+  .highlight { background: #f0fdfa; border-left: 4px solid #0d9488; padding: 16px 20px; border-radius: 0 12px 12px 0; margin: 16px 0; }
+  .alert { background: #fef2f2; border-left: 4px solid #ef4444; padding: 16px 20px; border-radius: 0 12px 12px 0; margin: 16px 0; }
+  .success { background: #f0fdf4; border-left: 4px solid #22c55e; padding: 16px 20px; border-radius: 0 12px 12px 0; margin: 16px 0; }
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; }
+  ul, ol { padding-left: 20px; }
+  li { margin-bottom: 6px; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 768px) { .two-col { grid-template-columns: 1fr; } }
+  .channel-card { border-radius: 12px; padding: 20px; }
+  .roi-tag { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="container">
+    <h1>📈 LargeHome AI — 流量快速增長計畫</h1>
+    <p>功能面 × 行銷面 × 內容面 — 90 天內從 DAU 5 → DAU 500</p>
+    <div style="display:flex; gap:12px; margin-top:20px; flex-wrap:wrap;">
+      <div style="background:rgba(255,255,255,0.1); padding:8px 16px; border-radius:12px;">目前 DAU <strong>5</strong></div>
+      <div style="background:rgba(255,255,255,0.1); padding:8px 16px; border-radius:12px;">目前 MAU <strong>206</strong></div>
+      <div style="background:rgba(255,255,255,0.1); padding:8px 16px; border-radius:12px;">總用戶 <strong>624</strong></div>
+      <div style="background:rgba(255,255,255,0.1); padding:8px 16px; border-radius:12px;">建材商 <strong>70</strong></div>
+      <div style="background:rgba(255,255,255,0.1); padding:8px 16px; border-radius:12px;">產品 <strong>1,975</strong></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ══════════ 現狀診斷 ══════════ -->
+<div class="section">
+  <h2 class="section-title">🔍 一、現狀診斷 — 為什麼流量上不來</h2>
+
+  <div class="grid-4">
+    <div class="kpi-card kpi-bad"><div class="num">5</div><div class="label">DAU（日活）</div></div>
+    <div class="kpi-card kpi-bad"><div class="num">-77%</div><div class="label">DAU 月趨勢</div></div>
+    <div class="kpi-card"><div class="num">206</div><div class="label">MAU（月活）</div></div>
+    <div class="kpi-card kpi-bad"><div class="num">3.2%</div><div class="label">DAU/MAU（黏著度）</div></div>
+  </div>
+
+  <div class="alert" style="margin-top:16px;">
+    <strong>⚠️ 核心問題：624 個用戶只有 5 個每天來 = 99% 的人註冊後就不回來了。</strong><br>
+    這不是「流量不夠」的問題，是「來了留不住」的問題。先解決留存，再衝流量。
+  </div>
+
+  <div class="card">
+    <h3>問題拆解</h3>
+    <table>
+      <tr><th>問題</th><th>數據佐證</th><th>根本原因</th><th>解法方向</th></tr>
+      <tr>
+        <td><strong>註冊後不回來</strong></td>
+        <td>624 用戶 → DAU 5</td>
+        <td>用戶註冊後沒有「啊哈時刻」— 不知道平台能幫他什麼</td>
+        <td>新手引導 + 首次使用就有價值</td>
+      </tr>
+      <tr>
+        <td><strong>建材搜不到想要的</strong></td>
+        <td>衛浴 17 件、廚房 0 件</td>
+        <td>品類不齊全，設計師搜不到就走了</td>
+        <td>BD 補齊缺口品類</td>
+      </tr>
+      <tr>
+        <td><strong>沒有回來的理由</strong></td>
+        <td>DAU/MAU 3.2%</td>
+        <td>沒有持續性的內容更新或通知拉回</td>
+        <td>每週新品推播 + 行情報價更新</td>
+      </tr>
+      <tr>
+        <td><strong>自然搜尋流量低</strong></td>
+        <td>未知（需查 GA）</td>
+        <td>1,975 個產品但 SEO 內容不足</td>
+        <td>產品頁 SEO 優化 + 部落格內容</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<!-- ══════════ 功能面 ══════════ -->
+<div class="section">
+  <h2 class="section-title">💻 二、功能面 — 讓用戶來了就離不開</h2>
+
+  <div class="card">
+    <h3>🎯 優先級 1：新手啊哈時刻（註冊後 5 分鐘內感受價值）</h3>
+    <div class="two-col">
+      <div>
+        <h4 style="font-size:0.9rem; margin-bottom:8px;">設計師的啊哈時刻</h4>
+        <div style="background:#f8fafc; border-radius:12px; padding:16px; font-size:0.85rem;">
+          <p>註冊完成 →</p>
+          <p>「選擇你最常用的建材品類」（磁磚/木地板/衛浴）→</p>
+          <p>立刻看到 <strong>該品類 TOP 50 產品 + 即時比價表</strong> →</p>
+          <p>「你常合作的區域？」（大安區）→</p>
+          <p>顯示 <strong>大安區附近 15 家建材商 + 8 位工班</strong> →</p>
+          <p>🎉「這平台有我要的東西！」→ 收藏 → 回訪</p>
+        </div>
+      </div>
+      <div>
+        <h4 style="font-size:0.9rem; margin-bottom:8px;">建材商的啊哈時刻</h4>
+        <div style="background:#f8fafc; border-radius:12px; padding:16px; font-size:0.85rem;">
+          <p>BD 幫他上架完成 →</p>
+          <p><strong>24 小時內收到第 1 封設計師詢價通知</strong> →</p>
+          <p>「真的有人在找我的產品！」→</p>
+          <p>第 2 天又收到 2 封 →</p>
+          <p>第 3 天主動上來看數據 →</p>
+          <p>🎉「這平台能幫我接到客人！」→ 離不開</p>
+        </div>
+        <p style="font-size:0.8rem; color:#dc2626; margin-top:8px;">⚡ 實現方式：前 7 天用 AI 自動產生模擬詢價通知（warm-up 機制），讓新建材商感受到價值</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔄 優先級 2：每天回來的理由</h3>
+    <table>
+      <tr><th>功能</th><th>對誰</th><th>回訪頻率</th><th>開發難度</th><th>ROI</th></tr>
+      <tr style="background:#f0fdf4">
+        <td><strong>📊 建材行情週報</strong><br>每週推播「本週磁磚價格異動」「新上架熱門建材 TOP 10」</td>
+        <td>設計師</td><td>每週 1 次</td><td>低（自動從 DB 撈）</td>
+        <td><span class="roi-tag" style="background:#dcfce7;color:#16a34a;">★★★★★</span></td>
+      </tr>
+      <tr style="background:#f0fdf4">
+        <td><strong>🔔 詢價即時通知</strong><br>設計師搜了你的品類 → LINE 推播通知建材商</td>
+        <td>建材商</td><td>每天</td><td>中（接 LINE API）</td>
+        <td><span class="roi-tag" style="background:#dcfce7;color:#16a34a;">★★★★★</span></td>
+      </tr>
+      <tr>
+        <td><strong>📍 附近工地動態</strong><br>「你附近 3 公里有 5 個裝修案正在找工班」</td>
+        <td>工班</td><td>每天</td><td>中</td>
+        <td><span class="roi-tag" style="background:#fef3c7;color:#d97706;">★★★★</span></td>
+      </tr>
+      <tr>
+        <td><strong>💡 選材靈感推播</strong><br>「2026 春季流行色：莫蘭迪灰 × 暖木色」附建材連結</td>
+        <td>設計師</td><td>每週 2 次</td><td>低（編輯內容）</td>
+        <td><span class="roi-tag" style="background:#fef3c7;color:#d97706;">★★★★</span></td>
+      </tr>
+      <tr>
+        <td><strong>🏆 設計師排行榜</strong><br>月度「最受歡迎設計師 TOP 20」+ 個人數據儀表板</td>
+        <td>設計師</td><td>每月查看</td><td>低</td>
+        <td><span class="roi-tag" style="background:#dbeafe;color:#2563eb;">★★★</span></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>🔗 優先級 3：病毒式分享機制</h3>
+    <div class="two-col">
+      <div>
+        <h4 style="font-size:0.9rem; margin-bottom:8px;">設計師選材清單分享</h4>
+        <ul style="font-size:0.85rem;">
+          <li>設計師在平台建好選材清單 →</li>
+          <li>一鍵產生「選材提案頁」（漂亮的網頁）→</li>
+          <li>分享連結給業主看 →</li>
+          <li>業主打開 = <strong>新流量</strong> →</li>
+          <li>業主覺得好用 → 推薦給朋友的設計師 →</li>
+          <li>🔄 病毒傳播</li>
+        </ul>
+        <div class="success" style="margin-top:8px;">
+          <strong>這是最低成本的流量來源。</strong>每個選材清單 = 一個免費廣告。
+        </div>
+      </div>
+      <div>
+        <h4 style="font-size:0.9rem; margin-bottom:8px;">建材商產品頁 SEO</h4>
+        <ul style="font-size:0.85rem;">
+          <li>每個產品頁 = 一個 SEO 落地頁</li>
+          <li>1,975 個產品 = <strong>1,975 個長尾關鍵字頁面</strong></li>
+          <li>「冠軍磁磚 60x60 價格」→ Google 第一頁</li>
+          <li>「EGGER 超耐磨地板 評價」→ Google 第一頁</li>
+          <li>「TOTO 免治馬桶 比較」→ Google 第一頁</li>
+          <li>每個頁面需要：標題優化 + 結構化資料 + 評價星星</li>
+        </ul>
+        <p style="font-size:0.8rem; color:#64748b; margin-top:8px;">目前已有 sitemap.ts，需要加強每個產品頁的 meta description 和 schema markup</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ 行銷面 ══════════ -->
+<div class="section">
+  <h2 class="section-title">📣 三、行銷面 — 低成本高槓桿的流量管道</h2>
+
+  <div class="highlight">
+    <strong>原則：不花大錢買廣告。用內容和社群建立「室內設計圈的標準工具」的品牌心智。</strong>
+  </div>
+
+  <div class="card">
+    <h3>📊 管道效益排序 — 從 ROI 最高的開始做</h3>
+    <table>
+      <tr><th>管道</th><th>月預算</th><th>預期月流量</th><th>轉化率</th><th>CAC</th><th>ROI</th><th>啟動時間</th></tr>
+      <tr style="background:#f0fdf4">
+        <td><strong>① SEO 長尾頁</strong></td>
+        <td>$0（工程時間）</td><td>3,000-8,000</td><td>5-8%</td>
+        <td>$0</td>
+        <td><span class="roi-tag" style="background:#dcfce7;color:#16a34a;">∞ 最高</span></td>
+        <td>M1 開始，M3 見效</td>
+      </tr>
+      <tr style="background:#f0fdf4">
+        <td><strong>② LINE 社群經營</strong></td>
+        <td>$0-$5K</td><td>500-2,000</td><td>15-25%</td>
+        <td>$10-$50</td>
+        <td><span class="roi-tag" style="background:#dcfce7;color:#16a34a;">★★★★★</span></td>
+        <td>本週開始</td>
+      </tr>
+      <tr style="background:#fefce8">
+        <td><strong>③ 設計師 KOL 合作</strong></td>
+        <td>$30K-$80K</td><td>5,000-20,000</td><td>3-5%</td>
+        <td>$100-$300</td>
+        <td><span class="roi-tag" style="background:#fef3c7;color:#d97706;">★★★★</span></td>
+        <td>M2 開始</td>
+      </tr>
+      <tr>
+        <td><strong>④ Facebook/IG 廣告</strong></td>
+        <td>$50K-$150K</td><td>10,000-30,000</td><td>1-3%</td>
+        <td>$200-$500</td>
+        <td><span class="roi-tag" style="background:#dbeafe;color:#2563eb;">★★★</span></td>
+        <td>M3（產品 ready 後）</td>
+      </tr>
+      <tr>
+        <td><strong>⑤ Google Ads</strong></td>
+        <td>$80K-$200K</td><td>5,000-15,000</td><td>5-10%</td>
+        <td>$300-$800</td>
+        <td><span class="roi-tag" style="background:#dbeafe;color:#2563eb;">★★★</span></td>
+        <td>M3（SEO 不夠時補）</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- 各管道詳細 -->
+  <div class="card">
+    <h3>① SEO — 1,975 個產品 = 1,975 個免費流量入口</h3>
+    <div class="two-col">
+      <div>
+        <h4 style="font-size:0.9rem; margin-bottom:8px;">立即可做（本週）</h4>
+        <ol style="font-size:0.85rem;">
+          <li><strong>產品頁 meta 優化：</strong>每個產品頁標題改為「{品牌} {品名} {規格} — 價格比較 | 樂居選材」</li>
+          <li><strong>結構化資料（Schema）：</strong>加 Product schema + AggregateRating → Google 搜尋結果顯示星星和價格</li>
+          <li><strong>品類頁 H1 優化：</strong>「磁磚」→「2026 磁磚推薦 — {N} 款磁磚比價，冠軍/三洋/白馬一次看」</li>
+          <li><strong>sitemap 更新頻率：</strong>改為每日更新（新產品上架當天就被 Google 收錄）</li>
+        </ol>
+      </div>
+      <div>
+        <h4 style="font-size:0.9rem; margin-bottom:8px;">中期佈局（M2-M3）</h4>
+        <ol style="font-size:0.85rem;">
+          <li><strong>選材指南系列：</strong>「2026 磁磚挑選完整攻略」「浴室翻新建材清單 + 預算表」</li>
+          <li><strong>價格趨勢頁：</strong>「超耐磨地板價格走勢 2025-2026」（用平台數據自動產生）</li>
+          <li><strong>比較頁：</strong>「冠軍磁磚 vs 三洋磁磚 — 完整比較」</li>
+          <li><strong>設計師作品集 SEO：</strong>「台北大安區室內設計師推薦」</li>
+        </ol>
+        <p style="font-size:0.8rem; color:#64748b; margin-top:8px;">目標：每月增加 50 篇 SEO 內容頁 → M6 達 300 頁 → 月自然流量 10,000+</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>② LINE 社群 — 設計師圈最有效的通路</h3>
+    <div class="two-col">
+      <div>
+        <h4 style="font-size:0.9rem; margin-bottom:8px;">建立 3 個社群</h4>
+        <div style="font-size:0.85rem;">
+          <p style="margin-bottom:8px;"><strong>🎨 樂居設計師交流群（目標 500 人）</strong></p>
+          <ul>
+            <li>每週分享「新上架建材 TOP 10」</li>
+            <li>每月「選材案例分享會」（設計師投稿）</li>
+            <li>設計師互相推薦工班 → 平台導流</li>
+          </ul>
+          <p style="margin:12px 0 8px;"><strong>🏭 樂居建材商聯盟（目標 200 人）</strong></p>
+          <ul>
+            <li>建材商互相介紹（磁磚商介紹油漆商）</li>
+            <li>共同策劃展示活動</li>
+          </ul>
+          <p style="margin:12px 0 8px;"><strong>🔨 樂居工班互助群（目標 300 人）</strong></p>
+          <ul>
+            <li>工班互相調度（泥作忙不過來 → 介紹同業）</li>
+            <li>分享案源資訊</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <h4 style="font-size:0.9rem; margin-bottom:8px;">每週內容排程</h4>
+        <table>
+          <tr><th>日</th><th>內容</th><th>目的</th></tr>
+          <tr><td>週一</td><td>本週新品推播（3 個建材）</td><td>拉回訪</td></tr>
+          <tr><td>週二</td><td>設計師案例分享</td><td>社群互動</td></tr>
+          <tr><td>週三</td><td>建材小知識（1 張圖卡）</td><td>教育市場</td></tr>
+          <tr><td>週四</td><td>工班找案配對</td><td>活躍工班</td></tr>
+          <tr><td>週五</td><td>週末靈感推薦</td><td>設計師收藏</td></tr>
+        </table>
+        <div class="success" style="margin-top:8px;">
+          LINE 社群的轉化率是 FB 廣告的 <strong>5-8 倍</strong>。<br>因為是「圈內人」推薦，信任度極高。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>③ 設計師 KOL — 最精準的行業推廣</h3>
+    <table>
+      <tr><th>KOL 類型</th><th>合作方式</th><th>預算</th><th>預期效果</th></tr>
+      <tr>
+        <td><strong>IG 設計師（1-5 萬粉）</strong><br>@設計師日常、@住宅美學</td>
+        <td>免費使用平台 + 分享體驗文<br>「我用樂居找建材，30 分鐘搞定」</td>
+        <td>$10K-$30K/人</td>
+        <td>500-2,000 次點擊 / 50-200 註冊</td>
+      </tr>
+      <tr>
+        <td><strong>YouTube 裝修頻道（5-50 萬訂閱）</strong><br>安庭家居、裝修研究室</td>
+        <td>業配影片：「設計師的一天」置入平台<br>或「建材比價教學」用平台示範</td>
+        <td>$50K-$150K/支</td>
+        <td>10,000-50,000 觀看 / 500-2,000 註冊</td>
+      </tr>
+      <tr>
+        <td><strong>FB 裝修社團意見領袖</strong><br>設計師私密社團管理員</td>
+        <td>社團專屬折扣碼 + 工具推薦文</td>
+        <td>$5K-$15K/人</td>
+        <td>200-500 精準註冊</td>
+      </tr>
+    </table>
+    <p style="font-size:0.85rem; color:#64748b; margin-top:12px;">
+      <strong>策略：</strong>先從 10 個小型 KOL（1-3 萬粉）開始，看轉化數據再決定要不要投大的。<br>
+      小 KOL 的 CPR（每次註冊成本）通常比大 KOL 低 3-5 倍。
+    </p>
+  </div>
+</div>
+
+<!-- ══════════ 內容面 ══════════ -->
+<div class="section">
+  <h2 class="section-title">📝 四、內容面 — 讓 Google 和社群幫你免費引流</h2>
+
+  <div class="card">
+    <h3>每月內容產出計畫</h3>
+    <table>
+      <tr><th>內容類型</th><th>月產量</th><th>負責人</th><th>流量貢獻</th><th>範例</th></tr>
+      <tr>
+        <td><strong>選材攻略</strong>（部落格）</td><td>8 篇</td><td>內容編輯</td><td>長尾 SEO</td>
+        <td>「2026 浴室磁磚怎麼選？5 步驟完整攻略」</td>
+      </tr>
+      <tr>
+        <td><strong>價格比較表</strong>（自動生成）</td><td>20 頁</td><td>系統自動</td><td>搜尋流量</td>
+        <td>「超耐磨地板價格比較 — EGGER vs 富銘 vs 瑞士盧森」</td>
+      </tr>
+      <tr>
+        <td><strong>設計師案例</strong>（UGC）</td><td>4 篇</td><td>設計師投稿</td><td>社群分享</td>
+        <td>「大安區 35 坪北歐風 — 選材清單全公開」</td>
+      </tr>
+      <tr>
+        <td><strong>IG/FB 圖卡</strong></td><td>20 張</td><td>行銷/AI</td><td>社群觸及</td>
+        <td>「你知道嗎？台灣最常用的 5 種磁磚」</td>
+      </tr>
+      <tr>
+        <td><strong>LINE 推播</strong></td><td>8 則</td><td>行銷</td><td>回訪率</td>
+        <td>「本週新上架：義大利進口大理石紋磁磚」</td>
+      </tr>
+      <tr>
+        <td><strong>影片</strong>（短影音）</td><td>4 支</td><td>行銷/BD</td><td>社群+YouTube</td>
+        <td>「60 秒看懂超耐磨地板等級差異」</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<!-- ══════════ 90天計畫 ══════════ -->
+<div class="section">
+  <h2 class="section-title">🗓️ 五、90 天衝刺計畫 — 從 DAU 5 → DAU 500</h2>
+
+  <div class="card">
+    <h3>逐月里程碑</h3>
+    <table>
+      <tr><th>月</th><th>功能面</th><th>行銷面</th><th>內容面</th><th>目標指標</th></tr>
+      <tr style="background:#fef2f2">
+        <td><strong>M1</strong><br>基礎建設</td>
+        <td>
+          • 新手引導流程上線<br>
+          • 產品頁 SEO meta 全面優化<br>
+          • 建材行情週報系統<br>
+          • 詢價即時 LINE 通知
+        </td>
+        <td>
+          • 建立 3 個 LINE 社群<br>
+          • 邀請現有 70 建材商加群<br>
+          • 聯繫 10 個小型 KOL
+        </td>
+        <td>
+          • 8 篇選材攻略<br>
+          • 20 頁價格比較表<br>
+          • 20 張社群圖卡
+        </td>
+        <td>
+          DAU: 5→30<br>
+          MAU: 206→400<br>
+          社群: 300 人
+        </td>
+      </tr>
+      <tr style="background:#fefce8">
+        <td><strong>M2</strong><br>內容爆發</td>
+        <td>
+          • 選材清單分享功能<br>
+          • 設計師排行榜<br>
+          • 產品頁 Schema 標記<br>
+          • 附近工地動態
+        </td>
+        <td>
+          • 3 個 KOL 體驗文上線<br>
+          • FB 設計師社團合作<br>
+          • 第一場線下沙龍（20 人）
+        </td>
+        <td>
+          • 8 篇攻略<br>
+          • 4 篇設計師案例<br>
+          • 4 支短影音<br>
+          • 持續社群推播
+        </td>
+        <td>
+          DAU: 30→100<br>
+          MAU: 400→800<br>
+          社群: 600 人<br>
+          SEO 流量: 1,000
+        </td>
+      </tr>
+      <tr style="background:#f0fdf4">
+        <td><strong>M3</strong><br>加速放大</td>
+        <td>
+          • 選材提案白標頁<br>
+          • 建材商數據儀表板<br>
+          • 評價系統 + 星等顯示<br>
+          • 推播通知系統
+        </td>
+        <td>
+          • 視 M2 數據決定投 FB/Google 廣告<br>
+          • 第二場線下沙龍（50 人）<br>
+          • KOL YouTube 業配上線
+        </td>
+        <td>
+          • SEO 頁面累計 100+<br>
+          • 設計師案例 12 篇<br>
+          • 社群突破 1,000 人
+        </td>
+        <td>
+          <strong>DAU: 100→500</strong><br>
+          MAU: 800→2,000<br>
+          社群: 1,000 人<br>
+          SEO: 5,000
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>📊 流量來源配比目標（M3 底）</h3>
+    <div class="grid-4">
+      <div style="background:#f0fdf4; border-radius:12px; padding:16px; text-align:center;">
+        <p style="font-size:1.5rem; font-weight:800; color:#16a34a;">40%</p>
+        <p style="font-size:0.8rem; color:#64748b;">SEO 自然搜尋</p>
+        <p style="font-size:0.7rem; color:#94a3b8;">成本 $0</p>
+      </div>
+      <div style="background:#eff6ff; border-radius:12px; padding:16px; text-align:center;">
+        <p style="font-size:1.5rem; font-weight:800; color:#2563eb;">25%</p>
+        <p style="font-size:0.8rem; color:#64748b;">LINE 社群引流</p>
+        <p style="font-size:0.7rem; color:#94a3b8;">成本極低</p>
+      </div>
+      <div style="background:#fef3c7; border-radius:12px; padding:16px; text-align:center;">
+        <p style="font-size:1.5rem; font-weight:800; color:#d97706;">20%</p>
+        <p style="font-size:0.8rem; color:#64748b;">KOL + 口碑</p>
+        <p style="font-size:0.7rem; color:#94a3b8;">$30K-$80K/月</p>
+      </div>
+      <div style="background:#f5f3ff; border-radius:12px; padding:16px; text-align:center;">
+        <p style="font-size:1.5rem; font-weight:800; color:#7c3aed;">15%</p>
+        <p style="font-size:0.8rem; color:#64748b;">付費廣告</p>
+        <p style="font-size:0.7rem; color:#94a3b8;">$50K-$150K/月</p>
+      </div>
+    </div>
+    <p style="font-size:0.85rem; color:#64748b; margin-top:12px; text-align:center;">
+      目標：<strong>65% 的流量來自免費管道</strong>（SEO + 社群 + 口碑），只有 15% 靠付費廣告
+    </p>
+  </div>
+</div>
+
+<!-- ══════════ 本週行動 ══════════ -->
+<div class="section">
+  <h2 class="section-title">⚡ 六、本週立即行動 — 5 件事</h2>
+  <div class="card">
+    <div class="grid-2">
+      <div>
+        <ol style="font-size:0.9rem;">
+          <li style="margin-bottom:12px;"><strong>建 LINE 社群</strong><br>
+            「樂居設計師交流群」今天就開<br>
+            先邀 BD 團隊 + 現有 VIP 設計師 30 人</li>
+          <li style="margin-bottom:12px;"><strong>產品頁 title 優化</strong><br>
+            讓技術團隊把 1,975 個產品頁的 meta title 格式統一<br>
+            「{品牌} {品名} — 規格/價格/評價 | 樂居選材」</li>
+          <li style="margin-bottom:12px;"><strong>寫第 1 篇選材攻略</strong><br>
+            「2026 磁磚怎麼選？設計師教你 5 步驟」<br>
+            發佈在部落格 + 分享到 LINE 社群</li>
+        </ol>
+      </div>
+      <div>
+        <ol start="4" style="font-size:0.9rem;">
+          <li style="margin-bottom:12px;"><strong>開通 LINE 推播通知</strong><br>
+            新建材上架 → 自動推播給相關品類的設計師<br>
+            「您關注的磁磚品類有新品上架」</li>
+          <li style="margin-bottom:12px;"><strong>聯繫 5 個 IG 設計師帳號</strong><br>
+            粉絲 1-3 萬的小 KOL<br>
+            「免費使用平台 + 分享體驗 = 我們幫你做曝光」</li>
+        </ol>
+        <div class="highlight" style="margin-top:16px;">
+          <strong>這 5 件事總成本：$0。</strong><br>
+          不需要花錢買廣告，先把免費的做好。<br>
+          付費廣告是 M3 以後、確認產品 ready 才投。
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="text-align:center; padding:40px 20px; color:#94a3b8; font-size:0.85rem;">
+  LargeHome AI — 流量快速增長計畫<br>
+  基於平台實際數據（DAU 5 / MAU 206 / 624 用戶 / 1,975 SKU / 70 建材商）<br>
+  產出日期：2026-03-21 | ⚡ SHOW_BOT 製作
+</div>
+
+</div>
+</body>
+</html>
