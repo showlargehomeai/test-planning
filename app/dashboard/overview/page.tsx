@@ -3,6 +3,10 @@ import CompanyOKR from "../_components/CompanyOKR";
 import TeamTracker from "../_components/TeamTracker";
 import BDPipeline from "../_components/BDPipeline";
 import UserGrowth from "../_components/UserGrowth";
+import RealtimeMetrics from "../_components/RealtimeMetrics";
+import ConversionFunnel from "../_components/ConversionFunnel";
+import RevenueChart from "../_components/RevenueChart";
+import AlertPanel from "../_components/AlertPanel";
 
 function SectionSkeleton({ className = "" }: { className?: string }) {
   return (
@@ -32,9 +36,29 @@ export default function DashboardPage() {
           </span>
         </div>
         <p className="text-sm text-slate-500">
-          公司 OKR / 團隊進度 / BD 管道 — 以下為模擬數據，待真實資料對接後移除標籤
+          即時監控 / 營收分析 / 轉換漏斗 / 警示 — 以下為模擬數據，待真實資料對接後移除標籤
         </p>
       </div>
+
+      {/* Realtime Metrics (full width) */}
+      <Suspense fallback={<SectionSkeleton />}>
+        <RealtimeMetrics />
+      </Suspense>
+
+      {/* Revenue + Conversion Funnel */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+        <Suspense fallback={<SectionSkeleton />}>
+          <RevenueChart />
+        </Suspense>
+        <Suspense fallback={<SectionSkeleton />}>
+          <ConversionFunnel />
+        </Suspense>
+      </div>
+
+      {/* Alert Panel (full width) */}
+      <Suspense fallback={<SectionSkeleton />}>
+        <AlertPanel />
+      </Suspense>
 
       {/* Company OKR Bar */}
       <Suspense
