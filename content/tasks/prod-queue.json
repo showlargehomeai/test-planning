@@ -1,6 +1,6 @@
 {
-  "lastUpdated": "2026-03-21T15:01:00+08:00",
-  "updatedBy": "cto-audit-round-N",
+  "lastUpdated": "2026-03-21T15:30:00+08:00",
+  "updatedBy": "cto-audit-round-15",
   "context": "基於 Production codebase 實際狀態建立的開發佇列",
   "tasks": [
     {
@@ -122,9 +122,9 @@
         "app/lib/api/material-inquiries.ts"
       ],
       "priority": "P0",
-      "status": "ready",
+      "status": "done",
       "dependencies": [],
-      "notes": "Build 失敗，需要立即修復。主要是 any 型別問題，需改為具體型別定義。"
+      "notes": "✅ 已修復：TypeScript build 通過，只剩下 app/about/page.tsx 的 img 標籤 warnings（不影響功能）。"
     },
     {
       "id": "P-010",
