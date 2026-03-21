@@ -263,9 +263,9 @@
         "app/lib/api/auth.ts"
       ],
       "priority": "P1",
-      "status": "ready",
+      "status": "done",
       "dependencies": [],
-      "notes": "auth-service 已有 Entra External ID + JWT + LINE，需要確認前端整合。"
+      "notes": "✅ 審計完成：(1) JWT 認證流程完整：localStorage 儲存、自動刷新、Authorization header (2) API 代理：next.config.ts 將 /api/v1/users/* 代理到 auth-service (3) Entra External ID：前端完整配置、支援多提供者 (4) LINE 整合：OAuth2 流程、用戶綁定 API、安全驗證。前端與 auth-service 整合完善。"
     }
   ],
   "rules": {
