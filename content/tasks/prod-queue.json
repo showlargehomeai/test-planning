@@ -249,9 +249,9 @@
         "app/types/product.ts"
       ],
       "priority": "P1",
-      "status": "ready",
+      "status": "done",
       "dependencies": [],
-      "notes": "後端 product-service 已有 5 類產品 CRUD API，需要確認前端整合狀態。"
+      "notes": "✅ 審計完成：(1) API 路徑一致 /api/v1/products (2) 前端有完整 API client、類型定義、Query hooks (3) 實際使用中：產品頁面、管理功能、收藏整合 (4) 5 類產品完整支援：建材(area/paint)、廚房設備、衛浴設備、軟裝。整合狀態良好。"
     },
     {
       "id": "P-017",
