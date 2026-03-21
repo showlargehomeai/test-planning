@@ -15,6 +15,7 @@ const tabs = [
   { name: "工班管理", href: "/contractor", icon: "🔨" },
   { name: "建材商", href: "/supplier", icon: "🏭" },
   { name: "協作中心", href: "/collaboration", icon: "🤝" },
+  { name: "BD策略", href: "/bd-strategy", icon: "🚀" },
 ];
 
 export default function TabNavigation() {

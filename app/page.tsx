@@ -55,6 +55,14 @@ const sections = [
     ],
   },
   {
+    category: "📑 策略文件",
+    color: "from-rose-500 to-pink-600",
+    items: [
+      { name: "2026 BD 整體發展策略", href: "/bd-strategy", icon: "🚀", desc: "200BD 全台擴張 × BD 角色規劃綜合方案" },
+      { name: "200BD 全台擴張計畫 v2", href: "/bd-strategy/200bd", icon: "⚡", desc: "12 個月 25→400 人閃電擴張作戰計畫" },
+    ],
+  },
+  {
     category: "🤝 協作與管理",
     color: "from-violet-500 to-purple-600",
     items: [
