@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useRouter } from "next/navigation";
 import { clsx } from "clsx";
 
@@ -197,7 +197,7 @@ function QuotationContent() {
                 </thead>
                 <tbody>
                   {Object.entries(grouped).map(([category, categoryItems]) => (
-                    <tbody key={category}>
+                    <React.Fragment key={category}>
                       <tr>
                         <td colSpan={5} className="px-4 py-2 bg-slate-50/50 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                           {category}
@@ -223,7 +223,7 @@ function QuotationContent() {
                           <td className="px-4 py-3 text-right font-medium text-slate-900">{(item.qty * item.unitPrice).toLocaleString()}</td>
                         </tr>
                       ))}
-                    </tbody>
+                    </React.Fragment>
                   ))}
                 </tbody>
               </table>
