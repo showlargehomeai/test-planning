@@ -52,7 +52,7 @@
       "title": "設計師個人儀表板首頁",
       "description": "重寫 /designer 首頁，不再 redirect。顯示：今日待辦、本月業績、近期訊息、快速操作入口。Mock 數據呈現完整的設計師工作台。",
       "priority": "P0",
-      "status": "in_progress",
+      "status": "done",
       "assignee": "dev-agent",
       "module": "designer",
       "files": [
@@ -66,7 +66,8 @@
         "最近活動 feed"
       ],
       "createdAt": "2026-03-21T09:55:00+08:00",
-      "notes": "Round 21 檢查：檔案已存在但需檢查是否實現所有功能需求"
+      "notes": "Round 21 檢查：檔案已存在但需檢查是否實現所有功能需求",
+      "completedAt": "2026-03-21T10:25:00+08:00"
     },
     {
       "id": "T-004",
@@ -123,7 +124,7 @@
       "title": "跨角色協作中心",
       "description": "建立 /collaboration 頁面：設計師×工班×建材商的三方協作空間。專案討論串、文件共享、進度同步。展示三角色生態的核心價值。",
       "priority": "P1",
-      "status": "ready",
+      "status": "done",
       "assignee": "dev-agent",
       "module": "collaboration",
       "files": [
@@ -140,7 +141,8 @@
         "即時通知模擬"
       ],
       "createdAt": "2026-03-21T09:55:00+08:00",
-      "notes": "Round 21 檢查：檔案不存在，需要實作，依賴 T-002"
+      "notes": "Round 21 檢查：檔案不存在，需要實作，依賴 T-002",
+      "completedAt": "2026-03-21T10:25:00+08:00"
     },
     {
       "id": "T-007",
