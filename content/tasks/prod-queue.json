@@ -1,6 +1,6 @@
 {
-  "lastUpdated": "2026-03-22T00:06:45+08:00",
-  "updatedBy": "P-022-onboarding-dev",
+  "lastUpdated": "2026-03-22T00:30:15+08:00",
+  "updatedBy": "cron-audit-prod-repo",
   "context": "基於 Production codebase (~/largehomeai-repos/LargeHomeAI--Frontend) 開發。所有任務都在 production repo 寫 code，不在 test-planning。",
   "tasks": [
     {
@@ -192,6 +192,40 @@
       "notes": "🔍 緊急檢查：確保程式碼品質、build 成功、無功能衝突。"
     },
     {
+      "id": "P-029",
+      "title": "🆕 Vendor 頁面整合（新發現）",
+      "repo": "LargeHomeAI--Frontend", 
+      "description": "審計發現新增 app/vendors/ 目錄（layout.tsx + page.tsx）。需要確認：(1) 與 profile-service 廠商 API 整合 (2) 廠商列表、搜尋、篩選功能 (3) 廠商詳情頁面 (4) 產品展示整合 (5) 聯絡/詢價入口。",
+      "files": [
+        "app/vendors/layout.tsx",
+        "app/vendors/page.tsx", 
+        "app/lib/api/vendors.ts",
+        "app/types/vendors.ts"
+      ],
+      "priority": "P0",
+      "status": "audit-needed",
+      "dependencies": [],
+      "notes": "🔍 新功能審計：確認廠商頁面功能完整性、API 整合、用戶體驗流程。"
+    },
+    {
+      "id": "P-030",
+      "title": "🔄 產品詳情頁優化（新發現）", 
+      "repo": "LargeHomeAI--Frontend",
+      "description": "審計發現 app/product-detail/[id]/components/ 多個新元件：ProductImageGallery、ImageModal、ActionButtons、SimilarMaterials、ProductInfo、ProductTabs。需要確認：(1) 圖片展示功能 (2) 相似產品推薦 (3) 操作按鈕整合 (4) 產品資訊展示 (5) 分頁功能。",
+      "files": [
+        "app/product-detail/[id]/components/ProductImageGallery.tsx",
+        "app/product-detail/[id]/components/ImageModal.tsx", 
+        "app/product-detail/[id]/components/ActionButtons.tsx",
+        "app/product-detail/[id]/components/SimilarMaterials.tsx",
+        "app/product-detail/[id]/components/ProductInfo.tsx",
+        "app/product-detail/[id]/components/ProductTabs.tsx"
+      ],
+      "priority": "P1", 
+      "status": "audit-needed",
+      "dependencies": [],
+      "notes": "🔍 需要確認產品詳情頁新元件整合度、用戶體驗、與比價系統整合。"
+    },
+    {
       "id": "P-022",
       "title": "新手引導流程（Onboarding）",
       "repo": "LargeHomeAI--Frontend",
@@ -230,6 +264,8 @@
         "app/crm/ - 客戶關係管理系統", 
         "app/compare/ - 即時比價引擎",
         "app/contracts/ - 合約管理",
+        "app/vendors/ - 廠商頁面系統",
+        "app/product-detail/[id]/components/ - 產品詳情頁優化",
         "app/hooks/useCRM.ts - CRM React Hook",
         "app/lib/api/batch-inquiry.ts - 批次詢價 API"
       ],
@@ -239,9 +275,10 @@
         "package.json - 依賴更新"
       ],
       "priority_tasks": [
+        "P-028 Build & TypeScript 健康度檢查",
+        "P-029 Vendor 頁面整合審計", 
         "P-025 工班管理系統審計",
-        "P-026 CRM 系統整合檢查",
-        "P-028 Build & TypeScript 健康度檢查"
+        "P-026 CRM 系統整合檢查"
       ]
     }
   },
