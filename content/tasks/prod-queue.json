@@ -1,7 +1,7 @@
 {
-  "lastUpdated": "2026-03-21T21:00:00+08:00",
+  "lastUpdated": "2026-03-21T21:10:00+08:00",
   "updatedBy": "cto-audit-prod",
-  "context": "Round 10 CTO 審計：Build 成功，所有關鍵任務已完成",
+  "context": "基於 Production codebase (~/largehomeai-repos/LargeHomeAI--Frontend) 開發。所有任務都在 production repo 寫 code，不在 test-planning。",
   "tasks": [
     {
       "id": "P-000",
@@ -29,7 +29,9 @@
       ],
       "priority": "P0",
       "status": "done",
-      "dependencies": ["P-000"],
+      "dependencies": [
+        "P-000"
+      ],
       "notes": "✅ 已完成：(1) API 路徑已一致 /api/v1/crm/* (2) USE_MOCK 已改為環境變數控制 NEXT_PUBLIC_CRM_USE_MOCK=true (3) .env.local 設定完成 (4) 型別匹配問題已修正。"
     },
     {
@@ -168,7 +170,9 @@
       ],
       "priority": "P0",
       "status": "done",
-      "dependencies": ["P-003"],
+      "dependencies": [
+        "P-003"
+      ],
       "notes": "✅ 已完成：併入 P-003。app/contracts/[id]/page.tsx 已建立，包含合約詳情、付款里程碑時間軸、支付狀態更新功能。"
     },
     {
@@ -195,7 +199,10 @@
       ],
       "priority": "P1",
       "status": "done",
-      "dependencies": ["P-001", "P-003"],
+      "dependencies": [
+        "P-001",
+        "P-003"
+      ],
       "notes": "✅ 審計確認：(1) CRM 入口已存在於主導航 line 163 (2) 合約管理入口已存在於 profile menu line 435。功能完整，無需修改。"
     },
     {
@@ -208,7 +215,11 @@
       ],
       "priority": "P1",
       "status": "done",
-      "dependencies": ["P-002", "P-004", "P-005"],
+      "dependencies": [
+        "P-002",
+        "P-004",
+        "P-005"
+      ],
       "notes": "✅ 已完成：與 P-006 重複。專案管理快捷入口已存在於 page.tsx line 1574-1629，包含施工日報、工地巡檢、建材詢價三個導航連結，使用 grid 佈局與漸層卡片設計，符合 shadcn/ui 風格。"
     },
     {
@@ -236,7 +247,11 @@
       ],
       "priority": "P1",
       "status": "done",
-      "dependencies": ["P-002", "P-004", "P-005"],
+      "dependencies": [
+        "P-002",
+        "P-004",
+        "P-005"
+      ],
       "notes": "✅ 已完成：專案管理快捷入口已存在於 page.tsx line 68-145，包含施工日報、工地巡檢、建材詢價三個導航連結，使用 grid 佈局與漸層卡片設計，符合 shadcn/ui 風格。"
     },
     {
@@ -266,6 +281,63 @@
       "status": "done",
       "dependencies": [],
       "notes": "✅ 審計完成：(1) JWT 認證流程完整：localStorage 儲存、自動刷新、Authorization header (2) API 代理：next.config.ts 將 /api/v1/users/* 代理到 auth-service (3) Entra External ID：前端完整配置、支援多提供者 (4) LINE 整合：OAuth2 流程、用戶綁定 API、安全驗證。前端與 auth-service 整合完善。"
+    },
+    {
+      "id": "P-020",
+      "title": "即時比價引擎（前端）",
+      "repo": "LargeHomeAI--Frontend",
+      "description": "在 /products 或新增 /compare 頁面。輸入品類+規格 → 顯示所有建材商的價格比較表 + 歷史價格走勢 + 用量計算器。DB 已有 unit_price/price_per_ping/price_per_m2。用 USE_MOCK 模式，但 API 路徑對準 product-service 的 /api/v1/products/search。",
+      "files": [
+        "app/compare/page.tsx",
+        "app/lib/api/compare.ts",
+        "app/types/compare.ts"
+      ],
+      "priority": "P0",
+      "status": "ready",
+      "dependencies": [],
+      "notes": "product-service 有完整價格欄位。前端需要: 品類篩選 + 規格篩選 + 排序(價格/評價) + 用量計算(輸入坪數→自動算數量和總價) + 歷史價格圖表"
+    },
+    {
+      "id": "P-021",
+      "title": "一鍵批次詢價功能（前端）",
+      "repo": "LargeHomeAI--Frontend",
+      "description": "在產品搜尋/比價頁面，設計師選多個建材 → 一鍵向多家建材商同時詢價。interaction-service 已有 material_inquiries API。前端需要: 建材選擇購物車 + 批次詢價表單 + 詢價狀態追蹤頁。",
+      "files": [
+        "app/projects/[id]/batch-inquiry/page.tsx",
+        "app/lib/api/batch-inquiry.ts"
+      ],
+      "priority": "P0",
+      "status": "ready",
+      "dependencies": [
+        "P-020"
+      ],
+      "notes": "後端 MaterialInquiry model 已有。前端需接 /api/v1/material-inquiries。USE_MOCK 模式。"
+    },
+    {
+      "id": "P-022",
+      "title": "新手引導流程（Onboarding）",
+      "repo": "LargeHomeAI--Frontend",
+      "description": "註冊後的引導流程：選品類偏好 → 選服務區域 → 立刻顯示相關建材/工班。已有 OnboardingContext.tsx 和 onboarding/ 元件資料夾，在此基礎上擴展。",
+      "files": [
+        "app/components/onboarding/"
+      ],
+      "priority": "P0",
+      "status": "ready",
+      "dependencies": [],
+      "notes": "已有 OnboardingProvider + OnboardingChecklist。需要加: 品類偏好選擇 + 區域選擇 + 首次推薦結果頁"
+    },
+    {
+      "id": "P-023",
+      "title": "建材行情週報推播系統",
+      "repo": "LargeHomeAI--Frontend",
+      "description": "每週自動生成「本週建材價格異動 + 新上架 TOP 10」頁面。可用 /weekly-digest 路由。從 product-service 的 thisWeek 數據自動產生。",
+      "files": [
+        "app/weekly-digest/page.tsx"
+      ],
+      "priority": "P1",
+      "status": "ready",
+      "dependencies": [],
+      "notes": "product-service 已有 thisWeek/thisMonth 統計。LINE 推播用現有 NovuService。"
     }
   ],
   "rules": {
