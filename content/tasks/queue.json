@@ -22,7 +22,7 @@
       "title": "專案進度追蹤 Dashboard",
       "description": "建立 /designer/projects 頁面，看板式專案管理：待確認→進行中→驗收→完工。每個專案卡片顯示業主、預算、進度百分比、下次里程碑。",
       "priority": "P0",
-      "status": "ready",
+      "status": "in-progress",
       "assignee": "dev-agent",
       "module": "designer",
       "files": ["app/designer/projects/page.tsx"],

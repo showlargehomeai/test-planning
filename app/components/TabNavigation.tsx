@@ -12,6 +12,8 @@ const tabs = [
   { name: "點子牆", href: "/ideas", icon: "💡" },
   { name: "戰情室", href: "/dashboard", icon: "📈" },
   { name: "設計師工具", href: "/designer", icon: "🛠️" },
+  { name: "工班管理", href: "/contractor", icon: "🔨" },
+  { name: "建材商", href: "/supplier", icon: "🏭" },
 ];
 
 export default function TabNavigation() {

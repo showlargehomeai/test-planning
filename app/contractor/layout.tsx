@@ -7,36 +7,22 @@ import { clsx } from "clsx";
 
 const sections = [
   {
-    title: "接案獲客",
+    title: "工程管理",
     items: [
-      { name: "業主媒合", href: "/designer/matching", icon: "🎯" },
-      { name: "客戶管理", href: "/designer/crm", icon: "👥" },
-      { name: "專案追蹤", href: "/designer/projects", icon: "📋" },
-      { name: "作品集展示", href: "/designer/portfolio", icon: "🖼️" },
-      { name: "評價口碑", href: "/designer/reviews", icon: "⭐" },
-      { name: "諮詢預約", href: "/designer/booking", icon: "📅" },
+      { name: "工程日曆", href: "/contractor/schedule", icon: "📅" },
+      { name: "施工紀錄", href: "/contractor/records", icon: "📋" },
     ],
   },
   {
-    title: "設計效率",
+    title: "團隊與財務",
     items: [
-      { name: "AI 渲染出圖", href: "/designer/rendering", icon: "🎨" },
-      { name: "建材資料庫", href: "/designer/materials", icon: "🧱" },
-      { name: "智慧報價", href: "/designer/quotation", icon: "💰" },
-      { name: "工程看板", href: "/designer/kanban", icon: "📋" },
-      { name: "合約簽章", href: "/designer/contracts", icon: "📝" },
-    ],
-  },
-  {
-    title: "財務管理",
-    items: [
-      { name: "收支分析", href: "/designer/finance", icon: "📊" },
-      { name: "付款追蹤", href: "/designer/payments", icon: "💳" },
+      { name: "班底管理", href: "/contractor/team", icon: "👷" },
+      { name: "請款管理", href: "/contractor/billing", icon: "💰" },
     ],
   },
 ];
 
-export default function DesignerLayout({
+export default function ContractorLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -54,7 +40,7 @@ export default function DesignerLayout({
       <div className="md:hidden fixed top-16 left-0 right-0 z-40 bg-white border-b border-slate-200 px-4 py-2">
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="w-full flex items-center justify-between px-4 py-3 bg-slate-50 rounded-lg text-sm font-medium text-slate-700 min-h-[44px]"
+          className="w-full flex items-center justify-between px-4 py-3 bg-amber-50 rounded-lg text-sm font-medium text-amber-800 min-h-[44px]"
         >
           <span>
             {currentItem.icon} {currentItem.name}
@@ -75,7 +61,7 @@ export default function DesignerLayout({
             <div className="px-4 py-2 space-y-3">
               {sections.map((section) => (
                 <div key={section.title}>
-                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider px-3 py-1">
+                  <p className="text-xs font-semibold text-amber-500 uppercase tracking-wider px-3 py-1">
                     {section.title}
                   </p>
                   {section.items.map((item) => {
@@ -88,7 +74,7 @@ export default function DesignerLayout({
                         className={clsx(
                           "flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium transition-colors",
                           isActive
-                            ? "bg-indigo-50 text-indigo-700"
+                            ? "bg-amber-50 text-amber-800"
                             : "text-slate-600 hover:bg-slate-50"
                         )}
                       >
@@ -105,11 +91,11 @@ export default function DesignerLayout({
       </div>
 
       {/* Desktop sidebar */}
-      <aside className="hidden md:flex flex-col w-56 lg:w-64 border-r border-slate-200 bg-white overflow-y-auto shrink-0">
+      <aside className="hidden md:flex flex-col w-56 lg:w-64 border-r border-amber-100 bg-amber-50/30 overflow-y-auto shrink-0">
         <div className="p-4 space-y-5">
           {sections.map((section) => (
             <div key={section.title}>
-              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider px-3 mb-1">
+              <p className="text-xs font-semibold text-amber-500 uppercase tracking-wider px-3 mb-1">
                 {section.title}
               </p>
               <div className="space-y-0.5">
@@ -122,8 +108,8 @@ export default function DesignerLayout({
                       className={clsx(
                         "flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
                         isActive
-                          ? "bg-indigo-50 text-indigo-700"
-                          : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                          ? "bg-amber-100 text-amber-900"
+                          : "text-slate-600 hover:text-slate-900 hover:bg-amber-50"
                       )}
                     >
                       <span className="text-base">{item.icon}</span>

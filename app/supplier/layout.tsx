@@ -5,38 +5,29 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { clsx } from "clsx";
 
-const sections = [
+const sections: { title: string; items: { name: string; href: string; icon: string; exact?: boolean }[] }[] = [
   {
-    title: "接案獲客",
+    title: "營運總覽",
     items: [
-      { name: "業主媒合", href: "/designer/matching", icon: "🎯" },
-      { name: "客戶管理", href: "/designer/crm", icon: "👥" },
-      { name: "專案追蹤", href: "/designer/projects", icon: "📋" },
-      { name: "作品集展示", href: "/designer/portfolio", icon: "🖼️" },
-      { name: "評價口碑", href: "/designer/reviews", icon: "⭐" },
-      { name: "諮詢預約", href: "/designer/booking", icon: "📅" },
+      { name: "儀表板", href: "/supplier", icon: "📊", exact: true },
     ],
   },
   {
-    title: "設計效率",
+    title: "商品管理",
     items: [
-      { name: "AI 渲染出圖", href: "/designer/rendering", icon: "🎨" },
-      { name: "建材資料庫", href: "/designer/materials", icon: "🧱" },
-      { name: "智慧報價", href: "/designer/quotation", icon: "💰" },
-      { name: "工程看板", href: "/designer/kanban", icon: "📋" },
-      { name: "合約簽章", href: "/designer/contracts", icon: "📝" },
+      { name: "產品目錄", href: "/supplier/catalog", icon: "🧱" },
     ],
   },
   {
-    title: "財務管理",
+    title: "交易管理",
     items: [
-      { name: "收支分析", href: "/designer/finance", icon: "📊" },
-      { name: "付款追蹤", href: "/designer/payments", icon: "💳" },
+      { name: "訂單追蹤", href: "/supplier/orders", icon: "📦" },
+      { name: "報價管理", href: "/supplier/quotes", icon: "💰" },
     ],
   },
 ];
 
-export default function DesignerLayout({
+export default function SupplierLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -44,9 +35,11 @@ export default function DesignerLayout({
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  const allItems = sections.flatMap((s) => s.items);
   const currentItem =
-    sections.flatMap((s) => s.items).find((i) => pathname.startsWith(i.href)) ??
-    sections[0].items[0];
+    allItems.find((i) =>
+      i.exact ? pathname === i.href : pathname.startsWith(i.href) && i.href !== "/supplier"
+    ) ?? allItems[0];
 
   return (
     <div className="flex h-full">
@@ -54,7 +47,7 @@ export default function DesignerLayout({
       <div className="md:hidden fixed top-16 left-0 right-0 z-40 bg-white border-b border-slate-200 px-4 py-2">
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="w-full flex items-center justify-between px-4 py-3 bg-slate-50 rounded-lg text-sm font-medium text-slate-700 min-h-[44px]"
+          className="w-full flex items-center justify-between px-4 py-3 bg-emerald-50 rounded-lg text-sm font-medium text-slate-700 min-h-[44px]"
         >
           <span>
             {currentItem.icon} {currentItem.name}
@@ -79,7 +72,9 @@ export default function DesignerLayout({
                     {section.title}
                   </p>
                   {section.items.map((item) => {
-                    const isActive = pathname.startsWith(item.href);
+                    const isActive = item.exact
+                      ? pathname === item.href
+                      : pathname.startsWith(item.href) && item.href !== "/supplier";
                     return (
                       <Link
                         key={item.href}
@@ -88,7 +83,7 @@ export default function DesignerLayout({
                         className={clsx(
                           "flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium transition-colors",
                           isActive
-                            ? "bg-indigo-50 text-indigo-700"
+                            ? "bg-emerald-50 text-emerald-700"
                             : "text-slate-600 hover:bg-slate-50"
                         )}
                       >
@@ -114,7 +109,9 @@ export default function DesignerLayout({
               </p>
               <div className="space-y-0.5">
                 {section.items.map((item) => {
-                  const isActive = pathname.startsWith(item.href);
+                  const isActive = item.exact
+                    ? pathname === item.href
+                    : pathname.startsWith(item.href) && item.href !== "/supplier";
                   return (
                     <Link
                       key={item.href}
@@ -122,7 +119,7 @@ export default function DesignerLayout({
                       className={clsx(
                         "flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
                         isActive
-                          ? "bg-indigo-50 text-indigo-700"
+                          ? "bg-emerald-50 text-emerald-700"
                           : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
                       )}
                     >
