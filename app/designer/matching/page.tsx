@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { clsx } from "clsx";
 
 const styles = ["現代簡約", "北歐風", "日式無印", "工業風", "新古典", "鄉村風", "混搭風"];
@@ -8,21 +9,64 @@ const regions = ["台北市", "新北市", "桃園市", "台中市", "台南市"
 const budgetRanges = ["50萬以下", "50-100萬", "100-200萬", "200-500萬", "500萬以上"];
 
 const mockOwners = [
-  { id: 1, name: "陳怡君", style: "現代簡約", budget: "150-200萬", region: "台北市大安區", area: "35坪", type: "新屋裝修", match: 96, avatar: "bg-gradient-to-br from-pink-400 to-rose-500", posted: "2 小時前", desc: "三房兩廳，希望以白色和木質為主調，注重收納功能" },
-  { id: 2, name: "林志明", style: "工業風", budget: "80-120萬", region: "新北市板橋區", area: "28坪", type: "老屋翻新", match: 91, avatar: "bg-gradient-to-br from-blue-400 to-indigo-500", posted: "5 小時前", desc: "30年老公寓翻新，喜歡裸露磚牆和鐵件元素" },
-  { id: 3, name: "王美玲", style: "北歐風", budget: "200-300萬", region: "台北市信義區", area: "45坪", type: "新屋裝修", match: 88, avatar: "bg-gradient-to-br from-emerald-400 to-teal-500", posted: "1 天前", desc: "新購預售屋客變，家中有兩個小孩，需要安全且溫馨的空間" },
-  { id: 4, name: "張家豪", style: "日式無印", budget: "100-150萬", region: "台中市西屯區", area: "32坪", type: "局部裝修", match: 85, avatar: "bg-gradient-to-br from-amber-400 to-orange-500", posted: "1 天前", desc: "客廳和主臥室改造，偏好自然材質和簡潔線條" },
-  { id: 5, name: "劉雅婷", style: "新古典", budget: "300-500萬", region: "台北市中山區", area: "60坪", type: "豪宅裝修", match: 82, avatar: "bg-gradient-to-br from-violet-400 to-purple-500", posted: "2 天前", desc: "新購豪宅裝潢，希望優雅大器風格，有獨立書房需求" },
-  { id: 6, name: "蔡明宏", style: "混搭風", budget: "120-180萬", region: "桃園市中壢區", area: "40坪", type: "新屋裝修", match: 79, avatar: "bg-gradient-to-br from-cyan-400 to-blue-500", posted: "3 天前", desc: "四房格局，希望每個房間有不同主題風格" },
-  { id: 7, name: "黃淑芬", style: "鄉村風", budget: "80-100萬", region: "台南市東區", area: "25坪", type: "老屋翻新", match: 76, avatar: "bg-gradient-to-br from-lime-400 to-green-500", posted: "3 天前", desc: "退休夫妻的老宅翻修，喜歡溫暖的鄉村風格" },
-  { id: 8, name: "吳政達", style: "現代簡約", budget: "50-80萬", region: "高雄市左營區", area: "22坪", type: "小宅裝修", match: 73, avatar: "bg-gradient-to-br from-red-400 to-pink-500", posted: "4 天前", desc: "首購小宅，預算有限但希望有質感的居住空間" },
+  { id: 1, name: "陳怡君", style: "現代簡約", budget: "150-200萬", region: "台北市大安區", area: "35坪", type: "新屋裝修", match: 96, avatar: "bg-gradient-to-br from-pink-400 to-rose-500", posted: "2 小時前", desc: "三房兩廳，希望以白色和木質為主調，注重收納功能", fullDesc: "三房兩廳，希望以白色和木質為主調，注重收納功能。客廳希望有大面書牆，主臥需要更衣室規劃。廚房偏好開放式設計，中島吧檯。兩間小孩房需要上下舖和書桌區域。全室希望使用超耐磨木地板，浴室乾濕分離。" },
+  { id: 2, name: "林志明", style: "工業風", budget: "80-120萬", region: "新北市板橋區", area: "28坪", type: "老屋翻新", match: 91, avatar: "bg-gradient-to-br from-blue-400 to-indigo-500", posted: "5 小時前", desc: "30年老公寓翻新，喜歡裸露磚牆和鐵件元素", fullDesc: "30年老公寓翻新，喜歡裸露磚牆和鐵件元素。希望保留原始紅磚牆面，天花板走明管設計。客廳需要大型投影幕牆，餐廳希望有長型工業風餐桌。臥室風格可以稍微溫馨，但整體維持工業調性。需要全面更新水電管線。" },
+  { id: 3, name: "王美玲", style: "北歐風", budget: "200-300萬", region: "台北市信義區", area: "45坪", type: "新屋裝修", match: 88, avatar: "bg-gradient-to-br from-emerald-400 to-teal-500", posted: "1 天前", desc: "新購預售屋客變，家中有兩個小孩，需要安全且溫馨的空間", fullDesc: "新購預售屋客變，家中有兩個小孩（3歲和5歲），需要安全且溫馨的空間。所有傢俱需要圓角處理，地板要防滑。希望有親子遊戲區和閱讀角。主臥套房需要獨立衛浴和步入式衣櫃。廚房需要安全鎖設計，陽台要加裝隱形鐵窗。" },
+  { id: 4, name: "張家豪", style: "日式無印", budget: "100-150萬", region: "台中市西屯區", area: "32坪", type: "局部裝修", match: 85, avatar: "bg-gradient-to-br from-amber-400 to-orange-500", posted: "1 天前", desc: "客廳和主臥室改造，偏好自然材質和簡潔線條", fullDesc: "客廳和主臥室改造，偏好自然材質和簡潔線條。希望大量使用原木和白色調，搭配藤編和亞麻材質。客廳要有和室區域（可升降桌），臥室採用地台床設計。全室照明以間接光源為主，營造柔和氛圍。" },
+  { id: 5, name: "劉雅婷", style: "新古典", budget: "300-500萬", region: "台北市中山區", area: "60坪", type: "豪宅裝修", match: 82, avatar: "bg-gradient-to-br from-violet-400 to-purple-500", posted: "2 天前", desc: "新購豪宅裝潢，希望優雅大器風格，有獨立書房需求", fullDesc: "新購豪宅裝潢，希望優雅大器風格，有獨立書房需求。客廳要有水晶吊燈和壁爐造型電視牆。餐廳需要八人座餐桌空間。書房要有整面書牆和舒適閱讀區。主臥需要化妝檯區域和步入式更衣室。指定使用進口大理石和實木地板。" },
+  { id: 6, name: "蔡明宏", style: "混搭風", budget: "120-180萬", region: "桃園市中壢區", area: "40坪", type: "新屋裝修", match: 79, avatar: "bg-gradient-to-br from-cyan-400 to-blue-500", posted: "3 天前", desc: "四房格局，希望每個房間有不同主題風格", fullDesc: "四房格局，希望每個房間有不同主題風格。主臥走現代簡約、小孩房一走太空主題、小孩房二走森林主題、客房走日式禪風。公共空間以北歐風為基調統一串聯。需要充足的收納空間和智慧家居系統。" },
+  { id: 7, name: "黃淑芬", style: "鄉村風", budget: "80-100萬", region: "台南市東區", area: "25坪", type: "老屋翻新", match: 76, avatar: "bg-gradient-to-br from-lime-400 to-green-500", posted: "3 天前", desc: "退休夫妻的老宅翻修，喜歡溫暖的鄉村風格", fullDesc: "退休夫妻的老宅翻修，喜歡溫暖的鄉村風格。需要無障礙設計（預留輪椅通道寬度）。廚房是重點空間，需要大型中島和充足收納。浴室要有止滑地磚和扶手。希望有小花園陽台可以種花草。整體用色偏暖色調。" },
+  { id: 8, name: "吳政達", style: "現代簡約", budget: "50-80萬", region: "高雄市左營區", area: "22坪", type: "小宅裝修", match: 73, avatar: "bg-gradient-to-br from-red-400 to-pink-500", posted: "4 天前", desc: "首購小宅，預算有限但希望有質感的居住空間", fullDesc: "首購小宅，預算有限但希望有質感的居住空間。需要極致的空間利用，包含隱藏式收納和多功能傢俱。希望客廳餐廳整合設計，臥室要有衣櫃和小書桌。浴室希望乾濕分離。偏好淺色系搭配木質元素，簡單但有溫度。" },
 ];
 
 export default function MatchingPage() {
+  const router = useRouter();
   const [styleFilter, setStyleFilter] = useState("");
   const [regionFilter, setRegionFilter] = useState("");
   const [budgetFilter, setBudgetFilter] = useState("");
   const [accepted, setAccepted] = useState<Set<number>>(new Set());
+  const [expandedId, setExpandedId] = useState<number | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
+
+  // Load accepted from localStorage on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("matching_accepted");
+      if (saved) setAccepted(new Set(JSON.parse(saved)));
+    } catch {}
+  }, []);
+
+  const handleAccept = (owner: typeof mockOwners[0]) => {
+    const newAccepted = new Set(accepted).add(owner.id);
+    setAccepted(newAccepted);
+
+    // Save to localStorage for CRM to read
+    const existingCrm = JSON.parse(localStorage.getItem("crm_from_matching") || "[]");
+    const alreadyExists = existingCrm.some((c: { id: number }) => c.id === owner.id);
+    if (!alreadyExists) {
+      existingCrm.push({
+        id: owner.id,
+        name: owner.name,
+        style: owner.style,
+        budget: owner.budget,
+        region: owner.region,
+        area: owner.area,
+        type: owner.type,
+        desc: owner.desc,
+        avatar: owner.avatar,
+        addedAt: new Date().toISOString(),
+      });
+      localStorage.setItem("crm_from_matching", JSON.stringify(existingCrm));
+    }
+    localStorage.setItem("matching_accepted", JSON.stringify([...newAccepted]));
+
+    // Show toast and redirect
+    setToast(`已將 ${owner.name} 新增至 CRM`);
+    setTimeout(() => {
+      setToast(null);
+      router.push("/designer/crm");
+    }, 2000);
+  };
 
   const filtered = mockOwners.filter((o) => {
     if (styleFilter && o.style !== styleFilter) return false;
@@ -32,6 +76,13 @@ export default function MatchingPage() {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto space-y-6">
+      {/* Toast */}
+      {toast && (
+        <div className="fixed top-6 right-6 z-50 bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium animate-[fadeIn_0.3s_ease-out]">
+          ✓ {toast}
+        </div>
+      )}
+
       {/* Header */}
       <div>
         <h1 className="text-xl sm:text-2xl font-bold text-slate-900">🎯 精準業主媒合系統</h1>
@@ -46,7 +97,7 @@ export default function MatchingPage() {
         </div>
         <div className="bg-white rounded-xl border border-slate-200 p-4">
           <p className="text-xs text-slate-500">本月已接案</p>
-          <p className="text-2xl font-bold text-emerald-600">3</p>
+          <p className="text-2xl font-bold text-emerald-600">{accepted.size}</p>
         </div>
         <div className="bg-white rounded-xl border border-slate-200 p-4">
           <p className="text-xs text-slate-500">平均媒合分數</p>
@@ -107,6 +158,15 @@ export default function MatchingPage() {
                   <span className="text-xs text-slate-400 ml-auto">{owner.posted}</span>
                 </div>
                 <p className="text-sm text-slate-600 mb-2">{owner.desc}</p>
+
+                {/* Expandable Full Description */}
+                {expandedId === owner.id && (
+                  <div className="mb-2 p-3 bg-slate-50 rounded-lg border border-slate-100">
+                    <p className="text-xs font-medium text-slate-500 mb-1">完整需求描述</p>
+                    <p className="text-sm text-slate-700">{owner.fullDesc}</p>
+                  </div>
+                )}
+
                 <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500">
                   <span>📍 {owner.region}</span>
                   <span>📐 {owner.area}</span>
@@ -123,13 +183,16 @@ export default function MatchingPage() {
                 ) : (
                   <>
                     <button
-                      onClick={() => setAccepted((prev) => new Set(prev).add(owner.id))}
+                      onClick={() => handleAccept(owner)}
                       className="px-4 py-2 rounded-lg text-sm font-medium bg-indigo-600 text-white hover:bg-indigo-700 transition-colors min-h-[44px]"
                     >
                       接案
                     </button>
-                    <button className="px-4 py-2 rounded-lg text-sm font-medium border border-slate-300 text-slate-600 hover:bg-slate-50 transition-colors min-h-[44px]">
-                      詳情
+                    <button
+                      onClick={() => setExpandedId(expandedId === owner.id ? null : owner.id)}
+                      className="px-4 py-2 rounded-lg text-sm font-medium border border-slate-300 text-slate-600 hover:bg-slate-50 transition-colors min-h-[44px]"
+                    >
+                      {expandedId === owner.id ? "收合" : "詳情"}
                     </button>
                   </>
                 )}

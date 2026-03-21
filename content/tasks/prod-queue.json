@@ -1,6 +1,6 @@
 {
-  "lastUpdated": "2026-03-21T15:30:00+08:00",
-  "updatedBy": "cto-audit-round-15",
+  "lastUpdated": "2026-03-21T18:00:00+08:00",
+  "updatedBy": "cto-audit-round-16",
   "context": "基於 Production codebase 實際狀態建立的開發佇列",
   "tasks": [
     {
@@ -90,9 +90,9 @@
         "app/types/site-inspections.ts"
       ],
       "priority": "P0",
-      "status": "ready",
+      "status": "done",
       "dependencies": [],
-      "notes": "待開發：後端 model SiteInspection(project_id, inspector_id, inspection_date, type, checklist(JSONB), overall_status, notes, photos)"
+      "notes": "✅ 已完成：(1) 建立完整型別定義 app/types/site-inspections.ts 包含檢查類型(quality/safety/progress)、狀態、預設檢查清單模板 (2) API client app/lib/api/site-inspections.ts 含 Mock 資料 fallback (3) 完整頁面 app/projects/[id]/inspections/page.tsx 包含巡檢列表、狀態篩選、新增表單、動態檢查清單、照片上傳、整體狀態管理等功能。使用 shadcn/ui + Tailwind 風格。"
     },
     {
       "id": "P-006",
@@ -170,6 +170,45 @@
       "status": "done",
       "dependencies": ["P-003"],
       "notes": "✅ 已完成：併入 P-003。app/contracts/[id]/page.tsx 已建立，包含合約詳情、付款里程碑時間軸、支付狀態更新功能。"
+    },
+    {
+      "id": "P-011",
+      "title": "🚨 TypeScript Build 錯誤修復 Round 2",
+      "repo": "LargeHomeAI--Frontend",
+      "description": "BUILD 失敗：app/projects/[id]/inspections/page.tsx 有 2 個 @typescript-eslint/no-explicit-any 錯誤在 line 87, 118。需要將 'any' type 改為具體型別定義。",
+      "files": [
+        "app/projects/[id]/inspections/page.tsx"
+      ],
+      "priority": "P0",
+      "status": "ready",
+      "dependencies": [],
+      "notes": "CRITICAL: Build 無法通過，阻止部署。需要修復 any types。"
+    },
+    {
+      "id": "P-012",
+      "title": "TopNav 整合 CRM 和 Contracts 入口",
+      "repo": "LargeHomeAI--Frontend",
+      "description": "TopNav 選單缺少 CRM 和合約管理入口。需在個人選單中加入：'CRM 系統' (/crm) 和 '合約管理' (/contracts) 連結。現有選單：個人檔案、通知設定、我的專案、訊息中心。",
+      "files": [
+        "app/components/TopNav.tsx"
+      ],
+      "priority": "P1",
+      "status": "ready",
+      "dependencies": ["P-001", "P-003"],
+      "notes": "現有 TopNav 結構完整，需要在 profile menu 中添加兩個新連結。"
+    },
+    {
+      "id": "P-013",
+      "title": "專案詳情頁子功能導航整合",
+      "repo": "LargeHomeAI--Frontend",
+      "description": "app/projects/[id]/page.tsx 需要加入導航到子功能：日報、巡檢、建材詢價。建立 tabs 或 quick actions 區塊，連結到：/projects/[id]/daily-reports、/projects/[id]/inspections、/projects/[id]/inquiries。",
+      "files": [
+        "app/projects/[id]/page.tsx"
+      ],
+      "priority": "P1",
+      "status": "ready",
+      "dependencies": ["P-002", "P-004", "P-005"],
+      "notes": "三個子功能都已完成，需要在主專案頁面提供導航入口。"
     }
   ],
   "rules": {
