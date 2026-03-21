@@ -260,15 +260,136 @@ export default function StrategicAudit({ compact = false }: { compact?: boolean 
 
   const { company, taiwan, japan, infrastructure, bd_expansion, mckinsey_recommendations } = data || {};
 
-  // Guard: if audit data schema changed (cron may update), show raw summary
+  // Guard: if audit data schema changed (cron may update), show formatted view
   if (!taiwan?.modules || !company) {
+    const status = data?.executionStatus;
+    const statusSummary = typeof status === 'string' ? status : status?.summary || '';
+    const achievements: string[] = typeof status === 'object' && status?.achievements ? status.achievements : [];
+    const systemHealth: Record<string, string> = typeof status === 'object' && status?.systemHealth ? status.systemHealth : {};
+    const actions: Array<{action: string; priority: string; details: string}> = Array.isArray(data?.businessActionPlan) ? data.businessActionPlan : [];
+    const metrics = data?.businessMetrics || {};
+
     return (
-      <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
-        <h2 className="text-lg font-bold text-slate-900 mb-3">🎯 戰略審計 Round {data?.round || '?'}</h2>
-        <p className="text-sm text-slate-600 mb-2">{data?.timestamp ? new Date(data.timestamp).toLocaleString('zh-TW') : ''}</p>
-        {data?.executionStatus && <p className="text-sm text-slate-700 mb-2">📋 {typeof data.executionStatus === 'string' ? data.executionStatus : JSON.stringify(data.executionStatus)}</p>}
-        {data?.criticalRecommendation && <p className="text-sm text-amber-700 bg-amber-50 rounded-lg p-3">⚠️ {typeof data.criticalRecommendation === 'string' ? data.criticalRecommendation : JSON.stringify(data.criticalRecommendation)}</p>}
-        {data?.businessActionPlan && <pre className="text-xs text-slate-500 mt-3 whitespace-pre-wrap">{JSON.stringify(data.businessActionPlan, null, 2)}</pre>}
+      <div className="space-y-4">
+        {/* Header */}
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-lg font-bold text-slate-900">🎯 戰略審計 Round {data?.round || '?'}</h2>
+              <p className="text-sm text-slate-500">{data?.timestamp ? new Date(data.timestamp).toLocaleString('zh-TW') : ''}</p>
+              {data?.perspective && <p className="text-xs text-indigo-600 mt-1">{data.perspective}</p>}
+            </div>
+            {data?.developmentStatus && (
+              <span className="text-xs px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 font-medium">
+                {typeof data.developmentStatus === 'string' ? data.developmentStatus.slice(0, 40) : ''}
+              </span>
+            )}
+          </div>
+
+          {/* Summary */}
+          {statusSummary && (
+            <p className="text-sm text-slate-700 leading-relaxed">{statusSummary}</p>
+          )}
+        </div>
+
+        {/* Achievements */}
+        {achievements.length > 0 && (
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+            <h3 className="text-sm font-semibold text-slate-900 mb-3">✅ 達成項目</h3>
+            <div className="space-y-2">
+              {achievements.map((a: string, i: number) => (
+                <div key={i} className="flex items-start gap-2 text-sm text-slate-700">
+                  <span className="text-emerald-500 mt-0.5 shrink-0">●</span>
+                  <span>{a}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* System Health */}
+        {Object.keys(systemHealth).length > 0 && (
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+            <h3 className="text-sm font-semibold text-slate-900 mb-3">🔧 系統狀態</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {Object.entries(systemHealth).map(([key, val]) => (
+                <div key={key} className="bg-slate-50 rounded-lg p-3">
+                  <p className="text-xs text-slate-500 mb-1">{key}</p>
+                  <p className="text-sm font-medium text-slate-800">{val}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Business Metrics */}
+        {Object.keys(metrics).length > 0 && (
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+            <h3 className="text-sm font-semibold text-slate-900 mb-3">📊 關鍵指標</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {Object.entries(metrics).map(([key, val]) => (
+                <div key={key} className="bg-indigo-50 rounded-lg p-3">
+                  <p className="text-xs text-indigo-500 mb-1">{key}</p>
+                  <p className="text-sm font-medium text-indigo-800">{typeof val === 'string' ? val : JSON.stringify(val)}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Critical Recommendation */}
+        {data?.criticalRecommendation && (
+          <div className="bg-amber-50 rounded-2xl p-6 shadow-sm border border-amber-200">
+            <h3 className="text-sm font-semibold text-amber-900 mb-2">⚠️ 關鍵建議</h3>
+            <p className="text-sm text-amber-800 leading-relaxed">
+              {typeof data.criticalRecommendation === 'string' ? data.criticalRecommendation : JSON.stringify(data.criticalRecommendation)}
+            </p>
+          </div>
+        )}
+
+        {/* Action Plan */}
+        {actions.length > 0 && (
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+            <h3 className="text-sm font-semibold text-slate-900 mb-3">📋 行動計畫</h3>
+            <div className="space-y-3">
+              {actions.map((item, i) => (
+                <div key={i} className="flex items-start gap-3 p-3 bg-slate-50 rounded-lg">
+                  <span className={`text-xs px-2 py-1 rounded-full font-medium shrink-0 ${
+                    item.priority?.includes('URGENT') ? 'bg-red-100 text-red-700' :
+                    item.priority?.includes('HIGH') ? 'bg-amber-100 text-amber-700' :
+                    'bg-blue-100 text-blue-700'
+                  }`}>
+                    {item.priority || 'N/A'}
+                  </span>
+                  <div>
+                    <p className="text-sm font-medium text-slate-900">{item.action}</p>
+                    <p className="text-xs text-slate-500 mt-0.5">{item.details}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Strategic Milestone */}
+        {data?.strategicMilestone && (
+          <div className="bg-gradient-to-r from-indigo-50 to-violet-50 rounded-2xl p-6 shadow-sm border border-indigo-100">
+            <h3 className="text-sm font-semibold text-indigo-900 mb-2">🏆 戰略里程碑</h3>
+            <p className="text-sm text-indigo-800 leading-relaxed">
+              {typeof data.strategicMilestone === 'string' ? data.strategicMilestone : JSON.stringify(data.strategicMilestone)}
+            </p>
+          </div>
+        )}
+
+        {/* Next Round */}
+        {data?.nextRoundStrategy && (
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+            <h3 className="text-sm font-semibold text-slate-900 mb-2">🔜 下一輪策略</h3>
+            <p className="text-sm text-slate-700 leading-relaxed">
+              {typeof data.nextRoundStrategy === 'string' ? data.nextRoundStrategy : JSON.stringify(data.nextRoundStrategy)}
+            </p>
+          </div>
+        )}
       </div>
     );
   }

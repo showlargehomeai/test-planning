@@ -1,6 +1,6 @@
 {
-  "lastUpdated": "2026-03-21T23:00:15+08:00",
-  "updatedBy": "cto-audit-prod-25115cf5",
+  "lastUpdated": "2026-03-21T23:06:45+08:00",
+  "updatedBy": "frontend-dev-agent",
   "context": "基於 Production codebase (~/largehomeai-repos/LargeHomeAI--Frontend) 開發。所有任務都在 production repo 寫 code，不在 test-planning。",
   "tasks": [
     {
@@ -304,14 +304,16 @@
       "description": "在產品搜尋/比價頁面，設計師選多個建材 → 一鍵向多家建材商同時詢價。interaction-service 已有 material_inquiries API。前端需要: 建材選擇購物車 + 批次詢價表單 + 詢價狀態追蹤頁。",
       "files": [
         "app/projects/[id]/batch-inquiry/page.tsx",
-        "app/lib/api/batch-inquiry.ts"
+        "app/lib/api/batch-inquiry.ts",
+        "app/types/batch-inquiry.ts",
+        "app/projects/[id]/page.tsx"
       ],
       "priority": "P0",
-      "status": "ready",
+      "status": "done",
       "dependencies": [
         "P-020"
       ],
-      "notes": "後端 MaterialInquiry model 已有。前端需接 /api/v1/material-inquiries。USE_MOCK 模式。"
+      "notes": "✅ 已完成：(1) 建立完整批次詢價管理頁面 app/projects/[id]/batch-inquiry/page.tsx，包含詢價列表、統計卡片、詢價詳情、新增批次詢價表單 (2) API client app/lib/api/batch-inquiry.ts 含完整 Mock 資料 (3) 型別定義 app/types/batch-inquiry.ts 含批次詢價、詢價項目、廠商回覆等完整型別 (4) 在專案詳情頁 app/projects/[id]/page.tsx 新增批次詢價導航入口 (5) 環境變數 NEXT_PUBLIC_BATCH_INQUIRY_USE_MOCK=true 已配置。Build 通過驗證。"
     },
     {
       "id": "P-022",
