@@ -1,8 +1,22 @@
 {
-  "lastUpdated": "2026-03-21T12:50:00+08:00",
-  "updatedBy": "cto-manual",
+  "lastUpdated": "2026-03-21T13:01:00+08:00",
+  "updatedBy": "cto-audit-Round5",
   "context": "基於 Production codebase 實際狀態建立的開發佇列",
   "tasks": [
+    {
+      "id": "P-000",
+      "title": "🚨 CRM TypeScript Type 衝突修復",
+      "repo": "LargeHomeAI--Frontend",
+      "description": "CRITICAL: Build 失敗，PipelineStage 定義不一致。app/types/crm.ts 定義 'closed_won'|'closed_lost'，但 app/crm/components/PipelineView.tsx 使用 'won'|'lost'。需要統一 type 定義或改前端元件代碼。Build error: Type '\"won\"' is not assignable to type 'PipelineStage'",
+      "files": [
+        "app/types/crm.ts",
+        "app/crm/components/PipelineView.tsx"
+      ],
+      "priority": "P0",
+      "status": "blocking",
+      "dependencies": [],
+      "notes": "阻塞 build 的關鍵問題。決定是改 type 還是改元件。"
+    },
     {
       "id": "P-001",
       "title": "CRM 前端接通真實 API（移除 USE_MOCK）",
@@ -15,7 +29,7 @@
       ],
       "priority": "P0",
       "status": "ready",
-      "dependencies": [],
+      "dependencies": ["P-000"],
       "notes": "後端已有: GET/POST/PATCH/DELETE /api/v1/crm/contacts, /pipeline, /bd-performance。DB migration 049 需確認是否已執行。"
     },
     {
@@ -91,7 +105,11 @@
       ],
       "priority": "P1",
       "status": "ready",
-      "dependencies": ["P-002", "P-004", "P-005"],
+      "dependencies": [
+        "P-002",
+        "P-004",
+        "P-005"
+      ],
       "notes": "專案頁面已有基本資訊展示，需要加入子頁面導航。合約可能是獨立路由不掛在 project 下。"
     },
     {
@@ -104,8 +122,16 @@
       ],
       "priority": "P2",
       "status": "ready",
-      "dependencies": ["P-001", "P-003"],
+      "dependencies": [
+        "P-001",
+        "P-003"
+      ],
       "notes": "確認現有 TopNav 的結構再決定放在哪裡"
     }
-  ]
+  ],
+  "rules": {
+    "NO_COMMIT": "絕對不 commit、不 push。所有開發只在本機端。",
+    "NO_GIT_WRITE": "禁止 git add / git commit / git push 到任何 production repo",
+    "LOCAL_ONLY": "只寫檔案、跑 build 驗證，不動 git"
+  }
 }
