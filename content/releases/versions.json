@@ -1,0 +1,84 @@
+[
+  {
+    "version": "v0.1.0",
+    "timestamp": "2026-03-17T13:00:00+08:00",
+    "description": "專案啟動 — 規劃系統 + 展示框架",
+    "author": "Bright",
+    "files": [],
+    "summary": {
+      "overview": "建立 TestPlanning 基礎架構，包含版本管理、展示檢視器、更新日誌等核心功能",
+      "changes": [
+        { "type": "feature", "text": "版本管理系統：demos/plans 雙軌版本控制 + versions.json" },
+        { "type": "feature", "text": "HtmlViewer 元件：iframe 沙盒化展示 HTML 內容" },
+        { "type": "feature", "text": "ChangelogTimeline 更新日誌：版本卡片 + Diff 檢視" },
+        { "type": "feature", "text": "Ideas 靈感捕捉系統" },
+        { "type": "feature", "text": "Dashboard 首頁 + 導航框架" }
+      ],
+      "businessGoal": "建立團隊協作的規劃管理平台，透過版本化追蹤產品演進",
+      "techNotes": "Next.js 15 App Router + TypeScript + Tailwind CSS v4"
+    }
+  },
+  {
+    "version": "v0.3.0",
+    "timestamp": "2026-03-20T14:00:00+08:00",
+    "description": "設計師加速器 MVP — CRM + 專案追蹤",
+    "author": "Bright",
+    "files": [],
+    "summary": {
+      "overview": "首個角色模組上線，設計師平台涵蓋 CRM、專案管理、報價、作品集等核心功能",
+      "changes": [
+        { "type": "feature", "text": "/designer — 設計師儀表板（營收趨勢、待辦、快速操作）" },
+        { "type": "feature", "text": "/designer/crm — CRM 客戶管理 + 客戶詳情頁 /designer/crm/[id]" },
+        { "type": "feature", "text": "/designer/projects — 專案管理列表" },
+        { "type": "feature", "text": "/designer/quotation — 智慧報價系統" },
+        { "type": "feature", "text": "/designer/portfolio — 作品集管理" },
+        { "type": "feature", "text": "/designer/kanban — 看板式進度追蹤" }
+      ],
+      "businessGoal": "驗證設計師角色的核心功能需求，建立第一批付費用戶基礎",
+      "techNotes": "Next.js App Router 動態路由、React Server Components"
+    }
+  },
+  {
+    "version": "v0.5.0",
+    "timestamp": "2026-03-21T12:00:00+08:00",
+    "description": "三角色平台上線 — 設計師 CRM + 建材商系統 + 工班管理 + 協作中心",
+    "author": "Bright",
+    "files": [],
+    "summary": {
+      "overview": "重大里程碑：三角色（設計師、建材商、工班）完整模組全部上線，並新增跨角色協作中心，平台從單一角色工具進化為三邊生態系統",
+      "changes": [
+        { "type": "breaking", "text": "平台架構從單角色（設計師）擴展為三角色生態系統" },
+        { "type": "feature", "text": "/designer — 設計師儀表板（營收趨勢、待辦清單、快速操作）" },
+        { "type": "feature", "text": "/designer/crm + /designer/crm/[id] — CRM 客戶管理系統 + 客戶詳情" },
+        { "type": "feature", "text": "/designer/projects — 專案管理列表" },
+        { "type": "feature", "text": "/designer/portfolio — 作品集管理" },
+        { "type": "feature", "text": "/designer/reviews — 評價管理" },
+        { "type": "feature", "text": "/designer/booking — 預約排程" },
+        { "type": "feature", "text": "/designer/rendering — AI 渲染工具" },
+        { "type": "feature", "text": "/designer/materials — 建材瀏覽與選購" },
+        { "type": "feature", "text": "/designer/quotation — 智慧報價系統" },
+        { "type": "feature", "text": "/designer/kanban — 看板式工程進度" },
+        { "type": "feature", "text": "/designer/contracts — 合約管理" },
+        { "type": "feature", "text": "/designer/finance — 財務收支管理" },
+        { "type": "feature", "text": "/designer/matching — AI 媒合" },
+        { "type": "feature", "text": "/supplier — 建材商儀表板（銷售統計、熱銷品、訂單概覽）" },
+        { "type": "feature", "text": "/supplier/catalog — 產品目錄管理" },
+        { "type": "feature", "text": "/supplier/orders — 訂單追蹤管理" },
+        { "type": "feature", "text": "/supplier/quotes — 報價單管理" },
+        { "type": "feature", "text": "/contractor — 工班管理儀表板（排程、進度、團隊）" },
+        { "type": "feature", "text": "/contractor/schedule — 工程排程日曆" },
+        { "type": "feature", "text": "/contractor/records — 施工記錄回報" },
+        { "type": "feature", "text": "/contractor/team — 團隊人員管理" },
+        { "type": "feature", "text": "/collaboration — 跨角色協作中心（專案列表 + 即時狀態）" },
+        { "type": "feature", "text": "/collaboration/[projectId] — 專案協作詳情（時間線、文件、成員）" },
+        { "type": "feature", "text": "/dashboard/overview — 平台數據總覽" },
+        { "type": "feature", "text": "/dashboard/analytics — 用戶分析" },
+        { "type": "feature", "text": "/dashboard/bd — BD 業務拓展追蹤" },
+        { "type": "feature", "text": "/dashboard/audit — 稽核紀錄" },
+        { "type": "improvement", "text": "商業計畫書更新至 v007：三角色完整商業模式 + 財務預測" }
+      ],
+      "businessGoal": "完成三角色 MVP 全面上線，形成設計師 ↔ 建材商 ↔ 工班的完整生態閉環，為 AI 媒合引擎提供三方數據基礎",
+      "techNotes": "新增 28 個路由、3 大角色模組、1 個跨角色協作中心、支援 releases 版本類型。技術棧：Next.js 15 + TypeScript + Tailwind CSS v4"
+    }
+  }
+]

@@ -1,6 +1,6 @@
 {
-  "lastUpdated": "2026-03-21T10:30:00+08:00",
-  "updatedBy": "cto-audit-round-22",
+  "lastUpdated": "2026-03-21T14:00:00+08:00",
+  "updatedBy": "dev-agent",
   "tasks": [
     {
       "id": "T-001",
@@ -176,11 +176,12 @@
       "title": "商業計畫頁面資料更新",
       "description": "更新 /plan 頁面的商業計畫內容，反映目前三角色生態的最新進展、技術架構優勢、市場競爭差異化。確保與實際產品開發進度一致。",
       "priority": "P1",
-      "status": "ready",
-      "assignee": "content-agent",
+      "status": "done",
+      "assignee": "dev-agent",
       "module": "planning",
       "files": [
-        "app/plan/page.tsx"
+        "content/plans/v007/index.html",
+        "content/plans/versions.json"
       ],
       "dependencies": [],
       "acceptanceCriteria": [
@@ -190,7 +191,8 @@
         "營運時程對齊"
       ],
       "createdAt": "2026-03-21T10:00:00+08:00",
-      "notes": "Round 22：需要內容更新，反映當前開發進度"
+      "completedAt": "2026-03-21T14:00:00+08:00",
+      "notes": "plan v007：三角色完整商業計畫書，含市場規模、5大收入模式、網路效應、競品對比、三年財務預測"
     },
     {
       "id": "T-009",
@@ -201,7 +203,10 @@
       "assignee": "dev-agent",
       "module": "planning",
       "files": [
-        "app/changelog/page.tsx"
+        "app/changelog/_components/ChangelogTimeline.tsx",
+        "app/lib/versions.ts",
+        "app/api/versions/route.ts",
+        "content/releases/versions.json"
       ],
       "dependencies": [],
       "acceptanceCriteria": [
@@ -211,8 +216,8 @@
         "技術升級日誌"
       ],
       "createdAt": "2026-03-21T10:00:00+08:00",
-      "completedAt": "2026-03-21T10:30:00+08:00",
-      "notes": "Round 22 確認：檔案存在，changelog 頁面已建立"
+      "completedAt": "2026-03-21T14:00:00+08:00",
+      "notes": "新增 releases 版本類型 + 平台版本 tab，v0.5.0 三角色上線紀錄含 28 個路由清單"
     },
     {
       "id": "T-010",

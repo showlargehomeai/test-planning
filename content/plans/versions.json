@@ -210,5 +210,26 @@
       "businessGoal": "用 M365 已購買的基礎設施 + 自有工程團隊，打造裝修產業垂直 CRM，省下巨額授權費的同時實現三角色深度整合",
       "techNotes": "深色主題、1,513 行、10 章節、含架構圖和 DB schema"
     }
+  },
+  {
+    "version": "v007",
+    "timestamp": "2026-03-21T14:00:00+08:00",
+    "description": "三角色平台完整商業計畫書 — 設計師 + 建材商 + 工班",
+    "author": "Claude",
+    "files": ["index.html"],
+    "summary": {
+      "overview": "全新商業計畫書，完整呈現三角色生態平台的市場機會、商業模式、網路效應、競爭優勢與三年財務預測",
+      "changes": [
+        { "type": "feature", "text": "台灣室內設計市場 2,000 億規模分析 + 產業痛點三維拆解" },
+        { "type": "feature", "text": "五大收入模式：SaaS 訂閱（45%）+ 媒合佣金（25%）+ 建材商上架費（15%）+ 增值服務（10%）+ 數據洞察（5%）" },
+        { "type": "feature", "text": "三角色飛輪網路效應模型 — 設計師 ↔ 建材商 ↔ 工班正向循環" },
+        { "type": "feature", "text": "競品對比矩陣：LargeHome vs 單點工具（設計師工具/建材平台/工程管理）" },
+        { "type": "feature", "text": "三年財務預測：Y1 營收 1,800 萬 → Y2 7,200 萬 → Y3 1.8 億，Y2 損益兩平" },
+        { "type": "feature", "text": "單位經濟模型：LTV/CAC 24x、CAC 回收 1.5 個月、毛利率 78%" },
+        { "type": "feature", "text": "三階段路線圖：MVP → AI 媒合 → 數據平台 + 日本市場" }
+      ],
+      "businessGoal": "以完整的三角色商業計畫書驗證 LargeHome AI 平台的商業可行性，支撐融資與內部決策",
+      "techNotes": "淺色主題、Tailwind CSS + Chart.js、響應式設計、含互動圖表與對比矩陣"
+    }
   }
 ]

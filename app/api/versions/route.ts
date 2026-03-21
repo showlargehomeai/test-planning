@@ -4,9 +4,9 @@ import { getVersions } from "@/app/lib/versions";
 export async function GET(request: NextRequest) {
   const type = request.nextUrl.searchParams.get("type");
 
-  if (type !== "demos" && type !== "plans") {
+  if (type !== "demos" && type !== "plans" && type !== "releases") {
     return NextResponse.json(
-      { error: 'type must be "demos" or "plans"' },
+      { error: 'type must be "demos", "plans", or "releases"' },
       { status: 400 }
     );
   }

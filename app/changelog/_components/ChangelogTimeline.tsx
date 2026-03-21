@@ -46,7 +46,7 @@ function formatTime(timestamp: string): string {
 }
 
 export default function ChangelogTimeline() {
-  const [type, setType] = useState<"demos" | "plans">("demos");
+  const [type, setType] = useState<"demos" | "plans" | "releases">("releases");
   const [versions, setVersions] = useState<VersionEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedDiff, setExpandedDiff] = useState<string | null>(null);
@@ -82,6 +82,16 @@ export default function ChangelogTimeline() {
     <div>
       {/* Type tabs */}
       <div className="flex gap-2 mb-8">
+        <button
+          onClick={() => setType("releases")}
+          className={`px-5 py-2 rounded-lg text-sm font-medium transition-all ${
+            type === "releases"
+              ? "bg-indigo-600 text-white shadow-sm"
+              : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
+          }`}
+        >
+          🚀 平台版本
+        </button>
         <button
           onClick={() => setType("demos")}
           className={`px-5 py-2 rounded-lg text-sm font-medium transition-all ${
