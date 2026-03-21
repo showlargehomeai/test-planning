@@ -22,12 +22,6 @@
   .kpi-card { background: linear-gradient(135deg, #f0f9ff, #ede9fe); border-radius: 12px; padding: 20px; text-align: center; }
   .kpi-card .num { font-size: 2rem; font-weight: 800; color: #4f46e5; }
   .kpi-card .label { font-size: 0.85rem; color: #64748b; margin-top: 4px; }
-  .timeline { position: relative; padding-left: 32px; }
-  .timeline::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 3px; background: #c7d2fe; border-radius: 2px; }
-  .timeline-item { position: relative; margin-bottom: 28px; }
-  .timeline-item::before { content: ''; position: absolute; left: -28px; top: 6px; width: 14px; height: 14px; border-radius: 50%; border: 3px solid #6366f1; background: white; }
-  .timeline-item.done::before { background: #22c55e; border-color: #22c55e; }
-  .timeline-item.active::before { background: #6366f1; border-color: #6366f1; }
   .phase-tag { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
   .tag-red { background: #fef2f2; color: #dc2626; }
   .tag-amber { background: #fffbeb; color: #d97706; }
@@ -51,7 +45,7 @@
 
 <div class="hero">
   <h1>🏠 LargeHome AI — 2026 BD 整體發展策略</h1>
-  <p>綜合 200BD 全台擴張計畫 × BD 角色規劃方案<br>以已完成目標為出發點，12月前達成全年目標</p>
+  <p>設計師的採購聯盟 × 建材商的獲客平台 × 工班的案源引擎<br>從市場痛點出發，用三層武器打造室內設計產業的基礎設施</p>
   <div style="margin-top:20px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
     <div style="background:rgba(255,255,255,0.15); padding:8px 20px; border-radius:12px;"><strong>目標月營收</strong><br>9,050 萬（M12）</div>
     <div style="background:rgba(255,255,255,0.15); padding:8px 20px; border-radius:12px;"><strong>BD 團隊</strong><br>46→200 人</div>
@@ -62,16 +56,243 @@
 
 <div class="container">
 
-<!-- ══════════════════════════════════════════ -->
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<!-- 市場痛點                                                          -->
+<!-- ══════════════════════════════════════════════════════════════════ -->
 <div class="section">
-  <h2 class="section-title">📍 一、現狀盤點 — 我們在哪裡</h2>
+  <h2 class="section-title">😤 室內設計產業的三角困局</h2>
 
+  <p style="color:#475569; margin-bottom:20px;">
+    台灣室內設計產業有三個核心角色 — 設計師、建材商、工班。他們每天都在做重複、低效、互相找不到對方的事。
+    問題的本質只有兩個字：<strong>資訊不對稱</strong>和<strong>議價權不對等</strong>。
+  </p>
+
+  <div class="grid-3">
+    <div class="card" style="border-top: 4px solid #6366f1;">
+      <h3>🎨 設計師的痛</h3>
+      <ul style="font-size:0.85rem;">
+        <li>找建材要跑 3-5 家展示廳，每家看 2 小時</li>
+        <li>比價打 5 通電話，等 2-3 天才收到回覆</li>
+        <li>個人叫 10 箱，工廠根本不理你</li>
+        <li>大事務所叫 100 箱直接 7 折，小設計師永遠拿不到好價格</li>
+        <li>找工班靠口碑，品質像開獎</li>
+      </ul>
+      <p style="font-size:0.8rem; color:#dc2626; margin-top:8px; font-weight:600;">一個 35 坪住宅案，光選材就花 2-3 週</p>
+    </div>
+    <div class="card" style="border-top: 4px solid #f59e0b;">
+      <h3>🏭 建材商的痛</h3>
+      <ul style="font-size:0.85rem;">
+        <li>等客上門，沒有主動獲客管道</li>
+        <li>養一個 BD 月薪 $35K-$50K，成效不確定</li>
+        <li>觸及不到設計師群體 — 不知道誰在找你的產品</li>
+        <li>被動等電話問價，一家一家回覆效率極低</li>
+        <li>同業削價競爭，無法差異化</li>
+      </ul>
+      <p style="font-size:0.8rem; color:#dc2626; margin-top:8px; font-weight:600;">好產品賣不出去，因為設計師根本不知道你</p>
+    </div>
+    <div class="card" style="border-top: 4px solid #22c55e;">
+      <h3>🔨 工班的痛</h3>
+      <ul style="font-size:0.85rem;">
+        <li>完全靠口碑和轉介紹，被動等電話</li>
+        <li>淡旺季落差巨大，收入不穩定</li>
+        <li>花 $5K-$15K/月 在 591 刊登，轉換率低</li>
+        <li>被統包壓價，沒有議價權</li>
+        <li>沒有系統管理排程和工程記錄</li>
+      </ul>
+      <p style="font-size:0.8rem; color:#dc2626; margin-top:8px; font-weight:600;">好師傅接不到案，爛師傅到處接案</p>
+    </div>
+  </div>
+
+  <!-- 量化痛點表 -->
   <div class="card">
-    <h3>✅ 已完成的技術基礎（不可低估的護城河）</h3>
-    <div class="grid-3">
+    <h3>📊 痛點量化 — 每一個數字都是我們的機會</h3>
+    <table>
+      <tr><th>環節</th><th>現在怎麼做</th><th>花多久</th><th>核心問題</th></tr>
+      <tr>
+        <td><strong>找建材</strong></td>
+        <td>設計師跑 3-5 家展示廳，每家看 2 小時</td>
+        <td>1-2 天</td>
+        <td>資訊分散，沒有統一搜尋入口</td>
+      </tr>
+      <tr>
+        <td><strong>比價</strong></td>
+        <td>打電話給 5 家問價，等 2-3 天回覆</td>
+        <td>2-3 天</td>
+        <td>價格不透明，每次都要重來</td>
+      </tr>
+      <tr style="background:#fef2f2">
+        <td><strong>議價</strong></td>
+        <td>個人叫 10 箱工廠不理，大所叫 100 箱直接 7 折</td>
+        <td>—</td>
+        <td><strong>議價權不對等，小設計師永遠吃虧</strong></td>
+      </tr>
+      <tr>
+        <td><strong>詢價</strong></td>
+        <td>逐家打電話，每家講 10 分鐘</td>
+        <td>半天</td>
+        <td>重複勞動，沒有批次工具</td>
+      </tr>
+      <tr>
+        <td><strong>算用量</strong></td>
+        <td>手動算坪數 × 用量，容易算錯</td>
+        <td>1-2 小時</td>
+        <td>人工計算，出錯成本高</td>
+      </tr>
+      <tr>
+        <td><strong>建材商獲客</strong></td>
+        <td>養 BD 掃街或等客上門</td>
+        <td>$35-50K/月/人</td>
+        <td>成本高、觸及面窄</td>
+      </tr>
+      <tr>
+        <td><strong>工班找案</strong></td>
+        <td>被動等口碑轉介紹 + 591 刊登</td>
+        <td>不確定</td>
+        <td>案源不穩，淡旺季落差大</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="alert">
+    <strong>問題的本質：三個角色彼此需要，卻互相找不到。</strong><br>
+    設計師需要建材和工班 → 建材商需要設計師的訂單 → 工班需要設計師的案源。<br>
+    缺一個中間平台把三方串起來。<strong>這就是樂居要做的事。</strong>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<!-- 我們的解法                                                        -->
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title">🔫 樂居的三層武器與認證生態</h2>
+
+  <div class="highlight">
+    <strong>樂居不是「找建材的網站」— 我們是三件事的交集：</strong><br>
+    🎨 <strong>設計師的採購聯盟</strong> — 500 人一起議價，拿到跟大事務所一樣的折扣<br>
+    🏭 <strong>建材商的精準獲客平台</strong> — 設計師主動搜尋你的產品，不用再養 BD 掃街<br>
+    🔨 <strong>工班的案源引擎</strong> — 附近的裝修案自動通知你，不用再被動等電話
+  </div>
+
+  <!-- 三層武器 -->
+  <div class="card">
+    <h3>三層武器 — 讓每個角色都「離不開」</h3>
+
+    <!-- 武器 1: 比價引擎 -->
+    <div style="background:#f0fdf4; border-radius:12px; padding:20px; margin-bottom:16px;">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+        <span class="badge" style="background:#dcfce7;color:#16a34a;">P0 立即做</span>
+        <h4 style="font-size:1rem; margin:0;">🔍 武器 1：即時比價引擎</h4>
+      </div>
+      <p style="font-size:0.85rem; color:#475569; margin-bottom:12px;">
+        設計師輸入「60x60 霧面磁磚」→ 平台 10 秒內顯示：
+      </p>
+      <div style="background:white; border-radius:8px; padding:16px; font-size:0.85rem; border:1px solid #d1fae5;">
+        <table style="margin:0;">
+          <tr><th>品牌</th><th>品名</th><th>單價</th><th>庫存</th><th>歷史低價</th><th>操作</th></tr>
+          <tr><td>冠軍磁磚</td><td>霧面仿石紋 60x60</td><td><strong>$180</strong>/片</td><td>✅ 有貨</td><td>$165（去年 11 月）</td><td><span style="color:#2563eb;">詢價</span></td></tr>
+          <tr><td>三洋磁磚</td><td>岩板灰 60x60</td><td><strong>$165</strong>/片</td><td>✅ 有貨</td><td>$155（今年 1 月）</td><td><span style="color:#2563eb;">詢價</span></td></tr>
+          <tr><td>白馬磁磚</td><td>水泥質感 60x60</td><td><strong>$145</strong>/片</td><td>⏳ 預訂 7 天</td><td>$140（去年 8 月）</td><td><span style="color:#2563eb;">詢價</span></td></tr>
+        </table>
+        <div style="margin-top:12px; padding-top:12px; border-top:1px solid #e2e8f0;">
+          <strong>📐 用量計算器：</strong>客廳 35 坪 → 需要 420 片 → 冠軍總價 $75,600 / 三洋總價 $69,300 / 白馬總價 $60,900
+        </div>
+      </div>
+      <p style="font-size:0.8rem; color:#64748b; margin-top:8px;">
+        <strong>技術基礎：</strong>product-service DB 已有 unit_price / price_per_ping / price_per_m2 欄位，1,975 個 SKU 都有價格。只缺前端比價介面。
+      </p>
+    </div>
+
+    <!-- 武器 2: 一鍵詢價 -->
+    <div style="background:#eff6ff; border-radius:12px; padding:20px; margin-bottom:16px;">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+        <span class="badge" style="background:#dbeafe;color:#2563eb;">P0 立即做</span>
+        <h4 style="font-size:1rem; margin:0;">📨 武器 2：一鍵批次詢價</h4>
+      </div>
+      <div style="font-size:0.85rem; color:#475569;">
+        <p style="margin-bottom:8px;">設計師選好 3 種磁磚 →「一鍵向 5 家建材商詢價」→</p>
+        <div style="background:white; border-radius:8px; padding:16px; border:1px solid #bfdbfe;">
+          <p>① 5 家建材商<strong>同時收到 LINE 通知</strong>：「林設計師詢價：60x60 霧面磁磚 × 420 片」</p>
+          <p>② 建材商在平台上回覆報價（24 小時內）</p>
+          <p>③ 設計師看到<strong>比較表</strong>：價格、交期、運費一目了然</p>
+          <p>④ 選最優方案 → 一鍵下單</p>
+        </div>
+        <p style="margin-top:8px;"><strong>技術基礎：</strong>interaction-service 已有 material_inquiries API（POST /api/v1/material-inquiries）。LINE 推播用現有 NovuService + LineService。只缺前端「批次選擇 + 詢價表單」UI。</p>
+      </div>
+    </div>
+
+    <!-- 武器 3: 團購議價 -->
+    <div style="background:#fef2f2; border-radius:12px; padding:20px;">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+        <span class="badge" style="background:#fecaca;color:#dc2626;">P1 殺手鐧</span>
+        <h4 style="font-size:1rem; margin:0;">👑 武器 3：團購議價 / 平台獨家價</h4>
+      </div>
+      <div style="font-size:0.85rem; color:#475569;">
+        <p style="margin-bottom:12px;"><strong>這個功能不需要寫 code，需要的是 BD 拿數據去談。</strong></p>
+        <div style="background:white; border-radius:8px; padding:16px; border:1px solid #fecaca;">
+          <p><strong>BD 對冠軍磁磚說：</strong></p>
+          <p style="background:#fef3c7; padding:12px; border-radius:8px; margin:8px 0; font-style:italic;">
+            「張總，我們平台上個月有 180 位設計師搜尋了你們的 60x60 霧面磁磚。<br>
+            如果你給我們一個平台獨家價，比如 85 折，我們幫你把這 180 個設計師推過來。<br>
+            你算算看，180 個潛在客戶 × 平均 500 片 = 90,000 片。這個量值不值得給個好價格？」
+          </p>
+          <p><strong>結果：三方共贏</strong></p>
+          <ul>
+            <li>設計師：原價 $180 → 平台價 $153 → <strong>省 15%</strong></li>
+            <li>冠軍磁磚：一次觸及 180 個潛在客戶 → <strong>獲客成本趨近零</strong></li>
+            <li>樂居：從價差中抽取 3-5% 服務費 → <strong>新營收來源</strong></li>
+            <li>小設計師：終於能拿到跟大事務所一樣的價格 → <strong>永遠不離開</strong></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 效果對比 -->
+  <div class="card">
+    <h3>⚡ 用了樂居之後</h3>
+    <table>
+      <tr><th>環節</th><th>傳統做法</th><th>用樂居</th><th>效率提升</th></tr>
+      <tr>
+        <td><strong>找建材</strong></td>
+        <td>跑 3-5 家展示廳，1-2 天</td>
+        <td>平台搜尋比較，30 分鐘</td>
+        <td><span class="badge" style="background:#dcfce7;color:#16a34a;">⚡ 快 10 倍</span></td>
+      </tr>
+      <tr>
+        <td><strong>比價</strong></td>
+        <td>打電話問 5 家，等 2-3 天</td>
+        <td>即時比價表，10 秒出結果</td>
+        <td><span class="badge" style="background:#dcfce7;color:#16a34a;">⚡ 快 100 倍</span></td>
+      </tr>
+      <tr>
+        <td><strong>議價</strong></td>
+        <td>個人叫貨沒折扣</td>
+        <td>500 人聯盟集體議價 = 8 折平台價</td>
+        <td><span class="badge" style="background:#fef2f2;color:#dc2626;">💰 省 20%</span></td>
+      </tr>
+      <tr>
+        <td><strong>詢價</strong></td>
+        <td>逐家打電話，半天</td>
+        <td>一鍵向 5 家同時詢價，24hr 收回覆</td>
+        <td><span class="badge" style="background:#dcfce7;color:#16a34a;">⚡ 快 5 倍</span></td>
+      </tr>
+      <tr>
+        <td><strong>算用量</strong></td>
+        <td>手動算，1-2 小時</td>
+        <td>輸入坪數自動計算數量 + 總價</td>
+        <td><span class="badge" style="background:#dcfce7;color:#16a34a;">⚡ 快 10 倍</span></td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- 技術基礎 -->
+  <div class="card">
+    <h3>✅ 已完成的技術基礎（護城河）</h3>
+    <div class="grid-4">
       <div class="kpi-card"><div class="num">14</div><div class="label">微服務已上線</div></div>
       <div class="kpi-card"><div class="num">47</div><div class="label">前端頁面</div></div>
       <div class="kpi-card"><div class="num">1,975</div><div class="label">產品 SKU</div></div>
+      <div class="kpi-card"><div class="num">70</div><div class="label">建材商</div></div>
     </div>
     <div style="margin-top:16px;">
       <div class="grid-2">
@@ -103,48 +324,21 @@
         </div>
       </div>
     </div>
+    <div class="alert" style="margin-top:16px;">
+      <strong>⚠️ 關鍵落差：技術 100% 就緒，但商業化 &lt;20%</strong><br>
+      不需要更多技術投資，需要的是「產品→商業」的轉換引擎 = <strong>BD 團隊</strong>。
+    </div>
   </div>
 
-  <div class="alert">
-    <strong>⚠️ 關鍵落差：技術 100% 就緒，但商業化 <20%</strong><br>
-    CRM 前端還在 mock 數據、設計師工具缺乏差異化功能、三角色協作尚未打通。<br>
-    <strong>結論：不需要更多技術投資，需要的是「產品→商業」的轉換引擎 = BD 團隊。</strong>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════ -->
-<div class="section">
-  <h2 class="section-title">🎯 二、2026 年度終極目標（12月31日前）</h2>
-
-  <div class="grid-4">
-    <div class="kpi-card"><div class="num">2,755</div><div class="label">SaaS 認證客戶</div></div>
-    <div class="kpi-card"><div class="num">$9,050萬</div><div class="label">M12 月營收</div></div>
-    <div class="kpi-card"><div class="num">200</div><div class="label">BD 團隊規模</div></div>
-    <div class="kpi-card"><div class="num">$10.9億</div><div class="label">年化營收</div></div>
-  </div>
-
-  <div class="card" style="margin-top:20px;">
-    <h3>目標拆解 — 從認證制驅動營收</h3>
-    <table>
-      <tr><th>角色</th><th>M6 認證數</th><th>M12 認證數</th><th>月費範圍</th><th>加權 ARPU/月</th><th>M12 月營收貢獻</th></tr>
-      <tr><td>🏭 建材商 PRO</td><td>60 家</td><td>150 家</td><td>$15K-$50K/月</td><td>$28K</td><td>~$4,200萬</td></tr>
-      <tr><td>👷 工班 PRO</td><td>120 人</td><td>800 人</td><td>$15K-$35K/月</td><td>$20K</td><td>~$1,600萬</td></tr>
-      <tr><td>🎨 設計師 PRO</td><td>80 人</td><td>800 人</td><td>$15K-$50K/月</td><td>$25K</td><td>~$2,000萬</td></tr>
-      <tr><td colspan="5"><strong>SaaS 認證合計</strong></td><td><strong>~$7,800萬</strong></td></tr>
-      <tr><td colspan="5">既有營收（產品/廣告/服務）</td><td>$1,250萬</td></tr>
-      <tr><td colspan="5"><strong>M12 月營收合計</strong></td><td><strong>≈$9,050萬</strong></td></tr>
-    </table>
-  </div>
-
-  <!-- 認證定價詳細表 -->
-  <div class="card" style="margin-top:20px;">
+  <!-- PRO 認證定價 -->
+  <div class="card">
     <h3>💎 樂居 PRO 認證三級定價（$15,000 - $50,000/月）</h3>
     <div class="highlight">
       <strong>定價邏輯：</strong>所有角色起步價統一 $15,000/月，降低入門門檻。<br>
       進階功能按需升級，最高 $50,000/月。讓每個角色都「付得起、用得到、離不開」。
     </div>
 
-    <h4 style="margin-top:20px; font-size:0.95rem; color:#1e293b;">🏭 建材商認證方案</h4>
+    <h4 style="font-size:0.95rem; color:#1e293b;">🏭 建材商認證方案</h4>
     <table>
       <tr><th>等級</th><th>月費</th><th>產品上架</th><th>設計師連結</th><th>詢價通知</th><th>數據報表</th><th>核心價值</th></tr>
       <tr style="background:#f0fdf4">
@@ -241,9 +435,9 @@
     </table>
   </div>
 
-  <!-- 定價策略說明 -->
-  <div class="card" style="margin-top:20px;">
-    <h3>📊 定價策略 — 為什麼統一 $15K 起步</h3>
+  <!-- 定價策略 & ROI -->
+  <div class="card">
+    <h3>📊 為什麼 $15K 起步？</h3>
     <div class="two-col">
       <div>
         <h4 style="font-size:0.9rem; margin-bottom:8px;">市場對標分析</h4>
@@ -276,29 +470,150 @@
     </div>
   </div>
 
-  <!-- 免費→認證轉換時程 -->
-  <div class="card" style="margin-top:20px;">
-    <h3>🔄 免費→認證 轉換時程與話術</h3>
-    <table>
-      <tr><th>時間</th><th>動作</th><th>目標</th><th>話術要點</th></tr>
-      <tr><td>M1-M5</td><td>全免費開放</td><td>衝供給量</td><td>「完全免費，先體驗平台價值」</td></tr>
-      <tr><td>M5</td><td>宣布認證制度</td><td>心理準備</td><td>「樂居 PRO 認證即將上線，搶先申請享早鳥優惠」</td></tr>
-      <tr style="background:#fefce8"><td><strong>M6</strong></td><td>PRO Basic 上線</td><td>首批轉換</td><td>「通過認證 = 專業身份象徵，首月 $7,500（5 折）」</td></tr>
-      <tr><td>M7-M9</td><td>免費版功能限縮</td><td>引導升級</td><td>「您的詢價已達上限，升級 PRO 立即解鎖」</td></tr>
-      <tr style="background:#f0fdf4"><td><strong>M10</strong></td><td>PRO Plus/Elite 上線</td><td>ARPU 提升</td><td>「您的業務量值得更好的工具，首月 7 折」</td></tr>
-      <tr><td>M11-M12</td><td>全面推廣</td><td>規模變現</td><td>「同業都已認證，您還在用免費版？」</td></tr>
-    </table>
-    <div class="alert" style="margin-top:12px;">
-      <strong>核心心理：</strong>付的不是「月費」，是「認證維護費」。<br>
-      ❌ 舊話術：「我們平台要開始收費了，月費 $15,000」→ 抗拒<br>
-      ✅ 新話術：「樂居 PRO 認證需要審核品質和回覆速度，不是每家都能通過。維護費 $15,000/月」→ 主動申請
+  <!-- 競爭壁壘 -->
+  <div class="card">
+    <h3>🏰 為什麼競爭對手做不到</h3>
+    <div class="grid-3">
+      <div style="background:#f0fdf4; border-radius:12px; padding:16px; text-align:center;">
+        <p style="font-size:2rem;">📊</p>
+        <p style="font-weight:700; margin:8px 0;">數據壁壘</p>
+        <p style="font-size:0.8rem; color:#64748b;">1,975 個 SKU 的即時價格<br>每天的搜尋/詢價數據<br>新進者需要 2-3 年才能累積</p>
+      </div>
+      <div style="background:#eff6ff; border-radius:12px; padding:16px; text-align:center;">
+        <p style="font-size:2rem;">🤝</p>
+        <p style="font-weight:700; margin:8px 0;">關係壁壘</p>
+        <p style="font-size:0.8rem; color:#64748b;">BD 深耕建材商 = 獨家價格<br>500 設計師的集體議價權<br>這不是花錢就能買到的</p>
+      </div>
+      <div style="background:#fef3c7; border-radius:12px; padding:16px; text-align:center;">
+        <p style="font-size:2rem;">🔒</p>
+        <p style="font-weight:700; margin:8px 0;">轉換成本</p>
+        <p style="font-size:0.8rem; color:#64748b;">設計師離開 = 多付 20% 建材費<br>建材商離開 = 失去 500 個潛在客戶<br><strong>雙邊鎖定</strong></p>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════ -->
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<!-- 終極目標                                                          -->
+<!-- ══════════════════════════════════════════════════════════════════ -->
 <div class="section">
-  <h2 class="section-title">🔬 三、BD 專精化分析 — 產品×工項×區域深耕策略</h2>
+  <h2 class="section-title">🎯 2026 終極目標：12 月前達成</h2>
+
+  <div class="grid-4">
+    <div class="kpi-card"><div class="num">2,755</div><div class="label">SaaS 認證客戶</div></div>
+    <div class="kpi-card"><div class="num">$9,050萬</div><div class="label">M12 月營收</div></div>
+    <div class="kpi-card"><div class="num">200</div><div class="label">BD 團隊規模</div></div>
+    <div class="kpi-card"><div class="num">$10.9億</div><div class="label">年化營收</div></div>
+  </div>
+
+  <!-- 營收拆解 -->
+  <div class="card" style="margin-top:20px;">
+    <h3>營收拆解 — 認證制驅動</h3>
+    <table>
+      <tr><th>角色</th><th>M6 認證數</th><th>M12 認證數</th><th>月費範圍</th><th>加權 ARPU/月</th><th>M12 月營收貢獻</th></tr>
+      <tr><td>🏭 建材商 PRO</td><td>60 家</td><td>150 家</td><td>$15K-$50K/月</td><td>$28K</td><td>~$4,200萬</td></tr>
+      <tr><td>👷 工班 PRO</td><td>120 人</td><td>800 人</td><td>$15K-$35K/月</td><td>$20K</td><td>~$1,600萬</td></tr>
+      <tr><td>🎨 設計師 PRO</td><td>80 人</td><td>800 人</td><td>$15K-$50K/月</td><td>$25K</td><td>~$2,000萬</td></tr>
+      <tr><td colspan="5"><strong>SaaS 認證合計</strong></td><td><strong>~$7,800萬</strong></td></tr>
+      <tr><td colspan="5">既有營收（產品/廣告/服務）</td><td>$1,250萬</td></tr>
+      <tr><td colspan="5"><strong>M12 月營收合計</strong></td><td><strong>≈$9,050萬</strong></td></tr>
+    </table>
+  </div>
+
+  <!-- 分季度 KPI -->
+  <div class="card">
+    <h3>📅 分季度 KPI 拆解</h3>
+    <table>
+      <tr><th>季度</th><th>BD 規模</th><th>累計客戶</th><th>SaaS MRR</th><th>合計月營收</th><th>核心任務</th></tr>
+      <tr style="background:#fef2f2">
+        <td><strong>Q1（M1-M3）</strong></td>
+        <td>6→15 人</td>
+        <td>216→281</td>
+        <td>$508→660萬</td>
+        <td>$1,758→1,910萬</td>
+        <td>建立司令部 + 台北打版（5人×3品類）</td>
+      </tr>
+      <tr style="background:#fefce8">
+        <td><strong>Q2（M4-M6）</strong></td>
+        <td>15→58 人</td>
+        <td>281→644</td>
+        <td>$660→1,513萬</td>
+        <td>$1,910→2,763萬</td>
+        <td>北部展開 + 中南啟動 + PRO 認證上線</td>
+      </tr>
+      <tr style="background:#f0fdf4">
+        <td><strong>Q3（M7-M9）</strong></td>
+        <td>58→148 人</td>
+        <td>644→1,812</td>
+        <td>$1,513→4,258萬</td>
+        <td>$2,763→5,508萬</td>
+        <td>全台加速 + 認證變現 + 損益兩平</td>
+      </tr>
+      <tr style="background:#eff6ff">
+        <td><strong>Q4（M10-M12）</strong></td>
+        <td>148→200 人</td>
+        <td>1,812→2,755</td>
+        <td>$4,258→7,800萬</td>
+        <td>$5,508→9,050萬</td>
+        <td>補齊 200BD + Plus/Elite 升級推廣</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- 逐月財務預測 -->
+  <div class="card">
+    <h3>💰 逐月財務預測</h3>
+    <table>
+      <tr><th>月份</th><th>有效BD</th><th>月新增客戶</th><th>客戶累計</th><th>SaaS MRR</th><th>合計月營收</th><th>月人事成本</th><th>月淨利</th></tr>
+      <tr><td>M1</td><td>6</td><td>18</td><td>216</td><td>508萬</td><td>1,758萬</td><td>280萬</td><td style="color:green">+</td></tr>
+      <tr><td>M3</td><td>15</td><td>45</td><td>281</td><td>660萬</td><td>1,910萬</td><td>680萬</td><td style="color:green">+</td></tr>
+      <tr style="background:#fefce8"><td><strong>M5</strong></td><td>42</td><td>126</td><td>477</td><td>1,121萬</td><td>2,371萬</td><td>1,350萬</td><td style="color:green"><strong>認證推出</strong></td></tr>
+      <tr style="background:#f0fdf4"><td><strong>M7</strong></td><td>58</td><td>174</td><td>644</td><td>1,513萬</td><td>2,763萬</td><td>1,680萬</td><td style="color:green"><strong>Breakeven</strong></td></tr>
+      <tr><td>M10</td><td>148</td><td>444</td><td>1,812</td><td>4,258萬</td><td>5,508萬</td><td>2,800萬</td><td style="color:green">++</td></tr>
+      <tr style="background:#eff6ff"><td><strong>M12</strong></td><td>180</td><td>540</td><td>2,755</td><td>7,800萬</td><td><strong>9,050萬</strong></td><td>2,976萬</td><td style="color:green"><strong>+6,074萬/月</strong></td></tr>
+    </table>
+  </div>
+
+  <!-- 投資預算 -->
+  <div class="two-col">
+    <div class="card">
+      <h3>投資預算分配（2.0-2.5 億）</h3>
+      <table>
+        <tr><td>C-Level（CRO+COO）</td><td>700-900萬</td></tr>
+        <tr><td>區域 VP + Director</td><td>1,600-2,100萬</td></tr>
+        <tr><td>TL + BD 薪酬</td><td>7,300-9,200萬</td></tr>
+        <tr><td>支援團隊（SDR+CS+Ops）</td><td>2,500-3,200萬</td></tr>
+        <tr><td>技術擴編（+20人）</td><td>1,500-2,000萬</td></tr>
+        <tr><td>辦公室（3 新據點）</td><td>1,200-1,800萬</td></tr>
+        <tr><td>招聘 + CRM + 培訓</td><td>2,200-3,100萬</td></tr>
+        <tr><td>預備金（10%）</td><td>1,800-2,300萬</td></tr>
+        <tr style="font-weight:700"><td>合計</td><td>2.0 - 2.5 億</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>資金來源建議</h3>
+      <div style="padding:12px; background:#f0fdf4; border-radius:8px; margin-bottom:12px;">
+        <strong>✅ 推薦：自有資金 + 銀行融資</strong><br>
+        1 億自有資金 + 1-1.5 億銀行額度<br>
+        用 Go/No-Go 機制分階段釋放
+      </div>
+      <div style="padding:12px; background:#eff6ff; border-radius:8px; margin-bottom:12px;">
+        <strong>💡 備選：策略投資人</strong><br>
+        SaaS 領域投資人 1-1.5 億<br>
+        適合有上市/併購計畫的情境
+      </div>
+      <div class="alert" style="margin:0;">
+        <strong>紅線：</strong>如果實際營收低於預測 25%，立即放緩招聘。BD 薪酬 60:40 結構確保底薪不會壓垮現金流。
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<!-- BD 組織架構                                                       -->
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title">🏗️ 像房仲一樣深耕：BD 軍團的組織與專精</h2>
 
   <div class="highlight">
     <strong>核心理念：每個 BD 像房仲一樣深耕自己的「區域×品類」。</strong><br>
@@ -306,57 +621,112 @@
     越深耕 → 越了解客戶 → 成交率越高 → 客戶黏著度越強 → 轉介紹越多。
   </div>
 
-  <!-- 3.1 產品種類分析 -->
+  <!-- 雙軌制 -->
   <div class="card">
-    <h3>📦 3.1 建材產品種類分析 — BD 開發優先序</h3>
-    <p style="color:#64748b; font-size:0.85rem; margin-bottom:16px;">基於平台現有 1,975 件 SKU + 70 家建材商的實際數據</p>
+    <h3>混合獵人 + 專精農夫雙軌制</h3>
+    <pre style="font-size:0.85rem; background:#f8fafc; padding:16px; border-radius:8px; overflow-x:auto;">
+CEO（你）
+ ├── CRO 營收長 ⭐（外聘，M1-M2 到位）
+ │    ├── 北部大區 VP（90 BD）
+ │    │    ├── Director ×3
+ │    │    ├── 混合獵人組長 ×8 → 混合 BD ×48
+ │    │    ├── 建材專精組長 ×3 → 專精 BD ×12
+ │    │    └── 設計師成功組長 ×4 → CS ×16
+ │    ├── 中部大區 VP（45 BD）
+ │    │    ├── Director ×2
+ │    │    ├── 混合獵人 ×24 + 專精 ×8 + CS ×8
+ │    │    └── SDR ×10
+ │    ├── 南部大區 VP（50 BD）
+ │    │    ├── Director ×2
+ │    │    ├── 混合獵人 ×27 + 專精 ×9 + CS ×9
+ │    │    └── SDR ×12
+ │    ├── 東部主管（15 BD）
+ │    │    └── 混合獵人 ×12 + CS ×3
+ │    ├── Sales Ops（12人）— CRM/數據/流程
+ │    └── Enablement（6人）— 培訓/教材
+ ├── COO 營運長（新聘）
+ │    └── HR(12) + 行政(5) + 財務(3)
+ └── CTO（現有）
+      └── 技術團隊（15→35人）
+    </pre>
+  </div>
 
+  <div class="two-col">
+    <div class="card">
+      <h3>🦁 混合獵人 BD（111人）— 60% 主力</h3>
+      <p><strong>定位：</strong>按區域劃分，同一天跑同一區所有類型客戶</p>
+      <p><strong>核心優勢：</strong>建材商和工班互為線索來源，一次拜訪通吃三角色</p>
+      <p><strong>日常節奏：</strong></p>
+      <ul>
+        <li>上午：拜訪設計公司 → 順帶簽設計師 → 拿到建材商/工班線索</li>
+        <li>下午：拜訪建材行 → 邀請上架 → 認識配合工班</li>
+        <li>傍晚：更新 CRM + 轉介紹給專精 BD</li>
+      </ul>
+      <p><strong>月 KPI：</strong>≥60 積分（多維度計分，跨類型轉介紹加分）</p>
+      <p><strong>月收入：</strong>$43K（新人）→ $55K（達標）→ $85K+（頂尖）</p>
+    </div>
+    <div class="card">
+      <h3>🐂 專精農夫 BD + CS（89人）— 40%</h3>
+      <p><strong>建材專精 BD（29人）：</strong>深度簽約、產品上架輔導、續約經營、付費升級</p>
+      <p><strong>設計師成功 CS（36人）：</strong>不是「賣」而是「教」— 教育訓練、社群經營、付費轉換</p>
+      <p><strong>SDR（24人）：</strong>線索開發、電話預約、漏斗頂部</p>
+      <p style="margin-top:12px;"><strong>CS 與供給 BD 的協作飛輪：</strong></p>
+      <ol>
+        <li>CS 收集設計師需求（「設計師在找 XXX 建材」）</li>
+        <li>供給 BD 優先開發該建材廠商</li>
+        <li>建材商上架 → CS 推播給設計師</li>
+        <li>設計師：「這平台越來越好用！」→ 🔄 正向循環</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- 產品品類分析 -->
+  <div class="card">
+    <h3>📦 建材產品 6 大品類分析 — BD 開發優先序</h3>
+    <p style="color:#64748b; font-size:0.85rem; margin-bottom:16px;">基於平台現有 1,975 件 SKU + 70 家建材商的實際數據</p>
     <table>
       <tr><th>品類</th><th>現有 SKU</th><th>佔比</th><th>市場規模</th><th>建材商數</th><th>BD 開發優先級</th><th>BD 策略</th></tr>
       <tr style="background:#fef2f2">
         <td><strong>🧱 磁磚/石材</strong></td><td>680</td><td>34%</td><td>★★★★★</td><td>~25</td>
         <td><span class="badge" style="background:#fef2f2;color:#dc2626;">P0 最優先</span></td>
-        <td>台灣磁磚年產值 200 億+，冠軍/三洋/白馬為首。每家建材行旁邊都有磁磚展示廳</td>
+        <td>台灣磁磚年產值 200 億+，冠軍/三洋/白馬為首</td>
       </tr>
       <tr style="background:#fef2f2">
         <td><strong>🪵 木地板/系統板</strong></td><td>520</td><td>26%</td><td>★★★★</td><td>~18</td>
         <td><span class="badge" style="background:#fef2f2;color:#dc2626;">P0 最優先</span></td>
-        <td>EGGER/Kronotex/富銘 三大進口品牌 + 台灣本土。設計師最常搜尋品類</td>
+        <td>EGGER/Kronotex/富銘。設計師最常搜尋品類</td>
       </tr>
       <tr>
         <td><strong>🎨 裝飾建材</strong></td><td>344</td><td>17%</td><td>★★★</td><td>~12</td>
         <td><span class="badge" style="background:#fef3c7;color:#d97706;">P1</span></td>
-        <td>壁紙/窗簾/燈具/五金。品項多但客單價低，靠量取勝</td>
+        <td>壁紙/窗簾/燈具/五金。品項多但客單價低</td>
       </tr>
       <tr>
         <td><strong>🎨 油漆塗料</strong></td><td>62</td><td>3%</td><td>★★★★</td><td>~5</td>
         <td><span class="badge" style="background:#fef3c7;color:#d97706;">P1 高潛力</span></td>
-        <td>虹牌/得利/立邦 三大品牌。SKU 少但幾乎每案都用，<strong>覆蓋率缺口大</strong></td>
+        <td>虹牌/得利/立邦。SKU 少但幾乎每案都用</td>
       </tr>
-      <tr>
+      <tr style="background:#fef2f2">
         <td><strong>🚿 衛浴設備</strong></td><td>17</td><td>1%</td><td>★★★★★</td><td>~3</td>
         <td><span class="badge" style="background:#fef2f2;color:#dc2626;">P0 缺口最大</span></td>
-        <td>TOTO/HCG/凱撒。市場巨大但平台嚴重不足！<strong>立即補齊的最高 ROI 品類</strong></td>
+        <td>TOTO/HCG/凱撒。市場巨大但平台嚴重不足！</td>
       </tr>
-      <tr>
+      <tr style="background:#fef2f2">
         <td><strong>🍳 廚房設備</strong></td><td>0</td><td>0%</td><td>★★★★</td><td>0</td>
         <td><span class="badge" style="background:#fef2f2;color:#dc2626;">P0 空白市場</span></td>
-        <td>林內/櫻花/Bosch。<strong>完全空白！</strong>一旦補上就是設計師最急需的功能</td>
+        <td>林內/櫻花/Bosch。<strong>完全空白！</strong></td>
       </tr>
     </table>
-
     <div class="alert" style="margin-top:12px;">
       <strong>⚠️ 關鍵發現：衛浴（17 件）和廚房（0 件）是平台最大缺口。</strong><br>
-      這兩類是每個裝修案 100% 會用到的品類，卻是平台最弱的。<br>
-      <strong>行動：前 3 個月集中 BD 資源補齊衛浴+廚房，這是最快提升平台價值的方式。</strong>
+      這兩類是每個裝修案 100% 會用到的品類。<strong>前 3 個月集中 BD 資源補齊，是最快提升平台價值的方式。</strong>
     </div>
   </div>
 
-  <!-- 3.2 工項種類分析 -->
+  <!-- 工項種類分析 -->
   <div class="card">
-    <h3>🔨 3.2 工項（工班）種類分析 — 按施工流程排序</h3>
+    <h3>🔨 9 道工序 × 工班類型 × 建材關聯</h3>
     <p style="color:#64748b; font-size:0.85rem; margin-bottom:16px;">一個裝修案的標準工序，每道工序對應的工班類型和 BD 開發策略</p>
-
     <table>
       <tr><th>工序</th><th>工種</th><th>市場規模</th><th>找工班難度</th><th>BD 開發策略</th><th>與建材關聯</th></tr>
       <tr>
@@ -365,11 +735,11 @@
       </tr>
       <tr>
         <td>2️⃣</td><td><strong>泥作工程</strong></td><td>★★★★★</td><td>高（師傅稀缺）</td>
-        <td>⭐ 最高優先！從磁磚建材商反向開發（買磁磚的就是泥作師傅）</td><td>磁磚/石材/水泥</td>
+        <td>⭐ 最高優先！從磁磚建材商反向開發</td><td>磁磚/石材/水泥</td>
       </tr>
       <tr>
         <td>3️⃣</td><td><strong>水電工程</strong></td><td>★★★★★</td><td>高（需證照）</td>
-        <td>⭐ 從水電材料行開發（凱士士/太平洋電線經銷點）</td><td>開關/配線/水管</td>
+        <td>⭐ 從水電材料行開發</td><td>開關/配線/水管</td>
       </tr>
       <tr>
         <td>4️⃣</td><td><strong>鋁窗工程</strong></td><td>★★★</td><td>中</td>
@@ -377,11 +747,11 @@
       </tr>
       <tr>
         <td>5️⃣</td><td><strong>木作工程</strong></td><td>★★★★★</td><td>極高（最稀缺）</td>
-        <td>⭐ 最難找！從系統櫃/木料行/設計師口碑推薦開發</td><td>木地板/系統板/五金</td>
+        <td>⭐ 最難找！從系統櫃/木料行/口碑推薦</td><td>木地板/系統板/五金</td>
       </tr>
       <tr>
         <td>6️⃣</td><td><strong>油漆工程</strong></td><td>★★★★</td><td>低（量大）</td>
-        <td>從油漆建材商開發（虹牌/得利經銷點都有配合油漆工）</td><td>油漆/批土/保護材</td>
+        <td>從油漆建材商開發（經銷點都有配合油漆工）</td><td>油漆/批土/保護材</td>
       </tr>
       <tr>
         <td>7️⃣</td><td><strong>廚衛設備安裝</strong></td><td>★★★</td><td>中</td>
@@ -389,78 +759,74 @@
       </tr>
       <tr>
         <td>8️⃣</td><td><strong>冷氣空調</strong></td><td>★★★★</td><td>中</td>
-        <td>從冷氣經銷商開發（大金/日立/三菱配合安裝商）</td><td>冷氣/全熱交換器</td>
+        <td>從冷氣經銷商開發（大金/日立/三菱）</td><td>冷氣/全熱交換器</td>
       </tr>
       <tr>
         <td>9️⃣</td><td><strong>清潔工程</strong></td><td>★★</td><td>低</td>
         <td>從統包/設計師轉介紹</td><td>清潔用品</td>
       </tr>
     </table>
-
     <div class="success" style="margin-top:12px;">
       <strong>🔑 BD 開發工班的黃金法則：從建材商反向找工班。</strong><br>
       磁磚建材行 → 泥作師傅常來買料 → 建材行老闆介紹 → BD 順帶簽下工班<br>
-      油漆經銷商 → 油漆工常來取貨 → 經銷商推薦 → BD 順帶簽下工班<br>
-      <strong>一次拜訪建材商 = 同時獲得 2-3 個工班線索。這就是「房仲」模式的精髓。</strong>
+      <strong>一次拜訪建材商 = 同時獲得 2-3 個工班線索。</strong>
     </div>
   </div>
 
-  <!-- 3.3 區域深耕分析 -->
+  <!-- 區域深耕 -->
   <div class="card">
-    <h3>🗺️ 3.3 全台區域深耕策略 — 像房仲一樣經營商圈</h3>
+    <h3>🗺️ 全台區域深耕策略 — 像房仲一樣經營商圈</h3>
     <p style="color:#64748b; font-size:0.85rem; margin-bottom:16px;">每個 BD 分配固定商圈，深度經營而非廣泛撒網</p>
-
     <table>
       <tr><th>區域</th><th>BD 數</th><th>商圈劃分</th><th>重點品類</th><th>目標建材商</th><th>開發策略</th></tr>
       <tr style="background:#eff6ff">
         <td><strong>🏙 台北市</strong></td><td>35</td>
         <td>大安/信義(8) · 中山/松山(6) · 內湖/南港(5) · 萬華/中正(5) · 士林/北投(5) · 大同/文山(6)</td>
         <td>磁磚·衛浴·系統櫃</td><td>60 家</td>
-        <td>從建國花市→建材街→設計師事務所密集區掃街。大安區設計師最密集，優先切入</td>
+        <td>大安區設計師最密集，優先切入</td>
       </tr>
       <tr style="background:#eff6ff">
         <td><strong>🌆 新北市</strong></td><td>30</td>
         <td>板橋/中和(8) · 新莊/三重(7) · 土城/樹林(5) · 永和/汐止(5) · 淡水/林口(5)</td>
         <td>木地板·油漆·五金</td><td>45 家</td>
-        <td>新北建材行密集在板橋/新莊工業區。老屋翻新需求最大</td>
+        <td>板橋/新莊工業區建材行密集，老屋翻新需求最大</td>
       </tr>
       <tr>
         <td><strong>🏭 桃園市</strong></td><td>15</td>
         <td>桃園/中壢(7) · 龜山/八德(4) · 平鎮/楊梅(4)</td>
         <td>系統板·鋁窗·木作</td><td>25 家</td>
-        <td>科技業聚集，新屋裝修需求大。航空城帶動新建案</td>
+        <td>科技業聚集，新屋裝修需求大</td>
       </tr>
       <tr>
         <td><strong>🌳 台中市</strong></td><td>30</td>
         <td>西屯/北屯(8) · 南屯/西區(7) · 豐原/潭子(5) · 大里/太平(5) · 南區/東區(5)</td>
         <td>磁磚·衛浴·木地板</td><td>40 家</td>
-        <td>七期為高端市場，豐原為傳產建材集散地</td>
+        <td>七期高端市場，豐原傳產建材集散地</td>
       </tr>
       <tr>
         <td><strong>🌊 台南市</strong></td><td>20</td>
         <td>東區/中西區(6) · 永康/新營(5) · 南科周邊(5) · 安平/安南(4)</td>
         <td>磁磚·油漆·泥作</td><td>20 家</td>
-        <td>老屋比例最高的城市，翻新市場巨大。南科帶動新屋</td>
+        <td>老屋比例最高，翻新市場巨大</td>
       </tr>
       <tr>
         <td><strong>🌴 高雄市</strong></td><td>25</td>
         <td>左營/鼓山(7) · 三民/前鎮(6) · 鳳山/大寮(5) · 楠梓/橋頭(4) · 岡山/路竹(3)</td>
         <td>衛浴·廚具·鋁窗</td><td>30 家</td>
-        <td>亞灣區新建案 + 舊市區翻新。高雄建材商較分散，需區域深耕</td>
+        <td>亞灣區新建案 + 舊市區翻新</td>
       </tr>
       <tr>
         <td><strong>🏔 其他縣市</strong></td><td>15</td>
         <td>新竹(5) · 彰化(3) · 嘉義(3) · 花東(2) · 離島(2)</td>
         <td>依當地特色</td><td>20 家</td>
-        <td>新竹科技業高端需求，彰化傳產建材，花東觀光民宿</td>
+        <td>新竹高端需求，彰化傳產建材，花東觀光民宿</td>
       </tr>
     </table>
   </div>
 
-  <!-- 3.4 BD 房仲模式 -->
+  <!-- BD 專精化範例 -->
   <div class="card">
-    <h3>🏠 3.4 BD 房仲化運營模式 — 開發房源 × 服務客戶</h3>
-
+    <h3>🏠 BD 專精化分配範例</h3>
     <div class="two-col">
       <div>
         <h4 style="font-size:0.9rem; margin-bottom:12px; color:#1e293b;">房仲類比：BD 的「房源」就是建材商+工班</h4>
@@ -475,7 +841,6 @@
         </table>
       </div>
       <div>
-        <h4 style="font-size:0.9rem; margin-bottom:12px; color:#1e293b;">BD 專精化分配範例</h4>
         <div style="background:#f8fafc; border-radius:12px; padding:16px; font-size:0.85rem;">
           <p style="margin-bottom:8px;"><strong>👤 BD 王小明 — 大安區磁磚專家</strong></p>
           <ul style="margin-bottom:12px;">
@@ -499,229 +864,302 @@
       </div>
     </div>
   </div>
+</div>
 
-  <!-- 3.5 細部效率優化 -->
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<!-- BD 獲客方式                                                       -->
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<div class="section">
+  <h2 class="section-title">📣 獲客引擎：線上引流 → 線下服務 → 線上留存</h2>
+
+  <div class="alert" style="margin-bottom:20px;">
+    <strong>❌ 錯誤做法：BD 一間一間拜訪建材行 → 每天跑 5 家 → 一個月 100 家 → 太慢</strong><br>
+    <strong>✅ 正確做法：廣告/媒體讓 1,000 家知道你 → 200 家有興趣主動留資料 → BD 只服務這 200 家 → 效率 20 倍</strong>
+  </div>
+
+  <!-- 核心流程圖 -->
+  <div style="text-align:center; padding:24px; background:linear-gradient(135deg, #f0f9ff, #faf5ff); border-radius:16px; margin-bottom:20px;">
+    <div style="font-size:0.95rem; line-height:2.5;">
+      <strong style="font-size:1.1rem;">🔄 線上引流 → 線下服務 → 線上留存</strong><br><br>
+      <span style="background:#dbeafe; padding:6px 14px; border-radius:20px; font-weight:700;">① 線上廣告/媒體曝光</span><br>
+      <span style="color:#94a3b8;">讓目標客戶知道樂居能幫他什麼</span><br>
+      <span style="color:#94a3b8; font-size:1.2rem;">↓</span><br>
+      <span style="background:#dcfce7; padding:6px 14px; border-radius:20px; font-weight:700;">② 有興趣的人主動留資料/註冊</span><br>
+      <span style="color:#94a3b8;">BD 不用陌生開發，只接住「已經舉手的人」</span><br>
+      <span style="color:#94a3b8; font-size:1.2rem;">↓</span><br>
+      <span style="background:#fef3c7; padding:6px 14px; border-radius:20px; font-weight:700;">③ BD 線下拜訪/視訊 Demo</span><br>
+      <span style="color:#94a3b8;">幫客戶上架產品、教他用平台、解決問題</span><br>
+      <span style="color:#94a3b8; font-size:1.2rem;">↓</span><br>
+      <span style="background:#fce7f3; padding:6px 14px; border-radius:20px; font-weight:700;">④ 客戶在平台上活躍 → 升級付費</span><br>
+      <span style="color:#94a3b8;">線上持續經營，BD 不用反覆上門</span>
+    </div>
+  </div>
+
+  <!-- 三角色引流策略 -->
   <div class="card">
-    <h3>⚡ 3.5 BD 效率優化 — 需要調整的細部資訊</h3>
-
-    <h4 style="font-size:0.9rem; margin:16px 0 8px; color:#1e293b;">🔴 立即調整項目</h4>
+    <h3>📣 三角色的線上引流方式</h3>
     <table>
-      <tr><th>項目</th><th>現狀問題</th><th>調整方案</th><th>預期效果</th></tr>
+      <tr><th>角色</th><th>廣告/媒體管道</th><th>訴求（讓他一看就想留資料）</th><th>引流落地頁</th><th>BD 介入時機</th></tr>
       <tr>
-        <td><strong>BD 拜訪路線</strong></td>
-        <td>BD 隨機跑客戶，每天花 2hr 交通</td>
-        <td>按商圈劃分固定路線，每天集中同一區塊。週一大安、週二板橋、週三中和...</td>
-        <td>交通時間減半，日拜訪量 +40%</td>
+        <td><strong>🏭 建材商</strong></td>
+        <td>
+          • Facebook 精準廣告（投建材業老闆）<br>
+          • 建材公會 LINE 群/電子報<br>
+          • 建材展覽現場（台北建材展）<br>
+          • Google 搜尋「建材上架平台」
+        </td>
+        <td>
+          <strong>「免費上架你的產品，讓 500 位設計師主動找到你」</strong><br>
+          <span style="font-size:0.8rem; color:#64748b;">附數據：本月平台設計師搜尋建材 X 次</span>
+        </td>
+        <td>專屬落地頁<br>填公司名+電話<br>即免費開通帳號</td>
+        <td>留資料後 <strong>24hr 內</strong><br>BD 電話聯繫<br>「幫你完成上架」</td>
       </tr>
       <tr>
-        <td><strong>建材商拜訪時段</strong></td>
-        <td>上班時間去建材行，老闆在忙</td>
-        <td>建材行最閒：週二～四 14:00-16:00。週末不去（客人多老闆忙）</td>
-        <td>拜訪成功率 +30%</td>
+        <td><strong>🎨 設計師</strong></td>
+        <td>
+          • IG 廣告（投室內設計相關興趣）<br>
+          • 設計師 FB 社團貼文<br>
+          • YouTube 選材教學影片<br>
+          • LINE 設計師交流群口碑
+        </td>
+        <td>
+          <strong>「一鍵比價 2,000 款建材，不用再跑展示廳」</strong><br>
+          <span style="font-size:0.8rem; color:#64748b;">附案例：「設計師小林用樂居，選材從 2 天變 30 分鐘」</span>
+        </td>
+        <td>直接註冊頁<br>選偏好品類+區域<br>立刻看到推薦建材</td>
+        <td>註冊後 <strong>3 天內</strong><br>CS 視訊教學<br>「帶你用平台完成第一次選材」</td>
       </tr>
       <tr>
-        <td><strong>工班開發方式</strong></td>
-        <td>BD 直接找工班，師傅不信任</td>
-        <td>改從建材商轉介紹：「張老闆說您常來買磁磚，我們平台能幫您接更多案子」</td>
-        <td>工班簽約率從 15% → 40%</td>
-      </tr>
-      <tr>
-        <td><strong>設計師拜訪方式</strong></td>
-        <td>BD 推銷付費方案，設計師反感</td>
-        <td>改為「教學式」：帶平板到設計公司，現場示範用平台選材比價</td>
-        <td>設計師活躍率 +50%</td>
+        <td><strong>🔨 工班</strong></td>
+        <td>
+          • 建材行/五金行張貼 QR Code<br>
+          • 工地現場 BD 直接掃碼<br>
+          • Facebook 工班社團貼文<br>
+          • 工班師傅口碑轉介紹
+        </td>
+        <td>
+          <strong>「免費註冊，附近的裝修案自動通知你」</strong><br>
+          <span style="font-size:0.8rem; color:#64748b;">附數據：「你 3 公里內有 8 個案子正在找泥作」</span>
+        </td>
+        <td>手機 LINE 註冊<br>選工種+服務區域<br>立刻收到案件通知</td>
+        <td>註冊後 <strong>自動推案件</strong><br>BD 只在接案後才介入<br>幫忙處理合約/付款</td>
       </tr>
     </table>
+  </div>
 
-    <h4 style="font-size:0.9rem; margin:20px 0 8px; color:#1e293b;">🟡 月度追蹤指標（每個 BD）</h4>
-    <table>
-      <tr><th>指標</th><th>月度目標</th><th>追蹤方式</th><th>為什麼重要</th></tr>
-      <tr><td>商圈覆蓋率</td><td>責任區域內 80% 建材行已拜訪</td><td>CRM 地圖打卡</td><td>確保不漏掉任何潛在客戶</td></tr>
-      <tr><td>品類覆蓋率</td><td>責任品類 TOP 10 品牌已接觸</td><td>品牌 checklist</td><td>確保主力品牌都在平台上</td></tr>
-      <tr><td>工班轉介率</td><td>每次建材商拜訪獲得 ≥2 個工班線索</td><td>CRM 線索來源標記</td><td>建材商是工班的最佳線索來源</td></tr>
-      <tr><td>設計師回訪率</td><td>教學後 7 天內回訪確認使用狀況</td><td>回訪紀錄</td><td>防止「教完就忘」</td></tr>
-      <tr><td>客戶存活率</td><td>簽約 3 個月後仍活躍 ≥75%</td><td>平台活躍度</td><td>BD 的核心價值不是簽約是留存</td></tr>
-      <tr><td>NPS 分數</td><td>客戶 NPS ≥50</td><td>季度問卷</td><td>決定轉介紹量的領先指標</td></tr>
-    </table>
-
-    <h4 style="font-size:0.9rem; margin:20px 0 8px; color:#1e293b;">🟢 長期建立的競爭壁壘</h4>
+  <!-- BD 角色轉變 -->
+  <div class="card">
+    <h3>🔄 BD 角色轉變：從「掃街業務」→「客戶成功顧問」</h3>
     <div class="two-col">
-      <div style="background:#f0fdf4; border-radius:12px; padding:16px;">
-        <p style="font-weight:600; margin-bottom:8px;">📊 數據飛輪</p>
+      <div style="background:#fef2f2; border-radius:12px; padding:16px;">
+        <p style="font-weight:700; color:#dc2626; margin-bottom:8px;">❌ 舊模式（掃街）</p>
         <ul style="font-size:0.85rem;">
-          <li>BD 拜訪 → 收集建材行實際售價</li>
-          <li>累積成<strong>全台最完整的建材價格資料庫</strong></li>
-          <li>設計師來比價 → 更多設計師</li>
-          <li>建材商看到詢價量 → 更多建材商上架</li>
-          <li>競爭對手無法複製這個數據資產</li>
+          <li>BD 每天跑 5 家陌生拜訪</li>
+          <li>被拒絕率 80%</li>
+          <li>一個月簽 5-8 家</li>
+          <li>BD 累到流動率高</li>
+          <li>成本：$48K/人/月 ÷ 5 家 = $9,600/家</li>
         </ul>
       </div>
-      <div style="background:#eff6ff; border-radius:12px; padding:16px;">
-        <p style="font-weight:600; margin-bottom:8px;">🤝 關係護城河</p>
+      <div style="background:#f0fdf4; border-radius:12px; padding:16px;">
+        <p style="font-weight:700; color:#16a34a; margin-bottom:8px;">✅ 新模式（引流+服務）</p>
         <ul style="font-size:0.85rem;">
-          <li>BD 深耕 → 跟建材行老闆建立私人關係</li>
-          <li>成為「那個區域的建材通」</li>
-          <li>建材商有新品 → 第一時間告訴 BD</li>
-          <li>工班有問題 → 找 BD 協調</li>
-          <li>這種關係是時間壁壘，新進者需要 2-3 年才能追上</li>
+          <li>廣告帶來 100 個 leads/月</li>
+          <li>BD 只聯繫「已舉手」的人</li>
+          <li>成交率 30-50%</li>
+          <li>一個月簽 30-50 家</li>
+          <li>成本：($48K + $30K 廣告) ÷ 40 家 = <strong>$1,950/家</strong></li>
         </ul>
+      </div>
+    </div>
+    <div class="success" style="margin-top:12px;">
+      <strong>獲客成本降 5 倍：$9,600 → $1,950/家。</strong><br>
+      BD 不再做最痛苦的陌生開發，而是做最有價值的「教客戶用平台」。
+    </div>
+  </div>
+
+  <!-- 廣告預算 -->
+  <div class="card">
+    <h3>💰 引流廣告預算規劃</h3>
+    <table>
+      <tr><th>管道</th><th>月預算</th><th>預期 Leads</th><th>成交率</th><th>預期新客</th><th>CPA</th></tr>
+      <tr>
+        <td>Facebook/IG 精準廣告</td><td>$50K</td><td>200</td><td>30%</td><td>60</td><td>$833</td>
+      </tr>
+      <tr>
+        <td>Google 搜尋廣告</td><td>$30K</td><td>80</td><td>40%</td><td>32</td><td>$938</td>
+      </tr>
+      <tr>
+        <td>建材展/活動</td><td>$30K/次</td><td>150/次</td><td>25%</td><td>38</td><td>$789</td>
+      </tr>
+      <tr>
+        <td>LINE 社群經營</td><td>$5K</td><td>50</td><td>50%</td><td>25</td><td>$200</td>
+      </tr>
+      <tr>
+        <td>KOL/口碑</td><td>$30K</td><td>100</td><td>20%</td><td>20</td><td>$1,500</td>
+      </tr>
+      <tr style="background:#f0fdf4; font-weight:600;">
+        <td>合計</td><td>$145K/月</td><td>580</td><td>30%</td><td><strong>175 家/月</strong></td><td><strong>$829</strong></td>
+      </tr>
+    </table>
+    <p style="font-size:0.85rem; color:#64748b; margin-top:8px;">
+      $145K 月廣告預算 + 5 個 BD（$240K）= 月投入 $385K → 月新增 175 家 → 其中 $15K 認證轉換 30% = 52 家 × $15K = <strong>月營收 $780K</strong><br>
+      <strong>月 ROI = 780K ÷ 385K = 2.0x → 第一個月就不賠錢。</strong>
+    </p>
+  </div>
+
+  <!-- 飛輪引擎 -->
+  <div class="card">
+    <h3>🔄 飛輪引擎：台北打版(5人) → 驗證 → 複製到全台</h3>
+    <table>
+      <tr><th>階段</th><th>時間</th><th>區域</th><th>BD 數</th><th>品類數</th><th>做什麼</th><th>成功標準</th></tr>
+      <tr style="background:#fef2f2">
+        <td><strong>打版</strong></td><td>M1-M3</td><td>台北 4 區</td><td>5</td><td>3 類</td>
+        <td>磁磚+木作+油漆 BD 跑通閉環</td>
+        <td>每人月簽 ≥5 家、$15K 意願 ≥30%</td>
+      </tr>
+      <tr style="background:#fefce8">
+        <td><strong>驗證</strong></td><td>M3-M4</td><td>台北全區</td><td>15</td><td>5 類</td>
+        <td>加入衛浴+廚具 BD，擴到全台北</td>
+        <td>5 類品類覆蓋率 ≥60%</td>
+      </tr>
+      <tr style="background:#f0fdf4">
+        <td><strong>複製 v1</strong></td><td>M4-M6</td><td>+新北+桃園</td><td>40</td><td>5 類</td>
+        <td>把台北的 SOP 直接搬到新北/桃園</td>
+        <td>新區域 BD 2 週內達到台北 BD 80% 產能</td>
+      </tr>
+      <tr style="background:#eff6ff">
+        <td><strong>複製 v2</strong></td><td>M6-M9</td><td>+台中+高雄</td><td>100</td><td>全品類</td>
+        <td>中南部建立在地團隊</td>
+        <td>全台 4 大區域運轉</td>
+      </tr>
+      <tr style="background:#f5f3ff">
+        <td><strong>規模化</strong></td><td>M9-M12</td><td>全台</td><td>200</td><td>全品類</td>
+        <td>補齊二線城市 + 精細化運營</td>
+        <td>200 BD + MRR &gt;6,000 萬</td>
+      </tr>
+    </table>
+
+    <div class="highlight" style="margin-top:16px;">
+      <strong>為什麼能指數成長？</strong><br><br>
+      <strong>1. 平台的傳播力：</strong>建材商上架 → 設計師來搜 → 設計師告訴其他設計師 → 更多設計師 → 更多建材商想上架。<br>
+      <strong>2. SOP 的複製力：</strong>台北打版的話術/流程/demo 腳本 → 直接搬到台中用。新人 2 週就能上手。<br>
+      <strong>3. 數據的累積力：</strong>每多一個建材商 → 價格資料庫更完整 → 比價功能更好用。<strong>後進者需要 3 年才能追上你 3 個月累積的數據量</strong>。
+    </div>
+  </div>
+
+  <!-- 免費→認證轉換時程 -->
+  <div class="card">
+    <h3>🔄 免費→認證 轉換時程</h3>
+    <table>
+      <tr><th>時間</th><th>動作</th><th>目標</th><th>話術要點</th></tr>
+      <tr><td>M1-M5</td><td>全免費開放</td><td>衝供給量</td><td>「完全免費，先體驗平台價值」</td></tr>
+      <tr><td>M5</td><td>宣布認證制度</td><td>心理準備</td><td>「樂居 PRO 認證即將上線，搶先申請享早鳥優惠」</td></tr>
+      <tr style="background:#fefce8"><td><strong>M6</strong></td><td>PRO Basic 上線</td><td>首批轉換</td><td>「通過認證 = 專業身份象徵，首月 $7,500（5 折）」</td></tr>
+      <tr><td>M7-M9</td><td>免費版功能限縮</td><td>引導升級</td><td>「您的詢價已達上限，升級 PRO 立即解鎖」</td></tr>
+      <tr style="background:#f0fdf4"><td><strong>M10</strong></td><td>PRO Plus/Elite 上線</td><td>ARPU 提升</td><td>「您的業務量值得更好的工具，首月 7 折」</td></tr>
+      <tr><td>M11-M12</td><td>全面推廣</td><td>規模變現</td><td>「同業都已認證，您還在用免費版？」</td></tr>
+    </table>
+    <div class="alert" style="margin-top:12px;">
+      <strong>核心心理：</strong>付的不是「月費」，是「認證維護費」。<br>
+      ❌ 舊話術：「我們平台要開始收費了，月費 $15,000」→ 抗拒<br>
+      ✅ 新話術：「樂居 PRO 認證需要審核品質和回覆速度，不是每家都能通過。維護費 $15,000/月」→ 主動申請
+    </div>
+  </div>
+
+  <!-- Go/No-Go 安全閥 -->
+  <div class="card">
+    <h3>🚨 Go/No-Go 安全閥 — 絕不燒錢硬衝</h3>
+    <table>
+      <tr><th>檢查點</th><th>時間</th><th>✅ Go 條件</th><th>❌ No-Go / 暫停</th></tr>
+      <tr>
+        <td><strong>Gate 0</strong></td><td>Day 15</td>
+        <td>15天啟動計畫全部完成</td>
+        <td>連 15 天都做不到 → 不適合 200BD 計畫</td>
+      </tr>
+      <tr style="background:#fef2f2">
+        <td><strong>Gate 1</strong></td><td>M2 底</td>
+        <td>CRO 到位 + 北部 VP + CRM 上線</td>
+        <td><strong>CRO 未到位 → 暫停全部</strong></td>
+      </tr>
+      <tr>
+        <td><strong>Gate 2</strong></td><td>M5 底</td>
+        <td>月新簽 ≥90 + 3 區辦公室運轉</td>
+        <td>月新簽 &lt;60 → 凍結招聘</td>
+      </tr>
+      <tr>
+        <td><strong>Gate 3</strong></td><td>M8 底</td>
+        <td>月新簽 ≥250 + MRR &gt;2,000 萬</td>
+        <td>MRR &lt;1,500 萬 → 收縮到 100 BD</td>
+      </tr>
+      <tr style="background:#f0fdf4">
+        <td><strong>Final</strong></td><td>M12</td>
+        <td>200 BD + MRR &gt;6,000 萬</td>
+        <td>150-199 BD → Q1 2027 補齊</td>
+      </tr>
+    </table>
+
+    <div class="two-col" style="margin-top:16px;">
+      <div class="card" style="margin-bottom:0;">
+        <h3>📊 M3 底驗證指標</h3>
+        <table>
+          <tr><th>指標</th><th>✅ Go</th><th>❌ No-Go</th></tr>
+          <tr><td>BD 月簽約數</td><td>每人 ≥5 家/月</td><td>&lt;3 家</td></tr>
+          <tr><td>$15K 付費意願</td><td>≥30% 願意認證</td><td>&lt;15%</td></tr>
+          <tr><td>客戶 3 個月存活率</td><td>≥70%</td><td>&lt;50%</td></tr>
+          <tr><td>設計師自然增長</td><td>每月 ≥50 位</td><td>&lt;20 位</td></tr>
+          <tr><td>轉介紹率</td><td>≥20% 介紹同業</td><td>&lt;10%</td></tr>
+        </table>
+      </div>
+      <div class="card" style="margin-bottom:0;">
+        <h3>Top 5 風險</h3>
+        <ol>
+          <li><strong>招聘品質失控</strong>（月均33人）→ 標準化4關面試 + 90天嚴格淘汰</li>
+          <li><strong>管理層斷層</strong>（需47位管理者）→ CRO 招募能力 + 外聘/內升 5:3</li>
+          <li><strong>M3-M6 現金流緊張</strong> → 1.5億銀行額度 + 每月現金流預測</li>
+          <li><strong>組織文化崩潰</strong>（25→400人）→ COO 專管 + 老員工留任獎金</li>
+          <li><strong>產品跟不上</strong>（客戶14倍增長）→ 技術團隊 15→35人</li>
+        </ol>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════ -->
+<!-- ══════════════════════════════════════════════════════════════════ -->
+<!-- 立即行動                                                          -->
+<!-- ══════════════════════════════════════════════════════════════════ -->
 <div class="section">
-  <h2 class="section-title">🔄 四、飛輪引擎 — 台北打版 → 區域複製 → 指數成長</h2>
+  <h2 class="section-title">⚡ 本週就開始</h2>
 
-  <div class="highlight">
-    <strong>Show 的核心策略：先在台北用 2-3 類 BD 打通模式，驗證完再複製到全台。</strong><br>
-    不是同時開 200 人，而是先造一台會跑的車 → 確認能跑 → 再量產 200 台。<br>
-    平台有傳播力 + 公司設規範 + BD 依規範找資源 + 客戶得到服務 = 成長飛輪自轉。
+  <!-- 本週 5 件事 -->
+  <div class="card">
+    <h3>本週做的 5 件事</h3>
+    <div class="grid-2">
+      <div>
+        <h4 style="font-size:0.9rem; margin-bottom:8px;">Day 1-3：宣戰動員</h4>
+        <ul>
+          <li>☐ CEO 全員大會宣布計畫</li>
+          <li>☐ 聯繫 3 家獵頭啟動 CRO 搜尋</li>
+          <li>☐ COO JD 發布 LinkedIn + 104</li>
+        </ul>
+      </div>
+      <div>
+        <h4 style="font-size:0.9rem; margin-bottom:8px;">Day 4-7：基礎建設</h4>
+        <ul>
+          <li>☐ 銀行洽談營運週轉金額度</li>
+          <li>☐ CRM 評估（Salesforce vs HubSpot）</li>
+          <li>☐ 現有 200 客戶 S/A/B/C 分級</li>
+          <li>☐ BD JD 發布（北部先行）</li>
+          <li>☐ 薪酬制度 v1.0 + 認證制度 v1.0 定稿</li>
+        </ul>
+      </div>
+    </div>
   </div>
 
-  <!-- Phase 0: 台北打版 -->
+  <!-- M1-M3 台北打版計畫 -->
   <div class="card">
-    <h3>📣 先線上引流，再線下服務 — BD 不掃街</h3>
-
-    <div class="alert" style="margin-bottom:20px;">
-      <strong>❌ 錯誤做法：BD 一間一間拜訪建材行 → 每天跑 5 家 → 一個月 100 家 → 太慢</strong><br>
-      <strong>✅ 正確做法：廣告/媒體讓 1,000 家知道你 → 200 家有興趣主動留資料 → BD 只服務這 200 家 → 效率 20 倍</strong>
-    </div>
-
-    <div style="text-align:center; padding:24px; background:linear-gradient(135deg, #f0f9ff, #faf5ff); border-radius:16px; margin-bottom:20px;">
-      <div style="font-size:0.95rem; line-height:2.5;">
-        <strong style="font-size:1.1rem;">🔄 線上引流 → 線下服務 → 線上留存</strong><br><br>
-        <span style="background:#dbeafe; padding:6px 14px; border-radius:20px; font-weight:700;">① 線上廣告/媒體曝光</span><br>
-        <span style="color:#94a3b8;">讓目標客戶知道樂居能幫他什麼</span><br>
-        <span style="color:#94a3b8; font-size:1.2rem;">↓</span><br>
-        <span style="background:#dcfce7; padding:6px 14px; border-radius:20px; font-weight:700;">② 有興趣的人主動留資料/註冊</span><br>
-        <span style="color:#94a3b8;">BD 不用陌生開發，只接住「已經舉手的人」</span><br>
-        <span style="color:#94a3b8; font-size:1.2rem;">↓</span><br>
-        <span style="background:#fef3c7; padding:6px 14px; border-radius:20px; font-weight:700;">③ BD 線下拜訪/視訊 Demo</span><br>
-        <span style="color:#94a3b8;">幫客戶上架產品、教他用平台、解決問題</span><br>
-        <span style="color:#94a3b8; font-size:1.2rem;">↓</span><br>
-        <span style="background:#fce7f3; padding:6px 14px; border-radius:20px; font-weight:700;">④ 客戶在平台上活躍 → 升級付費</span><br>
-        <span style="color:#94a3b8;">線上持續經營，BD 不用反覆上門</span>
-      </div>
-    </div>
-
-    <!-- 三角色引流策略 -->
-    <div class="card" style="margin-bottom:20px;">
-      <h4 style="font-size:1rem; margin-bottom:16px;">📣 三角色的線上引流方式</h4>
-      <table>
-        <tr><th>角色</th><th>廣告/媒體管道</th><th>訴求（讓他一看就想留資料）</th><th>引流落地頁</th><th>BD 介入時機</th></tr>
-        <tr>
-          <td><strong>🏭 建材商</strong></td>
-          <td>
-            • Facebook 精準廣告（投建材業老闆）<br>
-            • 建材公會 LINE 群/電子報<br>
-            • 建材展覽現場（台北建材展）<br>
-            • Google 搜尋「建材上架平台」
-          </td>
-          <td>
-            <strong>「免費上架你的產品，讓 500 位設計師主動找到你」</strong><br>
-            <span style="font-size:0.8rem; color:#64748b;">附數據：本月平台設計師搜尋建材 X 次</span>
-          </td>
-          <td>專屬落地頁<br>填公司名+電話<br>即免費開通帳號</td>
-          <td>留資料後 <strong>24hr 內</strong><br>BD 電話聯繫<br>「幫你完成上架」</td>
-        </tr>
-        <tr>
-          <td><strong>🎨 設計師</strong></td>
-          <td>
-            • IG 廣告（投室內設計相關興趣）<br>
-            • 設計師 FB 社團貼文<br>
-            • YouTube 選材教學影片<br>
-            • LINE 設計師交流群口碑
-          </td>
-          <td>
-            <strong>「一鍵比價 2,000 款建材，不用再跑展示廳」</strong><br>
-            <span style="font-size:0.8rem; color:#64748b;">附案例：「設計師小林用樂居，選材從 2 天變 30 分鐘」</span>
-          </td>
-          <td>直接註冊頁<br>選偏好品類+區域<br>立刻看到推薦建材</td>
-          <td>註冊後 <strong>3 天內</strong><br>CS 視訊教學<br>「帶你用平台完成第一次選材」</td>
-        </tr>
-        <tr>
-          <td><strong>🔨 工班</strong></td>
-          <td>
-            • 建材行/五金行張貼 QR Code<br>
-            • 工地現場 BD 直接掃碼<br>
-            • Facebook 工班社團貼文<br>
-            • 工班師傅口碑轉介紹
-          </td>
-          <td>
-            <strong>「免費註冊，附近的裝修案自動通知你」</strong><br>
-            <span style="font-size:0.8rem; color:#64748b;">附數據：「你 3 公里內有 8 個案子正在找泥作」</span>
-          </td>
-          <td>手機 LINE 註冊<br>選工種+服務區域<br>立刻收到案件通知</td>
-          <td>註冊後 <strong>自動推案件</strong><br>BD 只在接案後才介入<br>幫忙處理合約/付款</td>
-        </tr>
-      </table>
-    </div>
-
-    <!-- BD 角色轉變 -->
-    <div class="card" style="margin-bottom:20px;">
-      <h4 style="font-size:1rem; margin-bottom:12px;">🔄 BD 角色轉變：從「掃街業務」→「客戶成功顧問」</h4>
-      <div class="two-col">
-        <div style="background:#fef2f2; border-radius:12px; padding:16px;">
-          <p style="font-weight:700; color:#dc2626; margin-bottom:8px;">❌ 舊模式（掃街）</p>
-          <ul style="font-size:0.85rem;">
-            <li>BD 每天跑 5 家陌生拜訪</li>
-            <li>被拒絕率 80%</li>
-            <li>一個月簽 5-8 家</li>
-            <li>BD 累到流動率高</li>
-            <li>成本：$48K/人/月 ÷ 5 家 = $9,600/家</li>
-          </ul>
-        </div>
-        <div style="background:#f0fdf4; border-radius:12px; padding:16px;">
-          <p style="font-weight:700; color:#16a34a; margin-bottom:8px;">✅ 新模式（引流+服務）</p>
-          <ul style="font-size:0.85rem;">
-            <li>廣告帶來 100 個 leads/月</li>
-            <li>BD 只聯繫「已舉手」的人</li>
-            <li>成交率 30-50%</li>
-            <li>一個月簽 30-50 家</li>
-            <li>成本：($48K + $30K 廣告) ÷ 40 家 = <strong>$1,950/家</strong></li>
-          </ul>
-        </div>
-      </div>
-      <div class="success" style="margin-top:12px;">
-        <strong>獲客成本降 5 倍：$9,600 → $1,950/家。</strong><br>
-        BD 不再做最痛苦的陌生開發，而是做最有價值的「教客戶用平台」。<br>
-        客戶體驗也更好 — 是他主動來的，不是被推銷的。
-      </div>
-    </div>
-
-    <!-- 廣告預算規劃 -->
-    <div class="card" style="margin-bottom:20px;">
-      <h4 style="font-size:1rem; margin-bottom:12px;">💰 引流廣告預算規劃</h4>
-      <table>
-        <tr><th>管道</th><th>月預算</th><th>預期 Leads</th><th>成交率</th><th>預期新客</th><th>CPA</th></tr>
-        <tr>
-          <td>Facebook/IG 精準廣告</td><td>$50K</td><td>200</td><td>30%</td><td>60</td><td>$833</td>
-        </tr>
-        <tr>
-          <td>Google 搜尋廣告</td><td>$30K</td><td>80</td><td>40%</td><td>32</td><td>$938</td>
-        </tr>
-        <tr>
-          <td>建材展/活動</td><td>$30K/次</td><td>150/次</td><td>25%</td><td>38</td><td>$789</td>
-        </tr>
-        <tr>
-          <td>LINE 社群經營</td><td>$5K</td><td>50</td><td>50%</td><td>25</td><td>$200</td>
-        </tr>
-        <tr>
-          <td>KOL/口碑</td><td>$30K</td><td>100</td><td>20%</td><td>20</td><td>$1,500</td>
-        </tr>
-        <tr style="background:#f0fdf4; font-weight:600;">
-          <td>合計</td><td>$145K/月</td><td>580</td><td>30%</td><td><strong>175 家/月</strong></td><td><strong>$829</strong></td>
-        </tr>
-      </table>
-      <p style="font-size:0.85rem; color:#64748b; margin-top:8px;">
-        $145K 月廣告預算 + 5 個 BD（$240K）= 月投入 $385K → 月新增 175 家 → 其中 $15K 認證轉換 30% = 52 家 × $15K = <strong>月營收 $780K</strong><br>
-        <strong>月 ROI = 780K ÷ 385K = 2.0x → 第一個月就不賠錢。</strong>
-      </p>
-    </div>
-
-    <h3>🎯 Phase 0：台北打版期（M1-M3）— 3 類 BD × 5 人 × 驗證閉環</h3>
+    <h3>🎯 M1-M3 台北打版計畫 — 5 人 × 3 品類 × 驗證閉環</h3>
 
     <div style="text-align:center; padding:20px; background:#f8fafc; border-radius:12px; margin-bottom:20px; font-size:0.9rem;">
       <strong style="font-size:1.1rem;">台北打版的 3 類 BD</strong><br><br>
@@ -784,156 +1222,9 @@
     </div>
   </div>
 
-  <!-- 驗證指標 -->
+  <!-- CEO 3 件事 -->
   <div class="card">
-    <h3>📊 M3 底驗證指標 — Go/No-Go 決策數據</h3>
-    <table>
-      <tr><th>指標</th><th>✅ Go（可複製）</th><th>🟡 調整後再試</th><th>❌ No-Go（重新設計）</th></tr>
-      <tr>
-        <td><strong>BD 月簽約數</strong></td>
-        <td>每人 ≥5 家/月</td>
-        <td>3-4 家（話術/流程需優化）</td>
-        <td>&lt;3 家（產品或定價有問題）</td>
-      </tr>
-      <tr>
-        <td><strong>$15K 付費意願</strong></td>
-        <td>≥30% 建材商願意認證</td>
-        <td>15-30%（需加強價值展示）</td>
-        <td>&lt;15%（定價需重設）</td>
-      </tr>
-      <tr>
-        <td><strong>客戶 3 個月存活率</strong></td>
-        <td>≥70%</td>
-        <td>50-70%（CS 需加強）</td>
-        <td>&lt;50%（產品不夠好）</td>
-      </tr>
-      <tr>
-        <td><strong>設計師自然增長</strong></td>
-        <td>每月 ≥50 位自然註冊</td>
-        <td>20-50 位（內容不夠吸引）</td>
-        <td>&lt;20 位（供給不足）</td>
-      </tr>
-      <tr>
-        <td><strong>轉介紹率</strong></td>
-        <td>≥20% 客戶介紹同業</td>
-        <td>10-20%（服務需提升）</td>
-        <td>&lt;10%（價值不夠）</td>
-      </tr>
-    </table>
-  </div>
-
-  <!-- 飛輪機制 -->
-  <div class="card">
-    <h3>🔄 成長飛輪設計 — 為什麼能指數成長</h3>
-
-    <div style="text-align:center; padding:24px; background:linear-gradient(135deg, #f0f9ff, #f5f3ff); border-radius:16px; margin-bottom:20px;">
-      <div style="font-size:0.95rem; line-height:2.2;">
-        <strong style="font-size:1.2rem;">🔄 飛輪四段引擎</strong><br><br>
-        <span style="background:#dbeafe; padding:4px 12px; border-radius:20px; font-weight:600;">① 公司設規範</span>
-        <span style="color:#94a3b8;"> → </span>
-        <span style="background:#dcfce7; padding:4px 12px; border-radius:20px; font-weight:600;">② BD 依規範找資源</span><br>
-        <span style="color:#94a3b8;font-size:1.5rem;">↑</span>
-        <span style="color:transparent;">___________________________</span>
-        <span style="color:#94a3b8;font-size:1.5rem;">↓</span><br>
-        <span style="background:#fef3c7; padding:4px 12px; border-radius:20px; font-weight:600;">④ 數據回饋優化規範</span>
-        <span style="color:#94a3b8;"> ← </span>
-        <span style="background:#fce7f3; padding:4px 12px; border-radius:20px; font-weight:600;">③ 客戶得到服務</span>
-      </div>
-    </div>
-
-    <div class="two-col">
-      <div>
-        <h4 style="font-size:0.9rem; margin-bottom:8px;">① 公司設規範（總部）</h4>
-        <ul style="font-size:0.85rem;">
-          <li>建材商上架標準（照片規格、價格格式、描述模版）</li>
-          <li>工班認證標準（作品集、證照、評價門檻）</li>
-          <li>BD 拜訪 SOP（話術腳本、demo 流程、CRM 填寫規範）</li>
-          <li>定價方案與折扣權限（BD 可自行決定的範圍）</li>
-          <li><strong>規範 = 可複製的成功公式</strong></li>
-        </ul>
-      </div>
-      <div>
-        <h4 style="font-size:0.9rem; margin-bottom:8px;">② BD 依規範找資源（現場）</h4>
-        <ul style="font-size:0.85rem;">
-          <li>按品類 checklist 掃街（確保不漏掉主力品牌）</li>
-          <li>按拜訪 SOP 標準化開發（每個 BD 的話術一致）</li>
-          <li>建材商上架時用標準模版（品質一致）</li>
-          <li>工班註冊時驗證資格（確保服務品質）</li>
-          <li><strong>規範讓新人 2 週就能上手，不依賴個人英雄</strong></li>
-        </ul>
-      </div>
-    </div>
-    <div class="two-col" style="margin-top:12px;">
-      <div>
-        <h4 style="font-size:0.9rem; margin-bottom:8px;">③ 客戶得到服務（市場）</h4>
-        <ul style="font-size:0.85rem;">
-          <li>設計師搜建材 → 品項齊全、價格透明、一鍵詢價</li>
-          <li>設計師找工班 → 有評價、有作品、有認證</li>
-          <li>建材商獲客 → 設計師主動來搜、詢價量成長</li>
-          <li>工班接案 → 不用被動等電話、案源穩定</li>
-          <li><strong>每個角色都「工作變快、賺更多」→ 口碑傳播</strong></li>
-        </ul>
-      </div>
-      <div>
-        <h4 style="font-size:0.9rem; margin-bottom:8px;">④ 數據回饋優化規範（閉環）</h4>
-        <ul style="font-size:0.85rem;">
-          <li>BD 反饋：「客戶說搜尋不夠準」→ 產品改善搜尋</li>
-          <li>數據顯示：「磁磚詢價量最高」→ 加派磁磚 BD</li>
-          <li>客戶流失：「衛浴品項太少」→ 補齊衛浴供給</li>
-          <li>成交數據：「大安區轉化率最高」→ 該區 BD 加倍</li>
-          <li><strong>數據驅動決策，不靠猜</strong></li>
-        </ul>
-      </div>
-    </div>
-  </div>
-
-  <!-- 複製路徑 -->
-  <div class="card">
-    <h3>📈 台北打版 → 全台複製的指數成長路徑</h3>
-
-    <table>
-      <tr><th>階段</th><th>時間</th><th>區域</th><th>BD 數</th><th>品類數</th><th>做什麼</th><th>成功標準</th></tr>
-      <tr style="background:#fef2f2">
-        <td><strong>打版</strong></td><td>M1-M3</td><td>台北 4 區</td><td>5</td><td>3 類</td>
-        <td>磁磚+木作+油漆 BD 跑通閉環</td>
-        <td>每人月簽 ≥5 家、$15K 意願 ≥30%</td>
-      </tr>
-      <tr style="background:#fefce8">
-        <td><strong>驗證</strong></td><td>M3-M4</td><td>台北全區</td><td>15</td><td>5 類</td>
-        <td>加入衛浴+廚具 BD，擴到全台北</td>
-        <td>5 類品類覆蓋率 ≥60%</td>
-      </tr>
-      <tr style="background:#f0fdf4">
-        <td><strong>複製 v1</strong></td><td>M4-M6</td><td>+新北+桃園</td><td>40</td><td>5 類</td>
-        <td>把台北的 SOP 直接搬到新北/桃園</td>
-        <td>新區域 BD 2 週內達到台北 BD 80% 產能</td>
-      </tr>
-      <tr style="background:#eff6ff">
-        <td><strong>複製 v2</strong></td><td>M6-M9</td><td>+台中+高雄</td><td>100</td><td>全品類</td>
-        <td>中南部建立在地團隊，適配當地市場</td>
-        <td>全台 4 大區域運轉</td>
-      </tr>
-      <tr style="background:#f5f3ff">
-        <td><strong>規模化</strong></td><td>M9-M12</td><td>全台</td><td>200</td><td>全品類</td>
-        <td>補齊二線城市 + 精細化運營</td>
-        <td>200 BD + MRR &gt;6,000 萬</td>
-      </tr>
-    </table>
-
-    <div class="highlight" style="margin-top:16px;">
-      <strong>為什麼能指數成長？</strong><br><br>
-      <strong>1. 平台的傳播力：</strong>建材商上架 → 設計師來搜 → 設計師告訴其他設計師 → 更多設計師 → 更多建材商想上架。<br>
-      平台內容越豐富 → 自然流量越大 → BD 開發越容易（「你看平台上已經有 200 家建材商了，你不上就被搶走客戶」）<br><br>
-      <strong>2. SOP 的複製力：</strong>台北打版的話術/流程/demo 腳本 → 直接搬到台中用。<br>
-      新人不需要從零摸索，照 SOP 走 2 週就能開始簽約。這就是「規範」的力量。<br><br>
-      <strong>3. 數據的累積力：</strong>每多一個建材商 → 價格資料庫更完整 → 比價功能更好用 → 更多設計師來 → 更多建材商想上。<br>
-      這個數據飛輪一旦轉起來，<strong>後進者需要 3 年才能追上你 3 個月累積的數據量</strong>。
-    </div>
-  </div>
-
-  <!-- Show 的角色 -->
-  <div class="card">
-    <h3>👔 CEO 在飛輪中的角色 — 你只做 3 件事</h3>
+    <h3>👔 CEO 只做 3 件事</h3>
     <div class="grid-3">
       <div style="background:#fef2f2; border-radius:12px; padding:20px; text-align:center;">
         <p style="font-size:2rem;">🔍</p>
@@ -951,588 +1242,13 @@
         <p style="font-size:0.8rem; color:#64748b;">數字達標 → 擴編<br>數字不到 → 調整<br>絕不燒錢硬衝</p>
       </div>
     </div>
-  </div>
-</div>
 
-<!-- ══════════════════════════════════════════ -->
-<div class="section">
-  <h2 class="section-title">🛒 五、設計師採購聯盟 — 樂居的終極護城河</h2>
-
-  <div class="highlight">
-    <strong>樂居不是「找建材的網站」，是設計師的採購聯盟。</strong><br>
-    一個設計師議價沒力量。500 個設計師一起議價，就是市場的定價者。<br>
-    建材商不是來「上架」的，是來「搶這 500 個設計師的訂單」的。
-  </div>
-
-  <!-- 痛點 -->
-  <div class="card">
-    <h3>😤 設計師現在的地獄 — 為什麼他們需要你</h3>
-    <table>
-      <tr><th>環節</th><th>現在怎麼做</th><th>花多久</th><th>用樂居</th><th>省多少</th></tr>
-      <tr>
-        <td><strong>找建材</strong></td>
-        <td>跑 3-5 家展示廳，每家看 2 小時</td>
-        <td>1-2 天</td>
-        <td>平台搜尋比較，30 分鐘</td>
-        <td><span class="badge" style="background:#dcfce7;color:#16a34a;">⚡ 快 10 倍</span></td>
-      </tr>
-      <tr>
-        <td><strong>比價</strong></td>
-        <td>打電話給 5 家問價，等 2-3 天回覆</td>
-        <td>2-3 天</td>
-        <td>即時比價表，10 秒出結果</td>
-        <td><span class="badge" style="background:#dcfce7;color:#16a34a;">⚡ 快 100 倍</span></td>
-      </tr>
-      <tr style="background:#fef2f2">
-        <td><strong>議價</strong></td>
-        <td>個人叫 10 箱，工廠不理你<br>大事務所叫 100 箱，直接 7 折</td>
-        <td>—</td>
-        <td>500 人聯盟集體議價 = 8 折平台價</td>
-        <td><span class="badge" style="background:#fef2f2;color:#dc2626;">💰 省 20%</span></td>
-      </tr>
-      <tr>
-        <td><strong>詢價</strong></td>
-        <td>逐家打電話，每家講 10 分鐘</td>
-        <td>半天</td>
-        <td>一鍵向 5 家同時詢價，24hr 收回覆</td>
-        <td><span class="badge" style="background:#dcfce7;color:#16a34a;">⚡ 快 5 倍</span></td>
-      </tr>
-      <tr>
-        <td><strong>算用量</strong></td>
-        <td>手動算坪數 × 用量，容易算錯</td>
-        <td>1-2 小時</td>
-        <td>輸入坪數自動計算數量 + 總價</td>
-        <td><span class="badge" style="background:#dcfce7;color:#16a34a;">⚡ 快 10 倍</span></td>
-      </tr>
-    </table>
-    <p style="font-size:0.85rem; color:#64748b; margin-top:12px;">
-      一個 35 坪住宅案，設計師光選材就花 2-3 週。磁磚、木地板、油漆、衛浴、五金... 每個品類重複一次。<br>
-      <strong>問題的本質：資訊不對稱 + 議價權不對等。小設計師永遠拿不到好價格。</strong>
-    </p>
-  </div>
-
-  <!-- 三層武器 -->
-  <div class="card">
-    <h3>🔫 三層武器 — 讓設計師離不開樂居</h3>
-
-    <!-- 武器 1: 比價引擎 -->
-    <div style="background:#f0fdf4; border-radius:12px; padding:20px; margin-bottom:16px;">
-      <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
-        <span class="badge" style="background:#dcfce7;color:#16a34a;">P0 立即做</span>
-        <h4 style="font-size:1rem; margin:0;">🔍 武器 1：即時比價引擎</h4>
-      </div>
-      <p style="font-size:0.85rem; color:#475569; margin-bottom:12px;">
-        設計師輸入「60x60 霧面磁磚」→ 平台 10 秒內顯示：
-      </p>
-      <div style="background:white; border-radius:8px; padding:16px; font-size:0.85rem; border:1px solid #d1fae5;">
-        <table style="margin:0;">
-          <tr><th>品牌</th><th>品名</th><th>單價</th><th>庫存</th><th>歷史低價</th><th>操作</th></tr>
-          <tr><td>冠軍磁磚</td><td>霧面仿石紋 60x60</td><td><strong>$180</strong>/片</td><td>✅ 有貨</td><td>$165（去年 11 月）</td><td><span style="color:#2563eb;">詢價</span></td></tr>
-          <tr><td>三洋磁磚</td><td>岩板灰 60x60</td><td><strong>$165</strong>/片</td><td>✅ 有貨</td><td>$155（今年 1 月）</td><td><span style="color:#2563eb;">詢價</span></td></tr>
-          <tr><td>白馬磁磚</td><td>水泥質感 60x60</td><td><strong>$145</strong>/片</td><td>⏳ 預訂 7 天</td><td>$140（去年 8 月）</td><td><span style="color:#2563eb;">詢價</span></td></tr>
-        </table>
-        <div style="margin-top:12px; padding-top:12px; border-top:1px solid #e2e8f0;">
-          <strong>📐 用量計算器：</strong>客廳 35 坪 → 需要 420 片 → 冠軍總價 $75,600 / 三洋總價 $69,300 / 白馬總價 $60,900
-        </div>
-      </div>
-      <p style="font-size:0.8rem; color:#64748b; margin-top:8px;">
-        <strong>技術基礎：</strong>product-service DB 已有 unit_price / price_per_ping / price_per_m2 欄位，1,975 個 SKU 都有價格。只缺前端比價介面。
-      </p>
-    </div>
-
-    <!-- 武器 2: 一鍵詢價 -->
-    <div style="background:#eff6ff; border-radius:12px; padding:20px; margin-bottom:16px;">
-      <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
-        <span class="badge" style="background:#dbeafe;color:#2563eb;">P0 立即做</span>
-        <h4 style="font-size:1rem; margin:0;">📨 武器 2：一鍵批次詢價</h4>
-      </div>
-      <div style="font-size:0.85rem; color:#475569;">
-        <p style="margin-bottom:8px;">設計師選好 3 種磁磚 →「一鍵向 5 家建材商詢價」→</p>
-        <div style="background:white; border-radius:8px; padding:16px; border:1px solid #bfdbfe;">
-          <p>① 5 家建材商<strong>同時收到 LINE 通知</strong>：「林設計師詢價：60x60 霧面磁磚 × 420 片」</p>
-          <p>② 建材商在平台上回覆報價（24 小時內）</p>
-          <p>③ 設計師看到<strong>比較表</strong>：價格、交期、運費一目了然</p>
-          <p>④ 選最優方案 → 一鍵下單</p>
-        </div>
-        <p style="margin-top:8px;"><strong>技術基礎：</strong>interaction-service 已有 material_inquiries API（POST /api/v1/material-inquiries）。LINE 推播用現有 NovuService + LineService。只缺前端「批次選擇 + 詢價表單」UI。</p>
-      </div>
-    </div>
-
-    <!-- 武器 3: 團購議價 -->
-    <div style="background:#fef2f2; border-radius:12px; padding:20px;">
-      <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
-        <span class="badge" style="background:#fecaca;color:#dc2626;">P1 殺手鐧</span>
-        <h4 style="font-size:1rem; margin:0;">👑 武器 3：團購議價 / 平台獨家價</h4>
-      </div>
-      <div style="font-size:0.85rem; color:#475569;">
-        <p style="margin-bottom:12px;"><strong>這個功能不需要寫 code，需要的是 BD 拿數據去談。</strong></p>
-        <div style="background:white; border-radius:8px; padding:16px; border:1px solid #fecaca;">
-          <p><strong>BD 對冠軍磁磚說：</strong></p>
-          <p style="background:#fef3c7; padding:12px; border-radius:8px; margin:8px 0; font-style:italic;">
-            「張總，我們平台上個月有 180 位設計師搜尋了你們的 60x60 霧面磁磚。<br>
-            如果你給我們一個平台獨家價，比如 85 折，我們幫你把這 180 個設計師推過來。<br>
-            你算算看，180 個潛在客戶 × 平均 500 片 = 90,000 片。這個量值不值得給個好價格？」
-          </p>
-          <p>冠軍：「85 折可以談。」</p>
-          <p style="margin-top:8px;"><strong>結果：</strong></p>
-          <ul>
-            <li>設計師：原價 $180 → 平台價 $153 → <strong>省 15%</strong></li>
-            <li>冠軍磁磚：一次觸及 180 個潛在客戶 → <strong>獲客成本趨近零</strong></li>
-            <li>樂居：從價差中抽取 3-5% 服務費 → <strong>新營收來源</strong></li>
-            <li>小設計師：終於能拿到跟大事務所一樣的價格 → <strong>永遠不離開</strong></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 飛輪效應 -->
-  <div class="card">
-    <h3>🔄 採購聯盟的飛輪效應</h3>
-    <div style="text-align:center; padding:24px; background:linear-gradient(135deg, #f0fdf4, #ecfdf5); border-radius:16px; margin-bottom:16px;">
-      <div style="font-size:0.9rem; line-height:2.4;">
-        <span style="background:#dcfce7; padding:6px 14px; border-radius:20px; font-weight:700;">更多設計師加入</span><br>
-        <span style="color:#94a3b8; font-size:1.2rem;">↑</span>
-        <span style="color:transparent;">_______________________________</span>
-        <span style="color:#94a3b8; font-size:1.2rem;">↓</span><br>
-        <span style="background:#fef3c7; padding:6px 14px; border-radius:20px; font-weight:700;">議價量更大</span>
-        <span style="color:transparent;">________________</span>
-        <span style="background:#dbeafe; padding:6px 14px; border-radius:20px; font-weight:700;">平台價更低</span><br>
-        <span style="color:#94a3b8; font-size:1.2rem;">↑</span>
-        <span style="color:transparent;">_______________________________</span>
-        <span style="color:#94a3b8; font-size:1.2rem;">↓</span><br>
-        <span style="background:#fce7f3; padding:6px 14px; border-radius:20px; font-weight:700;">建材商更願意給折扣</span>
-      </div>
-    </div>
-    <div class="two-col">
-      <div>
-        <h4 style="font-size:0.9rem; margin-bottom:8px;">M1-M6：比價引擎建立數據</h4>
-        <ol style="font-size:0.85rem;">
-          <li>上線即時比價功能 → 設計師開始用</li>
-          <li>累積搜尋數據：「哪些品牌被搜最多」</li>
-          <li>BD 拿數據拜訪建材商：「你的產品月搜尋量 500 次」</li>
-          <li>建材商主動要求上架（因為看到流量）</li>
-        </ol>
-      </div>
-      <div>
-        <h4 style="font-size:0.9rem; margin-bottom:8px;">M7-M12：啟動團購議價</h4>
-        <ol style="font-size:0.85rem;">
-          <li>平台有 500+ 設計師 → 議價量夠大</li>
-          <li>BD 跟 TOP 20 建材商談平台獨家價</li>
-          <li>推出「樂居價」標籤 → 設計師一看就知道比市價便宜</li>
-          <li>設計師轉介紹同業加入 → 議價量更大 → 🔄 飛輪加速</li>
-        </ol>
-      </div>
-    </div>
-  </div>
-
-  <!-- 競爭壁壘 -->
-  <div class="card">
-    <h3>🏰 為什麼競爭對手做不到</h3>
-    <div class="grid-3">
-      <div style="background:#f0fdf4; border-radius:12px; padding:16px; text-align:center;">
-        <p style="font-size:2rem;">📊</p>
-        <p style="font-weight:700; margin:8px 0;">數據壁壘</p>
-        <p style="font-size:0.8rem; color:#64748b;">1,975 個 SKU 的即時價格<br>每天的搜尋/詢價數據<br>新進者需要 2-3 年才能累積</p>
-      </div>
-      <div style="background:#eff6ff; border-radius:12px; padding:16px; text-align:center;">
-        <p style="font-size:2rem;">🤝</p>
-        <p style="font-weight:700; margin:8px 0;">關係壁壘</p>
-        <p style="font-size:0.8rem; color:#64748b;">BD 深耕建材商 = 獨家價格<br>500 設計師的集體議價權<br>這不是花錢就能買到的</p>
-      </div>
-      <div style="background:#fef3c7; border-radius:12px; padding:16px; text-align:center;">
-        <p style="font-size:2rem;">🔒</p>
-        <p style="font-weight:700; margin:8px 0;">轉換成本</p>
-        <p style="font-size:0.8rem; color:#64748b;">設計師離開 = 多付 20% 建材費<br>建材商離開 = 失去 500 個潛在客戶<br><strong>雙邊鎖定</strong></p>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════ -->
-<div class="section">
-  <h2 class="section-title">🏗️ 六、BD 組織架構 — 雙軌制落地方案</h2>
-
-  <div class="highlight">
-    <strong>核心決策：採用「混合獵人 + 專精農夫」雙軌制</strong><br>
-    200BD 全台擴張計畫的規模 × BD 角色規劃方案的「全循環」理念 = 混合雙軌制。<br>
-    混合 BD 快速覆蓋市場、專精 BD 深度經營高價值客戶。
-  </div>
-
-  <div class="card">
-    <h3>最終架構（M12 目標：~400 人）</h3>
-    <pre style="font-size:0.85rem; background:#f8fafc; padding:16px; border-radius:8px; overflow-x:auto;">
-CEO（你）
- ├── CRO 營收長 ⭐（外聘，M1-M2 到位）
- │    ├── 北部大區 VP（90 BD）
- │    │    ├── Director ×3
- │    │    ├── 混合獵人組長 ×8 → 混合 BD ×48
- │    │    ├── 建材專精組長 ×3 → 專精 BD ×12
- │    │    └── 設計師成功組長 ×4 → CS ×16
- │    ├── 中部大區 VP（45 BD）
- │    │    ├── Director ×2
- │    │    ├── 混合獵人 ×24 + 專精 ×8 + CS ×8
- │    │    └── SDR ×10
- │    ├── 南部大區 VP（50 BD）
- │    │    ├── Director ×2
- │    │    ├── 混合獵人 ×27 + 專精 ×9 + CS ×9
- │    │    └── SDR ×12
- │    ├── 東部主管（15 BD）
- │    │    └── 混合獵人 ×12 + CS ×3
- │    ├── Sales Ops（12人）— CRM/數據/流程
- │    └── Enablement（6人）— 培訓/教材
- ├── COO 營運長（新聘）
- │    └── HR(12) + 行政(5) + 財務(3)
- └── CTO（現有）
-      └── 技術團隊（15→35人）
-    </pre>
-  </div>
-
-  <div class="two-col">
-    <div class="card">
-      <h3>🦁 混合獵人 BD（111人）— 60% 主力</h3>
-      <p><strong>定位：</strong>按區域劃分，同一天跑同一區所有類型客戶</p>
-      <p><strong>核心優勢：</strong>建材商和工班互為線索來源，一次拜訪通吃三角色</p>
-      <p><strong>日常節奏：</strong></p>
-      <ul>
-        <li>上午：拜訪設計公司 → 順帶簽設計師 → 拿到建材商/工班線索</li>
-        <li>下午：拜訪建材行 → 邀請上架 → 認識配合工班</li>
-        <li>傍晚：更新 CRM + 轉介紹給專精 BD</li>
-      </ul>
-      <p><strong>月 KPI：</strong>≥60 積分（多維度計分，跨類型轉介紹加分）</p>
-      <p><strong>月收入：</strong>$43K（新人）→ $55K（達標）→ $85K+（頂尖）</p>
-    </div>
-    <div class="card">
-      <h3>🐂 專精農夫 BD + CS（89人）— 40%</h3>
-      <p><strong>建材專精 BD（29人）：</strong>深度簽約、產品上架輔導、續約經營、付費升級</p>
-      <p><strong>設計師成功 CS（36人）：</strong>不是「賣」而是「教」— 教育訓練、社群經營、付費轉換</p>
-      <p><strong>SDR（24人）：</strong>線索開發、電話預約、漏斗頂部</p>
-      <p style="margin-top:12px;"><strong>CS 與供給 BD 的協作飛輪：</strong></p>
-      <ol>
-        <li>CS 收集設計師需求（「設計師在找 XXX 建材」）</li>
-        <li>供給 BD 優先開發該建材廠商</li>
-        <li>建材商上架 → CS 推播給設計師</li>
-        <li>設計師：「這平台越來越好用！」→ 🔄 正向循環</li>
-      </ol>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════ -->
-<div class="section">
-  <h2 class="section-title">📅 七、12 個月分階段落地方針</h2>
-
-  <div class="timeline">
-    <div class="timeline-item active">
-      <span class="phase-tag tag-red">Phase 1：M1-M2 建立司令部</span>
-      <div class="card" style="margin-top:8px;">
-        <h3>🔴 20-25 人 → 公司達 45-50 人</h3>
-        <div class="two-col">
-          <div>
-            <strong>人員到位：</strong>
-            <ul>
-              <li>⭐ CRO（最關鍵！月薪 35-50 萬）</li>
-              <li>COO 營運長</li>
-              <li>北部 VP + 3 位 Director</li>
-              <li>Sales Ops 3 人 + Enablement 2 人</li>
-              <li>HR 擴到 5 人</li>
-            </ul>
-          </div>
-          <div>
-            <strong>關鍵行動：</strong>
-            <ul>
-              <li>CRM 全面上線（HubSpot/Salesforce）</li>
-              <li>現有 200 客戶 S/A/B/C 分級</li>
-              <li>認證制度 v1.0 定稿</li>
-              <li>培訓教材 + 銷售腳本完成</li>
-              <li>台中/高雄辦公室選址</li>
-            </ul>
-          </div>
-        </div>
-        <div class="alert" style="margin-top:12px;">
-          <strong>Gate 1（M2 底）：</strong>CRO 到位 + 北部 VP 到位 + CRM 上線 → GO<br>
-          ❌ CRO 還沒到位 → <strong>暫停全部，繼續找</strong>。沒有將軍不上戰場。
-        </div>
-      </div>
-    </div>
-
-    <div class="timeline-item">
-      <span class="phase-tag tag-amber">Phase 2：M3-M5 北部全面展開 + 中南啟動</span>
-      <div class="card" style="margin-top:8px;">
-        <h3>🟡 +80-100 人 → 公司達 130-150 人</h3>
-        <ul>
-          <li>北部 BD 衝到 40-50 人（混合獵人為主）</li>
-          <li>中南部 VP 到位、每區先進 10-15 BD</li>
-          <li>SDR 團隊啟動（每區 5-8 人）</li>
-          <li>第一批 BD 開始成交 → 月新簽 ≥90 客戶</li>
-          <li><strong>M5：全平台宣布樂居 PRO 認證制度</strong></li>
-          <li>Phase 1 免費版 → 開始限縮功能，引導升級</li>
-        </ul>
-        <div class="highlight" style="margin-top:8px;">
-          <strong>⚡ 這是現金流壓力最大的階段。</strong>人事成本快速膨脹但營收還沒跟上。<br>
-          需要 1.5 億以上銀行額度作為安全網。
-        </div>
-        <div class="alert">
-          <strong>Gate 2（M5 底）：</strong>月新簽 ≥90 客戶 + 3 個辦公室運轉 → GO<br>
-          月新簽 &lt;60 → 凍結招聘，診斷問題。
-        </div>
-      </div>
-    </div>
-
-    <div class="timeline-item">
-      <span class="phase-tag tag-green">Phase 3：M6-M9 全台加速 + 認證變現</span>
-      <div class="card" style="margin-top:8px;">
-        <h3>🟢 +120-140 人 → 公司達 270-300 人</h3>
-        <ul>
-          <li>全面衝量：北部 70-80 BD，中南部各 30-40 BD</li>
-          <li>東部據點啟動（M5 起）</li>
-          <li><strong>M6：推出 PRO Basic 認證（首月 5 折）</strong></li>
-          <li>M7：建材商 PRO Basic $15K/月上線（首月 5 折 $7,500）</li>
-          <li>M8：設計師基礎版上線</li>
-          <li>M9：工班基礎版上線</li>
-          <li>Hunter/Farmer 正式分流</li>
-          <li>CS 團隊全面運轉 → 設計師留存率 &gt;75%</li>
-        </ul>
-        <div class="success">
-          <strong>🎯 M6-M7 是關鍵轉折點：SaaS MRR 超過人事成本，正現金流開始。</strong>
-        </div>
-        <div class="alert">
-          <strong>Gate 3（M8 底）：</strong>月新簽 ≥250 + MRR &gt;2,000 萬 + 現金流正 → GO<br>
-          MRR &lt;1,500 萬 → 目標收縮到 100 BD 穩住。
-        </div>
-      </div>
-    </div>
-
-    <div class="timeline-item">
-      <span class="phase-tag tag-blue">Phase 4：M10-M12 補齊 + 升級 + 穩固</span>
-      <div class="card" style="margin-top:8px;">
-        <h3>🔵 +50-60 人 → 公司達 380-420 人</h3>
-        <ul>
-          <li>補齊 200 BD 缺口</li>
-          <li><strong>M10+：推出 PRO Plus/Elite 進階認證</strong>（$25K-$50K/月，按角色分級）</li>
-          <li>績效評估全面展開：淘汰 15-20% 並補新血</li>
-          <li>月度 Business Review 制度化</li>
-          <li>開始規劃 2027 年 100→300 BD 架構</li>
-        </ul>
-        <div class="success">
-          <strong>Final Gate（M12）：</strong>200 BD + MRR &gt;6,000 萬 + 全台 4 區域運轉 ✅
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════ -->
-<div class="section">
-  <h2 class="section-title">💻 八、產品發展策略 — 技術服務商業</h2>
-
-  <div class="highlight">
-    <strong>核心原則：產品開發以 BD 需求為驅動，不再做「技術先行」的功能。</strong><br>
-    每個功能都必須回答：「這個功能讓 BD 更容易簽客戶，還是讓客戶更難離開？」
-  </div>
-
-  <div class="card">
-    <h3>產品路線圖 — 對齊 BD 四個 Phase</h3>
-    <table>
-      <tr><th>Phase</th><th>產品重點</th><th>目的</th></tr>
-      <tr>
-        <td><span class="phase-tag tag-red">M1-M2</span></td>
-        <td>
-          ① CRM 接通真實 API（移除 mock）<br>
-          ② 供給側上架流程優化（3 步完成）<br>
-          ③ BD 用的客戶管理 App（行動版 CRM）
-        </td>
-        <td>讓 BD 有武器<br>讓建材商/工班上架零摩擦</td>
-      </tr>
-      <tr>
-        <td><span class="phase-tag tag-amber">M3-M5</span></td>
-        <td>
-          ④ 認證系統 + 付費方案頁面<br>
-          ⑤ 設計師「工作加速器」功能強化<br>
-          　- 一鍵多家詢價<br>
-          　- 建材用量計算器<br>
-          　- AI 空間提案（照片→風格預覽）<br>
-          ⑥ 建材商即時詢價通知 + 自動報價
-        </td>
-        <td>讓平台「好到上癮」<br>為 M6 認證付費做準備</td>
-      </tr>
-      <tr>
-        <td><span class="phase-tag tag-green">M6-M9</span></td>
-        <td>
-          ⑦ PRO 認證標章 + 功能分層（免費版限制）<br>
-          ⑧ 設計師 Moodboard + 業主共享<br>
-          ⑨ 工程排程甘特圖 + 三方進度同步<br>
-          ⑩ 業主驗收系統 → 觸發付款里程碑
-        </td>
-        <td>免費→付費轉換<br>三角色協作閉環</td>
-      </tr>
-      <tr>
-        <td><span class="phase-tag tag-blue">M10-M12</span></td>
-        <td>
-          ⑪ PRO Plus 進階功能（AI 推薦、ERP 串接）<br>
-          ⑫ 數據儀表板（客戶能看自己的 ROI）<br>
-          ⑬ 自動化 Upsell 觸發引擎<br>
-          ⑭ API 開放平台
-        </td>
-        <td>ARPU 提升<br>規模化自動變現</td>
-      </tr>
-    </table>
-  </div>
-
-  <div class="card">
-    <h3>🔑 產品 × BD 協作機制（閉環反饋）</h3>
-    <div style="text-align:center; padding:16px; background:#f8fafc; border-radius:12px; font-size:0.95rem;">
-      BD 現場收集需求 → <strong>需求工單（3分鐘）</strong> → 產品反饋組整理分類<br>
-      ↓<br>
-      <strong>每週五「需求評審會」</strong>（BD主管 + PM + 反饋組）<br>
-      ↓<br>
-      產品排入開發（P0:48hr / P1:1週 / P2:月度）<br>
-      ↓<br>
-      上線後通知 BD → <strong>BD 回去跟客戶說「改好了」</strong> → 🔄 客戶黏著度 UP
-    </div>
-    <p style="margin-top:12px; color:#64748b; font-size:0.9rem;">
-      每個 BD 每月必須提交 ≥5 則需求工單。需求被採納額外獎金 $1,000。<br>
-      反饋得越多 → 產品越好 → 留存越高 → BD 工作越輕鬆。
-    </p>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════ -->
-<div class="section">
-  <h2 class="section-title">💰 九、財務預測與資金規劃</h2>
-
-  <div class="card">
-    <h3>逐月關鍵指標</h3>
-    <table>
-      <tr><th>月份</th><th>有效BD</th><th>月新增客戶</th><th>客戶累計</th><th>SaaS MRR</th><th>合計月營收</th><th>月人事成本</th><th>月淨利</th></tr>
-      <tr><td>M1</td><td>6</td><td>18</td><td>216</td><td>508萬</td><td>1,758萬</td><td>280萬</td><td style="color:green">+</td></tr>
-      <tr><td>M3</td><td>15</td><td>45</td><td>281</td><td>660萬</td><td>1,910萬</td><td>680萬</td><td style="color:green">+</td></tr>
-      <tr style="background:#fefce8"><td><strong>M5</strong></td><td>42</td><td>126</td><td>477</td><td>1,121萬</td><td>2,371萬</td><td>1,350萬</td><td style="color:green"><strong>認證推出</strong></td></tr>
-      <tr style="background:#f0fdf4"><td><strong>M7</strong></td><td>58</td><td>174</td><td>644</td><td>1,513萬</td><td>2,763萬</td><td>1,680萬</td><td style="color:green"><strong>Breakeven</strong></td></tr>
-      <tr><td>M10</td><td>148</td><td>444</td><td>1,812</td><td>4,258萬</td><td>5,508萬</td><td>2,800萬</td><td style="color:green">++</td></tr>
-      <tr style="background:#eff6ff"><td><strong>M12</strong></td><td>180</td><td>540</td><td>2,755</td><td>7,800萬</td><td><strong>9,050萬</strong></td><td>2,976萬</td><td style="color:green"><strong>+6,074萬/月</strong></td></tr>
-    </table>
-  </div>
-
-  <div class="two-col">
-    <div class="card">
-      <h3>投資預算分配（2.0-2.5 億）</h3>
-      <table>
-        <tr><td>C-Level（CRO+COO）</td><td>700-900萬</td></tr>
-        <tr><td>區域 VP + Director</td><td>1,600-2,100萬</td></tr>
-        <tr><td>TL + BD 薪酬</td><td>7,300-9,200萬</td></tr>
-        <tr><td>支援團隊（SDR+CS+Ops）</td><td>2,500-3,200萬</td></tr>
-        <tr><td>技術擴編（+20人）</td><td>1,500-2,000萬</td></tr>
-        <tr><td>辦公室（3 新據點）</td><td>1,200-1,800萬</td></tr>
-        <tr><td>招聘 + CRM + 培訓</td><td>2,200-3,100萬</td></tr>
-        <tr><td>預備金（10%）</td><td>1,800-2,300萬</td></tr>
-        <tr style="font-weight:700"><td>合計</td><td>2.0 - 2.5 億</td></tr>
-      </table>
-    </div>
-    <div class="card">
-      <h3>資金來源建議</h3>
-      <div style="padding:12px; background:#f0fdf4; border-radius:8px; margin-bottom:12px;">
-        <strong>✅ 推薦：自有資金 + 銀行融資</strong><br>
-        1 億自有資金 + 1-1.5 億銀行額度<br>
-        用 Go/No-Go 機制分階段釋放
-      </div>
-      <div style="padding:12px; background:#eff6ff; border-radius:8px; margin-bottom:12px;">
-        <strong>💡 備選：策略投資人</strong><br>
-        SaaS 領域投資人 1-1.5 億<br>
-        適合有上市/併購計畫的情境
-      </div>
-      <div class="alert" style="margin:0;">
-        <strong>紅線：</strong>如果實際營收低於預測 25%，立即放緩招聘。BD 薪酬 60:40 結構確保底薪不會壓垮現金流。
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════ -->
-<div class="section">
-  <h2 class="section-title">🚨 十、風險管控 — Go/No-Go 安全閥</h2>
-
-  <div class="card">
-    <table>
-      <tr><th>檢查點</th><th>時間</th><th>✅ Go 條件</th><th>❌ No-Go / 暫停</th></tr>
-      <tr>
-        <td><strong>Gate 0</strong></td><td>Day 15</td>
-        <td>15天啟動計畫全部完成</td>
-        <td>連 15 天都做不到 → 不適合 200BD 計畫</td>
-      </tr>
-      <tr style="background:#fef2f2">
-        <td><strong>Gate 1</strong></td><td>M2 底</td>
-        <td>CRO 到位 + 北部 VP + CRM 上線</td>
-        <td><strong>CRO 未到位 → 暫停全部</strong></td>
-      </tr>
-      <tr>
-        <td><strong>Gate 2</strong></td><td>M5 底</td>
-        <td>月新簽 ≥90 + 3 區辦公室運轉</td>
-        <td>月新簽 &lt;60 → 凍結招聘</td>
-      </tr>
-      <tr>
-        <td><strong>Gate 3</strong></td><td>M8 底</td>
-        <td>月新簽 ≥250 + MRR &gt;2,000 萬</td>
-        <td>MRR &lt;1,500 萬 → 收縮到 100 BD</td>
-      </tr>
-      <tr style="background:#f0fdf4">
-        <td><strong>Final</strong></td><td>M12</td>
-        <td>200 BD + MRR &gt;6,000 萬</td>
-        <td>150-199 BD → Q1 2027 補齊</td>
-      </tr>
-    </table>
-  </div>
-
-  <div class="grid-2">
-    <div class="card">
-      <h3>Top 5 風險</h3>
-      <ol>
-        <li><strong>招聘品質失控</strong>（月均33人）→ 標準化4關面試 + 90天嚴格淘汰</li>
-        <li><strong>管理層斷層</strong>（需47位管理者）→ CRO 招募能力 + 外聘/內升 5:3</li>
-        <li><strong>M3-M6 現金流緊張</strong> → 1.5億銀行額度 + 每月現金流預測</li>
-        <li><strong>組織文化崩潰</strong>（25→400人）→ COO 專管 + 老員工留任獎金</li>
-        <li><strong>產品跟不上</strong>（客戶14倍增長）→ 技術團隊 15→35人 + 10倍容量規劃</li>
-      </ol>
-    </div>
-    <div class="card">
-      <h3>三個必須回答的問題</h3>
-      <div style="font-size:1.1rem; line-height:2;">
-        <p>Q1：能準備 <strong>2 億以上</strong>的資金嗎？</p>
-        <p>Q2：能在 M2 底找到<strong>世界級 CRO</strong> 嗎？</p>
-        <p>Q3：能承受 <strong>6 個月燒錢</strong>的壓力嗎？</p>
-      </div>
-      <div class="success" style="margin-top:12px;">
-        三個 YES → <strong>全速前進</strong>。<br>
-        20 年品牌信任 + 穩定現金流 = 多數公司沒有的巨大優勢。用它，搶佔整個台灣。
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════ -->
-<div class="section">
-  <h2 class="section-title">⚡ 十一、立即行動 — 第一週 Checklist</h2>
-
-  <div class="card">
-    <div class="grid-2">
-      <div>
-        <h3>Day 1-3：宣戰動員</h3>
-        <ul>
-          <li>☐ CEO 全員大會宣布計畫</li>
-          <li>☐ 聯繫 3 家獵頭啟動 CRO 搜尋</li>
-          <li>☐ COO JD 發布 LinkedIn + 104</li>
-          <li>☐ 銀行洽談營運週轉金額度</li>
-        </ul>
-      </div>
-      <div>
-        <h3>Day 4-7：基礎建設</h3>
-        <ul>
-          <li>☐ CRM 評估（Salesforce vs HubSpot）</li>
-          <li>☐ 現有 200 客戶 S/A/B/C 分級</li>
-          <li>☐ BD JD 發布（北部先行）</li>
-          <li>☐ 薪酬制度 v1.0 + 認證制度 v1.0 定稿</li>
-        </ul>
-      </div>
+    <div class="success" style="margin-top:16px;">
+      <strong>三個 YES 就全速前進：</strong><br>
+      Q1：能準備 <strong>2 億以上</strong>的資金嗎？<br>
+      Q2：能在 M2 底找到<strong>世界級 CRO</strong> 嗎？<br>
+      Q3：能承受 <strong>6 個月燒錢</strong>的壓力嗎？<br><br>
+      20 年品牌信任 + 穩定現金流 = 多數公司沒有的巨大優勢。<strong>用它，搶佔整個台灣。</strong>
     </div>
   </div>
 </div>
