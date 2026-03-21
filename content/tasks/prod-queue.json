@@ -1,6 +1,6 @@
 {
-  "lastUpdated": "2026-03-21T19:00:00+08:00",
-  "updatedBy": "cto-audit-prod-round-1",
+  "lastUpdated": "2026-03-21T19:31:00+08:00",
+  "updatedBy": "cto-audit-prod-round-2",
   "context": "基於 Production codebase 實際狀態建立的開發佇列",
   "tasks": [
     {
@@ -194,9 +194,9 @@
         "app/components/TopNav.tsx"
       ],
       "priority": "P1",
-      "status": "ready",
+      "status": "done",
       "dependencies": ["P-001", "P-003"],
-      "notes": "審計發現：CRM 入口已存在，只缺合約管理 (/contracts) 連結。需要在 profileMenuItems 陣列中加入。"
+      "notes": "✅ 審計確認：(1) CRM 入口已存在於主導航 line 163 (2) 合約管理入口已存在於 profile menu line 435。功能完整，無需修改。"
     },
     {
       "id": "P-013",
@@ -222,9 +222,50 @@
         "app/components/ImagePreviewModal.tsx"
       ],
       "priority": "P0",
+      "status": "done",
+      "dependencies": [],
+      "notes": "✅ 已修復：Build 成功通過，僅剩 warnings 不影響功能。巡檢頁面完整可用（2026-03-21 19:31）"
+    },
+    {
+      "id": "P-015",
+      "title": "專案詳情頁子功能導航整合",
+      "repo": "LargeHomeAI--Frontend",
+      "description": "app/projects/[id]/page.tsx 需要加入導航到子功能：日報、巡檢、建材詢價。建立 tabs 或 quick actions 區塊，連結到：/projects/[id]/daily-reports、/projects/[id]/inspections、/projects/[id]/inquiries。",
+      "files": [
+        "app/projects/[id]/page.tsx"
+      ],
+      "priority": "P1",
+      "status": "ready",
+      "dependencies": ["P-002", "P-004", "P-005"],
+      "notes": "三個子功能頁面都已完成並通過 build 測試（daily-reports: 30375B, inquiries: 21944B, inspections: 24772B）。需要在主專案頁面提供導航入口。"
+    },
+    {
+      "id": "P-016",
+      "title": "產品服務 API 整合檢查",
+      "repo": "LargeHomeAI--Frontend + product-service",
+      "description": "確認前端是否正確接通 product-service API。檢查：(1) API client 路徑是否與後端 router 一致 (2) 產品分類、搜尋、CRUD 功能 (3) 5 類產品（建材、設備、軟裝、品牌、廠商）的完整流程。",
+      "files": [
+        "app/lib/api/*.ts",
+        "app/types/product.ts"
+      ],
+      "priority": "P1",
       "status": "ready",
       "dependencies": [],
-      "notes": "新發現的 Build 錯誤，阻止編譯。需要修復型別不匹配和 Modal props 錯誤。"
+      "notes": "後端 product-service 已有 5 類產品 CRUD API，需要確認前端整合狀態。"
+    },
+    {
+      "id": "P-017",
+      "title": "auth-service 整合確認",
+      "repo": "LargeHomeAI--Frontend + auth-service",
+      "description": "確認前端認證流程是否正確接通 auth-service（Entra External ID + JWT + LINE）。檢查：(1) 登入/登出流程 (2) JWT token 處理 (3) LINE 社群登入 (4) 權限驗證機制。",
+      "files": [
+        "app/utils/auth.ts",
+        "app/lib/api/auth.ts"
+      ],
+      "priority": "P1",
+      "status": "ready",
+      "dependencies": [],
+      "notes": "auth-service 已有 Entra External ID + JWT + LINE，需要確認前端整合。"
     }
   ],
   "rules": {
