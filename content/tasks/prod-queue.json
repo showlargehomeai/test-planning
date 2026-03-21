@@ -1,6 +1,6 @@
 {
-  "lastUpdated": "2026-03-21T23:06:45+08:00",
-  "updatedBy": "frontend-dev-agent",
+  "lastUpdated": "2026-03-21T23:30:15+08:00",
+  "updatedBy": "cto-audit-bot",
   "context": "基於 Production codebase (~/largehomeai-repos/LargeHomeAI--Frontend) 開發。所有任務都在 production repo 寫 code，不在 test-planning。",
   "tasks": [
     {
@@ -97,192 +97,6 @@
       "notes": "✅ 已完成：(1) 建立完整型別定義 app/types/site-inspections.ts 包含檢查類型(quality/safety/progress)、狀態、預設檢查清單模板 (2) API client app/lib/api/site-inspections.ts 含 Mock 資料 fallback (3) 完整頁面 app/projects/[id]/inspections/page.tsx 包含巡檢列表、狀態篩選、新增表單、動態檢查清單、照片上傳、整體狀態管理等功能。使用 shadcn/ui + Tailwind 風格。"
     },
     {
-      "id": "P-006",
-      "title": "專案詳情頁整合入口（日報+巡檢+詢價+合約）",
-      "repo": "LargeHomeAI--Frontend",
-      "description": "在 app/projects/[id]/page.tsx 加入 tab 或 section 導航到：daily-reports、inspections、inquiries。讓專案頁面成為管理中心，一個專案下所有相關功能都能到達。",
-      "files": [
-        "app/projects/[id]/page.tsx",
-        "app/projects/[id]/layout.tsx"
-      ],
-      "priority": "P1",
-      "status": "done",
-      "dependencies": [
-        "P-002",
-        "P-004",
-        "P-005"
-      ],
-      "notes": "✅ 已完成：專案管理快捷入口已存在於 page.tsx line 1574-1629，包含施工日報、工地巡檢、建材詢價三個導航連結，使用 grid 佈局與漸層卡片設計，符合 shadcn/ui 風格。功能完整。"
-    },
-    {
-      "id": "P-009",
-      "title": "🚨 TypeScript Build 錯誤修復",
-      "repo": "LargeHomeAI--Frontend",
-      "description": "CRITICAL: Build 有多個 TypeScript 錯誤需修復：(1) app/lib/api/daily-reports.ts 和 material-inquiries.ts 中的 Unexpected any 錯誤 (2) 移除未使用的變數避免 lint 警告影響 build。優先修復阻止 build 的 error，warning 可後續處理。",
-      "files": [
-        "app/lib/api/daily-reports.ts",
-        "app/lib/api/material-inquiries.ts"
-      ],
-      "priority": "P0",
-      "status": "done",
-      "dependencies": [],
-      "notes": "✅ 已修復：TypeScript build 通過，只剩下 app/about/page.tsx 的 img 標籤 warnings（不影響功能）。"
-    },
-    {
-      "id": "P-010",
-      "title": "工地巡檢前端頁面實作",
-      "repo": "LargeHomeAI--Frontend",
-      "description": "P-005 更新：建立 app/projects/[id]/inspections/page.tsx，功能：巡檢列表、新增巡檢（類型quality/safety/progress、checklist JSONB、整體狀態、備註、照片上傳）。後端 API 已確認存在於 interaction-service。",
-      "files": [
-        "app/projects/[id]/inspections/page.tsx",
-        "app/lib/api/site-inspections.ts",
-        "app/types/site-inspections.ts"
-      ],
-      "priority": "P0",
-      "status": "done",
-      "dependencies": [],
-      "notes": "✅ 已完成：(1) 建立完整型別定義 app/types/site-inspections.ts 包含檢查類型(quality/safety/progress)、狀態、預設檢查清單模板 (2) API client app/lib/api/site-inspections.ts 含 Mock 資料 fallback (3) 完整頁面 app/projects/[id]/inspections/page.tsx 包含巡檢列表、狀態篩選、新增表單、動態檢查清單、照片上傳、整體狀態管理等功能。使用 shadcn/ui + Tailwind 風格。"
-    },
-    {
-      "id": "P-007",
-      "title": "TopNav 加入 CRM 和合約入口",
-      "repo": "LargeHomeAI--Frontend",
-      "description": "在 app/components/TopNav.tsx 或全局導航中加入 CRM (/crm) 和合約管理 (/contracts) 的入口連結，讓使用者能從任何頁面進入。",
-      "files": [
-        "app/components/TopNav.tsx"
-      ],
-      "priority": "P1",
-      "status": "done",
-      "dependencies": [
-        "P-001",
-        "P-003"
-      ],
-      "notes": "✅ 審計確認：TopNav.tsx 已包含 CRM 入口（第 163 行），但缺少合約管理 (/contracts) 入口。需要在 profileMenuItems 中加入 contracts 連結。"
-    },
-    {
-      "id": "P-008",
-      "title": "合約詳情頁 + 付款里程碑時間軸",
-      "repo": "LargeHomeAI--Frontend",
-      "description": "完成 P-003 的剩餘部分：建立 app/contracts/[id]/page.tsx，展示合約詳情、付款里程碑時間軸、狀態更新。使用 shadcn/ui Timeline 元件展示付款進度。",
-      "files": [
-        "app/contracts/[id]/page.tsx",
-        "app/types/contracts.ts"
-      ],
-      "priority": "P0",
-      "status": "done",
-      "dependencies": [
-        "P-003"
-      ],
-      "notes": "✅ 已完成：併入 P-003。app/contracts/[id]/page.tsx 已建立，包含合約詳情、付款里程碑時間軸、支付狀態更新功能。"
-    },
-    {
-      "id": "P-011",
-      "title": "🚨 TypeScript Build 錯誤修復 Round 2",
-      "repo": "LargeHomeAI--Frontend",
-      "description": "BUILD 失敗：app/projects/[id]/inspections/page.tsx 有 2 個 @typescript-eslint/no-explicit-any 錯誤在 line 87, 118。需要將 'any' type 改為具體型別定義。",
-      "files": [
-        "app/projects/[id]/inspections/page.tsx",
-        "app/types/site-inspections.ts"
-      ],
-      "priority": "P0",
-      "status": "done",
-      "dependencies": [],
-      "notes": "✅ 已修復：(1) 修正 ChecklistItem 型別定義，增加 'pending' 狀態 (2) 移除未使用的變數 router, isMobile (3) 修復 useEffect 依賴問題 (4) Build 成功，無 TypeScript 錯誤，僅剩 img 標籤 warnings（不影響功能）。"
-    },
-    {
-      "id": "P-012",
-      "title": "TopNav 整合 CRM 和 Contracts 入口",
-      "repo": "LargeHomeAI--Frontend",
-      "description": "TopNav 選單缺少合約管理入口。需在個人選單中加入：'合約管理' (/contracts) 連結。現有選單已有：CRM 系統、個人檔案、通知設定、我的專案、訊息中心。",
-      "files": [
-        "app/components/TopNav.tsx"
-      ],
-      "priority": "P1",
-      "status": "done",
-      "dependencies": [
-        "P-001",
-        "P-003"
-      ],
-      "notes": "✅ 審計確認：(1) CRM 入口已存在於主導航 line 163 (2) 合約管理入口已存在於 profile menu line 435。功能完整，無需修改。"
-    },
-    {
-      "id": "P-013",
-      "title": "專案詳情頁子功能導航整合",
-      "repo": "LargeHomeAI--Frontend",
-      "description": "app/projects/[id]/page.tsx 需要加入導航到子功能：日報、巡檢、建材詢價。建立 tabs 或 quick actions 區塊，連結到：/projects/[id]/daily-reports、/projects/[id]/inspections、/projects/[id]/inquiries。",
-      "files": [
-        "app/projects/[id]/page.tsx"
-      ],
-      "priority": "P1",
-      "status": "done",
-      "dependencies": [
-        "P-002",
-        "P-004",
-        "P-005"
-      ],
-      "notes": "✅ 已完成：與 P-006 重複。專案管理快捷入口已存在於 page.tsx line 1574-1629，包含施工日報、工地巡檢、建材詢價三個導航連結，使用 grid 佈局與漸層卡片設計，符合 shadcn/ui 風格。"
-    },
-    {
-      "id": "P-014",
-      "title": "🚨 TypeScript 巡檢頁面錯誤修復 Round 3",
-      "repo": "LargeHomeAI--Frontend",
-      "description": "CRITICAL: app/projects/[id]/inspections/page.tsx 有 4 個 TypeScript 錯誤：(1) SiteInspectionResponse vs SiteInspection type 不匹配 (2) ImagePreviewModal props 錯誤 (3) 參數不匹配。需要統一型別定義並修復 Modal 呼叫。",
-      "files": [
-        "app/projects/[id]/inspections/page.tsx",
-        "app/types/site-inspections.ts",
-        "app/components/ImagePreviewModal.tsx"
-      ],
-      "priority": "P0",
-      "status": "done",
-      "dependencies": [],
-      "notes": "✅ 已修復：Build 成功通過，僅剩 warnings 不影響功能。巡檢頁面完整可用（2026-03-21 19:31）"
-    },
-    {
-      "id": "P-015",
-      "title": "專案詳情頁子功能導航整合",
-      "repo": "LargeHomeAI--Frontend",
-      "description": "app/projects/[id]/page.tsx 需要加入導航到子功能：日報、巡檢、建材詢價。建立 tabs 或 quick actions 區塊，連結到：/projects/[id]/daily-reports、/projects/[id]/inspections、/projects/[id]/inquiries。",
-      "files": [
-        "app/projects/[id]/page.tsx"
-      ],
-      "priority": "P1",
-      "status": "done",
-      "dependencies": [
-        "P-002",
-        "P-004",
-        "P-005"
-      ],
-      "notes": "✅ 已完成：專案管理快捷入口已存在於 page.tsx line 68-145，包含施工日報、工地巡檢、建材詢價三個導航連結，使用 grid 佈局與漸層卡片設計，符合 shadcn/ui 風格。"
-    },
-    {
-      "id": "P-016",
-      "title": "產品服務 API 整合檢查",
-      "repo": "LargeHomeAI--Frontend + product-service",
-      "description": "確認前端是否正確接通 product-service API。檢查：(1) API client 路徑是否與後端 router 一致 (2) 產品分類、搜尋、CRUD 功能 (3) 5 類產品（建材、設備、軟裝、品牌、廠商）的完整流程。",
-      "files": [
-        "app/lib/api/*.ts",
-        "app/types/product.ts"
-      ],
-      "priority": "P1",
-      "status": "done",
-      "dependencies": [],
-      "notes": "✅ 審計完成：(1) API 路徑一致 /api/v1/products (2) 前端有完整 API client、類型定義、Query hooks (3) 實際使用中：產品頁面、管理功能、收藏整合 (4) 5 類產品完整支援：建材(area/paint)、廚房設備、衛浴設備、軟裝。整合狀態良好。"
-    },
-    {
-      "id": "P-017",
-      "title": "auth-service 整合確認",
-      "repo": "LargeHomeAI--Frontend + auth-service",
-      "description": "確認前端認證流程是否正確接通 auth-service（Entra External ID + JWT + LINE）。檢查：(1) 登入/登出流程 (2) JWT token 處理 (3) LINE 社群登入 (4) 權限驗證機制。",
-      "files": [
-        "app/utils/auth.ts",
-        "app/lib/api/auth.ts"
-      ],
-      "priority": "P1",
-      "status": "done",
-      "dependencies": [],
-      "notes": "✅ 審計完成：(1) JWT 認證流程完整：localStorage 儲存、自動刷新、Authorization header (2) API 代理：next.config.ts 將 /api/v1/users/* 代理到 auth-service (3) Entra External ID：前端完整配置、支援多提供者 (4) LINE 整合：OAuth2 流程、用戶綁定 API、安全驗證。前端與 auth-service 整合完善。"
-    },
-    {
       "id": "P-020",
       "title": "即時比價引擎（前端）",
       "repo": "LargeHomeAI--Frontend",
@@ -316,6 +130,68 @@
       "notes": "✅ 已完成：(1) 建立完整批次詢價管理頁面 app/projects/[id]/batch-inquiry/page.tsx，包含詢價列表、統計卡片、詢價詳情、新增批次詢價表單 (2) API client app/lib/api/batch-inquiry.ts 含完整 Mock 資料 (3) 型別定義 app/types/batch-inquiry.ts 含批次詢價、詢價項目、廠商回覆等完整型別 (4) 在專案詳情頁 app/projects/[id]/page.tsx 新增批次詢價導航入口 (5) 環境變數 NEXT_PUBLIC_BATCH_INQUIRY_USE_MOCK=true 已配置。Build 通過驗證。"
     },
     {
+      "id": "P-025",
+      "title": "🔥 工班管理系統（Crew Dashboard）",
+      "repo": "LargeHomeAI--Frontend",
+      "description": "🆕 發現新增功能：app/crew/ 目錄。審計發現已有 dashboard/ 資料夾，需要確認工班管理系統完整性：(1) 工班資料管理 (2) 專案排程 (3) 施工人員配置 (4) 績效追蹤 (5) 與 profile-service 的工班 API 整合。",
+      "files": [
+        "app/crew/dashboard/",
+        "app/lib/api/crew.ts",
+        "app/types/crew.ts"
+      ],
+      "priority": "P1",
+      "status": "audit-needed",
+      "dependencies": [],
+      "notes": "🔍 需要深度審計：確認 app/crew/dashboard/ 內檔案完整性、API 整合狀況、與 profile-service 工班管理模組對接。"
+    },
+    {
+      "id": "P-026",
+      "title": "🔍 CRM 系統整合度檢查",
+      "repo": "LargeHomeAI--Frontend",
+      "description": "🆕 發現新增功能：app/crm/ 完整目錄。審計發現有多個 CRM 子模組，需要確認整體整合度：(1) 客戶管理 (2) 銷售管道 (3) 跟進記錄 (4) 報表分析 (5) 與 profile-service CRM API 完整對接。",
+      "files": [
+        "app/crm/",
+        "app/hooks/useCRM.ts",
+        "app/lib/api/crm.ts"
+      ],
+      "priority": "P1",
+      "status": "audit-needed",
+      "dependencies": [],
+      "notes": "🔍 需要深度審計：確認 CRM 功能模組完整性、useCRM hook 功能、API 整合品質、使用者體驗流程。"
+    },
+    {
+      "id": "P-027",
+      "title": "📊 比價引擎整合度驗證",
+      "repo": "LargeHomeAI--Frontend",
+      "description": "🆕 發現新增功能：app/compare/ 目錄。需要驗證比價引擎與其他系統整合：(1) 產品資料同步 (2) 廠商價格更新機制 (3) 與批次詢價流程整合 (4) 歷史價格資料視覺化 (5) 用量計算器準確性。",
+      "files": [
+        "app/compare/page.tsx",
+        "app/lib/api/compare.ts",
+        "app/types/compare.ts"
+      ],
+      "priority": "P1",
+      "status": "audit-needed",
+      "dependencies": [
+        "P-020"
+      ],
+      "notes": "🔍 需要深度審計：確認比價引擎資料流完整性、與 product-service 同步機制、計算邏輯正確性。"
+    },
+    {
+      "id": "P-028",
+      "title": "🚨 Build & TypeScript 健康度檢查",
+      "repo": "LargeHomeAI--Frontend",
+      "description": "審計發現多個檔案修改（TopNav.tsx、projects/[id]/page.tsx、package.json），需要確認：(1) TypeScript 編譯無錯誤 (2) ESLint 規則通過 (3) 新增依賴版本相容 (4) 路由功能正常 (5) 元件整合無衝突。",
+      "files": [
+        "app/components/TopNav.tsx",
+        "app/projects/[id]/page.tsx",
+        "package.json"
+      ],
+      "priority": "P0",
+      "status": "audit-needed",
+      "dependencies": [],
+      "notes": "🔍 緊急檢查：確保程式碼品質、build 成功、無功能衝突。"
+    },
+    {
       "id": "P-022",
       "title": "新手引導流程（Onboarding）",
       "repo": "LargeHomeAI--Frontend",
@@ -340,25 +216,31 @@
       "status": "ready",
       "dependencies": [],
       "notes": "product-service 已有 thisWeek/thisMonth 統計。LINE 推播用現有 NovuService。"
-    },
-    {
-      "id": "P-024",
-      "title": "🚨 SEO & 效能優化檢查",
-      "repo": "LargeHomeAI--Frontend", 
-      "description": "審計發現：(1) 產品詳情頁已有完整 SSR、ISR、JSON-LD structured data、SEO friendly URLs、301 redirects (2) Vendors 頁面新增：統計整合、驗證標記、產品圖片預覽、篩選系統 (3) TopNav 檔案有變更：確認導航選單功能完整性 (4) package.json 更新：確認依賴版本一致性",
-      "files": [
-        "app/product-detail/[id]/page.tsx",
-        "app/product-detail/[id]/metadata.ts", 
-        "app/vendors/page.tsx",
-        "app/components/TopNav.tsx",
-        "package.json"
-      ],
-      "priority": "P1",
-      "status": "done",
-      "dependencies": [],
-      "notes": "✅ 審計確認：(1) 產品頁 SEO 最佳化完整：SSR + ISR + JSON-LD + 301 重定向 (2) 廠商頁功能豐富：統計整合 + 驗證標記 + 篩選系統 (3) TopNav 功能完整 (4) 新檔案架構良好，符合 Next.js 15 最佳實踐。效能與 SEO 優化到位。"
     }
   ],
+  "audit": {
+    "timestamp": "2026-03-21T23:30:15+08:00",
+    "findings": {
+      "new_features": [
+        "app/crew/dashboard/ - 工班管理系統",
+        "app/crm/ - 客戶關係管理系統", 
+        "app/compare/ - 即時比價引擎",
+        "app/contracts/ - 合約管理",
+        "app/hooks/useCRM.ts - CRM React Hook",
+        "app/lib/api/batch-inquiry.ts - 批次詢價 API"
+      ],
+      "modified_files": [
+        "app/components/TopNav.tsx - 導航更新",
+        "app/projects/[id]/page.tsx - 專案功能擴展",
+        "package.json - 依賴更新"
+      ],
+      "priority_tasks": [
+        "P-025 工班管理系統審計",
+        "P-026 CRM 系統整合檢查",
+        "P-028 Build & TypeScript 健康度檢查"
+      ]
+    }
+  },
   "rules": {
     "NO_COMMIT": "絕對不 commit、不 push。所有開發只在本機端。",
     "NO_GIT_WRITE": "禁止 git add / git commit / git push 到任何 production repo",
