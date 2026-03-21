@@ -12,6 +12,14 @@ const mockReviews = [
   { id: 6, name: "蔡明宏", project: "中壢開放式廚房", rating: 3, date: "2025-11-15", content: "設計方面OK，但施工過程溝通有些落差，部分材料的顏色和當初討論的不太一樣。後來有做調整，最後結果還算滿意。", avatar: "from-cyan-400 to-blue-500", replied: true, replyContent: "感謝明宏的回饋，材料色差問題已與廠商反映並改善流程。很抱歉造成不便，我們會持續進步。" },
 ];
 
+const clientOptions = [
+  { name: "陳怡君", project: "大安區現代簡約宅" },
+  { name: "林志明", project: "板橋工業風 Loft" },
+  { name: "王美玲", project: "信義區北歐親子宅" },
+  { name: "張家豪", project: "西屯日式無印小宅" },
+  { name: "劉雅婷", project: "中山區新古典豪宅" },
+];
+
 function StarDisplay({ rating }: { rating: number }) {
   return (
     <div className="flex gap-0.5">
@@ -24,17 +32,81 @@ function StarDisplay({ rating }: { rating: number }) {
 
 export default function ReviewsPage() {
   const [filter, setFilter] = useState<number>(0);
+  const [showInviteForm, setShowInviteForm] = useState(false);
+  const [inviteClient, setInviteClient] = useState("");
+  const [toast, setToast] = useState<string | null>(null);
 
   const avgRating = (mockReviews.reduce((s, r) => s + r.rating, 0) / mockReviews.length).toFixed(1);
   const responseRate = Math.round((mockReviews.filter((r) => r.replied).length / mockReviews.length) * 100);
   const filtered = filter === 0 ? mockReviews : mockReviews.filter((r) => r.rating === filter);
 
+  const handleSendInvite = () => {
+    if (!inviteClient) return;
+    const client = clientOptions.find((c) => c.name === inviteClient);
+    setToast(`已發送評價邀請給 ${client?.name}（${client?.project}）`);
+    setShowInviteForm(false);
+    setInviteClient("");
+    setTimeout(() => setToast(null), 3000);
+  };
+
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto space-y-6">
-      <div>
-        <h1 className="text-xl sm:text-2xl font-bold text-slate-900">⭐ 業主評價與口碑系統</h1>
-        <p className="text-sm text-slate-500 mt-1">管理您的評價，建立良好口碑</p>
+      {/* Toast */}
+      {toast && (
+        <div className="fixed top-6 right-6 z-50 bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium">
+          ✓ {toast}
+        </div>
+      )}
+
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900">⭐ 業主評價與口碑系統</h1>
+          <p className="text-sm text-slate-500 mt-1">管理您的評價，建立良好口碑</p>
+        </div>
+        <button
+          onClick={() => setShowInviteForm(!showInviteForm)}
+          className="px-4 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors min-h-[44px] shrink-0"
+        >
+          {showInviteForm ? "✕ 取消" : "📩 邀請業主評價"}
+        </button>
       </div>
+
+      {/* Invite Form */}
+      {showInviteForm && (
+        <div className="bg-white rounded-xl border border-indigo-200 p-5">
+          <h3 className="font-semibold text-slate-900 mb-4">邀請業主評價</h3>
+          <div className="space-y-4">
+            <div>
+              <label className="text-xs font-medium text-slate-500 block mb-1">選擇業主 / 專案</label>
+              <select
+                value={inviteClient}
+                onChange={(e) => setInviteClient(e.target.value)}
+                className="border border-slate-300 rounded-lg px-3 py-2.5 text-sm w-full sm:w-96 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 min-h-[44px]"
+              >
+                <option value="">請選擇業主</option>
+                {clientOptions.map((c) => (
+                  <option key={c.name} value={c.name}>{c.name} — {c.project}</option>
+                ))}
+              </select>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={handleSendInvite}
+                disabled={!inviteClient}
+                className="px-4 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors disabled:bg-slate-300 disabled:cursor-not-allowed min-h-[44px]"
+              >
+                發送邀請
+              </button>
+              <button
+                onClick={() => setShowInviteForm(false)}
+                className="px-4 py-2.5 border border-slate-300 text-slate-600 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors min-h-[44px]"
+              >
+                取消
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Overview */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

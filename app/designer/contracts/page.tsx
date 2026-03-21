@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { clsx } from "clsx";
 
 const mockTemplates = [
@@ -25,12 +26,36 @@ const statusConfig = {
   draft: { label: "草稿", color: "bg-slate-100 text-slate-500 border-slate-200", icon: "📝" },
 };
 
-export default function ContractsPage() {
+function ContractsContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const fromQuote = searchParams.get("fromQuote");
+  const fromClient = searchParams.get("client");
+  const fromTotal = searchParams.get("total");
+
   const [tab, setTab] = useState<"templates" | "contracts">("contracts");
   const [previewTemplate, setPreviewTemplate] = useState<number | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
+
+  const hasPreFill = fromQuote && fromClient && fromTotal;
+
+  const handleSyncToFinance = (contractId: string) => {
+    setToast("合約已同步至收支系統");
+    setTimeout(() => {
+      setToast(null);
+      router.push("/designer/finance");
+    }, 1500);
+  };
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto space-y-6">
+      {/* Toast */}
+      {toast && (
+        <div className="fixed top-6 right-6 z-50 bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium">
+          ✓ {toast}
+        </div>
+      )}
+
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-slate-900">📝 合約範本庫與電子簽章</h1>
@@ -40,6 +65,44 @@ export default function ContractsPage() {
           + 建立新合約
         </button>
       </div>
+
+      {/* Pre-filled Contract from Quotation */}
+      {hasPreFill && (
+        <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-5">
+          <div className="flex items-start gap-3">
+            <span className="text-2xl">📋</span>
+            <div className="flex-1">
+              <h3 className="font-semibold text-indigo-900 mb-1">從報價單自動帶入</h3>
+              <p className="text-sm text-indigo-700 mb-3">以下合約資訊已根據報價單 {fromQuote} 預先填入</p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="bg-white rounded-lg p-3">
+                  <p className="text-xs text-slate-500">報價單編號</p>
+                  <p className="text-sm font-semibold text-slate-900">{fromQuote}</p>
+                </div>
+                <div className="bg-white rounded-lg p-3">
+                  <p className="text-xs text-slate-500">客戶</p>
+                  <p className="text-sm font-semibold text-slate-900">{fromClient}</p>
+                </div>
+                <div className="bg-white rounded-lg p-3">
+                  <p className="text-xs text-slate-500">合約金額</p>
+                  <p className="text-sm font-semibold text-indigo-600">NT$ {Number(fromTotal).toLocaleString()}</p>
+                </div>
+              </div>
+              <div className="flex gap-2 mt-3">
+                <button className="px-4 py-2 text-sm font-medium rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors">
+                  確認建立合約
+                </button>
+                <button
+                  onClick={() => router.push("/designer/contracts")}
+                  className="px-4 py-2 text-sm font-medium rounded-lg border border-indigo-300 text-indigo-700 hover:bg-indigo-100 transition-colors"
+                >
+                  取消
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -106,17 +169,28 @@ export default function ContractsPage() {
                   ))}
                 </div>
 
-                {/* Digital Signature Placeholder */}
+                {/* Signed state */}
                 {contract.status === "signed" && (
-                  <div className="bg-slate-50 rounded-lg p-3 flex items-center gap-3">
-                    <div className="w-20 h-10 border-2 border-dashed border-slate-300 rounded flex items-center justify-center">
-                      <span className="text-xs italic text-slate-400 font-serif">簽名</span>
+                  <>
+                    <div className="bg-slate-50 rounded-lg p-3 flex items-center gap-3">
+                      <div className="w-20 h-10 border-2 border-dashed border-slate-300 rounded flex items-center justify-center">
+                        <span className="text-xs italic text-slate-400 font-serif">簽名</span>
+                      </div>
+                      <div className="text-xs text-slate-500">
+                        <p>電子簽章完成</p>
+                        <p>簽署日期：{contract.signedDate}</p>
+                      </div>
                     </div>
-                    <div className="text-xs text-slate-500">
-                      <p>電子簽章完成</p>
-                      <p>簽署日期：{contract.signedDate}</p>
+                    {/* Sync to Finance button */}
+                    <div className="mt-3">
+                      <button
+                        onClick={() => handleSyncToFinance(contract.id)}
+                        className="px-4 py-2 text-sm font-medium rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors"
+                      >
+                        📊 同步至收支
+                      </button>
                     </div>
-                  </div>
+                  </>
                 )}
 
                 {contract.status === "pending" && (
@@ -194,5 +268,13 @@ export default function ContractsPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function ContractsPage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center text-slate-400">載入中...</div>}>
+      <ContractsContent />
+    </Suspense>
   );
 }

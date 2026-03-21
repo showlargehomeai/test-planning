@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { clsx } from "clsx";
 
 const categories = ["全部", "地板", "磁磚", "油漆", "壁紙", "五金", "燈具", "衛浴", "廚具"];
@@ -16,11 +17,56 @@ const mockMaterials = [
   { id: 8, name: "人造石檯面 — 雪白", category: "廚具", brand: "Corian", origin: "美國", price: 8500, unit: "才", rating: 4.6, stock: "需預訂", specs: "厚度 12mm / 無孔隙 / 可修復 / 抗菌", suppliers: ["杜邦代理", "廚具世界"], gradient: "from-gray-50 to-gray-200" },
 ];
 
+interface SelectedMaterial {
+  id: number;
+  name: string;
+  category: string;
+  brand: string;
+  price: number;
+  unit: string;
+}
+
 export default function MaterialsPage() {
+  const router = useRouter();
   const [category, setCategory] = useState("全部");
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState<"name" | "price" | "rating">("rating");
   const [expandedId, setExpandedId] = useState<number | null>(null);
+  const [selectedMaterials, setSelectedMaterials] = useState<SelectedMaterial[]>([]);
+  const [toast, setToast] = useState<string | null>(null);
+
+  // Load from localStorage on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("quotation_materials");
+      if (saved) setSelectedMaterials(JSON.parse(saved));
+    } catch {}
+  }, []);
+
+  const addToQuotation = (mat: typeof mockMaterials[0]) => {
+    const alreadyAdded = selectedMaterials.some((m) => m.id === mat.id);
+    if (alreadyAdded) return;
+
+    const newItem: SelectedMaterial = {
+      id: mat.id,
+      name: mat.name,
+      category: mat.category,
+      brand: mat.brand,
+      price: mat.price,
+      unit: mat.unit,
+    };
+    const updated = [...selectedMaterials, newItem];
+    setSelectedMaterials(updated);
+    localStorage.setItem("quotation_materials", JSON.stringify(updated));
+    setToast(`已加入「${mat.name}」`);
+    setTimeout(() => setToast(null), 1500);
+  };
+
+  const removeFromQuotation = (id: number) => {
+    const updated = selectedMaterials.filter((m) => m.id !== id);
+    setSelectedMaterials(updated);
+    localStorage.setItem("quotation_materials", JSON.stringify(updated));
+  };
 
   const filtered = mockMaterials
     .filter((m) => category === "全部" || m.category === category)
@@ -28,7 +74,14 @@ export default function MaterialsPage() {
     .sort((a, b) => sortBy === "price" ? a.price - b.price : sortBy === "rating" ? b.rating - a.rating : a.name.localeCompare(b.name));
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto space-y-6">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto space-y-6 pb-24">
+      {/* Toast */}
+      {toast && (
+        <div className="fixed top-6 right-6 z-50 bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium">
+          ✓ {toast}
+        </div>
+      )}
+
       <div>
         <h1 className="text-xl sm:text-2xl font-bold text-slate-900">🧱 建材資料庫</h1>
         <p className="text-sm text-slate-500 mt-1">搜尋比價，找到最適合的建材</p>
@@ -72,79 +125,107 @@ export default function MaterialsPage() {
 
       {/* Materials Cards */}
       <div className="space-y-3">
-        {filtered.map((mat) => (
-          <div key={mat.id} className="bg-white rounded-xl border border-slate-200 overflow-hidden hover:shadow-md transition-shadow">
-            <div className="flex flex-col sm:flex-row">
-              {/* Image */}
-              <div className={clsx("h-32 sm:h-auto sm:w-40 bg-gradient-to-br flex items-center justify-center shrink-0", mat.gradient)}>
-                <span className="text-white/40 text-3xl">🧱</span>
-              </div>
-
-              {/* Info */}
-              <div className="flex-1 p-4">
-                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
-                  <div>
-                    <h3 className="font-semibold text-slate-900">{mat.name}</h3>
-                    <div className="flex flex-wrap gap-2 mt-1">
-                      <span className="text-xs px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700">{mat.category}</span>
-                      <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">{mat.brand}</span>
-                      <span className="text-xs text-slate-400">產地：{mat.origin}</span>
-                    </div>
-                  </div>
-                  <div className="text-right shrink-0">
-                    <p className="text-xl font-bold text-indigo-600">NT$ {mat.price.toLocaleString()}</p>
-                    <p className="text-xs text-slate-400">/ {mat.unit}</p>
-                  </div>
+        {filtered.map((mat) => {
+          const isAdded = selectedMaterials.some((m) => m.id === mat.id);
+          return (
+            <div key={mat.id} className="bg-white rounded-xl border border-slate-200 overflow-hidden hover:shadow-md transition-shadow">
+              <div className="flex flex-col sm:flex-row">
+                {/* Image */}
+                <div className={clsx("h-32 sm:h-auto sm:w-40 bg-gradient-to-br flex items-center justify-center shrink-0", mat.gradient)}>
+                  <span className="text-white/40 text-3xl">🧱</span>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-3 mt-3 text-xs text-slate-500">
-                  <span className="flex items-center gap-1">
-                    <span className="text-amber-400">★</span> {mat.rating}
-                  </span>
-                  <span className={clsx(
-                    "px-2 py-0.5 rounded-full",
-                    mat.stock === "有貨" ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"
-                  )}>
-                    {mat.stock}
-                  </span>
-                </div>
-
-                <button
-                  onClick={() => setExpandedId(expandedId === mat.id ? null : mat.id)}
-                  className="text-xs text-indigo-600 hover:text-indigo-700 font-medium mt-2"
-                >
-                  {expandedId === mat.id ? "收起詳情 ▲" : "展開詳情 ▼"}
-                </button>
-
-                {expandedId === mat.id && (
-                  <div className="mt-3 pt-3 border-t border-slate-100 space-y-2">
+                {/* Info */}
+                <div className="flex-1 p-4">
+                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
                     <div>
-                      <p className="text-xs font-medium text-slate-500">規格</p>
-                      <p className="text-sm text-slate-700">{mat.specs}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs font-medium text-slate-500">供應商</p>
-                      <div className="flex gap-2 mt-1">
-                        {mat.suppliers.map((s) => (
-                          <span key={s} className="text-xs px-2 py-1 rounded-lg bg-slate-50 text-slate-600 border border-slate-200">{s}</span>
-                        ))}
+                      <h3 className="font-semibold text-slate-900">{mat.name}</h3>
+                      <div className="flex flex-wrap gap-2 mt-1">
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700">{mat.category}</span>
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">{mat.brand}</span>
+                        <span className="text-xs text-slate-400">產地：{mat.origin}</span>
                       </div>
                     </div>
-                    <div className="flex gap-2 mt-2">
-                      <button className="px-3 py-1.5 text-xs font-medium rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors">
-                        加入報價單
-                      </button>
-                      <button className="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 transition-colors">
-                        比價
-                      </button>
+                    <div className="text-right shrink-0">
+                      <p className="text-xl font-bold text-indigo-600">NT$ {mat.price.toLocaleString()}</p>
+                      <p className="text-xs text-slate-400">/ {mat.unit}</p>
                     </div>
                   </div>
-                )}
+
+                  <div className="flex flex-wrap items-center gap-3 mt-3 text-xs text-slate-500">
+                    <span className="flex items-center gap-1">
+                      <span className="text-amber-400">★</span> {mat.rating}
+                    </span>
+                    <span className={clsx(
+                      "px-2 py-0.5 rounded-full",
+                      mat.stock === "有貨" ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"
+                    )}>
+                      {mat.stock}
+                    </span>
+                  </div>
+
+                  <button
+                    onClick={() => setExpandedId(expandedId === mat.id ? null : mat.id)}
+                    className="text-xs text-indigo-600 hover:text-indigo-700 font-medium mt-2"
+                  >
+                    {expandedId === mat.id ? "收起詳情 ▲" : "展開詳情 ▼"}
+                  </button>
+
+                  {expandedId === mat.id && (
+                    <div className="mt-3 pt-3 border-t border-slate-100 space-y-2">
+                      <div>
+                        <p className="text-xs font-medium text-slate-500">規格</p>
+                        <p className="text-sm text-slate-700">{mat.specs}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs font-medium text-slate-500">供應商</p>
+                        <div className="flex gap-2 mt-1">
+                          {mat.suppliers.map((s) => (
+                            <span key={s} className="text-xs px-2 py-1 rounded-lg bg-slate-50 text-slate-600 border border-slate-200">{s}</span>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="flex gap-2 mt-2">
+                        {isAdded ? (
+                          <button
+                            onClick={() => removeFromQuotation(mat.id)}
+                            className="px-3 py-1.5 text-xs font-medium rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition-colors"
+                          >
+                            從報價單移除
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => addToQuotation(mat)}
+                            className="px-3 py-1.5 text-xs font-medium rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors"
+                          >
+                            加入報價單
+                          </button>
+                        )}
+                        <button className="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 transition-colors">
+                          比價
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
+
+      {/* Floating Bar */}
+      {selectedMaterials.length > 0 && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 bg-indigo-600 text-white px-6 py-3 rounded-2xl shadow-xl flex items-center gap-4">
+          <span className="text-sm font-medium">已加入 {selectedMaterials.length} 項建材</span>
+          <button
+            onClick={() => router.push("/designer/quotation")}
+            className="px-4 py-1.5 bg-white text-indigo-700 text-sm font-semibold rounded-lg hover:bg-indigo-50 transition-colors"
+          >
+            前往報價 →
+          </button>
+        </div>
+      )}
     </div>
   );
 }

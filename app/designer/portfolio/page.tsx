@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { clsx } from "clsx";
+import Link from "next/link";
 
 const categories = ["全部", "客廳", "臥室", "廚房", "浴室", "書房", "商業空間"];
 
@@ -109,13 +111,20 @@ export default function PortfolioPage() {
                   <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">{project.category}</span>
                   <span className="text-xs text-slate-400">{project.area}</span>
                 </div>
-                <div className="flex items-center justify-between text-xs text-slate-500">
+                <div className="flex items-center justify-between text-xs text-slate-500 mb-3">
                   <div className="flex gap-3">
                     <span>👁 {project.views.toLocaleString()}</span>
                     <span>❤️ {project.likes}</span>
                   </div>
                   <span>{project.date}</span>
                 </div>
+                {/* CTA Button */}
+                <Link
+                  href="/designer/booking"
+                  className="w-full block text-center px-3 py-2 text-xs font-medium rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition-colors"
+                >
+                  📅 預約諮詢
+                </Link>
               </div>
             </div>
           ) : (
@@ -130,14 +139,34 @@ export default function PortfolioPage() {
                   <span className="text-xs text-slate-400">{project.area} · {project.date}</span>
                 </div>
               </div>
-              <div className="text-right text-xs text-slate-500 shrink-0 hidden sm:block">
-                <p>👁 {project.views.toLocaleString()}</p>
-                <p>❤️ {project.likes}</p>
-                <p className={clsx("font-medium", project.seo >= 90 ? "text-emerald-600" : "text-amber-600")}>SEO {project.seo}</p>
+              <div className="flex flex-col items-end gap-2 shrink-0">
+                <div className="text-right text-xs text-slate-500 hidden sm:block">
+                  <p>👁 {project.views.toLocaleString()}</p>
+                  <p>❤️ {project.likes}</p>
+                  <p className={clsx("font-medium", project.seo >= 90 ? "text-emerald-600" : "text-amber-600")}>SEO {project.seo}</p>
+                </div>
+                <Link
+                  href="/designer/booking"
+                  className="px-3 py-1.5 text-xs font-medium rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition-colors"
+                >
+                  📅 預約諮詢
+                </Link>
               </div>
             </div>
           )
         ))}
+      </div>
+
+      {/* CTA Banner */}
+      <div className="bg-gradient-to-r from-indigo-600 to-violet-600 rounded-2xl p-6 sm:p-8 text-white text-center">
+        <h2 className="text-xl sm:text-2xl font-bold mb-2">想請這位設計師幫你設計？</h2>
+        <p className="text-indigo-200 text-sm mb-4">立即預約免費諮詢，讓專業設計師為您量身打造理想空間</p>
+        <Link
+          href="/designer/booking"
+          className="inline-block px-6 py-3 bg-white text-indigo-700 font-semibold rounded-xl hover:bg-indigo-50 transition-colors text-sm"
+        >
+          📅 立即預約諮詢
+        </Link>
       </div>
     </div>
   );

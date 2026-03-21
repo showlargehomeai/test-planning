@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter } from "next/navigation";
 import { clsx } from "clsx";
 
 interface QuoteItem {
@@ -11,6 +12,15 @@ interface QuoteItem {
   unit: string;
   qty: number;
   unitPrice: number;
+}
+
+interface MaterialItem {
+  id: number;
+  name: string;
+  category: string;
+  brand: string;
+  price: number;
+  unit: string;
 }
 
 const templates = ["住宅全室裝修", "局部翻新", "商業空間", "辦公室裝修"];
@@ -35,15 +45,31 @@ const mockHistory = [
   { id: "Q-2025-011", client: "張家豪", project: "西屯日式無印小宅", total: 1120000, status: "已過期", date: "2025-11-15" },
 ];
 
-export default function QuotationPage() {
+function QuotationContent() {
+  const router = useRouter();
   const [items, setItems] = useState(mockItems);
   const [selectedTemplate, setSelectedTemplate] = useState(templates[0]);
   const [discount, setDiscount] = useState(0);
   const [tab, setTab] = useState<"builder" | "history">("builder");
+  const [materialItems, setMaterialItems] = useState<MaterialItem[]>([]);
+  const [clientName, setClientName] = useState("新客戶");
+
+  // Load materials from localStorage
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("quotation_materials");
+      if (saved) {
+        const materials: MaterialItem[] = JSON.parse(saved);
+        setMaterialItems(materials);
+      }
+    } catch {}
+  }, []);
 
   const subtotal = items.reduce((sum, item) => sum + item.qty * item.unitPrice, 0);
-  const discountAmount = subtotal * (discount / 100);
-  const total = subtotal - discountAmount;
+  const materialTotal = materialItems.reduce((sum, m) => sum + m.price, 0);
+  const combinedSubtotal = subtotal + materialTotal;
+  const discountAmount = combinedSubtotal * (discount / 100);
+  const total = combinedSubtotal - discountAmount;
 
   const grouped = items.reduce<Record<string, QuoteItem[]>>((acc, item) => {
     if (!acc[item.category]) acc[item.category] = [];
@@ -55,6 +81,17 @@ export default function QuotationPage() {
     setItems(items.map((i) => (i.id === id ? { ...i, qty: Math.max(0, qty) } : i)));
   };
 
+  const removeMaterial = (id: number) => {
+    const updated = materialItems.filter((m) => m.id !== id);
+    setMaterialItems(updated);
+    localStorage.setItem("quotation_materials", JSON.stringify(updated));
+  };
+
+  const handleConvertToContract = () => {
+    const quoteId = `Q-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 999) + 1).padStart(3, "0")}`;
+    router.push(`/designer/contracts?fromQuote=${encodeURIComponent(quoteId)}&client=${encodeURIComponent(clientName)}&total=${total}`);
+  };
+
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -63,6 +100,12 @@ export default function QuotationPage() {
           <p className="text-sm text-slate-500 mt-1">快速建立專業報價單</p>
         </div>
         <div className="flex gap-2">
+          <button
+            onClick={handleConvertToContract}
+            className="px-4 py-2.5 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors min-h-[44px]"
+          >
+            📝 轉為合約
+          </button>
           <button className="px-4 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors min-h-[44px]">
             📤 匯出 PDF
           </button>
@@ -84,6 +127,18 @@ export default function QuotationPage() {
 
       {tab === "builder" ? (
         <>
+          {/* Client Name */}
+          <div className="bg-white rounded-xl border border-slate-200 p-4">
+            <p className="text-sm font-semibold text-slate-700 mb-3">客戶資訊</p>
+            <input
+              type="text"
+              value={clientName}
+              onChange={(e) => setClientName(e.target.value)}
+              placeholder="客戶名稱"
+              className="border border-slate-300 rounded-lg px-3 py-2.5 text-sm w-full sm:w-64 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 min-h-[44px]"
+            />
+          </div>
+
           {/* Template selector */}
           <div className="bg-white rounded-xl border border-slate-200 p-4">
             <p className="text-sm font-semibold text-slate-700 mb-3">報價範本</p>
@@ -103,6 +158,30 @@ export default function QuotationPage() {
             </div>
           </div>
 
+          {/* Materials from localStorage */}
+          {materialItems.length > 0 && (
+            <div className="bg-white rounded-xl border border-emerald-200 p-4">
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-sm font-semibold text-emerald-700">🧱 從建材庫加入的項目</p>
+                <span className="text-xs text-emerald-600">{materialItems.length} 項</span>
+              </div>
+              <div className="space-y-2">
+                {materialItems.map((mat) => (
+                  <div key={mat.id} className="flex items-center justify-between bg-emerald-50 rounded-lg px-3 py-2">
+                    <div>
+                      <p className="text-sm font-medium text-slate-900">{mat.name}</p>
+                      <p className="text-xs text-slate-500">{mat.brand} · {mat.category}</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="text-sm font-semibold text-emerald-700">NT$ {mat.price.toLocaleString()}/{mat.unit}</span>
+                      <button onClick={() => removeMaterial(mat.id)} className="text-xs text-red-500 hover:text-red-700">移除</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Quote Items */}
           <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
             <div className="overflow-x-auto">
@@ -118,8 +197,8 @@ export default function QuotationPage() {
                 </thead>
                 <tbody>
                   {Object.entries(grouped).map(([category, categoryItems]) => (
-                    <>
-                      <tr key={category}>
+                    <tbody key={category}>
+                      <tr>
                         <td colSpan={5} className="px-4 py-2 bg-slate-50/50 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                           {category}
                         </td>
@@ -144,7 +223,7 @@ export default function QuotationPage() {
                           <td className="px-4 py-3 text-right font-medium text-slate-900">{(item.qty * item.unitPrice).toLocaleString()}</td>
                         </tr>
                       ))}
-                    </>
+                    </tbody>
                   ))}
                 </tbody>
               </table>
@@ -153,9 +232,15 @@ export default function QuotationPage() {
             {/* Totals */}
             <div className="border-t border-slate-200 p-4 space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-slate-500">小計</span>
+                <span className="text-slate-500">工程小計</span>
                 <span className="text-slate-700">NT$ {subtotal.toLocaleString()}</span>
               </div>
+              {materialTotal > 0 && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-slate-500">建材小計</span>
+                  <span className="text-emerald-700">NT$ {materialTotal.toLocaleString()}</span>
+                </div>
+              )}
               <div className="flex justify-between items-center text-sm">
                 <div className="flex items-center gap-2">
                   <span className="text-slate-500">折扣</span>
@@ -197,12 +282,30 @@ export default function QuotationPage() {
               </div>
               <div className="text-right">
                 <p className="text-xl font-bold text-indigo-600">NT$ {q.total.toLocaleString()}</p>
-                <button className="text-xs text-indigo-600 hover:text-indigo-700 font-medium mt-1">查看報價單 →</button>
+                <div className="flex gap-2 mt-1 justify-end">
+                  <button className="text-xs text-indigo-600 hover:text-indigo-700 font-medium">查看報價單 →</button>
+                  {q.status === "待確認" && (
+                    <button
+                      onClick={() => router.push(`/designer/contracts?fromQuote=${encodeURIComponent(q.id)}&client=${encodeURIComponent(q.client)}&total=${q.total}`)}
+                      className="text-xs text-emerald-600 hover:text-emerald-700 font-medium"
+                    >
+                      轉為合約 →
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           ))}
         </div>
       )}
     </div>
+  );
+}
+
+export default function QuotationPage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center text-slate-400">載入中...</div>}>
+      <QuotationContent />
+    </Suspense>
   );
 }

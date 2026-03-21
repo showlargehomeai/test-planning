@@ -1,13 +1,35 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { clsx } from "clsx";
 import Link from "next/link";
 
 const customerTags = ["VIP", "活躍", "沉睡", "新客", "老客", "高消費", "潛在客"];
 const projectStatus = ["諮詢中", "報價中", "簽約中", "施工中", "已完工", "已結案"];
 
-const mockCustomers = [
+interface Customer {
+  id: number;
+  name: string;
+  phone: string;
+  email: string;
+  region: string;
+  style: string;
+  budget: string;
+  status: string;
+  tags: string[];
+  avatar: string;
+  lastContact: string;
+  nextFollowUp: string | null;
+  projectCount: number;
+  totalValue: number;
+  satisfaction: number | null;
+  notes: string;
+  timeline: { type: string; text: string; date: string; time: string }[];
+  fromMatching?: boolean;
+}
+
+const mockCustomers: Customer[] = [
   {
     id: 1,
     name: "陳怡君",
@@ -121,13 +143,51 @@ const mockCustomers = [
 ];
 
 export default function CRMPage() {
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [tagFilter, setTagFilter] = useState("");
   const [selectedCustomer, setSelectedCustomer] = useState<number | null>(null);
+  const [customers, setCustomers] = useState<Customer[]>(mockCustomers);
 
-  const filtered = mockCustomers.filter((c) => {
-    if (searchTerm && !c.name.toLowerCase().includes(searchTerm.toLowerCase()) && 
+  // Load customers from matching localStorage on mount
+  useEffect(() => {
+    try {
+      const matchingData = JSON.parse(localStorage.getItem("crm_from_matching") || "[]");
+      if (matchingData.length > 0) {
+        const newCustomers: Customer[] = matchingData
+          .filter((m: { id: number; name: string }) => !mockCustomers.some((c) => c.name === m.name))
+          .map((m: { id: number; name: string; avatar: string; region: string; style: string; budget: string; desc: string }, idx: number) => ({
+            id: 100 + idx,
+            name: m.name,
+            phone: "待填寫",
+            email: "待填寫",
+            region: m.region,
+            style: m.style,
+            budget: m.budget,
+            status: "諮詢中",
+            tags: ["新客"],
+            avatar: m.avatar,
+            lastContact: "剛剛",
+            nextFollowUp: "待安排",
+            projectCount: 0,
+            totalValue: 0,
+            satisfaction: null,
+            notes: m.desc,
+            timeline: [
+              { type: "meeting", text: "從媒合系統接案", date: new Date().toISOString().split("T")[0], time: new Date().toLocaleTimeString("zh-TW", { hour: "2-digit", minute: "2-digit" }) },
+            ],
+            fromMatching: true,
+          }));
+        if (newCustomers.length > 0) {
+          setCustomers((prev) => [...prev, ...newCustomers]);
+        }
+      }
+    } catch {}
+  }, []);
+
+  const filtered = customers.filter((c) => {
+    if (searchTerm && !c.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
         !c.phone.includes(searchTerm) && !c.email.toLowerCase().includes(searchTerm.toLowerCase())) {
       return false;
     }
@@ -136,7 +196,9 @@ export default function CRMPage() {
     return true;
   });
 
-  const selectedCustomerData = mockCustomers.find(c => c.id === selectedCustomer);
+  const selectedCustomerData = customers.find(c => c.id === selectedCustomer);
+  const canCreateProject = selectedCustomerData && (selectedCustomerData.status === "簽約中" || selectedCustomerData.status === "施工中");
+  const hasProject = selectedCustomerData && selectedCustomerData.projectCount > 0;
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-6">
@@ -150,25 +212,25 @@ export default function CRMPage() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="bg-white rounded-xl border border-slate-200 p-4">
           <p className="text-xs text-slate-500">總客戶數</p>
-          <p className="text-2xl font-bold text-indigo-600">{mockCustomers.length}</p>
+          <p className="text-2xl font-bold text-indigo-600">{customers.length}</p>
         </div>
         <div className="bg-white rounded-xl border border-slate-200 p-4">
           <p className="text-xs text-slate-500">進行中專案</p>
           <p className="text-2xl font-bold text-emerald-600">
-            {mockCustomers.filter(c => ["諮詢中", "報價中", "簽約中", "施工中"].includes(c.status)).length}
+            {customers.filter(c => ["諮詢中", "報價中", "簽約中", "施工中"].includes(c.status)).length}
           </p>
         </div>
         <div className="bg-white rounded-xl border border-slate-200 p-4">
           <p className="text-xs text-slate-500">VIP 客戶</p>
           <p className="text-2xl font-bold text-amber-600">
-            {mockCustomers.filter(c => c.tags.includes("VIP")).length}
+            {customers.filter(c => c.tags.includes("VIP")).length}
           </p>
         </div>
         <div className="bg-white rounded-xl border border-slate-200 p-4">
           <p className="text-xs text-slate-500">平均滿意度</p>
           <p className="text-2xl font-bold text-violet-600">
-            {(mockCustomers.filter(c => c.satisfaction).reduce((acc, c) => acc + (c.satisfaction || 0), 0) / 
-              mockCustomers.filter(c => c.satisfaction).length).toFixed(1)}
+            {(customers.filter(c => c.satisfaction).reduce((acc, c) => acc + (c.satisfaction || 0), 0) /
+              (customers.filter(c => c.satisfaction).length || 1)).toFixed(1)}
           </p>
         </div>
       </div>
@@ -184,17 +246,17 @@ export default function CRMPage() {
             onChange={(e) => setSearchTerm(e.target.value)}
             className="border border-slate-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 min-h-[44px] flex-1"
           />
-          <select 
-            value={statusFilter} 
-            onChange={(e) => setStatusFilter(e.target.value)} 
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
             className="border border-slate-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 min-h-[44px] w-full lg:w-40"
           >
             <option value="">所有狀態</option>
             {projectStatus.map((s) => <option key={s} value={s}>{s}</option>)}
           </select>
-          <select 
-            value={tagFilter} 
-            onChange={(e) => setTagFilter(e.target.value)} 
+          <select
+            value={tagFilter}
+            onChange={(e) => setTagFilter(e.target.value)}
             className="border border-slate-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 min-h-[44px] w-full lg:w-40"
           >
             <option value="">所有標籤</option>
@@ -207,8 +269,8 @@ export default function CRMPage() {
         {/* Customer List */}
         <div className="lg:col-span-2 space-y-4">
           {filtered.map((customer) => (
-            <div 
-              key={customer.id} 
+            <div
+              key={customer.id}
               className={clsx(
                 "bg-white rounded-xl border p-4 sm:p-5 hover:shadow-md transition-all cursor-pointer",
                 selectedCustomer === customer.id ? "border-indigo-500 shadow-md" : "border-slate-200"
@@ -224,10 +286,13 @@ export default function CRMPage() {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <h3 className="font-semibold text-slate-900">{customer.name}</h3>
+                      {customer.fromMatching && (
+                        <span className="text-[10px] px-1.5 py-0.5 rounded-full font-medium bg-indigo-50 text-indigo-700">媒合</span>
+                      )}
                       <div className="flex flex-wrap gap-1">
                         {customer.tags.map((tag) => (
-                          <span 
-                            key={tag} 
+                          <span
+                            key={tag}
                             className={clsx(
                               "text-[10px] px-1.5 py-0.5 rounded-full font-medium",
                               tag === "VIP" ? "bg-amber-50 text-amber-700" :
@@ -351,6 +416,26 @@ export default function CRMPage() {
 
                 {/* Actions */}
                 <div className="space-y-2 pt-2 border-t border-slate-100">
+                  {/* Create Project Button — only for 簽約中 or 施工中 */}
+                  {canCreateProject && (
+                    <button
+                      onClick={() => router.push(`/designer/projects?newProject=${encodeURIComponent(selectedCustomerData.name)}`)}
+                      className="w-full px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors text-center"
+                    >
+                      📋 建立專案
+                    </button>
+                  )}
+
+                  {/* View Project Link — if customer has projects */}
+                  {hasProject && (
+                    <Link
+                      href="/designer/projects"
+                      className="w-full px-4 py-2 bg-indigo-50 text-indigo-700 text-sm font-medium rounded-lg hover:bg-indigo-100 transition-colors text-center block"
+                    >
+                      📋 查看專案
+                    </Link>
+                  )}
+
                   <Link
                     href={`/designer/crm/${selectedCustomerData.id}`}
                     className="w-full px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors text-center block"

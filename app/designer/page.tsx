@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { clsx } from "clsx";
 
@@ -8,27 +8,29 @@ import { clsx } from "clsx";
 
 const designerName = "林宥彤";
 
-const todayTodos = [
-  { id: 1, text: "陳怡君 大安區案場 — 施工進度巡檢", time: "09:30", done: false },
-  { id: 2, text: "林志明 板橋老屋 — 3D 設計圖定稿確認", time: "11:00", done: false },
-  { id: 3, text: "劉雅婷 中山豪宅 — 建材樣品比對會議", time: "14:00", done: false },
-  { id: 4, text: "張家豪 日式案 — 線上報價說明", time: "15:30", done: false },
-  { id: 5, text: "上傳本週作品集更新至平台", time: "17:00", done: false },
-  { id: 6, text: "回覆王美玲的結案滿意度問卷", time: "18:00", done: false },
+// Simulated project data (mirrors projects page)
+const projectData = [
+  { client: "王董事長", title: "陽明山景觀豪宅", status: "pending", deadline: "2026-04-15", progress: 25 },
+  { client: "創新科技", title: "信義區辦公室改裝", status: "inProgress", deadline: "2026-05-20", progress: 65 },
+  { client: "林小姐", title: "三房兩廳居家空間", status: "review", deadline: "2026-04-01", progress: 90 },
+  { client: "張先生", title: "老宅翻新專案", status: "completed", deadline: "2026-03-15", progress: 100 },
+  { client: "BREW咖啡", title: "咖啡廳商空設計", status: "inProgress", deadline: "2026-05-10", progress: 45 },
+  { client: "陳同學", title: "小坪數套房改造", status: "pending", deadline: "2026-06-30", progress: 15 },
 ];
 
-const kpiCards = [
-  { label: "本月接案數", value: "7", unit: "件", change: "+2", up: true, color: "text-indigo-600", bg: "bg-indigo-50", icon: "📋" },
-  { label: "本月營收", value: "182", unit: "萬", change: "+23%", up: true, color: "text-emerald-600", bg: "bg-emerald-50", icon: "💰" },
-  { label: "媒合成功率", value: "84", unit: "%", change: "+5%", up: true, color: "text-amber-600", bg: "bg-amber-50", icon: "🎯" },
-  { label: "客戶評分", value: "4.8", unit: "/5", change: "+0.1", up: true, color: "text-violet-600", bg: "bg-violet-50", icon: "⭐" },
+// Simulated booking data
+const bookingData = [
+  { name: "陳怡君", date: "2026-03-21", time: "10:00", type: "設計提案" },
+  { name: "張家豪", date: "2026-03-21", time: "15:00", type: "初次諮詢" },
+  { name: "劉雅婷", date: "2026-03-22", time: "10:00", type: "合約簽訂" },
 ];
 
-const recentMessages = [
-  { id: 1, sender: "陳怡君", role: "業主", avatar: "bg-gradient-to-br from-pink-400 to-rose-500", time: "10 分鐘前", preview: "林設計師您好，廚房磁磚我選好了，想跟您確認一下顏色搭配..." },
-  { id: 2, sender: "王師傅", role: "工班", avatar: "bg-gradient-to-br from-blue-400 to-indigo-500", time: "1 小時前", preview: "林小姐，板橋案的水電走線已完成，麻煩您抽空驗收一下。" },
-  { id: 3, sender: "大成建材", role: "建材商", avatar: "bg-gradient-to-br from-emerald-400 to-teal-500", time: "2 小時前", preview: "您訂的義大利進口磁磚已到貨，預計明天可以配送到工地。" },
-  { id: 4, sender: "劉雅婷", role: "業主", avatar: "bg-gradient-to-br from-violet-400 to-purple-500", time: "3 小時前", preview: "設計師，主臥的壁紙我想改成淺灰色系，可以幫我出個效果圖嗎？" },
+// Simulated CRM interactions
+const crmInteractions = [
+  { id: 1, client: "陳怡君", avatar: "bg-gradient-to-br from-pink-400 to-rose-500", time: "10 分鐘前", action: "確認廚房磁磚顏色搭配", status: "施工中" },
+  { id: 2, client: "林志明", avatar: "bg-gradient-to-br from-blue-400 to-indigo-500", time: "1 小時前", action: "水電走線驗收完成通知", status: "報價中" },
+  { id: 3, client: "劉雅婷", avatar: "bg-gradient-to-br from-violet-400 to-purple-500", time: "2 小時前", action: "主臥壁紙更換為淺灰色系", status: "簽約中" },
+  { id: 4, client: "王美玲", avatar: "bg-gradient-to-br from-emerald-400 to-teal-500", time: "3 小時前", action: "結案滿意度問卷已回覆", status: "已完工" },
 ];
 
 const quickActions = [
@@ -38,14 +40,6 @@ const quickActions = [
   { name: "AI 出圖", href: "/designer/rendering", icon: "🎨", desc: "快速渲染" },
   { name: "智慧報價", href: "/designer/quotation", icon: "💰", desc: "產出報價" },
   { name: "工程看板", href: "/designer/kanban", icon: "📊", desc: "施工排程" },
-];
-
-const activityFeed = [
-  { id: 1, time: "今天 09:15", icon: "✅", iconBg: "bg-emerald-100 text-emerald-700", text: "陳怡君案 — 客廳天花板施工完成" },
-  { id: 2, time: "今天 08:40", icon: "📦", iconBg: "bg-blue-100 text-blue-700", text: "板橋林志明案 — 進口木地板到貨入庫" },
-  { id: 3, time: "昨天 17:20", icon: "📝", iconBg: "bg-violet-100 text-violet-700", text: "劉雅婷 中山豪宅 — 合約修訂完成，等待簽章" },
-  { id: 4, time: "昨天 14:00", icon: "💬", iconBg: "bg-amber-100 text-amber-700", text: "張家豪來電諮詢日式風格玄關設計細節" },
-  { id: 5, time: "前天 11:30", icon: "⭐", iconBg: "bg-pink-100 text-pink-700", text: "王美玲完成結案評價 — 5 星好評！" },
 ];
 
 /* ── Helpers ────────────────────────────────────────────────── */
@@ -59,7 +53,29 @@ function getTodayString() {
 /* ── Component ─────────────────────────────────────────────── */
 
 export default function DesignerDashboard() {
-  const [todos, setTodos] = useState(todayTodos);
+  // Dynamic todos derived from projects and bookings
+  const dynamicTodos = [
+    // From projects — pending items
+    ...projectData
+      .filter((p) => p.status !== "completed")
+      .map((p, i) => ({
+        id: i + 1,
+        text: `${p.client} ${p.title} — ${p.status === "review" ? "安排驗收" : p.status === "pending" ? "確認設計提案" : "追蹤施工進度"}`,
+        time: p.deadline,
+        done: false,
+      })),
+    // From bookings — today's appointments
+    ...bookingData
+      .filter((b) => b.date === "2026-03-21")
+      .map((b, i) => ({
+        id: 100 + i,
+        text: `${b.name} — ${b.type}`,
+        time: b.time,
+        done: false,
+      })),
+  ].slice(0, 6);
+
+  const [todos, setTodos] = useState(dynamicTodos);
 
   const toggleTodo = (id: number) => {
     setTodos((prev) =>
@@ -68,6 +84,17 @@ export default function DesignerDashboard() {
   };
 
   const completedCount = todos.filter((t) => t.done).length;
+
+  // Dynamic KPI values
+  const activeProjects = projectData.filter((p) => p.status !== "completed").length;
+  const pendingBookings = bookingData.length;
+
+  const kpiCards = [
+    { label: "進行中專案", value: String(activeProjects), unit: "件", change: "+2", up: true, color: "text-indigo-600", bg: "bg-indigo-50", icon: "📋" },
+    { label: "本月營收", value: "182", unit: "萬", change: "+23%", up: true, color: "text-emerald-600", bg: "bg-emerald-50", icon: "💰" },
+    { label: "待處理預約", value: String(pendingBookings), unit: "件", change: "+1", up: true, color: "text-amber-600", bg: "bg-amber-50", icon: "📅" },
+    { label: "客戶評分", value: "4.8", unit: "/5", change: "+0.1", up: true, color: "text-violet-600", bg: "bg-violet-50", icon: "⭐" },
+  ];
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto space-y-6">
@@ -79,7 +106,7 @@ export default function DesignerDashboard() {
             <h1 className="text-2xl sm:text-3xl font-bold mt-1">{designerName} 設計師</h1>
             <p className="text-indigo-200 text-sm mt-2 flex items-center gap-2">
               <span>☀️</span>
-              <span>{getTodayString()} ・ 台北 26°C 晴</span>
+              <span>{getTodayString()} · 台北 26°C 晴</span>
             </p>
           </div>
           <div className="flex items-center gap-4 text-center">
@@ -88,8 +115,8 @@ export default function DesignerDashboard() {
               <p className="text-xs text-indigo-200">今日完成</p>
             </div>
             <div className="bg-white/15 backdrop-blur rounded-xl px-5 py-3">
-              <p className="text-2xl font-bold">3</p>
-              <p className="text-xs text-indigo-200">待回覆</p>
+              <p className="text-2xl font-bold">{pendingBookings}</p>
+              <p className="text-xs text-indigo-200">待處理</p>
             </div>
           </div>
         </div>
@@ -116,9 +143,9 @@ export default function DesignerDashboard() {
         ))}
       </div>
 
-      {/* ── Middle: Todos + Messages ────────────────────── */}
+      {/* ── Middle: Todos + CRM Interactions ──────────── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Today's Todos */}
+        {/* Today's Todos (from Projects & Bookings) */}
         <div className="bg-white rounded-xl border border-slate-200 p-5">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm font-semibold text-slate-900">📝 今日待辦</h2>
@@ -148,32 +175,36 @@ export default function DesignerDashboard() {
           </div>
         </div>
 
-        {/* Recent Messages */}
+        {/* Recent CRM Interactions */}
         <div className="bg-white rounded-xl border border-slate-200 p-5">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-semibold text-slate-900">💬 近期訊息</h2>
-            <button className="text-xs text-indigo-600 hover:text-indigo-700 font-medium">查看全部</button>
+            <h2 className="text-sm font-semibold text-slate-900">💬 最近 CRM 互動</h2>
+            <Link href="/designer/crm" className="text-xs text-indigo-600 hover:text-indigo-700 font-medium">
+              查看全部
+            </Link>
           </div>
           <div className="space-y-3">
-            {recentMessages.map((msg) => (
-              <div key={msg.id} className="flex gap-3 p-3 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer">
-                <div className={clsx("w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm shrink-0", msg.avatar)}>
-                  {msg.sender[0]}
+            {crmInteractions.map((interaction) => (
+              <div key={interaction.id} className="flex gap-3 p-3 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer">
+                <div className={clsx("w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm shrink-0", interaction.avatar)}>
+                  {interaction.client[0]}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
-                    <span className="text-sm font-medium text-slate-900">{msg.sender}</span>
+                    <span className="text-sm font-medium text-slate-900">{interaction.client}</span>
                     <span className={clsx(
                       "text-[10px] px-1.5 py-0.5 rounded-full font-medium",
-                      msg.role === "業主" ? "bg-indigo-50 text-indigo-700" :
-                      msg.role === "工班" ? "bg-amber-50 text-amber-700" :
-                      "bg-emerald-50 text-emerald-700"
+                      interaction.status === "施工中" ? "bg-indigo-50 text-indigo-700" :
+                      interaction.status === "已完工" ? "bg-emerald-50 text-emerald-700" :
+                      interaction.status === "報價中" ? "bg-amber-50 text-amber-700" :
+                      interaction.status === "簽約中" ? "bg-violet-50 text-violet-700" :
+                      "bg-slate-50 text-slate-600"
                     )}>
-                      {msg.role}
+                      {interaction.status}
                     </span>
-                    <span className="text-[10px] text-slate-400 ml-auto">{msg.time}</span>
+                    <span className="text-[10px] text-slate-400 ml-auto">{interaction.time}</span>
                   </div>
-                  <p className="text-xs text-slate-500 truncate">{msg.preview}</p>
+                  <p className="text-xs text-slate-500 truncate">{interaction.action}</p>
                 </div>
               </div>
             ))}
@@ -203,24 +234,45 @@ export default function DesignerDashboard() {
         </div>
       </div>
 
-      {/* ── Activity Feed ───────────────────────────────── */}
+      {/* ── Project Status Overview ──────────────────── */}
       <div className="bg-white rounded-xl border border-slate-200 p-5">
-        <h2 className="text-sm font-semibold text-slate-900 mb-4">🕐 最近活動</h2>
-        <div className="space-y-0">
-          {activityFeed.map((activity, index) => (
-            <div key={activity.id} className="flex gap-4 relative">
-              {/* Timeline line */}
-              {index < activityFeed.length - 1 && (
-                <div className="absolute left-[15px] top-9 bottom-0 w-px bg-slate-200" />
-              )}
-              {/* Icon */}
-              <div className={clsx("w-8 h-8 rounded-full flex items-center justify-center text-sm shrink-0 z-10", activity.iconBg)}>
-                {activity.icon}
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-sm font-semibold text-slate-900">📊 專案概覽</h2>
+          <Link href="/designer/projects" className="text-xs text-indigo-600 hover:text-indigo-700 font-medium">
+            查看全部
+          </Link>
+        </div>
+        <div className="space-y-3">
+          {projectData.filter((p) => p.status !== "completed").map((project, index) => (
+            <div key={index} className="flex items-center gap-4">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <p className="text-sm font-medium text-slate-900 truncate">{project.title}</p>
+                  <span className={clsx(
+                    "text-[10px] px-1.5 py-0.5 rounded-full font-medium shrink-0",
+                    project.status === "inProgress" ? "bg-blue-50 text-blue-700" :
+                    project.status === "review" ? "bg-purple-50 text-purple-700" :
+                    "bg-amber-50 text-amber-700"
+                  )}>
+                    {project.status === "inProgress" ? "進行中" : project.status === "review" ? "驗收中" : "待確認"}
+                  </span>
+                </div>
+                <p className="text-xs text-slate-400">{project.client} · 截止 {project.deadline}</p>
               </div>
-              {/* Content */}
-              <div className="flex-1 min-w-0 pb-5">
-                <p className="text-sm text-slate-700">{activity.text}</p>
-                <p className="text-xs text-slate-400 mt-0.5">{activity.time}</p>
+              <div className="w-24 shrink-0">
+                <div className="flex items-center justify-between text-xs mb-1">
+                  <span className="text-slate-400">進度</span>
+                  <span className="font-medium text-slate-600">{project.progress}%</span>
+                </div>
+                <div className="w-full bg-slate-100 rounded-full h-1.5">
+                  <div
+                    className={clsx(
+                      "h-1.5 rounded-full",
+                      project.progress >= 80 ? "bg-emerald-500" : project.progress >= 50 ? "bg-blue-500" : "bg-amber-500"
+                    )}
+                    style={{ width: `${project.progress}%` }}
+                  />
+                </div>
               </div>
             </div>
           ))}

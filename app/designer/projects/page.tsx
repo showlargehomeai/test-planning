@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { clsx } from "clsx";
 
 interface Project {
@@ -190,11 +191,49 @@ const priorityConfig = {
   low: { label: "低", color: "text-gray-700 bg-gray-50" },
 };
 
-export default function ProjectsPage() {
+function ProjectsContent() {
+  const searchParams = useSearchParams();
+  const newProjectClient = searchParams.get("newProject");
+
   const [projects, setProjects] = useState<Project[]>(mockProjects);
   const [filterStatus, setFilterStatus] = useState<string>("");
   const [filterPriority, setFilterPriority] = useState<string>("");
   const [draggedProject, setDraggedProject] = useState<Project | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
+
+  // Auto-create project from CRM query param
+  useEffect(() => {
+    if (newProjectClient) {
+      const alreadyExists = projects.some((p) => p.client === newProjectClient);
+      if (!alreadyExists) {
+        const newProject: Project = {
+          id: Date.now(),
+          title: `${newProjectClient} 的新專案`,
+          client: newProjectClient,
+          budget: "待定",
+          area: "待定",
+          progress: 0,
+          status: "pending",
+          nextMilestone: "初步設計提案",
+          deadline: "待定",
+          style: "待定",
+          region: "待定",
+          startDate: new Date().toISOString().split("T")[0],
+          estimatedCompletion: "待定",
+          teamSize: 1,
+          priority: "medium",
+          avatar: "bg-gradient-to-br from-indigo-400 to-indigo-600",
+          description: `來自 CRM 建立的新專案 — ${newProjectClient}`,
+          contractSigned: false,
+          designApproved: false,
+          constructionStarted: false,
+        };
+        setProjects((prev) => [newProject, ...prev]);
+        setToast(`已為 ${newProjectClient} 建立新專案`);
+        setTimeout(() => setToast(null), 3000);
+      }
+    }
+  }, [newProjectClient]);
 
   const filteredProjects = projects.filter((project) => {
     if (filterStatus && project.status !== filterStatus) return false;
@@ -238,6 +277,13 @@ export default function ProjectsPage() {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-6">
+      {/* Toast */}
+      {toast && (
+        <div className="fixed top-6 right-6 z-50 bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium">
+          ✓ {toast}
+        </div>
+      )}
+
       {/* Header */}
       <div>
         <h1 className="text-xl sm:text-2xl font-bold text-slate-900">📋 專案進度追蹤</h1>
@@ -268,8 +314,8 @@ export default function ProjectsPage() {
       <div className="bg-white rounded-xl border border-slate-200 p-4">
         <p className="text-sm font-semibold text-slate-700 mb-3">篩選條件</p>
         <div className="flex flex-col sm:flex-row gap-3">
-          <select 
-            value={filterStatus} 
+          <select
+            value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
             className="border border-slate-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 min-h-[44px] flex-1"
           >
@@ -279,8 +325,8 @@ export default function ProjectsPage() {
             <option value="review">驗收中</option>
             <option value="completed">已完工</option>
           </select>
-          <select 
-            value={filterPriority} 
+          <select
+            value={filterPriority}
             onChange={(e) => setFilterPriority(e.target.value)}
             className="border border-slate-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 min-h-[44px] flex-1"
           >
@@ -357,7 +403,7 @@ export default function ProjectsPage() {
                       <span className="font-semibold text-slate-900">{project.progress}%</span>
                     </div>
                     <div className="w-full bg-slate-100 rounded-full h-2">
-                      <div 
+                      <div
                         className={clsx("h-2 rounded-full transition-all", getProgressColor(project.progress))}
                         style={{ width: `${project.progress}%` }}
                       />
@@ -384,5 +430,13 @@ export default function ProjectsPage() {
         ))}
       </div>
     </div>
+  );
+}
+
+export default function ProjectsPage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center text-slate-400">載入中...</div>}>
+      <ProjectsContent />
+    </Suspense>
   );
 }
