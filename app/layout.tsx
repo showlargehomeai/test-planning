@@ -29,7 +29,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="zh-TW" className={inter.variable}>
-      <body className="h-screen bg-[#f7f8fa] text-slate-900 antialiased font-sans overflow-hidden">
+      <body className="h-screen bg-[#fafbfc] text-slate-800 antialiased font-sans overflow-hidden">
         <div className="flex h-full">
           <TabNavigation />
           <main className="flex-1 min-w-0 overflow-y-auto">{children}</main>

@@ -95,9 +95,9 @@ export default function HomePage() {
           {/* Quick stats */}
           <div className="flex flex-wrap gap-6 mt-5">
             {[
-              { label: "功能頁面", value: totalPages, color: "text-indigo-600" },
-              { label: "角色平台", value: 3, color: "text-violet-600" },
-              { label: "功能模組", value: sections.length, color: "text-emerald-600" },
+              { label: "功能頁面", value: totalPages, color: "text-blue-600" },
+              { label: "角色平台", value: 3, color: "text-blue-600" },
+              { label: "功能模組", value: sections.length, color: "text-blue-600" },
             ].map((s) => (
               <div key={s.label} className="flex items-baseline gap-2">
                 <span className={`text-2xl font-bold ${s.color}`}>{s.value}</span>
