@@ -1,6 +1,6 @@
 {
-  "lastUpdated": "2026-03-21T13:36:00+08:00",
-  "updatedBy": "cron-dev-sprint",
+  "lastUpdated": "2026-03-21T14:30:00+08:00",
+  "updatedBy": "cron-cto-audit",
   "context": "基於 Production codebase 實際狀態建立的開發佇列",
   "tasks": [
     {
@@ -15,7 +15,7 @@
       "priority": "P0",
       "status": "done",
       "dependencies": [],
-      "notes": "已修復：PipelineView.tsx 中 'won'/'lost' 改為 'closed_won'/'closed_lost' 以符合 type 定義。"
+      "notes": "✅ 已修復：PipelineView.tsx 中 'won'/'lost' 改為 'closed_won'/'closed_lost' 以符合 type 定義。"
     },
     {
       "id": "P-001",
@@ -30,7 +30,7 @@
       "priority": "P0",
       "status": "done",
       "dependencies": ["P-000"],
-      "notes": "已完成：(1) API 路徑已一致 /api/v1/crm/* (2) USE_MOCK 已改為環境變數控制 (3) .env.local 設定 NEXT_PUBLIC_CRM_USE_MOCK=true (4) 修正 BdTeamPerformance mock data 型別不一致問題。"
+      "notes": "✅ 已完成：(1) API 路徑已一致 /api/v1/crm/* (2) USE_MOCK 已改為環境變數控制 NEXT_PUBLIC_CRM_USE_MOCK=true (3) .env.local 設定完成 (4) 型別匹配問題已修正。"
     },
     {
       "id": "P-002",
@@ -45,13 +45,13 @@
       "priority": "P0",
       "status": "done",
       "dependencies": [],
-      "notes": "已完成：(1) 建立 API client (app/lib/api/daily-reports.ts) (2) 型別定義 (app/types/daily-reports.ts) (3) 完整頁面 (app/projects/[id]/daily-reports/page.tsx) 包含日報列表、新增/編輯表單、狀態篩選、照片上傳、材料使用記錄等功能。使用 shadcn/ui + Tailwind 風格，符合現有設計系統。"
+      "notes": "✅ 已完成：(1) 建立 API client (app/lib/api/daily-reports.ts) (2) 型別定義 (app/types/daily-reports.ts) (3) 完整頁面包含日報列表、新增/編輯表單、狀態篩選、照片上傳、材料使用記錄等功能。使用 shadcn/ui + Tailwind 風格。"
     },
     {
       "id": "P-003",
       "title": "合約管理前端頁面（接 interaction-service）",
       "repo": "LargeHomeAI--Frontend",
-      "description": "interaction-service 已有 contracts API + payment_milestones API 但前端沒有頁面。建立：(1) app/contracts/page.tsx — 合約列表（篩選狀態、搜尋）(2) app/contracts/[id]/page.tsx — 合約詳情 + 付款里程碑時間軸。參考 CRM 的元件風格。",
+      "description": "interaction-service 已有 contracts API + payment_milestones API。建立：(1) app/contracts/page.tsx ✅ 已有 (2) app/contracts/[id]/page.tsx — 合約詳情 + 付款里程碑時間軸。參考 CRM 的元件風格。",
       "files": [
         "app/contracts/page.tsx",
         "app/contracts/[id]/page.tsx",
@@ -60,9 +60,9 @@
         "app/types/contracts.ts"
       ],
       "priority": "P0",
-      "status": "ready",
+      "status": "partial",
       "dependencies": [],
-      "notes": "後端 model: Contract(project_id, contact_id, contract_number, type, status, total_amount, signed_date, start_date, end_date) + PaymentMilestone(contract_id, name, percentage, amount, due_date, status)"
+      "notes": "🚧 部分完成：app/contracts/page.tsx + API client 已建立。待完成：app/contracts/[id]/page.tsx (合約詳情頁)。後端 model: Contract + PaymentMilestone。"
     },
     {
       "id": "P-004",
@@ -74,10 +74,10 @@
         "app/lib/api/material-inquiries.ts",
         "app/types/material-inquiries.ts"
       ],
-      "priority": "P1",
+      "priority": "P0",
       "status": "ready",
       "dependencies": [],
-      "notes": "後端 model: MaterialInquiry(project_id, requester_id, vendor_id, product_id, product_name, specification, quantity, unit, budget_hint, message, status, vendor_reply, vendor_price)"
+      "notes": "待開發：後端 model MaterialInquiry(project_id, requester_id, vendor_id, product_id, product_name, specification, quantity, unit, budget_hint, message, status, vendor_reply, vendor_price)"
     },
     {
       "id": "P-005",
@@ -89,10 +89,10 @@
         "app/lib/api/site-inspections.ts",
         "app/types/site-inspections.ts"
       ],
-      "priority": "P1",
+      "priority": "P0",
       "status": "ready",
       "dependencies": [],
-      "notes": "後端 model: SiteInspection(project_id, inspector_id, inspection_date, type, checklist(JSONB), overall_status, notes, photos)"
+      "notes": "待開發：後端 model SiteInspection(project_id, inspector_id, inspection_date, type, checklist(JSONB), overall_status, notes, photos)"
     },
     {
       "id": "P-006",
@@ -110,7 +110,7 @@
         "P-004",
         "P-005"
       ],
-      "notes": "專案頁面已有基本資訊展示，需要加入子頁面導航。合約可能是獨立路由不掛在 project 下。"
+      "notes": "專案頁面已有基本資訊展示，需要加入子頁面導航。合約可能是獨立路由不掛在 project 下。依賴 P-002(已完成), P-004, P-005。"
     },
     {
       "id": "P-007",
@@ -120,13 +120,27 @@
       "files": [
         "app/components/TopNav.tsx"
       ],
-      "priority": "P2",
+      "priority": "P1",
       "status": "ready",
       "dependencies": [
         "P-001",
         "P-003"
       ],
-      "notes": "確認現有 TopNav 的結構再決定放在哪裡"
+      "notes": "確認現有 TopNav 的結構再決定放在哪裡。依賴 P-001(已完成), P-003(部分完成)。"
+    },
+    {
+      "id": "P-008",
+      "title": "合約詳情頁 + 付款里程碑時間軸",
+      "repo": "LargeHomeAI--Frontend",
+      "description": "完成 P-003 的剩餘部分：建立 app/contracts/[id]/page.tsx，展示合約詳情、付款里程碑時間軸、狀態更新。使用 shadcn/ui Timeline 元件展示付款進度。",
+      "files": [
+        "app/contracts/[id]/page.tsx",
+        "app/types/contracts.ts"
+      ],
+      "priority": "P0",
+      "status": "ready",
+      "dependencies": ["P-003"],
+      "notes": "拆分自 P-003。需要整合現有 contracts API，展示 PaymentMilestone 資料。"
     }
   ],
   "rules": {
