@@ -1,0 +1,111 @@
+{
+  "lastUpdated": "2026-03-21T12:50:00+08:00",
+  "updatedBy": "cto-manual",
+  "context": "基於 Production codebase 實際狀態建立的開發佇列",
+  "tasks": [
+    {
+      "id": "P-001",
+      "title": "CRM 前端接通真實 API（移除 USE_MOCK）",
+      "repo": "LargeHomeAI--Frontend",
+      "description": "profile-service 已有完整 CRM API (338行)，前端 app/lib/api/crm.ts 有 USE_MOCK=true。任務：(1) 確認 API endpoint 路徑與後端 router 一致 (2) 把 USE_MOCK 改為環境變數控制 NEXT_PUBLIC_CRM_USE_MOCK (3) 在 .env.local 設為 true 供本地開發，.env.production 設為 false (4) 確保 CrmContactResponse schema 與前端 CrmContact 型別匹配",
+      "files": [
+        "app/lib/api/crm.ts",
+        ".env.local",
+        "app/types/crm.ts"
+      ],
+      "priority": "P0",
+      "status": "ready",
+      "dependencies": [],
+      "notes": "後端已有: GET/POST/PATCH/DELETE /api/v1/crm/contacts, /pipeline, /bd-performance。DB migration 049 需確認是否已執行。"
+    },
+    {
+      "id": "P-002",
+      "title": "施工日報前端頁面（接 interaction-service）",
+      "repo": "LargeHomeAI--Frontend",
+      "description": "interaction-service 已有 daily_reports API（POST/GET /projects/{id}/daily-reports）但前端沒有對應頁面。建立 app/projects/[id]/daily-reports/page.tsx，功能：日報列表、新增日報表單（日期、天氣、工人數、施工描述、材料用量、問題、照片上傳placeholder）、審核狀態。參考 app/projects/[id]/page.tsx 的 layout 和 app/crm/components/ 的元件風格。",
+      "files": [
+        "app/projects/[id]/daily-reports/page.tsx",
+        "app/lib/api/daily-reports.ts",
+        "app/types/daily-reports.ts"
+      ],
+      "priority": "P0",
+      "status": "ready",
+      "dependencies": [],
+      "notes": "後端 model: DailyReport(project_id, submitted_by, report_date, weather, worker_count, work_description, materials_used(JSONB), issues, photos, status, approved_by)"
+    },
+    {
+      "id": "P-003",
+      "title": "合約管理前端頁面（接 interaction-service）",
+      "repo": "LargeHomeAI--Frontend",
+      "description": "interaction-service 已有 contracts API + payment_milestones API 但前端沒有頁面。建立：(1) app/contracts/page.tsx — 合約列表（篩選狀態、搜尋）(2) app/contracts/[id]/page.tsx — 合約詳情 + 付款里程碑時間軸。參考 CRM 的元件風格。",
+      "files": [
+        "app/contracts/page.tsx",
+        "app/contracts/[id]/page.tsx",
+        "app/contracts/layout.tsx",
+        "app/lib/api/contracts.ts",
+        "app/types/contracts.ts"
+      ],
+      "priority": "P0",
+      "status": "ready",
+      "dependencies": [],
+      "notes": "後端 model: Contract(project_id, contact_id, contract_number, type, status, total_amount, signed_date, start_date, end_date) + PaymentMilestone(contract_id, name, percentage, amount, due_date, status)"
+    },
+    {
+      "id": "P-004",
+      "title": "建材詢價前端頁面（接 interaction-service）",
+      "repo": "LargeHomeAI--Frontend",
+      "description": "interaction-service 已有 material_inquiries API 但前端沒有頁面。建立 app/projects/[id]/inquiries/page.tsx，功能：詢價列表、新增詢價（選建材商、選產品或手動輸入、數量、預算、訊息）、建材商回覆狀態追蹤。設計師/工班向建材商詢價的入口。",
+      "files": [
+        "app/projects/[id]/inquiries/page.tsx",
+        "app/lib/api/material-inquiries.ts",
+        "app/types/material-inquiries.ts"
+      ],
+      "priority": "P1",
+      "status": "ready",
+      "dependencies": [],
+      "notes": "後端 model: MaterialInquiry(project_id, requester_id, vendor_id, product_id, product_name, specification, quantity, unit, budget_hint, message, status, vendor_reply, vendor_price)"
+    },
+    {
+      "id": "P-005",
+      "title": "工地巡檢前端頁面（接 interaction-service）",
+      "repo": "LargeHomeAI--Frontend",
+      "description": "interaction-service 已有 site_inspections API 但前端沒有頁面。建立 app/projects/[id]/inspections/page.tsx，功能：巡檢列表、新增巡檢（類型quality/safety/progress、checklist JSONB、整體狀態、備註、照片）。",
+      "files": [
+        "app/projects/[id]/inspections/page.tsx",
+        "app/lib/api/site-inspections.ts",
+        "app/types/site-inspections.ts"
+      ],
+      "priority": "P1",
+      "status": "ready",
+      "dependencies": [],
+      "notes": "後端 model: SiteInspection(project_id, inspector_id, inspection_date, type, checklist(JSONB), overall_status, notes, photos)"
+    },
+    {
+      "id": "P-006",
+      "title": "專案詳情頁整合入口（日報+巡檢+詢價+合約）",
+      "repo": "LargeHomeAI--Frontend",
+      "description": "在 app/projects/[id]/page.tsx 加入 tab 或 section 導航到：daily-reports、inspections、inquiries。讓專案頁面成為管理中心，一個專案下所有相關功能都能到達。",
+      "files": [
+        "app/projects/[id]/page.tsx",
+        "app/projects/[id]/layout.tsx"
+      ],
+      "priority": "P1",
+      "status": "ready",
+      "dependencies": ["P-002", "P-004", "P-005"],
+      "notes": "專案頁面已有基本資訊展示，需要加入子頁面導航。合約可能是獨立路由不掛在 project 下。"
+    },
+    {
+      "id": "P-007",
+      "title": "TopNav 加入 CRM 和合約入口",
+      "repo": "LargeHomeAI--Frontend",
+      "description": "在 app/components/TopNav.tsx 或全局導航中加入 CRM (/crm) 和合約管理 (/contracts) 的入口連結，讓使用者能從任何頁面進入。",
+      "files": [
+        "app/components/TopNav.tsx"
+      ],
+      "priority": "P2",
+      "status": "ready",
+      "dependencies": ["P-001", "P-003"],
+      "notes": "確認現有 TopNav 的結構再決定放在哪裡"
+    }
+  ]
+}
