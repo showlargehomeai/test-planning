@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-03-21T10:00:00+08:00",
+  "lastUpdated": "2026-03-21T10:25:00+08:00",
   "updatedBy": "cto-audit-round-21",
   "tasks": [
     {
@@ -10,9 +10,17 @@
       "status": "done",
       "assignee": "dev-agent",
       "module": "designer",
-      "files": ["app/designer/crm/page.tsx", "app/designer/crm/[id]/page.tsx"],
+      "files": [
+        "app/designer/crm/page.tsx",
+        "app/designer/crm/[id]/page.tsx"
+      ],
       "dependencies": [],
-      "acceptanceCriteria": ["客戶列表可篩選搜尋", "客戶詳情頁顯示互動時間軸", "標籤可新增編輯", "RWD 手機可用"],
+      "acceptanceCriteria": [
+        "客戶列表可篩選搜尋",
+        "客戶詳情頁顯示互動時間軸",
+        "標籤可新增編輯",
+        "RWD 手機可用"
+      ],
       "createdAt": "2026-03-21T09:55:00+08:00",
       "completedAt": "2026-03-21T09:56:00+08:00",
       "notes": "Round 21 確認：已實作完成，commit bdcd5cd 有具體實作"
@@ -22,14 +30,22 @@
       "title": "專案進度追蹤 Dashboard",
       "description": "建立 /designer/projects 頁面，看板式專案管理：待確認→進行中→驗收→完工。每個專案卡片顯示業主、預算、進度百分比、下次里程碑。",
       "priority": "P0",
-      "status": "in-progress",
+      "status": "done",
       "assignee": "dev-agent",
       "module": "designer",
-      "files": ["app/designer/projects/page.tsx"],
+      "files": [
+        "app/designer/projects/page.tsx"
+      ],
       "dependencies": [],
-      "acceptanceCriteria": ["看板拖拉換狀態", "專案卡片資訊完整", "進度條視覺化", "篩選功能"],
+      "acceptanceCriteria": [
+        "看板拖拉換狀態",
+        "專案卡片資訊完整",
+        "進度條視覺化",
+        "篩選功能"
+      ],
       "createdAt": "2026-03-21T09:55:00+08:00",
-      "notes": "Round 21 檢查：檔案不存在，需要派工實作"
+      "notes": "Round 21 檢查：檔案不存在，需要派工實作",
+      "completedAt": "2026-03-21T10:25:00+08:00"
     },
     {
       "id": "T-003",
@@ -39,9 +55,16 @@
       "status": "in_progress",
       "assignee": "dev-agent",
       "module": "designer",
-      "files": ["app/designer/page.tsx"],
+      "files": [
+        "app/designer/page.tsx"
+      ],
       "dependencies": [],
-      "acceptanceCriteria": ["儀表板數據卡片", "今日待辦清單", "快速入口按鈕", "最近活動 feed"],
+      "acceptanceCriteria": [
+        "儀表板數據卡片",
+        "今日待辦清單",
+        "快速入口按鈕",
+        "最近活動 feed"
+      ],
       "createdAt": "2026-03-21T09:55:00+08:00",
       "notes": "Round 21 檢查：檔案已存在但需檢查是否實現所有功能需求"
     },
@@ -50,28 +73,50 @@
       "title": "建材商目錄與報價系統",
       "description": "建立 /supplier 路由群組：產品目錄、報價管理、訂單追蹤。讓建材商角色也有獨立的操作介面。",
       "priority": "P1",
-      "status": "ready",
+      "status": "done",
       "assignee": "dev-agent",
       "module": "supplier",
-      "files": ["app/supplier/page.tsx", "app/supplier/catalog/page.tsx", "app/supplier/orders/page.tsx", "app/supplier/layout.tsx"],
+      "files": [
+        "app/supplier/page.tsx",
+        "app/supplier/catalog/page.tsx",
+        "app/supplier/orders/page.tsx",
+        "app/supplier/layout.tsx"
+      ],
       "dependencies": [],
-      "acceptanceCriteria": ["產品目錄展示", "報價單建立", "訂單狀態追蹤", "獨立 layout"],
+      "acceptanceCriteria": [
+        "產品目錄展示",
+        "報價單建立",
+        "訂單狀態追蹤",
+        "獨立 layout"
+      ],
       "createdAt": "2026-03-21T09:55:00+08:00",
-      "notes": "Round 21 檢查：全部檔案都不存在，需要完整實作"
+      "notes": "Round 21 檢查：全部檔案都不存在，需要完整實作",
+      "completedAt": "2026-03-21T10:25:00+08:00"
     },
     {
       "id": "T-005",
       "title": "工班管理與排程系統",
       "description": "建立 /contractor 路由群組：工班檔案、排程日曆、施工紀錄。Mock 數據展示工班的完整管理流程。",
       "priority": "P1",
-      "status": "ready",
+      "status": "done",
       "assignee": "dev-agent",
       "module": "contractor",
-      "files": ["app/contractor/page.tsx", "app/contractor/schedule/page.tsx", "app/contractor/records/page.tsx", "app/contractor/layout.tsx"],
+      "files": [
+        "app/contractor/page.tsx",
+        "app/contractor/schedule/page.tsx",
+        "app/contractor/records/page.tsx",
+        "app/contractor/layout.tsx"
+      ],
       "dependencies": [],
-      "acceptanceCriteria": ["工班列表與篩選", "日曆排程視圖", "施工紀錄上傳", "獨立 layout"],
+      "acceptanceCriteria": [
+        "工班列表與篩選",
+        "日曆排程視圖",
+        "施工紀錄上傳",
+        "獨立 layout"
+      ],
       "createdAt": "2026-03-21T09:55:00+08:00",
-      "notes": "Round 21 檢查：全部檔案都不存在，需要完整實作"
+      "notes": "Round 21 檢查：全部檔案都不存在，需要完整實作",
+      "completedAt": "2026-03-21T10:25:00+08:00"
     },
     {
       "id": "T-006",
@@ -81,9 +126,19 @@
       "status": "ready",
       "assignee": "dev-agent",
       "module": "collaboration",
-      "files": ["app/collaboration/page.tsx", "app/collaboration/[projectId]/page.tsx"],
-      "dependencies": ["T-002"],
-      "acceptanceCriteria": ["專案討論串", "文件共享區", "三方進度同步", "即時通知模擬"],
+      "files": [
+        "app/collaboration/page.tsx",
+        "app/collaboration/[projectId]/page.tsx"
+      ],
+      "dependencies": [
+        "T-002"
+      ],
+      "acceptanceCriteria": [
+        "專案討論串",
+        "文件共享區",
+        "三方進度同步",
+        "即時通知模擬"
+      ],
       "createdAt": "2026-03-21T09:55:00+08:00",
       "notes": "Round 21 檢查：檔案不存在，需要實作，依賴 T-002"
     },
@@ -93,11 +148,21 @@
       "description": "將 /dashboard 升級為完整戰情室：即時新增客戶、專案轉換率、BD 活動成效、工班產能利用率。用圖表和 KPI 儀表板呈現 LargeHome 營運全貌。",
       "priority": "P0",
       "status": "ready",
-      "assignee": "dev-agent", 
+      "assignee": "dev-agent",
       "module": "dashboard",
-      "files": ["app/dashboard/page.tsx", "app/dashboard/overview/page.tsx", "app/dashboard/analytics/page.tsx", "app/dashboard/bd/page.tsx"],
+      "files": [
+        "app/dashboard/page.tsx",
+        "app/dashboard/overview/page.tsx",
+        "app/dashboard/analytics/page.tsx",
+        "app/dashboard/bd/page.tsx"
+      ],
       "dependencies": [],
-      "acceptanceCriteria": ["實時數據圖表", "BD 成效追蹤", "工班產能分析", "客戶轉換漏斗"],
+      "acceptanceCriteria": [
+        "實時數據圖表",
+        "BD 成效追蹤",
+        "工班產能分析",
+        "客戶轉換漏斗"
+      ],
       "createdAt": "2026-03-21T10:00:00+08:00",
       "notes": "Round 21 新增：現有 dashboard 檔案存在但功能不完整，需要強化為管理階層戰情室"
     },
@@ -109,9 +174,16 @@
       "status": "ready",
       "assignee": "content-agent",
       "module": "planning",
-      "files": ["app/plan/page.tsx"],
+      "files": [
+        "app/plan/page.tsx"
+      ],
       "dependencies": [],
-      "acceptanceCriteria": ["技術架構描述更新", "三角色整合進展", "競爭優勢重點", "營運時程對齊"],
+      "acceptanceCriteria": [
+        "技術架構描述更新",
+        "三角色整合進展",
+        "競爭優勢重點",
+        "營運時程對齊"
+      ],
       "createdAt": "2026-03-21T10:00:00+08:00",
       "notes": "Round 21 新增：確保商業計畫與實際開發進度同步"
     },
@@ -119,13 +191,21 @@
       "id": "T-009",
       "title": "版本更新記錄自動化",
       "description": "建立 /changelog 頁面的版本記錄自動更新機制，每次 demo/plan 內容更新時自動產生更新摘要。讓投資人和合作夥伴能清楚追蹤產品進展。",
-      "priority": "P2", 
+      "priority": "P2",
       "status": "ready",
       "assignee": "dev-agent",
       "module": "planning",
-      "files": ["app/changelog/page.tsx", "content/versions/auto-update.js"],
+      "files": [
+        "app/changelog/page.tsx",
+        "content/versions/auto-update.js"
+      ],
       "dependencies": [],
-      "acceptanceCriteria": ["自動版本摘要", "進展追蹤時間軸", "功能新增記錄", "技術升級日誌"],
+      "acceptanceCriteria": [
+        "自動版本摘要",
+        "進展追蹤時間軸",
+        "功能新增記錄",
+        "技術升級日誌"
+      ],
       "createdAt": "2026-03-21T10:00:00+08:00",
       "notes": "Round 21 新增：建立產品進展的透明化追蹤機制"
     }
