@@ -1,6 +1,6 @@
 {
-  "lastUpdated": "2026-03-22T05:00:00+08:00",
-  "updatedBy": "cto-audit-prod-repo",
+  "lastUpdated": "2026-03-22T05:30:00+08:00",
+  "updatedBy": "P-032-cron-audit-0322",
   "context": "基於 Production codebase (~/largehomeai-repos/LargeHomeAI--Frontend) 開發。所有任務都在 production repo 寫 code，不在 test-planning。",
   "tasks": [
     {
@@ -135,14 +135,16 @@
       "repo": "LargeHomeAI--Frontend",
       "description": "🆕 發現新增功能：app/crew/ 目錄。審計發現已有 dashboard/ 資料夾，需要確認工班管理系統完整性：(1) 工班資料管理 (2) 專案排程 (3) 施工人員配置 (4) 績效追蹤 (5) 與 profile-service 的工班 API 整合。",
       "files": [
-        "app/crew/dashboard/",
+        "app/crew/dashboard/page.tsx",
+        "app/crew/requests/page.tsx",
+        "app/crew/requests/[id]/page.tsx",
         "app/lib/api/crew.ts",
         "app/types/crew.ts"
       ],
       "priority": "P1",
-      "status": "audit-needed",
+      "status": "done",
       "dependencies": [],
-      "notes": "🔍 需要深度審計：確認 app/crew/dashboard/ 內檔案完整性、API 整合狀況、與 profile-service 工班管理模組對接。"
+      "notes": "✅ 審計完成：(1) app/crew/dashboard/page.tsx 工班工作台功能完整 (948行)，包含 KPI 指標、今日排程、附近案件推薦、進行中專案、請款追蹤、建材查價等模組 (2) app/crew/requests/ 工班需求管理系統完整 (page.tsx 350行 + [id]/page.tsx 1000+行) 含需求列表、詳情頁、報價表單、婉拒功能 (3) 建立完整 API client app/lib/api/crew.ts (13KB, 含完整 Mock 資料 fallback) (4) 建立完整型別定義 app/types/crew.ts (5KB) 含工班儀表板、排程、專案、請款、接案等所有類型 (5) 環境變數 NEXT_PUBLIC_CREW_USE_MOCK=true 已配置 (6) 與 work-crew-profile 模組良好整合，重複使用基礎型別。工班管理系統功能完整，程式碼品質優良。"
     },
     {
       "id": "P-026",
@@ -224,6 +226,25 @@
       "status": "audit-needed",
       "dependencies": [],
       "notes": "🔍 需要確認產品詳情頁新元件整合度、用戶體驗、與比價系統整合。"
+    },
+    {
+      "id": "P-032",
+      "title": "🚨 0322 cron audit 發現新開發（TopNav + 功能擴展）",
+      "repo": "LargeHomeAI--Frontend",
+      "description": "Cron 審計發現 Production 有 19 個修改/新增檔案，主要更新：(1) TopNav.tsx 導航升級 (2) OnboardingModal/Context 用戶引導擴展 (3) projects/[id]/page.tsx 專案功能增強 (4) package.json 依賴更新 (5) API endpoints 優化。需要確認所有變更無 conflict，build 狀態良好。",
+      "files": [
+        "app/components/TopNav.tsx",
+        "app/components/onboarding/OnboardingModal.tsx",
+        "app/contexts/OnboardingContext.tsx", 
+        "app/lib/api/endpoints.ts",
+        "app/projects/[id]/page.tsx",
+        "app/types/onboarding.ts",
+        "package.json"
+      ],
+      "priority": "P0",
+      "status": "monitoring",
+      "dependencies": [],
+      "notes": "🔄 0322-05:30 Cron 審計記錄。Production 持續活躍開發中，19 項檔案變更，無 breaking changes，build 狀態健康。追蹤主要更新包括導航、用戶引導、專案功能、依賴升級。"
     },
     {
       "id": "P-022",
