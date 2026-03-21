@@ -10,6 +10,7 @@ const sections = [
     title: "接案獲客",
     items: [
       { name: "業主媒合", href: "/designer/matching", icon: "🎯" },
+      { name: "客戶管理", href: "/designer/crm", icon: "👥" },
       { name: "作品集展示", href: "/designer/portfolio", icon: "🖼️" },
       { name: "評價口碑", href: "/designer/reviews", icon: "⭐" },
       { name: "諮詢預約", href: "/designer/booking", icon: "📅" },

@@ -1,0 +1,85 @@
+{
+  "lastUpdated": "2026-03-21T09:55:00+08:00",
+  "updatedBy": "manual-init",
+  "tasks": [
+    {
+      "id": "T-001",
+      "title": "CRM 客戶管理頁面",
+      "description": "建立 /designer/crm 頁面，包含：客戶列表、客戶詳情、互動紀錄、標籤系統。使用 mock 數據，UI 風格與現有 designer 頁面一致。",
+      "priority": "P0",
+      "status": "done",
+      "assignee": "dev-agent",
+      "module": "designer",
+      "files": ["app/designer/crm/page.tsx", "app/designer/crm/[id]/page.tsx"],
+      "dependencies": [],
+      "acceptanceCriteria": ["客戶列表可篩選搜尋", "客戶詳情頁顯示互動時間軸", "標籤可新增編輯", "RWD 手機可用"],
+      "createdAt": "2026-03-21T09:55:00+08:00",
+      "completedAt": "2026-03-21T09:56:00+08:00"
+    },
+    {
+      "id": "T-002",
+      "title": "專案進度追蹤 Dashboard",
+      "description": "建立 /designer/projects 頁面，看板式專案管理：待確認→進行中→驗收→完工。每個專案卡片顯示業主、預算、進度百分比、下次里程碑。",
+      "priority": "P0",
+      "status": "ready",
+      "assignee": "dev-agent",
+      "module": "designer",
+      "files": ["app/designer/projects/page.tsx"],
+      "dependencies": [],
+      "acceptanceCriteria": ["看板拖拉換狀態", "專案卡片資訊完整", "進度條視覺化", "篩選功能"],
+      "createdAt": "2026-03-21T09:55:00+08:00"
+    },
+    {
+      "id": "T-003",
+      "title": "設計師個人儀表板首頁",
+      "description": "重寫 /designer 首頁，不再 redirect。顯示：今日待辦、本月業績、近期訊息、快速操作入口。Mock 數據呈現完整的設計師工作台。",
+      "priority": "P0",
+      "status": "ready",
+      "assignee": "dev-agent",
+      "module": "designer",
+      "files": ["app/designer/page.tsx"],
+      "dependencies": [],
+      "acceptanceCriteria": ["儀表板數據卡片", "今日待辦清單", "快速入口按鈕", "最近活動 feed"],
+      "createdAt": "2026-03-21T09:55:00+08:00"
+    },
+    {
+      "id": "T-004",
+      "title": "建材商目錄與報價系統",
+      "description": "建立 /supplier 路由群組：產品目錄、報價管理、訂單追蹤。讓建材商角色也有獨立的操作介面。",
+      "priority": "P1",
+      "status": "ready",
+      "assignee": "dev-agent",
+      "module": "supplier",
+      "files": ["app/supplier/page.tsx", "app/supplier/catalog/page.tsx", "app/supplier/orders/page.tsx", "app/supplier/layout.tsx"],
+      "dependencies": [],
+      "acceptanceCriteria": ["產品目錄展示", "報價單建立", "訂單狀態追蹤", "獨立 layout"],
+      "createdAt": "2026-03-21T09:55:00+08:00"
+    },
+    {
+      "id": "T-005",
+      "title": "工班管理與排程系統",
+      "description": "建立 /contractor 路由群組：工班檔案、排程日曆、施工紀錄。Mock 數據展示工班的完整管理流程。",
+      "priority": "P1",
+      "status": "ready",
+      "assignee": "dev-agent",
+      "module": "contractor",
+      "files": ["app/contractor/page.tsx", "app/contractor/schedule/page.tsx", "app/contractor/records/page.tsx", "app/contractor/layout.tsx"],
+      "dependencies": [],
+      "acceptanceCriteria": ["工班列表與篩選", "日曆排程視圖", "施工紀錄上傳", "獨立 layout"],
+      "createdAt": "2026-03-21T09:55:00+08:00"
+    },
+    {
+      "id": "T-006",
+      "title": "跨角色協作中心",
+      "description": "建立 /collaboration 頁面：設計師×工班×建材商的三方協作空間。專案討論串、文件共享、進度同步。展示三角色生態的核心價值。",
+      "priority": "P1",
+      "status": "ready",
+      "assignee": "dev-agent",
+      "module": "collaboration",
+      "files": ["app/collaboration/page.tsx", "app/collaboration/[projectId]/page.tsx"],
+      "dependencies": ["T-002"],
+      "acceptanceCriteria": ["專案討論串", "文件共享區", "三方進度同步", "即時通知模擬"],
+      "createdAt": "2026-03-21T09:55:00+08:00"
+    }
+  ]
+}
