@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-03-21T19:46:00+08:00",
+  "lastUpdated": "2026-03-21T20:26:00+08:00",
   "updatedBy": "dev-sprint-prod",
   "context": "基於 Production codebase 實際狀態建立的開發佇列",
   "tasks": [
@@ -104,13 +104,13 @@
         "app/projects/[id]/layout.tsx"
       ],
       "priority": "P1",
-      "status": "ready",
+      "status": "done",
       "dependencies": [
         "P-002",
         "P-004",
         "P-005"
       ],
-      "notes": "專案頁面已有基本資訊展示，需要加入子頁面導航。合約可能是獨立路由不掛在 project 下。依賴 P-002(已完成), P-004(已完成), P-005。"
+      "notes": "✅ 已完成：專案管理快捷入口已存在於 page.tsx line 1574-1629，包含施工日報、工地巡檢、建材詢價三個導航連結，使用 grid 佈局與漸層卡片設計，符合 shadcn/ui 風格。功能完整。"
     },
     {
       "id": "P-009",
