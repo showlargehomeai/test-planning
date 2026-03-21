@@ -1,6 +1,6 @@
 {
-  "lastUpdated": "2026-03-21T22:00:00+08:00",
-  "updatedBy": "cto-audit-prod-P24",
+  "lastUpdated": "2026-03-21T22:30:00+08:00",
+  "updatedBy": "cto-audit-prod-P25",
   "context": "基於 Production codebase (~/largehomeai-repos/LargeHomeAI--Frontend) 開發。所有任務都在 production repo 寫 code，不在 test-planning。",
   "tasks": [
     {
@@ -293,9 +293,9 @@
         "app/types/compare.ts"
       ],
       "priority": "P0",
-      "status": "ready",
+      "status": "in_progress",
       "dependencies": [],
-      "notes": "product-service 有完整價格欄位。前端需要: 品類篩選 + 規格篩選 + 排序(價格/評價) + 用量計算(輸入坪數→自動算數量和總價) + 歷史價格圖表"
+      "notes": "✅ 發現新資料夾：app/compare/ 已存在。API client app/lib/api/compare.ts 也已實作。需要確認功能完整性。"
     },
     {
       "id": "P-021",
