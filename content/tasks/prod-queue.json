@@ -1,6 +1,6 @@
 {
-  "lastUpdated": "2026-03-21T22:30:00+08:00",
-  "updatedBy": "cto-audit-prod-P25",
+  "lastUpdated": "2026-03-21T23:00:15+08:00",
+  "updatedBy": "cto-audit-prod-25115cf5",
   "context": "基於 Production codebase (~/largehomeai-repos/LargeHomeAI--Frontend) 開發。所有任務都在 production repo 寫 code，不在 test-planning。",
   "tasks": [
     {
@@ -293,9 +293,9 @@
         "app/types/compare.ts"
       ],
       "priority": "P0",
-      "status": "in_progress",
+      "status": "done",
       "dependencies": [],
-      "notes": "✅ 發現新資料夾：app/compare/ 已存在。API client app/lib/api/compare.ts 也已實作。需要確認功能完整性。"
+      "notes": "✅ 已完成：完整比價引擎頁面已實作（958行），包含：(1) 品類篩選+規格篩選 (2) 價格排序、用量計算器 (3) 價格歷史圖表 (4) 廠商驗證標記 (5) 批次詢價車。API client + 類型定義完整，符合 shadcn/ui + Tailwind 風格。"
     },
     {
       "id": "P-021",
