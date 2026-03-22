@@ -395,6 +395,7 @@ export default function StrategicAudit({ compact = false }: { compact?: boolean 
   }
 
   /* Group Taiwan modules by priority */
+  if (!taiwan?.modules) return null;
   const priorityGroups: Record<string, typeof taiwan.modules> = {};
   for (const m of taiwan.modules) {
     const key = m.priority;
