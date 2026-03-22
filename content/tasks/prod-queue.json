@@ -1,6 +1,6 @@
 {
-  "lastUpdated": "2026-03-22T08:00:00+08:00",
-  "updatedBy": "cron-audit-0322-0800",
+  "lastUpdated": "2026-03-22T08:06:00+08:00",
+  "updatedBy": "cron-dev-frontend-0322-0806",
   "context": "基於 Production codebase (~/largehomeai-repos/LargeHomeAI--Frontend) 開發。所有任務都在 production repo 寫 code，不在 test-planning。",
   "tasks": [
     {
@@ -196,11 +196,11 @@
     {
       "id": "P-029",
       "title": "✅ Vendor 頁面整合審計完成",
-      "repo": "LargeHomeAI--Frontend", 
+      "repo": "LargeHomeAI--Frontend",
       "description": "審計 app/vendors/page.tsx：(1) ✅ 廠商列表 API 整合完整 (2) ✅ 搜尋/篩選/排序功能齊全 (3) ✅ 認證廠商標記系統 (4) ✅ 產品圖片展示網格 (5) ✅ 響應式設計 (6) ✅ VendorLogo 元件整合",
       "files": [
         "app/vendors/layout.tsx",
-        "app/vendors/page.tsx", 
+        "app/vendors/page.tsx",
         "app/lib/api/vendors.ts",
         "app/types/vendors.ts"
       ],
@@ -211,18 +211,18 @@
     },
     {
       "id": "P-030",
-      "title": "🔄 產品詳情頁優化（新發現）", 
+      "title": "🔄 產品詳情頁優化（新發現）",
       "repo": "LargeHomeAI--Frontend",
       "description": "審計發現 app/product-detail/[id]/components/ 多個新元件：ProductImageGallery、ImageModal、ActionButtons、SimilarMaterials、ProductInfo、ProductTabs。需要確認：(1) 圖片展示功能 (2) 相似產品推薦 (3) 操作按鈕整合 (4) 產品資訊展示 (5) 分頁功能。",
       "files": [
         "app/product-detail/[id]/components/ProductImageGallery.tsx",
-        "app/product-detail/[id]/components/ImageModal.tsx", 
+        "app/product-detail/[id]/components/ImageModal.tsx",
         "app/product-detail/[id]/components/ActionButtons.tsx",
         "app/product-detail/[id]/components/SimilarMaterials.tsx",
         "app/product-detail/[id]/components/ProductInfo.tsx",
         "app/product-detail/[id]/components/ProductTabs.tsx"
       ],
-      "priority": "P1", 
+      "priority": "P1",
       "status": "done",
       "dependencies": [],
       "notes": "✅ 審計完成：產品詳情頁優化已全面完成。(1) ProductImageGallery.tsx 圖片輪播展示功能完整 (2) ImageModal.tsx 放大檢視功能正常 (3) ActionButtons.tsx 操作按鈕整合良好（加入比價、一鍵詢價、收藏等）(4) SimilarMaterials.tsx 相似產品推薦演算法準確 (5) ProductInfo.tsx 產品資訊展示結構化 (6) ProductTabs.tsx 分頁功能完整（規格/評價/FAQ等）(7) 與比價引擎無縫整合，用戶體驗流暢。新元件總代碼量 1500+ 行，程式碼品質優良，符合 shadcn/ui 規範。"
@@ -235,7 +235,7 @@
       "files": [
         "app/components/TopNav.tsx",
         "app/components/onboarding/OnboardingModal.tsx",
-        "app/contexts/OnboardingContext.tsx", 
+        "app/contexts/OnboardingContext.tsx",
         "app/lib/api/endpoints.ts",
         "app/projects/[id]/page.tsx",
         "app/types/onboarding.ts",
@@ -253,7 +253,7 @@
       "description": "註冊後的引導流程：選品類偏好 → 選服務區域 → 立刻顯示相關建材/工班。已有 OnboardingContext.tsx 和 onboarding/ 元件資料夾，在此基礎上擴展。",
       "files": [
         "app/components/onboarding/CategorySelection.tsx",
-        "app/components/onboarding/AreaSelection.tsx", 
+        "app/components/onboarding/AreaSelection.tsx",
         "app/components/onboarding/RecommendationResults.tsx",
         "app/types/preferences.ts",
         "app/lib/api/recommendations.ts"
@@ -270,7 +270,7 @@
       "description": "每週自動生成「本週建材價格異動 + 新上架 TOP 10」頁面。可用 /weekly-digest 路由。從 product-service 的 thisWeek 數據自動產生。",
       "files": [
         "app/weekly-digest/page.tsx",
-        "app/weekly-digest/history/page.tsx", 
+        "app/weekly-digest/history/page.tsx",
         "app/weekly-digest/[id]/page.tsx",
         "app/lib/api/weekly-digest.ts",
         "app/types/weekly-digest.ts"
@@ -287,7 +287,7 @@
       "build_status": "✅ PASS - TypeScript 編譯成功，build 無錯誤，僅少量 ESLint warnings",
       "new_features": [
         "app/crew/dashboard/ - 工班管理系統 ✅ 已審計完成",
-        "app/crm/ - 客戶關係管理系統 ✅ 已審計完成", 
+        "app/crm/ - 客戶關係管理系統 ✅ 已審計完成",
         "app/compare/ - 即時比價引擎 ✅ 已審計完成",
         "app/contracts/ - 合約管理 ✅ 已審計完成",
         "app/vendors/ - 廠商頁面系統 ✅ 已審計完成",
@@ -303,7 +303,7 @@
       ],
       "completed_audits": [
         "P-025 工班管理系統審計 ✅ 完成",
-        "P-026 CRM 系統整合檢查 ✅ 完成", 
+        "P-026 CRM 系統整合檢查 ✅ 完成",
         "P-027 比價引擎整合度驗證 ✅ 完成",
         "P-028 Build & TypeScript 健康度檢查 ✅ 完成",
         "P-029 Vendor 頁面整合審計 ✅ 完成",
