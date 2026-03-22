@@ -26,6 +26,119 @@ const statusConfig = {
   draft: { label: "草稿", color: "bg-slate-100 text-slate-500 border-slate-200", icon: "📝" },
 };
 
+function SignatureModal({ contract, onClose, onSign }: { contract: typeof mockContracts[0]; onClose: () => void; onSign: (id: string) => void }) {
+  const [drawing, setDrawing] = useState(false);
+  const [hasSignature, setHasSignature] = useState(false);
+  const [agreed, setAgreed] = useState(false);
+  const canvasRef = useState<HTMLCanvasElement | null>(null);
+
+  const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    setDrawing(true);
+    const canvas = e.currentTarget;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    const rect = canvas.getBoundingClientRect();
+    ctx.beginPath();
+    ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!drawing) return;
+    const canvas = e.currentTarget;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    const rect = canvas.getBoundingClientRect();
+    ctx.lineWidth = 2;
+    ctx.lineCap = "round";
+    ctx.strokeStyle = "#1e293b";
+    ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+    ctx.stroke();
+    setHasSignature(true);
+  };
+
+  const handleMouseUp = () => setDrawing(false);
+
+  const clearSignature = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const canvas = document.getElementById("sig-canvas") as HTMLCanvasElement;
+    if (canvas) {
+      const ctx = canvas.getContext("2d");
+      ctx?.clearRect(0, 0, canvas.width, canvas.height);
+      setHasSignature(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={onClose}>
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+        <div className="p-5 border-b border-slate-200">
+          <h2 className="text-lg font-bold text-slate-900">📝 電子簽章</h2>
+          <p className="text-sm text-slate-500 mt-1">{contract.id} — {contract.client}</p>
+        </div>
+        
+        {/* 合約摘要 */}
+        <div className="p-5 space-y-3">
+          <div className="bg-slate-50 rounded-lg p-4 text-sm space-y-2">
+            <div className="flex justify-between"><span className="text-slate-500">專案</span><span className="font-medium">{contract.project}</span></div>
+            <div className="flex justify-between"><span className="text-slate-500">合約類型</span><span>{contract.template}</span></div>
+            <div className="flex justify-between"><span className="text-slate-500">合約金額</span><span className="font-bold text-indigo-600">{contract.total}</span></div>
+            <div className="flex justify-between"><span className="text-slate-500">簽署方</span><span>{contract.signers.map(s => s.name).join("、")}</span></div>
+          </div>
+
+          {/* 條款確認 */}
+          <div className="bg-amber-50 rounded-lg p-3 border border-amber-200">
+            <label className="flex items-start gap-2 cursor-pointer">
+              <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} className="mt-1 rounded border-slate-300" />
+              <span className="text-xs text-amber-800">我已詳閱並同意合約所有條款，包含設計服務範圍、付款方式、工期、保固條款及爭議處理機制。</span>
+            </label>
+          </div>
+
+          {/* 簽名板 */}
+          <div>
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-sm font-medium text-slate-700">手寫簽名</span>
+              <button onClick={clearSignature} className="text-xs text-slate-400 hover:text-slate-600">清除重簽</button>
+            </div>
+            <canvas
+              id="sig-canvas"
+              width={420}
+              height={120}
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseUp}
+              className="w-full border-2 border-dashed border-slate-300 rounded-lg cursor-crosshair bg-white touch-none"
+              style={{ height: 120 }}
+            />
+            <p className="text-xs text-slate-400 mt-1">在上方區域用滑鼠簽名</p>
+          </div>
+
+          {/* 時間戳 */}
+          <div className="text-xs text-slate-400 bg-slate-50 rounded-lg p-3 font-mono">
+            簽署時間：{new Date().toLocaleString("zh-TW", { timeZone: "Asia/Taipei" })}
+            <br />IP 位址：192.168.x.x（模擬）
+            <br />裝置：Web Browser
+          </div>
+        </div>
+
+        <div className="p-5 border-t border-slate-200 flex gap-3">
+          <button onClick={onClose} className="flex-1 px-4 py-2.5 rounded-lg border border-slate-300 text-sm font-medium text-slate-600 hover:bg-slate-50">取消</button>
+          <button
+            onClick={() => { if (agreed && hasSignature) onSign(contract.id); }}
+            disabled={!agreed || !hasSignature}
+            className={clsx(
+              "flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors",
+              agreed && hasSignature ? "bg-indigo-600 text-white hover:bg-indigo-700" : "bg-slate-200 text-slate-400 cursor-not-allowed"
+            )}
+          >
+            ✍️ 確認簽署
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function ContractsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -36,6 +149,8 @@ function ContractsContent() {
   const [tab, setTab] = useState<"templates" | "contracts">("contracts");
   const [previewTemplate, setPreviewTemplate] = useState<number | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+  const [signingContract, setSigningContract] = useState<string | null>(null);
+  const [contracts, setContracts] = useState(mockContracts);
 
   const hasPreFill = fromQuote && fromClient && fromTotal;
 
@@ -47,9 +162,38 @@ function ContractsContent() {
     }, 1500);
   };
 
+  const handleSign = (contractId: string) => {
+    setContracts(prev => prev.map(c => 
+      c.id === contractId 
+        ? { ...c, status: "signed" as const, signedDate: new Date().toISOString().split("T")[0], signers: c.signers.map(s => ({ ...s, signed: true })) }
+        : c
+    ));
+    setSigningContract(null);
+    setToast("✅ 合約簽署完成！已記錄電子簽章。");
+    setTimeout(() => setToast(null), 3000);
+  };
+
+  const handleSendReminder = (contractId: string) => {
+    setToast("📩 已發送簽署提醒通知給客戶");
+    setTimeout(() => setToast(null), 2000);
+  };
+
+  const handleSendForSigning = (contractId: string) => {
+    setContracts(prev => prev.map(c =>
+      c.id === contractId ? { ...c, status: "pending" as const } : c
+    ));
+    setToast("📤 合約已送出，等待客戶簽署");
+    setTimeout(() => setToast(null), 2000);
+  };
+
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto space-y-6">
       {/* Toast */}
+      {signingContract && (() => {
+        const c = contracts.find(x => x.id === signingContract);
+        return c ? <SignatureModal contract={c} onClose={() => setSigningContract(null)} onSign={handleSign} /> : null;
+      })()}
+
       {toast && (
         <div className="fixed top-6 right-6 z-50 bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium">
           ✓ {toast}
@@ -112,11 +256,11 @@ function ContractsContent() {
         </div>
         <div className="bg-white rounded-xl border border-slate-200 p-4">
           <p className="text-xs text-slate-500">已簽署</p>
-          <p className="text-2xl font-bold text-emerald-600">{mockContracts.filter((c) => c.status === "signed").length}</p>
+          <p className="text-2xl font-bold text-emerald-600">{contracts.filter((c) => c.status === "signed").length}</p>
         </div>
         <div className="bg-white rounded-xl border border-slate-200 p-4">
           <p className="text-xs text-slate-500">待簽署</p>
-          <p className="text-2xl font-bold text-amber-600">{mockContracts.filter((c) => c.status === "pending").length}</p>
+          <p className="text-2xl font-bold text-amber-600">{contracts.filter((c) => c.status === "pending").length}</p>
         </div>
         <div className="bg-white rounded-xl border border-slate-200 p-4">
           <p className="text-xs text-slate-500">草稿中</p>
@@ -136,7 +280,7 @@ function ContractsContent() {
 
       {tab === "contracts" ? (
         <div className="space-y-4">
-          {mockContracts.map((contract) => {
+          {contracts.map((contract) => {
             const cfg = statusConfig[contract.status];
             return (
               <div key={contract.id} className="bg-white rounded-xl border border-slate-200 p-4 sm:p-5 hover:shadow-md transition-shadow">
@@ -195,22 +339,22 @@ function ContractsContent() {
 
                 {contract.status === "pending" && (
                   <div className="flex gap-2 mt-2">
-                    <button className="px-3 py-1.5 text-xs font-medium rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors">
-                      發送簽署提醒
+                    <button onClick={() => handleSendReminder(contract.id)} className="px-3 py-1.5 text-xs font-medium rounded-lg bg-amber-500 text-white hover:bg-amber-600 transition-colors">
+                      📩 發送簽署提醒
                     </button>
-                    <button className="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 transition-colors">
-                      預覽合約
+                    <button onClick={() => setSigningContract(contract.id)} className="px-3 py-1.5 text-xs font-medium rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors">
+                      ✍️ 立即簽署
                     </button>
                   </div>
                 )}
 
                 {contract.status === "draft" && (
                   <div className="flex gap-2 mt-2">
-                    <button className="px-3 py-1.5 text-xs font-medium rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors">
-                      編輯合約
+                    <button onClick={() => setSigningContract(contract.id)} className="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 transition-colors">
+                      👁️ 預覽合約
                     </button>
-                    <button className="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 transition-colors">
-                      送出簽署
+                    <button onClick={() => handleSendForSigning(contract.id)} className="px-3 py-1.5 text-xs font-medium rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors">
+                      📤 送出簽署
                     </button>
                   </div>
                 )}
@@ -278,3 +422,5 @@ export default function ContractsPage() {
     </Suspense>
   );
 }
+
+// Note: SignatureModal is rendered inside ContractsContent
