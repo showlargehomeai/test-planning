@@ -53,12 +53,20 @@ const priorityLabels = { high: "緊急", medium: "一般", low: "低" };
 export default function KanbanPage() {
   const [cards] = useState(initialCards);
   const [mobileColumn, setMobileColumn] = useState<ColumnKey>("inProgress");
+  const [toast, setToast] = useState<string | null>(null);
 
   const totalTasks = Object.values(cards).flat().length;
   const completedTasks = cards.completed.length;
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-full mx-auto space-y-6">
+      {/* Toast */}
+      {toast && (
+        <div className="fixed top-6 right-6 z-50 bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium">
+          ✓ {toast}
+        </div>
+      )}
+
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-slate-900">📋 工程進度管理看板</h1>
@@ -66,7 +74,7 @@ export default function KanbanPage() {
             進行中 {totalTasks - completedTasks} 項 · 已完成 {completedTasks} 項
           </p>
         </div>
-        <button className="px-4 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors min-h-[44px] shrink-0">
+        <button onClick={() => { setToast("新增工項表單已開啟"); setTimeout(() => setToast(null), 2000); }} className="px-4 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors min-h-[44px] shrink-0">
           + 新增工項
         </button>
       </div>

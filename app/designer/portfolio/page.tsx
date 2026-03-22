@@ -22,17 +22,25 @@ const mockProjects = [
 export default function PortfolioPage() {
   const [category, setCategory] = useState("全部");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [toast, setToast] = useState<string | null>(null);
 
   const filtered = category === "全部" ? mockProjects : mockProjects.filter((p) => p.category === category);
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto space-y-6">
+      {/* Toast */}
+      {toast && (
+        <div className="fixed top-6 right-6 z-50 bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium">
+          ✓ {toast}
+        </div>
+      )}
+
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-slate-900">🖼️ 作品集線上展示</h1>
           <p className="text-sm text-slate-500 mt-1">展示您的設計作品，吸引潛在業主</p>
         </div>
-        <button className="px-4 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors min-h-[44px] shrink-0">
+        <button onClick={() => { setToast("上傳作品表單已開啟"); setTimeout(() => setToast(null), 2000); }} className="px-4 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors min-h-[44px] shrink-0">
           + 上傳作品
         </button>
       </div>

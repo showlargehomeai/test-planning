@@ -138,6 +138,12 @@ export default function RecordsPage() {
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [newNote, setNewNote] = useState("");
   const [progressInput, setProgressInput] = useState(0);
+  const [toast, setToast] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 2000);
+  };
 
   const trades = ["all", ...Object.keys(tradeColors)];
   const filtered = filterTrade === "all" ? mockRecords : mockRecords.filter((r) => r.trade === filterTrade);
@@ -153,6 +159,13 @@ export default function RecordsPage() {
 
   return (
     <div className="p-4 md:p-6 lg:p-8 space-y-6">
+      {/* Toast */}
+      {toast && (
+        <div className="fixed top-6 right-6 z-50 bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium">
+          ✓ {toast}
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
@@ -300,7 +313,7 @@ export default function RecordsPage() {
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <label className="text-sm font-medium text-slate-700">施工照片</label>
-                  <button className="text-xs text-amber-600 hover:text-amber-800 font-medium">+ 上傳照片</button>
+                  <button onClick={() => showToast("照片上傳功能已開啟")} className="text-xs text-amber-600 hover:text-amber-800 font-medium">+ 上傳照片</button>
                 </div>
                 <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
                   {selectedRecord.photos.map((photo, idx) => (
@@ -314,7 +327,7 @@ export default function RecordsPage() {
                       </div>
                     </div>
                   ))}
-                  <button className="aspect-square bg-amber-50 rounded-lg flex items-center justify-center border-2 border-dashed border-amber-200 hover:border-amber-400 transition-colors">
+                  <button onClick={() => showToast("照片上傳功能已開啟")} className="aspect-square bg-amber-50 rounded-lg flex items-center justify-center border-2 border-dashed border-amber-200 hover:border-amber-400 transition-colors">
                     <div className="text-center">
                       <span className="text-xl text-amber-400">+</span>
                       <p className="text-[10px] text-amber-500 mt-1">新增</p>
@@ -361,10 +374,10 @@ export default function RecordsPage() {
 
               {/* Actions */}
               <div className="flex justify-end gap-2">
-                <button className="px-4 py-2 text-sm font-medium text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors">
+                <button onClick={() => setSelectedRecord(null)} className="px-4 py-2 text-sm font-medium text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors">
                   取消
                 </button>
-                <button className="px-4 py-2 text-sm font-medium text-white bg-amber-500 rounded-lg hover:bg-amber-600 transition-colors">
+                <button onClick={() => showToast("施工紀錄已儲存")} className="px-4 py-2 text-sm font-medium text-white bg-amber-500 rounded-lg hover:bg-amber-600 transition-colors">
                   儲存紀錄
                 </button>
               </div>

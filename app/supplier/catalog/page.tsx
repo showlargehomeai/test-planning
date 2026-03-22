@@ -63,6 +63,12 @@ export default function CatalogPage() {
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [editingStock, setEditingStock] = useState<number | null>(null);
   const [editingPrice, setEditingPrice] = useState<number | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 2000);
+  };
 
   const filtered = mockProducts
     .filter((p) => activeCategory === "all" || p.category === activeCategory)
@@ -79,12 +85,19 @@ export default function CatalogPage() {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto space-y-6">
+      {/* Toast */}
+      {toast && (
+        <div className="fixed top-6 right-6 z-50 bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium">
+          ✓ {toast}
+        </div>
+      )}
+
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-slate-900">產品目錄</h1>
           <p className="text-sm text-slate-500 mt-1">管理您的建材商品，共 {mockProducts.length} 項產品</p>
         </div>
-        <button className="px-4 py-2.5 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors shrink-0">
+        <button onClick={() => showToast("新增產品表單已開啟")} className="px-4 py-2.5 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors shrink-0">
           + 新增產品
         </button>
       </div>
@@ -202,7 +215,7 @@ export default function CatalogPage() {
                       >
                         更新庫存
                       </button>
-                      <button className="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 transition-colors">
+                      <button onClick={() => showToast(`正在編輯 ${product.name}`)} className="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 transition-colors">
                         編輯產品
                       </button>
                     </div>
@@ -210,7 +223,7 @@ export default function CatalogPage() {
                       <div className="flex items-center gap-2">
                         <span className="text-sm text-slate-500">新價格：NT$</span>
                         <input type="number" defaultValue={product.price} className="border border-slate-300 rounded-lg px-3 py-1.5 text-sm w-32 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" />
-                        <button className="px-3 py-1.5 text-xs font-medium rounded-lg bg-emerald-600 text-white hover:bg-emerald-700">確認</button>
+                        <button onClick={() => { showToast(`${product.name} 價格已更新`); setEditingPrice(null); }} className="px-3 py-1.5 text-xs font-medium rounded-lg bg-emerald-600 text-white hover:bg-emerald-700">確認</button>
                       </div>
                     )}
                     {editingStock === product.id && (
@@ -218,7 +231,7 @@ export default function CatalogPage() {
                         <span className="text-sm text-slate-500">新庫存：</span>
                         <input type="number" defaultValue={product.stock} className="border border-slate-300 rounded-lg px-3 py-1.5 text-sm w-32 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" />
                         <span className="text-sm text-slate-400">{product.unit}</span>
-                        <button className="px-3 py-1.5 text-xs font-medium rounded-lg bg-emerald-600 text-white hover:bg-emerald-700">確認</button>
+                        <button onClick={() => { showToast(`${product.name} 庫存已更新`); setEditingStock(null); }} className="px-3 py-1.5 text-xs font-medium rounded-lg bg-emerald-600 text-white hover:bg-emerald-700">確認</button>
                       </div>
                     )}
                   </div>

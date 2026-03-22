@@ -144,6 +144,12 @@ function QuotationContent() {
   const [projectName, setProjectName] = useState("");
   const [showMarketPrice, setShowMarketPrice] = useState(true);
   const [designFeeRate, setDesignFeeRate] = useState(3000);
+  const [toast, setToast] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 2000);
+  };
 
   useEffect(() => {
     try {
@@ -220,6 +226,13 @@ function QuotationContent() {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-5">
+      {/* Toast */}
+      {toast && (
+        <div className="fixed top-6 right-6 z-50 bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium">
+          ✓ {toast}
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -228,8 +241,8 @@ function QuotationContent() {
         </div>
         <div className="flex flex-wrap gap-2">
           <button onClick={handleConvertToContract} className="px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors">📝 轉為合約</button>
-          <button className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors">📤 匯出 PDF</button>
-          <button className="px-4 py-2 border border-slate-300 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors">📋 複製</button>
+          <button onClick={() => showToast("報價 PDF 匯出中...")} className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors">📤 匯出 PDF</button>
+          <button onClick={() => showToast("報價單已複製")} className="px-4 py-2 border border-slate-300 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors">📋 複製</button>
         </div>
       </div>
 
@@ -421,7 +434,7 @@ function QuotationContent() {
               <div className="text-right">
                 <p className="text-xl font-bold text-indigo-600">NT$ {q.total.toLocaleString()}</p>
                 <div className="flex gap-2 mt-1 justify-end">
-                  <button className="text-xs text-indigo-600 hover:text-indigo-700 font-medium">查看 →</button>
+                  <button onClick={() => showToast(`正在載入報價 ${q.id}`)} className="text-xs text-indigo-600 hover:text-indigo-700 font-medium">查看 →</button>
                   {q.status === "待確認" && (
                     <button onClick={() => router.push(`/designer/contracts?fromQuote=${encodeURIComponent(q.id)}&client=${encodeURIComponent(q.client)}&total=${q.total}`)} className="text-xs text-emerald-600 hover:text-emerald-700 font-medium">轉為合約 →</button>
                   )}

@@ -205,7 +205,7 @@ function ContractsContent() {
           <h1 className="text-xl sm:text-2xl font-bold text-slate-900">📝 合約範本庫與電子簽章</h1>
           <p className="text-sm text-slate-500 mt-1">管理合約範本、建立與追蹤電子簽章</p>
         </div>
-        <button className="px-4 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors min-h-[44px] shrink-0">
+        <button onClick={() => { setToast("新合約表單已開啟"); setTimeout(() => setToast(null), 2000); }} className="px-4 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors min-h-[44px] shrink-0">
           + 建立新合約
         </button>
       </div>
@@ -233,7 +233,7 @@ function ContractsContent() {
                 </div>
               </div>
               <div className="flex gap-2 mt-3">
-                <button className="px-4 py-2 text-sm font-medium rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors">
+                <button onClick={() => { setToast("合約已建立"); setTimeout(() => setToast(null), 2000); }} className="px-4 py-2 text-sm font-medium rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors">
                   確認建立合約
                 </button>
                 <button
@@ -387,7 +387,7 @@ function ContractsContent() {
                 >
                   預覽
                 </button>
-                <button className="flex-1 px-3 py-2 text-xs font-medium rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors min-h-[36px]">
+                <button onClick={() => { setToast(`正在使用「${template.name}」範本建立合約`); setTimeout(() => setToast(null), 2000); }} className="flex-1 px-3 py-2 text-xs font-medium rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors min-h-[36px]">
                   使用範本
                 </button>
               </div>

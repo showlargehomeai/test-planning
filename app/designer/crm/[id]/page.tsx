@@ -141,6 +141,12 @@ export default function CustomerDetailPage() {
 
   const [activeTab, setActiveTab] = useState("overview");
   const [newNote, setNewNote] = useState("");
+  const [toast, setToast] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 2000);
+  };
 
   if (!customer) {
     return (
@@ -197,10 +203,10 @@ export default function CustomerDetailPage() {
           </div>
         </div>
         <div className="flex gap-2">
-          <button className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors">
+          <button onClick={() => showToast(`已為 ${customer.name} 安排會議`)} className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors">
             安排會議
           </button>
-          <button className="px-4 py-2 border border-slate-300 text-slate-600 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors">
+          <button onClick={() => showToast(`訊息已發送給 ${customer.name}`)} className="px-4 py-2 border border-slate-300 text-slate-600 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors">
             發送訊息
           </button>
         </div>
@@ -225,6 +231,13 @@ export default function CustomerDetailPage() {
           ))}
         </nav>
       </div>
+
+      {/* Toast */}
+      {toast && (
+        <div className="fixed top-6 right-6 z-50 bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium">
+          ✓ {toast}
+        </div>
+      )}
 
       {/* Content */}
       {activeTab === "overview" && (
@@ -293,7 +306,7 @@ export default function CustomerDetailPage() {
                 />
                 <button 
                   className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors"
-                  onClick={() => setNewNote("")}
+                  onClick={() => { setNewNote(""); showToast("備註已儲存"); }}
                 >
                   儲存備註
                 </button>
@@ -463,7 +476,7 @@ export default function CustomerDetailPage() {
         <div className="bg-white rounded-xl border border-slate-200 p-5">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-lg font-semibold text-slate-900">相關文件</h3>
-            <button className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors">
+            <button onClick={() => showToast("文件上傳功能已開啟")} className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors">
               上傳文件
             </button>
           </div>
@@ -492,8 +505,8 @@ export default function CustomerDetailPage() {
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <button className="text-indigo-600 hover:text-indigo-700 text-sm">下載</button>
-                  <button className="text-slate-500 hover:text-slate-700 text-sm">預覽</button>
+                  <button onClick={() => showToast(`正在下載 ${doc.name}`)} className="text-indigo-600 hover:text-indigo-700 text-sm">下載</button>
+                  <button onClick={() => showToast(`正在預覽 ${doc.name}`)} className="text-slate-500 hover:text-slate-700 text-sm">預覽</button>
                 </div>
               </div>
             ))}

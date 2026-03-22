@@ -35,6 +35,8 @@ export default function ReviewsPage() {
   const [showInviteForm, setShowInviteForm] = useState(false);
   const [inviteClient, setInviteClient] = useState("");
   const [toast, setToast] = useState<string | null>(null);
+  const [replyingId, setReplyingId] = useState<number | null>(null);
+  const [replyText, setReplyText] = useState("");
 
   const avgRating = (mockReviews.reduce((s, r) => s + r.rating, 0) / mockReviews.length).toFixed(1);
   const responseRate = Math.round((mockReviews.filter((r) => r.replied).length / mockReviews.length) * 100);
@@ -200,9 +202,28 @@ export default function ReviewsPage() {
                 )}
 
                 {!review.replied && (
-                  <button className="mt-3 text-sm text-indigo-600 hover:text-indigo-700 font-medium">
-                    💬 回覆此評價
-                  </button>
+                  <>
+                    <button onClick={() => setReplyingId(replyingId === review.id ? null : review.id)} className="mt-3 text-sm text-indigo-600 hover:text-indigo-700 font-medium">
+                      💬 回覆此評價
+                    </button>
+                    {replyingId === review.id && (
+                      <div className="mt-2 space-y-2">
+                        <textarea
+                          value={replyText}
+                          onChange={(e) => setReplyText(e.target.value)}
+                          placeholder="輸入回覆..."
+                          rows={2}
+                          className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                        />
+                        <button
+                          onClick={() => { setToast(`已回覆 ${review.name} 的評價`); setReplyingId(null); setReplyText(""); setTimeout(() => setToast(null), 2000); }}
+                          className="px-3 py-1.5 text-xs font-medium rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors"
+                        >
+                          送出回覆
+                        </button>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             </div>

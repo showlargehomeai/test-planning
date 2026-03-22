@@ -346,13 +346,13 @@ export default function BookingPage() {
                 </div>
                 <p className="text-sm text-slate-600 bg-slate-50 rounded-lg p-3">{apt.note}</p>
                 <div className="flex gap-2 mt-3">
-                  <button className="px-3 py-1.5 text-xs font-medium rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition-colors min-h-[36px]">
+                  <button onClick={() => { setToast(`已確認 ${apt.name} 的預約`); setTimeout(() => setToast(null), 2000); }} className="px-3 py-1.5 text-xs font-medium rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition-colors min-h-[36px]">
                     確認預約
                   </button>
-                  <button className="px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-50 text-slate-600 hover:bg-slate-100 transition-colors min-h-[36px]">
+                  <button onClick={() => { setToast(`${apt.name} 的預約已進入重新排程`); setTimeout(() => setToast(null), 2000); }} className="px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-50 text-slate-600 hover:bg-slate-100 transition-colors min-h-[36px]">
                     重新排程
                   </button>
-                  <button className="px-3 py-1.5 text-xs font-medium rounded-lg text-red-600 hover:bg-red-50 transition-colors min-h-[36px]">
+                  <button onClick={() => { setAppointments((prev) => prev.filter((a) => a.id !== apt.id)); setToast(`${apt.name} 的預約已取消`); setTimeout(() => setToast(null), 2000); }} className="px-3 py-1.5 text-xs font-medium rounded-lg text-red-600 hover:bg-red-50 transition-colors min-h-[36px]">
                     取消
                   </button>
                 </div>

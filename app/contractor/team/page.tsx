@@ -190,6 +190,12 @@ export default function TeamPage() {
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
   const [filterTrade, setFilterTrade] = useState<string>("all");
   const [searchText, setSearchText] = useState("");
+  const [toast, setToast] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 2000);
+  };
 
   const allTrades = ["all", ...new Set(mockTeam.flatMap((m) => m.trades))];
 
@@ -205,13 +211,20 @@ export default function TeamPage() {
 
   return (
     <div className="p-4 md:p-6 lg:p-8 space-y-6">
+      {/* Toast */}
+      {toast && (
+        <div className="fixed top-6 right-6 z-50 bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium">
+          ✓ {toast}
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">班底管理</h1>
           <p className="text-sm text-slate-500 mt-1">共 {mockTeam.length} 位師傅｜{mockTeam.filter((m) => m.currentProject).length} 位出工中</p>
         </div>
-        <button className="px-4 py-2 bg-amber-500 text-white text-sm font-medium rounded-lg hover:bg-amber-600 transition-colors">
+        <button onClick={() => showToast("新增師傅表單已開啟")} className="px-4 py-2 bg-amber-500 text-white text-sm font-medium rounded-lg hover:bg-amber-600 transition-colors">
           + 新增師傅
         </button>
       </div>
@@ -376,10 +389,10 @@ export default function TeamPage() {
 
               {/* Actions */}
               <div className="flex gap-2">
-                <button className="flex-1 px-3 py-2 text-sm font-medium text-amber-700 bg-amber-50 rounded-lg hover:bg-amber-100 transition-colors">
+                <button onClick={() => showToast(`已對 ${selectedMember.name} 發出派工通知`)} className="flex-1 px-3 py-2 text-sm font-medium text-amber-700 bg-amber-50 rounded-lg hover:bg-amber-100 transition-colors">
                   派工
                 </button>
-                <button className="flex-1 px-3 py-2 text-sm font-medium text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors">
+                <button onClick={() => showToast(`正在聯絡 ${selectedMember.name}（${selectedMember.phone}）`)} className="flex-1 px-3 py-2 text-sm font-medium text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors">
                   聯絡
                 </button>
               </div>

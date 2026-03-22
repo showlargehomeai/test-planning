@@ -97,6 +97,12 @@ export default function OrdersPage() {
   const [activeFilter, setActiveFilter] = useState<OrderStatus | "all">("all");
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+  const [toast, setToast] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 2000);
+  };
 
   const filtered = mockOrders
     .filter((o) => activeFilter === "all" || o.status === activeFilter)
@@ -107,6 +113,13 @@ export default function OrdersPage() {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto space-y-6">
+      {/* Toast */}
+      {toast && (
+        <div className="fixed top-6 right-6 z-50 bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium">
+          ✓ {toast}
+        </div>
+      )}
+
       <div>
         <h1 className="text-xl sm:text-2xl font-bold text-slate-900">訂單追蹤</h1>
         <p className="text-sm text-slate-500 mt-1">管理所有訂單狀態，即時追蹤出貨進度</p>
@@ -260,25 +273,25 @@ export default function OrdersPage() {
                     <div className="flex flex-wrap gap-2">
                       {order.status === "待確認" && (
                         <>
-                          <button className="px-3 py-1.5 text-xs font-medium rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors">
+                          <button onClick={() => showToast(`訂單 ${order.id} 已確認接單`)} className="px-3 py-1.5 text-xs font-medium rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors">
                             確認接單
                           </button>
-                          <button className="px-3 py-1.5 text-xs font-medium rounded-lg border border-red-300 text-red-600 hover:bg-red-50 transition-colors">
+                          <button onClick={() => showToast(`訂單 ${order.id} 已拒絕`)} className="px-3 py-1.5 text-xs font-medium rounded-lg border border-red-300 text-red-600 hover:bg-red-50 transition-colors">
                             拒絕訂單
                           </button>
                         </>
                       )}
                       {order.status === "備貨中" && (
-                        <button className="px-3 py-1.5 text-xs font-medium rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors">
+                        <button onClick={() => showToast(`訂單 ${order.id} 已標記為出貨`)} className="px-3 py-1.5 text-xs font-medium rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors">
                           標記已出貨
                         </button>
                       )}
                       {order.status === "已出貨" && (
-                        <button className="px-3 py-1.5 text-xs font-medium rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors">
+                        <button onClick={() => showToast(`訂單 ${order.id} 已確認完成`)} className="px-3 py-1.5 text-xs font-medium rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors">
                           確認完成
                         </button>
                       )}
-                      <button className="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 transition-colors">
+                      <button onClick={() => showToast(`訂單 ${order.id} 出貨單列印中...`)} className="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 transition-colors">
                         列印出貨單
                       </button>
                     </div>

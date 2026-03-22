@@ -108,6 +108,12 @@ export default function QuotesPage() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [showNewQuote, setShowNewQuote] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 2000);
+  };
 
   const filtered = mockQuotes
     .filter((q) => activeFilter === "all" || q.status === activeFilter)
@@ -121,6 +127,13 @@ export default function QuotesPage() {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto space-y-6">
+      {/* Toast */}
+      {toast && (
+        <div className="fixed top-6 right-6 z-50 bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium">
+          ✓ {toast}
+        </div>
+      )}
+
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-slate-900">報價管理</h1>
@@ -204,7 +217,7 @@ export default function QuotesPage() {
                 </tbody>
               </table>
             </div>
-            <button className="mt-2 text-xs text-emerald-600 hover:text-emerald-700 font-medium">+ 新增品項</button>
+            <button onClick={() => showToast("已新增一個品項列")} className="mt-2 text-xs text-emerald-600 hover:text-emerald-700 font-medium">+ 新增品項</button>
           </div>
 
           <div>
@@ -213,10 +226,10 @@ export default function QuotesPage() {
           </div>
 
           <div className="flex gap-2">
-            <button className="px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors">
+            <button onClick={() => { showToast("報價已儲存為草稿"); setShowNewQuote(false); }} className="px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors">
               儲存為草稿
             </button>
-            <button className="px-4 py-2 bg-teal-600 text-white text-sm font-medium rounded-lg hover:bg-teal-700 transition-colors">
+            <button onClick={() => { showToast("報價已送出"); setShowNewQuote(false); }} className="px-4 py-2 bg-teal-600 text-white text-sm font-medium rounded-lg hover:bg-teal-700 transition-colors">
               送出報價
             </button>
             <button onClick={() => setShowNewQuote(false)} className="px-4 py-2 border border-slate-300 text-slate-600 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors">
@@ -337,23 +350,23 @@ export default function QuotesPage() {
                     <div className="flex flex-wrap gap-2">
                       {quote.status === "草稿" && (
                         <>
-                          <button className="px-3 py-1.5 text-xs font-medium rounded-lg bg-teal-600 text-white hover:bg-teal-700 transition-colors">
+                          <button onClick={() => showToast(`報價 ${quote.id} 已送出`)} className="px-3 py-1.5 text-xs font-medium rounded-lg bg-teal-600 text-white hover:bg-teal-700 transition-colors">
                             送出報價
                           </button>
-                          <button className="px-3 py-1.5 text-xs font-medium rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors">
+                          <button onClick={() => showToast(`正在編輯報價 ${quote.id}`)} className="px-3 py-1.5 text-xs font-medium rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors">
                             編輯
                           </button>
                         </>
                       )}
                       {quote.status === "已送出" && (
-                        <button className="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 transition-colors">
+                        <button onClick={() => showToast(`報價 ${quote.id} 已撤回`)} className="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 transition-colors">
                           撤回報價
                         </button>
                       )}
-                      <button className="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 transition-colors">
+                      <button onClick={() => showToast(`報價 ${quote.id} 已複製`)} className="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 transition-colors">
                         複製報價
                       </button>
-                      <button className="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 transition-colors">
+                      <button onClick={() => showToast(`報價 ${quote.id} PDF 匯出中...`)} className="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 transition-colors">
                         匯出 PDF
                       </button>
                     </div>

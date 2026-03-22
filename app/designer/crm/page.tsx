@@ -149,6 +149,12 @@ export default function CRMPage() {
   const [tagFilter, setTagFilter] = useState("");
   const [selectedCustomer, setSelectedCustomer] = useState<number | null>(null);
   const [customers, setCustomers] = useState<Customer[]>(mockCustomers);
+  const [toast, setToast] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 2000);
+  };
 
   // Load customers from matching localStorage on mount
   useEffect(() => {
@@ -202,6 +208,13 @@ export default function CRMPage() {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-6">
+      {/* Toast */}
+      {toast && (
+        <div className="fixed top-6 right-6 z-50 bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium">
+          ✓ {toast}
+        </div>
+      )}
+
       {/* Header */}
       <div>
         <h1 className="text-xl sm:text-2xl font-bold text-slate-900">👥 客戶關係管理</h1>
@@ -442,10 +455,10 @@ export default function CRMPage() {
                   >
                     查看完整詳情
                   </Link>
-                  <button className="w-full px-4 py-2 border border-slate-300 text-slate-600 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors">
+                  <button onClick={() => showToast(`已為 ${selectedCustomerData.name} 安排會議`)} className="w-full px-4 py-2 border border-slate-300 text-slate-600 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors">
                     安排會議
                   </button>
-                  <button className="w-full px-4 py-2 border border-slate-300 text-slate-600 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors">
+                  <button onClick={() => showToast(`訊息已發送給 ${selectedCustomerData.name}`)} className="w-full px-4 py-2 border border-slate-300 text-slate-600 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors">
                     發送訊息
                   </button>
                 </div>

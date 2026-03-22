@@ -201,7 +201,7 @@ export default function MaterialsPage() {
                             加入報價單
                           </button>
                         )}
-                        <button className="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 transition-colors">
+                        <button onClick={() => { setToast(`正在比價「${mat.name}」`); setTimeout(() => setToast(null), 2000); }} className="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 transition-colors">
                           比價
                         </button>
                       </div>
