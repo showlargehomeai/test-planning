@@ -14,12 +14,12 @@ const renderStyles = [
 const rooms = ["客廳", "臥室", "廚房", "浴室", "書房", "餐廳", "玄關", "陽台"];
 
 const mockGallery = [
-  { id: 1, name: "大安區客廳_v3", style: "現代簡約", room: "客廳", date: "2026-03-15", status: "completed", gradient: "from-slate-500 to-slate-700" },
-  { id: 2, name: "板橋主臥_v2", style: "工業風", room: "臥室", date: "2026-03-14", status: "completed", gradient: "from-amber-600 to-orange-700" },
-  { id: 3, name: "信義區廚房_v1", style: "北歐風", room: "廚房", date: "2026-03-13", status: "completed", gradient: "from-sky-500 to-blue-600" },
-  { id: 4, name: "中山書房_v4", style: "新古典", room: "書房", date: "2026-03-12", status: "completed", gradient: "from-violet-500 to-purple-600" },
-  { id: 5, name: "西屯浴室_v1", style: "日式無印", room: "浴室", date: "2026-03-11", status: "completed", gradient: "from-emerald-500 to-teal-600" },
-  { id: 6, name: "左營餐廳_v2", style: "鄉村風", room: "餐廳", date: "2026-03-10", status: "completed", gradient: "from-cyan-500 to-blue-600" },
+  { id: 1, name: "大安區客廳_v3", style: "現代簡約", room: "客廳", date: "2026-03-15", status: "completed" },
+  { id: 2, name: "板橋主臥_v2", style: "工業風", room: "臥室", date: "2026-03-14", status: "completed" },
+  { id: 3, name: "信義區廚房_v1", style: "北歐風", room: "廚房", date: "2026-03-13", status: "completed" },
+  { id: 4, name: "中山書房_v4", style: "新古典", room: "書房", date: "2026-03-12", status: "completed" },
+  { id: 5, name: "西屯浴室_v1", style: "日式無印", room: "浴室", date: "2026-03-11", status: "completed" },
+  { id: 6, name: "左營餐廳_v2", style: "鄉村風", room: "餐廳", date: "2026-03-10", status: "completed" },
 ];
 
 const renderOptionGroups = [
@@ -35,6 +35,82 @@ const styleGradients: Record<string, string> = {
   "工業風": "from-gray-400 via-stone-500 to-zinc-600",
   "新古典": "from-amber-200 via-yellow-100 to-violet-200",
   "鄉村風": "from-green-200 via-amber-100 to-orange-200",
+};
+
+// 模擬渲染結果圖（Unsplash 室內設計照片）
+const renderResultImages: Record<string, Record<string, string>> = {
+  "現代簡約": {
+    "客廳": "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=800&q=80",
+    "臥室": "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=800&q=80",
+    "廚房": "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80",
+    "浴室": "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=800&q=80",
+    "書房": "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=800&q=80",
+    "餐廳": "https://images.unsplash.com/photo-1617806118233-18e1de247200?w=800&q=80",
+    "玄關": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80",
+    "陽台": "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800&q=80",
+  },
+  "北歐風": {
+    "客廳": "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&q=80",
+    "臥室": "https://images.unsplash.com/photo-1617325247661-675ab4b64ae2?w=800&q=80",
+    "廚房": "https://images.unsplash.com/photo-1556909114-44e3e70034e2?w=800&q=80",
+    "浴室": "https://images.unsplash.com/photo-1600566752355-35792bedcfea?w=800&q=80",
+    "書房": "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=800&q=80",
+    "餐廳": "https://images.unsplash.com/photo-1615529328331-f8917597711f?w=800&q=80",
+    "玄關": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80",
+    "陽台": "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=800&q=80",
+  },
+  "日式無印": {
+    "客廳": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80",
+    "臥室": "https://images.unsplash.com/photo-1615529182904-14819c35db37?w=800&q=80",
+    "廚房": "https://images.unsplash.com/photo-1600489000022-c2086d79f9d4?w=800&q=80",
+    "浴室": "https://images.unsplash.com/photo-1600566752229-250ed79470f8?w=800&q=80",
+    "書房": "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=800&q=80",
+    "餐廳": "https://images.unsplash.com/photo-1617806118233-18e1de247200?w=800&q=80",
+    "玄關": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80",
+    "陽台": "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800&q=80",
+  },
+  "工業風": {
+    "客廳": "https://images.unsplash.com/photo-1600607687644-c7171b42498f?w=800&q=80",
+    "臥室": "https://images.unsplash.com/photo-1600210491892-03d54c0aaf87?w=800&q=80",
+    "廚房": "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80",
+    "浴室": "https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=800&q=80",
+    "書房": "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=800&q=80",
+    "餐廳": "https://images.unsplash.com/photo-1615529328331-f8917597711f?w=800&q=80",
+    "玄關": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80",
+    "陽台": "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800&q=80",
+  },
+  "新古典": {
+    "客廳": "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80",
+    "臥室": "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=800&q=80",
+    "廚房": "https://images.unsplash.com/photo-1556909114-44e3e70034e2?w=800&q=80",
+    "浴室": "https://images.unsplash.com/photo-1600566752355-35792bedcfea?w=800&q=80",
+    "書房": "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=800&q=80",
+    "餐廳": "https://images.unsplash.com/photo-1617806118233-18e1de247200?w=800&q=80",
+    "玄關": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80",
+    "陽台": "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=800&q=80",
+  },
+  "鄉村風": {
+    "客廳": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80",
+    "臥室": "https://images.unsplash.com/photo-1615529182904-14819c35db37?w=800&q=80",
+    "廚房": "https://images.unsplash.com/photo-1600489000022-c2086d79f9d4?w=800&q=80",
+    "浴室": "https://images.unsplash.com/photo-1600566752229-250ed79470f8?w=800&q=80",
+    "書房": "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=800&q=80",
+    "餐廳": "https://images.unsplash.com/photo-1615529328331-f8917597711f?w=800&q=80",
+    "玄關": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80",
+    "陽台": "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800&q=80",
+  },
+};
+
+// 原始空間照片（before）
+const beforeImages: Record<string, string> = {
+  "客廳": "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80",
+  "臥室": "https://images.unsplash.com/photo-1560185893-a55cbc8c57e8?w=800&q=80",
+  "廚房": "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=60",
+  "浴室": "https://images.unsplash.com/photo-1564540586988-aa4e53c3d799?w=800&q=80",
+  "書房": "https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=800&q=80",
+  "餐廳": "https://images.unsplash.com/photo-1549488344-1f9b8d2bd1f3?w=800&q=80",
+  "玄關": "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=800&q=80",
+  "陽台": "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800&q=60",
 };
 
 export default function RenderingPage() {
@@ -124,8 +200,6 @@ export default function RenderingPage() {
           room: selectedRoom,
           date: new Date().toISOString().split("T")[0],
           status: "completed",
-          gradient: styleGradients[selectedStyle]?.replace("from-", "from-").split(" ")[0]?.replace("from-", "") 
-            ? `from-indigo-400 to-violet-500` : "from-indigo-400 to-violet-500",
         };
         setGallery(prev => [newItem, ...prev]);
       }
@@ -376,37 +450,55 @@ export default function RenderingPage() {
                 </button>
               </div>
             </div>
-            <div className={clsx(
-              "aspect-video rounded-xl flex items-center justify-center relative overflow-hidden transition-all duration-500",
-              showBefore
-                ? uploadedFile ? "bg-gradient-to-br from-slate-300 to-slate-400" : "bg-gradient-to-br from-slate-200 to-slate-300"
-                : renderCompleted
-                  ? `bg-gradient-to-br ${styleGradients[selectedStyle] || "from-indigo-200 to-violet-300"}`
-                  : "bg-gradient-to-br from-slate-200 to-slate-300"
-            )}>
+            <div className="aspect-video rounded-xl relative overflow-hidden transition-all duration-500 bg-slate-200">
               {showBefore ? (
-                <div className="text-center">
-                  <span className="text-5xl block mb-2">{uploadedFile ? "🖼️" : "📐"}</span>
-                  <p className="text-sm text-slate-500">
-                    {uploadedFile ? uploadedFile.name : "尚未上傳圖片"}
-                  </p>
-                </div>
+                uploadedFile ? (
+                  /* 上傳後顯示模擬原圖 */
+                  <>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={beforeImages[selectedRoom] || beforeImages["客廳"]} alt="原始空間" className="w-full h-full object-cover" />
+                    <div className="absolute top-2 left-2 bg-black/50 text-white text-[10px] px-2 py-1 rounded-full">📐 原圖</div>
+                    <div className="absolute bottom-2 left-2 bg-black/50 text-white text-xs px-2.5 py-1 rounded-lg">{uploadedFile.name}</div>
+                  </>
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-200 to-slate-300">
+                    <div className="text-center">
+                      <span className="text-5xl block mb-2">📐</span>
+                      <p className="text-sm text-slate-500">尚未上傳圖片</p>
+                    </div>
+                  </div>
+                )
               ) : renderCompleted ? (
-                <div className="text-center">
-                  <span className="text-5xl block mb-2">🏠</span>
-                  <p className="text-sm font-medium text-slate-700">{selectedStyle} · {selectedRoom}</p>
-                  <p className="text-xs text-slate-500 mt-1">{resolution} · {strength}</p>
-                  {prompt && <p className="text-[10px] text-slate-400 mt-1 max-w-[200px] mx-auto">「{prompt}」</p>}
-                </div>
+                /* 渲染完成：顯示對應風格+空間的模擬渲染圖 */
+                <>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={renderResultImages[selectedStyle]?.[selectedRoom] || renderResultImages["現代簡約"]["客廳"]} alt={`${selectedStyle} ${selectedRoom} 渲染圖`} className="w-full h-full object-cover" />
+                  <div className="absolute top-2 left-2 bg-emerald-600 text-white text-[10px] px-2 py-1 rounded-full">✨ AI 渲染</div>
+                  <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/60 to-transparent p-3">
+                    <p className="text-white text-sm font-medium">{selectedStyle} · {selectedRoom}</p>
+                    <p className="text-white/70 text-xs">{resolution} · {strength}</p>
+                    {prompt && <p className="text-white/50 text-[10px] mt-0.5">「{prompt}」</p>}
+                  </div>
+                </>
               ) : isRendering ? (
-                <div className="text-center animate-pulse">
-                  <span className="text-5xl block mb-2">⏳</span>
-                  <p className="text-sm text-slate-500">{renderPhase}</p>
+                /* 渲染中：漸進式顯示 */
+                <div className="w-full h-full relative">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={renderResultImages[selectedStyle]?.[selectedRoom] || renderResultImages["現代簡約"]["客廳"]} alt="渲染中" className="w-full h-full object-cover transition-all duration-1000" style={{ opacity: Math.min(progress / 100, 0.9), filter: `blur(${Math.max(0, 10 - progress / 10)}px)` }} />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="bg-black/60 backdrop-blur-sm rounded-2xl px-6 py-4 text-center">
+                      <div className="w-10 h-10 border-3 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-2" />
+                      <p className="text-white text-sm font-medium">{renderPhase}</p>
+                      <p className="text-white/60 text-xs mt-1">{Math.min(100, Math.round(progress))}%</p>
+                    </div>
+                  </div>
                 </div>
               ) : (
-                <div className="text-center">
-                  <span className="text-5xl block mb-2">🎨</span>
-                  <p className="text-sm text-slate-400">渲染結果將顯示在此</p>
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-200 to-slate-300">
+                  <div className="text-center">
+                    <span className="text-5xl block mb-2">🎨</span>
+                    <p className="text-sm text-slate-400">渲染結果將顯示在此</p>
+                  </div>
                 </div>
               )}
             </div>
@@ -429,18 +521,22 @@ export default function RenderingPage() {
               <span className="text-xs text-slate-400">{gallery.length} 筆</span>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {gallery.slice(0, 9).map((item) => (
-                <div key={item.id} className="group cursor-pointer">
-                  <div className={clsx("aspect-video rounded-lg bg-gradient-to-br flex items-center justify-center relative overflow-hidden", item.gradient)}>
-                    <span className="text-white/30 text-2xl">🏠</span>
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                      <span className="text-white opacity-0 group-hover:opacity-100 text-xs font-medium transition-opacity">查看</span>
+              {gallery.slice(0, 9).map((item) => {
+                const imgUrl = renderResultImages[item.style]?.[item.room] || renderResultImages["現代簡約"]["客廳"];
+                return (
+                  <div key={item.id} className="group cursor-pointer">
+                    <div className="aspect-video rounded-lg relative overflow-hidden bg-slate-200">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={imgUrl} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
+                        <span className="text-white opacity-0 group-hover:opacity-100 text-xs font-medium transition-opacity bg-black/40 px-3 py-1.5 rounded-full">查看大圖</span>
+                      </div>
                     </div>
+                    <p className="text-xs text-slate-700 mt-1.5 font-medium truncate">{item.name}</p>
+                    <p className="text-[10px] text-slate-400">{item.style} · {item.date}</p>
                   </div>
-                  <p className="text-xs text-slate-700 mt-1.5 font-medium truncate">{item.name}</p>
-                  <p className="text-[10px] text-slate-400">{item.style} · {item.date}</p>
-                </div>
-              ))}
+                );
+              })}
             </div>
             {gallery.length > 9 && (
               <button className="w-full mt-3 py-2 text-xs text-indigo-600 font-medium hover:bg-indigo-50 rounded-lg transition-colors">
