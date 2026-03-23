@@ -134,9 +134,12 @@ export default function SupplierRequirementsPage() {
   const [filterCity, setFilterCity] = useState("all");
   const [expanded, setExpanded] = useState<string | null>(null);
 
+  const [filterContacted, setFilterContacted] = useState("all");
+
   const filtered = pool
     .filter(r => filterType === "all" || r.materialType === filterType)
-    .filter(r => filterCity === "all" || r.city === filterCity);
+    .filter(r => filterCity === "all" || r.city === filterCity)
+    .filter(r => filterContacted === "all" || (filterContacted === "available" ? !r.alreadyContacted : r.alreadyContacted));
 
   const handleContact = (id: string, msg: string) => {
     setPool(prev => prev.map(r => r.id === id ? { ...r, alreadyContacted: true, contactCount: r.contactCount + 1 } : r));
@@ -183,6 +186,11 @@ export default function SupplierRequirementsPage() {
           <option value="all">所有地區</option>
           {cities.map(c => <option key={c} value={c}>{c}</option>)}
         </select>
+        <div className="flex gap-1">
+          {[{ key: "all", label: "全部" }, { key: "available", label: "可搶單" }, { key: "contacted", label: "已聯繫" }].map(f => (
+            <button key={f.key} onClick={() => setFilterContacted(f.key)} className={clsx("px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors", filterContacted === f.key ? "bg-emerald-600 text-white" : "bg-slate-100 text-slate-600")}>{f.label}</button>
+          ))}
+        </div>
         <span className="text-xs text-slate-400 self-center ml-2">{filtered.length} 筆需求</span>
       </div>
 

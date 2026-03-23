@@ -185,7 +185,7 @@ function NewRfqModal({ onClose, onCreate }: { onClose: () => void; onCreate: (rf
   const [siteAddress, setSiteAddress] = useState("");
   const [deadline, setDeadline] = useState("");
   const [items, setItems] = useState<RfqItem[]>([
-    { id: 1, name: "", spec: "", quantity: 0, unit: "式", zone: "客廳", materialType: "with_labor", deadline: "", note: "" },
+    { id: 1, name: "", spec: "", quantity: 0, unit: "坪", zone: "客廳", materialType: "with_labor", deadline: "", note: "" },
   ]);
   const [selectedVendors, setSelectedVendors] = useState<number[]>([]);
   const [step, setStep] = useState(1);
@@ -198,7 +198,7 @@ function NewRfqModal({ onClose, onCreate }: { onClose: () => void; onCreate: (rf
   ];
 
   const addItem = () => setItems(prev => [...prev, {
-    id: Date.now(), name: "", spec: "", quantity: 0, unit: "式",
+    id: Date.now(), name: "", spec: "", quantity: 0, unit: "坪",
     zone: "客廳", materialType: "with_labor" as MaterialType, deadline: "", note: "",
   }]);
 
@@ -439,36 +439,20 @@ function ComparePanel({ rfq }: { rfq: Rfq }) {
                 <span className={clsx("text-[10px] px-1.5 py-0.5 rounded-full", materialTypeColors[item.materialType])}>{materialTypeLabels[item.materialType]}</span>
               </div>
             </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-slate-100">
-                    <th className="text-left px-4 py-2 text-xs text-slate-500 font-medium">供應商</th>
-                    <th className="text-right px-4 py-2 text-xs text-slate-500 font-medium">單價</th>
-                    <th className="text-right px-4 py-2 text-xs text-slate-500 font-medium">小計</th>
-                    <th className="text-center px-4 py-2 text-xs text-slate-500 font-medium">交期</th>
-                    <th className="text-center px-4 py-2 text-xs text-slate-500 font-medium">保固</th>
-                    <th className="text-left px-4 py-2 text-xs text-slate-500 font-medium">備註</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {quotesForItem.map(q => (
-                    <tr key={q.vendorId} className={clsx("border-b border-slate-50", q.unitPrice === minPrice && "bg-emerald-50/50")}>
-                      <td className="px-4 py-2.5">
-                        <div className="flex items-center gap-1.5">
-                          {q.unitPrice === minPrice && <span className="text-[10px] bg-emerald-100 text-emerald-700 px-1 rounded">最低</span>}
-                          <span className="font-medium text-slate-800">{q.vendor}</span>
-                        </div>
-                      </td>
-                      <td className="px-4 py-2.5 text-right font-mono text-slate-800">NT$ {(q.unitPrice || 0).toLocaleString()}</td>
-                      <td className="px-4 py-2.5 text-right font-mono font-semibold text-slate-900">NT$ {(q.subtotal || 0).toLocaleString()}</td>
-                      <td className="px-4 py-2.5 text-center text-slate-600">{q.deliveryDays}天</td>
-                      <td className="px-4 py-2.5 text-center text-slate-600">{q.warranty}</td>
-                      <td className="px-4 py-2.5 text-xs text-slate-500">{q.note}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="px-4 py-2 space-y-1.5">
+              {quotesForItem.map(q => (
+                <div key={q.vendorId} className={clsx("flex items-center gap-3 p-2.5 rounded-lg text-sm", q.unitPrice === minPrice ? "bg-emerald-50 border border-emerald-200" : "bg-slate-50")}>
+                  <div className="flex items-center gap-1.5 w-32 shrink-0">
+                    {q.unitPrice === minPrice && <span className="text-[10px] bg-emerald-600 text-white px-1.5 py-0.5 rounded font-medium">最低</span>}
+                    <span className="font-medium text-slate-800 truncate">{q.vendor}</span>
+                  </div>
+                  <span className="font-mono text-slate-700 w-24 text-right">NT${(q.unitPrice || 0).toLocaleString()}/{item.unit}</span>
+                  <span className="font-mono font-semibold text-slate-900 w-28 text-right">NT${(q.subtotal || 0).toLocaleString()}</span>
+                  <span className="text-xs text-slate-500 w-12 text-center">{q.deliveryDays}天</span>
+                  <span className="text-xs text-slate-500 w-12 text-center">{q.warranty}</span>
+                  <span className="text-xs text-slate-400 flex-1 truncate">{q.note}</span>
+                </div>
+              ))}
             </div>
           </div>
         );
@@ -528,9 +512,14 @@ export default function RfqPage() {
           <h1 className="text-xl sm:text-2xl font-bold text-slate-900">📋 RFQ 詢價管理</h1>
           <p className="text-sm text-slate-500 mt-1">建立詢價單、管理報價、比價分析 — 設計師發包核心工具</p>
         </div>
-        <button onClick={() => setShowNewRfq(true)} className="px-4 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors shrink-0">
-          + 建立詢價單
-        </button>
+        <div className="flex gap-2">
+          <a href="/designer/rfq/requirements" className="px-4 py-2.5 border border-indigo-300 text-indigo-700 text-sm font-medium rounded-lg hover:bg-indigo-50 transition-colors shrink-0">
+            📢 需求池
+          </a>
+          <button onClick={() => setShowNewRfq(true)} className="px-4 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors shrink-0">
+            + 建立詢價單
+          </button>
+        </div>
       </div>
 
       {/* Stats */}
