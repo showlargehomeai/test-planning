@@ -1,5 +1,19 @@
 [
   {
+    "id": "DEV-006",
+    "date": "2026-03-23",
+    "feature": "專案追蹤新增專案",
+    "page": "/designer/projects",
+    "status": "mock",
+    "what": "新增專案 Modal：名稱/業主/優先級/預算/坪數/風格/地區/開工日/描述。建立後加入看板「待確認」欄。",
+    "backend_table": "projects (RfqProject)（已存在，含 zones/materials/requirements 關聯表）",
+    "backend_api": "POST /api/v1/projects（已存在）",
+    "backend_gap": "前端 mock 的 Project interface（施工管理視角）和後端 RfqProject（詢價採購視角）欄位不同。前端有 progress/style/teamSize 後端沒有；後端有 project_type/site_status/zones 前端沒有。",
+    "roles": "設計師建立管理 / 業主檢視進度 / 工班看分配任務 / 建材商不可",
+    "conflict": "無 table 衝突。但前端 mock status (pending/inProgress/review/completed) ≠ 後端 status (active/completed)，串接需 mapping。",
+    "next_step": "統一 status mapping → 前端 interface 對齊 RfqProject → 串接 POST /api/v1/projects"
+  },
+  {
     "id": "DEV-005",
     "date": "2026-03-23",
     "feature": "產品目錄新增產品",

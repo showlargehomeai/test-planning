@@ -352,6 +352,132 @@ function ProjectsContent() {
 // Tab 1: Kanban (Existing)
 // ============================================================
 
+/* ── 新增專案 Modal ── */
+const styleOptions = ["現代簡約", "北歐風", "日式無印", "工業風", "新古典", "鄉村風", "混搭風"];
+const regionOptions = ["台北", "新北", "桃園", "台中", "台南", "高雄", "其他"];
+
+function NewProjectModal({ onClose, onCreate }: {
+  onClose: () => void;
+  onCreate: (p: Project) => void;
+}) {
+  const [title, setTitle] = useState("");
+  const [client, setClient] = useState("");
+  const [budget, setBudget] = useState("");
+  const [area, setArea] = useState("");
+  const [style, setStyle] = useState("現代簡約");
+  const [region, setRegion] = useState("台北");
+  const [priority, setPriority] = useState<"high" | "medium" | "low">("medium");
+  const [description, setDescription] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validate = () => {
+    const e: Record<string, string> = {};
+    if (!title.trim()) e.title = "必填";
+    if (!client.trim()) e.client = "必填";
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  };
+
+  const inputCls = "w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none";
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={onClose}>
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+        <div className="p-5 border-b border-slate-200 flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-bold text-slate-900">📋 新增專案</h2>
+            <p className="text-xs text-slate-500 mt-0.5">後端對應：interaction-service / projects (RfqProject)</p>
+          </div>
+          <button onClick={onClose} className="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-400">✕</button>
+        </div>
+        <div className="p-5 space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1.5">專案名稱 *</label>
+            <input value={title} onChange={e => { setTitle(e.target.value); setErrors(er => ({ ...er, title: "" })); }} placeholder="例如：大安區現代簡約宅" className={inputCls} />
+            {errors.title && <p className="text-xs text-red-500 mt-1">{errors.title}</p>}
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">業主 *</label>
+              <input value={client} onChange={e => { setClient(e.target.value); setErrors(er => ({ ...er, client: "" })); }} placeholder="例如：陳怡君" className={inputCls} />
+              {errors.client && <p className="text-xs text-red-500 mt-1">{errors.client}</p>}
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">優先級</label>
+              <select value={priority} onChange={e => setPriority(e.target.value as "high"|"medium"|"low")} className={inputCls + " bg-white"}>
+                <option value="high">高</option>
+                <option value="medium">中</option>
+                <option value="low">低</option>
+              </select>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">預算 (萬)</label>
+              <input type="number" value={budget} onChange={e => setBudget(e.target.value)} placeholder="例如：800" className={inputCls} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">坪數</label>
+              <input type="number" value={area} onChange={e => setArea(e.target.value)} placeholder="例如：35" className={inputCls} />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">設計風格</label>
+              <select value={style} onChange={e => setStyle(e.target.value)} className={inputCls + " bg-white"}>
+                {styleOptions.map(s => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">地區</label>
+              <select value={region} onChange={e => setRegion(e.target.value)} className={inputCls + " bg-white"}>
+                {regionOptions.map(r => <option key={r} value={r}>{r}</option>)}
+              </select>
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1.5">預計開工日</label>
+            <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} className={inputCls} />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1.5">專案描述</label>
+            <textarea value={description} onChange={e => setDescription(e.target.value)} rows={2} placeholder="特殊需求、風格偏好..." className={inputCls + " resize-none"} />
+          </div>
+        </div>
+        <div className="p-5 border-t border-slate-200 flex gap-3">
+          <button onClick={onClose} className="px-4 py-2.5 rounded-lg border border-slate-300 text-sm font-medium text-slate-600 hover:bg-slate-50">取消</button>
+          <div className="flex-1" />
+          <button onClick={() => {
+            if (!validate()) return;
+            const avatars = ["🏠", "🏢", "🏡", "🏗️", "🏘️"];
+            onCreate({
+              id: Date.now(),
+              title, client,
+              budget: budget ? `${budget}萬` : "待確認",
+              area: area ? `${area}坪` : "待確認",
+              progress: 0,
+              status: "pending",
+              nextMilestone: "簽約",
+              deadline: startDate || "待確認",
+              style, region,
+              startDate: startDate || "待確認",
+              estimatedCompletion: "待確認",
+              teamSize: 0,
+              priority,
+              avatar: avatars[Math.floor(Math.random() * avatars.length)],
+              description: description || `${style}風格 ${region}地區專案`,
+              contractSigned: false,
+              designApproved: false,
+              constructionStarted: false,
+            });
+          }} className="px-6 py-2.5 rounded-lg bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition-colors">✅ 建立專案</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function KanbanTab({
   projects,
   setProjects,
@@ -361,6 +487,7 @@ function KanbanTab({
 }) {
   const [filterStatus, setFilterStatus] = useState<string>("");
   const [filterPriority, setFilterPriority] = useState<string>("");
+  const [showNewProject, setShowNewProject] = useState(false);
   const [draggedProject, setDraggedProject] = useState<Project | null>(null);
 
   const filteredProjects = projects.filter((project) => {
@@ -442,11 +569,22 @@ function KanbanTab({
             <option value="medium">中優先級</option>
             <option value="low">低優先級</option>
           </select>
-          <button className="px-4 py-2.5 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors min-h-[44px]">
-            新增專案
+          <button onClick={() => setShowNewProject(true)} className="px-4 py-2.5 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors min-h-[44px]">
+            + 新增專案
           </button>
         </div>
       </div>
+
+      {/* New Project Modal */}
+      {showNewProject && (
+        <NewProjectModal
+          onClose={() => setShowNewProject(false)}
+          onCreate={(p) => {
+            setProjects(prev => [p, ...prev]);
+            setShowNewProject(false);
+          }}
+        />
+      )}
 
       {/* Kanban Board */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
