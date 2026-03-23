@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>全台 200 BD 擴張作戰計畫 v2 — 一年內搶佔全台灣市場</title>
+<style>
+  :root{
+    --primary:#2563eb;--primary-light:#dbeafe;--primary-dark:#1e40af;
+    --green:#059669;--green-light:#d1fae5;--green-dark:#065f46;
+    --amber:#d97706;--amber-light:#fef3c7;--amber-dark:#92400e;
+    --purple:#7c3aed;--purple-light:#ede9fe;--purple-dark:#5b21b6;
+    --red:#dc2626;--red-light:#fee2e2;--red-dark:#991b1b;
+    --teal:#0891b2;--teal-light:#cffafe;
+    --pink:#db2777;--pink-light:#fce7f3;
+    --north:#2563eb;--north-light:#dbeafe;
+    --central:#7c3aed;--central-light:#ede9fe;
+    --south:#d97706;--south-light:#fef3c7;
+    --east:#059669;--east-light:#d1fae5;
+    --gray-50:#f9fafb;--gray-100:#f3f4f6;--gray-200:#e5e7eb;
+    --gray-300:#d1d5db;--gray-500:#6b7280;--gray-700:#374151;--gray-900:#111827;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif;background:var(--gray-50);color:var(--gray-900);line-height:1.7;}
+  .container{max-width:1220px;margin:0 auto;padding:40px 24px;}
+
+  /* NAV */
+  .nav{position:sticky;top:0;z-index:100;background:rgba(15,23,42,.96);backdrop-filter:blur(12px);padding:10px 0;border-bottom:1px solid rgba(255,255,255,.08);}
+  .nav-inner{max-width:1220px;margin:0 auto;padding:0 24px;display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;}
+  .nav-inner::-webkit-scrollbar{display:none;}
+  .nav-link{color:rgba(255,255,255,.6);font-size:.76rem;font-weight:500;text-decoration:none;padding:6px 12px;border-radius:20px;white-space:nowrap;transition:all .2s;}
+  .nav-link:hover{color:white;background:rgba(255,255,255,.1);}
+
+  /* HEADER */
+  .header{text-align:center;padding:68px 24px;background:linear-gradient(135deg,#0f172a 0%,#7f1d1d 30%,#dc2626 60%,#f59e0b 100%);color:white;border-radius:20px;margin-bottom:48px;position:relative;overflow:hidden;}
+  .header::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 70%,rgba(255,255,255,.08) 0%,transparent 50%);}
+  .header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:5px;background:linear-gradient(90deg,var(--north),var(--central),var(--south),var(--east));}
+  .header .badge{display:inline-block;background:rgba(255,255,255,.15);padding:5px 22px;border-radius:24px;font-size:.84rem;margin-bottom:14px;position:relative;z-index:1;letter-spacing:.5px;font-weight:600;}
+  .header h1{font-size:2.6rem;font-weight:900;margin-bottom:10px;position:relative;z-index:1;letter-spacing:-1px;}
+  .header p{font-size:1.05rem;opacity:.85;position:relative;z-index:1;max-width:750px;margin:0 auto;}
+
+  /* SECTION */
+  .section{margin-bottom:56px;scroll-margin-top:60px;}
+  .section-title{font-size:1.4rem;font-weight:800;margin-bottom:6px;display:flex;align-items:center;gap:10px;}
+  .section-sub{color:var(--gray-500);margin-bottom:22px;font-size:.92rem;}
+  .card{background:white;border-radius:14px;padding:28px;box-shadow:0 1px 4px rgba(0,0,0,.05);margin-bottom:22px;}
+  .card h4{font-size:1.05rem;margin-bottom:14px;}
+
+  /* ANSWER BOX */
+  .answer-box{background:linear-gradient(135deg,#7f1d1d,#991b1b,#0f172a);color:white;border-radius:18px;padding:38px;margin-bottom:36px;position:relative;overflow:hidden;}
+  .answer-box::after{content:'';position:absolute;top:-30%;right:-10%;width:50%;height:80%;border-radius:50%;background:rgba(245,158,11,.1);}
+  .answer-box .answer-label{font-size:.78rem;opacity:.45;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;}
+  .answer-box .answer-number{font-size:4rem;font-weight:900;line-height:1.1;margin-bottom:8px;background:linear-gradient(90deg,#fbbf24,#f87171,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;position:relative;z-index:1;}
+  .answer-box .answer-sub{font-size:1.1rem;opacity:.9;position:relative;z-index:1;}
+  .answer-box .answer-detail{font-size:.9rem;opacity:.55;margin-top:8px;position:relative;z-index:1;}
+
+  /* COMPARE */
+  .compare-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;margin-bottom:22px;}
+  .compare-card{border-radius:14px;padding:22px;text-align:center;}
+  .compare-card.old{background:var(--gray-100);border:1px solid var(--gray-300);}
+  .compare-card.new{background:linear-gradient(135deg,#fef3c7,#fee2e2);border:2px solid var(--red);}
+  .compare-arrow{font-size:2.4rem;color:var(--red);font-weight:800;}
+
+  /* TABLE */
+  table{width:100%;border-collapse:collapse;font-size:.84rem;}
+  thead{background:var(--gray-100);}
+  th{padding:10px 12px;text-align:left;font-weight:600;color:var(--gray-700);border-bottom:2px solid var(--gray-200);font-size:.77rem;}
+  td{padding:10px 12px;border-bottom:1px solid var(--gray-100);color:var(--gray-700);}
+  tr:last-child td{border-bottom:none;}
+  .hl{background:var(--green-light);}
+  .hl-amber{background:var(--amber-light);}
+  .hl-red{background:var(--red-light);}
+
+  /* TAGS */
+  .tag{display:inline-block;padding:2px 10px;border-radius:10px;font-size:.72rem;font-weight:600;}
+  .tag-red{background:var(--red-light);color:var(--red-dark);}
+  .tag-amber{background:var(--amber-light);color:var(--amber-dark);}
+  .tag-green{background:var(--green-light);color:var(--green-dark);}
+  .tag-blue{background:var(--primary-light);color:var(--primary-dark);}
+  .tag-purple{background:var(--purple-light);color:var(--purple-dark);}
+  .tag-north{background:var(--north-light);color:var(--north);}
+  .tag-central{background:var(--central-light);color:var(--central);}
+  .tag-south{background:var(--south-light);color:var(--south);}
+  .tag-east{background:var(--east-light);color:var(--east);}
+
+  /* CALLOUT */
+  .callout{border-left:4px solid var(--primary);background:var(--primary-light);padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0;font-size:.9rem;color:var(--gray-700);}
+  .callout.red{border-left-color:var(--red);background:var(--red-light);}
+  .callout.green{border-left-color:var(--green);background:var(--green-light);}
+  .callout.amber{border-left-color:var(--amber);background:var(--amber-light);}
+  .callout.purple{border-left-color:var(--purple);background:var(--purple-light);}
+  .callout strong{color:var(--gray-900);}
+
+  /* KPI */
+  .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:18px;}
+  .kpi-card{background:white;border-radius:10px;padding:16px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.06);}
+  .kpi-val{font-size:1.4rem;font-weight:800;}
+  .kpi-label{font-size:.72rem;color:var(--gray-500);margin-top:2px;}
+  .kpi-sub{font-size:.68rem;font-weight:600;margin-top:2px;}
+
+  /* LAYOUTS */
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  .three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .four-col{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+
+  /* ORG */
+  .org-chart{background:white;border-radius:14px;padding:28px;box-shadow:0 1px 4px rgba(0,0,0,.05);overflow-x:auto;margin-bottom:18px;}
+  .org-level{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin-bottom:5px;}
+  .org-node{padding:10px 14px;border-radius:8px;font-size:.78rem;font-weight:600;text-align:center;min-width:90px;}
+  .org-node.ceo{background:#0f172a;color:white;font-size:.9rem;}
+  .org-node.cro{background:var(--red);color:white;font-size:.85rem;}
+  .org-node.rvp{background:var(--primary);color:white;}
+  .org-node.dir{background:var(--amber);color:white;}
+  .org-node.tl{background:var(--primary-light);color:var(--primary-dark);border:1px solid #93c5fd;}
+  .org-node.bd{background:var(--gray-100);color:var(--gray-700);font-size:.74rem;}
+  .org-node.tech{background:var(--purple-light);color:var(--purple-dark);border:1px solid #c4b5fd;}
+  .org-node.ops{background:var(--green-light);color:var(--green-dark);border:1px solid #6ee7b7;}
+  .org-connector{text-align:center;color:var(--gray-300);font-size:1rem;margin:3px 0;}
+  .org-label-text{text-align:center;font-size:.72rem;color:var(--gray-500);margin-bottom:8px;}
+
+  /* REGION MAP */
+  .region-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
+  .region-card{border-radius:14px;padding:20px;color:white;position:relative;overflow:hidden;}
+  .region-card::after{content:'';position:absolute;top:-30%;right:-20%;width:60%;height:80%;border-radius:50%;background:rgba(255,255,255,.08);}
+  .region-card.north{background:linear-gradient(135deg,#1d4ed8,#2563eb);}
+  .region-card.central{background:linear-gradient(135deg,#6d28d9,#7c3aed);}
+  .region-card.south{background:linear-gradient(135deg,#b45309,#d97706);}
+  .region-card.east{background:linear-gradient(135deg,#047857,#059669);}
+  .region-name{font-size:.82rem;opacity:.85;font-weight:600;letter-spacing:.5px;}
+  .region-cities{font-size:.72rem;opacity:.6;margin-bottom:8px;}
+  .region-bd{font-size:2rem;font-weight:900;position:relative;z-index:1;}
+  .region-bd-label{font-size:.72rem;opacity:.7;}
+  .region-detail{font-size:.72rem;opacity:.6;margin-top:6px;line-height:1.4;position:relative;z-index:1;}
+
+  /* TIMELINE */
+  .timeline{position:relative;padding-left:36px;}
+  .timeline::before{content:'';position:absolute;left:10px;top:0;bottom:0;width:4px;background:linear-gradient(to bottom,var(--red),var(--amber),var(--green),var(--primary));border-radius:3px;}
+  .tl-item{margin-bottom:28px;position:relative;}
+  .tl-item::before{content:'';position:absolute;left:-30px;top:6px;width:14px;height:14px;border-radius:50%;border:3px solid white;}
+  .tl-item.t1::before{background:var(--red);box-shadow:0 0 0 2px var(--red);}
+  .tl-item.t2::before{background:var(--amber);box-shadow:0 0 0 2px var(--amber);}
+  .tl-item.t3::before{background:var(--green);box-shadow:0 0 0 2px var(--green);}
+  .tl-item.t4::before{background:var(--primary);box-shadow:0 0 0 2px var(--primary);}
+  .tl-item h4{font-size:1rem;margin-bottom:3px;}
+  .tl-item .tl-meta{font-size:.78rem;color:var(--gray-500);margin-bottom:5px;}
+  .tl-item p{font-size:.87rem;color:var(--gray-700);}
+
+  /* FORMULA */
+  .formula-box{background:var(--gray-900);color:#e5e7eb;border-radius:10px;padding:18px 22px;font-family:"SF Mono","Fira Code",monospace;font-size:.82rem;line-height:1.9;margin:14px 0;overflow-x:auto;}
+  .formula-box .comment{color:#6b7280;}
+  .formula-box .number{color:#34d399;}
+  .formula-box .keyword{color:#60a5fa;}
+  .formula-box .string{color:#fbbf24;}
+
+  /* VBAR */
+  .vbar-row{display:flex;align-items:center;gap:10px;margin-bottom:7px;}
+  .vbar-label{width:100px;font-size:.78rem;text-align:right;flex-shrink:0;color:var(--gray-700);}
+  .vbar-track{flex:1;height:28px;background:var(--gray-100);border-radius:6px;overflow:hidden;}
+  .vbar-fill{height:100%;border-radius:6px;display:flex;align-items:center;padding-left:10px;font-size:.72rem;font-weight:700;color:white;}
+  .vbar-val{width:90px;font-size:.78rem;font-weight:700;flex-shrink:0;}
+
+  /* RISK METER */
+  .risk-meter{display:flex;gap:4px;margin:8px 0;}
+  .risk-block{height:8px;flex:1;border-radius:3px;background:var(--gray-200);}
+  .risk-block.filled{background:var(--red);}
+  .risk-block.filled.amber{background:var(--amber);}
+
+  .footer{text-align:center;padding:32px 0;color:var(--gray-500);font-size:.8rem;border-top:1px solid var(--gray-200);margin-top:48px;}
+
+  /* COMP HIGHLIGHT */
+  .comp-highlight{background:linear-gradient(135deg,var(--green-light),var(--primary-light));border-radius:12px;padding:18px;margin-bottom:14px;}
+  .comp-highlight h5{font-size:.95rem;margin-bottom:8px;color:var(--gray-900);}
+  .comp-highlight ul{list-style:none;padding:0;}
+  .comp-highlight li{font-size:.86rem;color:var(--gray-700);padding:4px 0;padding-left:18px;position:relative;}
+  .comp-highlight li::before{content:'→';position:absolute;left:0;color:var(--primary);}
+
+  /* TRAINING PHASE */
+  .train-phase{border-radius:12px;padding:20px;margin-bottom:14px;border:1px solid var(--gray-200);background:white;}
+  .train-phase h5{font-size:.95rem;margin-bottom:10px;}
+  .train-phase ul{list-style:none;padding:0;}
+  .train-phase li{font-size:.86rem;color:var(--gray-700);padding:4px 0;padding-left:18px;position:relative;}
+  .train-phase li::before{content:'•';position:absolute;left:4px;color:var(--primary);font-weight:bold;}
+
+  /* LAUNCH DAY CARD */
+  .launch-day{border-radius:12px;padding:20px;margin-bottom:14px;background:white;border-left:4px solid var(--primary);}
+  .launch-day h5{font-size:.95rem;margin-bottom:8px;color:var(--primary-dark);}
+  .launch-day ul{list-style:none;padding:0;}
+  .launch-day li{font-size:.86rem;color:var(--gray-700);padding:4px 0;padding-left:18px;position:relative;}
+  .launch-day li::before{content:'☑';position:absolute;left:0;color:var(--green);}
+
+  @media(max-width:768px){
+    .two-col,.three-col,.four-col,.region-grid{grid-template-columns:1fr;}
+    .compare-grid{grid-template-columns:1fr;}
+    .compare-arrow{transform:rotate(90deg);}
+    .header h1{font-size:1.8rem;}
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#scale" class="nav-link">規模對比</a>
+    <a href="#regions" class="nav-link">區域部署</a>
+    <a href="#org" class="nav-link">組織架構</a>
+    <a href="#compensation" class="nav-link">薪酬制度</a>
+    <a href="#hiring" class="nav-link">招聘節奏</a>
+    <a href="#training" class="nav-link">培訓體系</a>
+    <a href="#finance" class="nav-link">財務預測</a>
+    <a href="#investment" class="nav-link">投資預算</a>
+    <a href="#risks" class="nav-link">風險管控</a>
+    <a href="#launch15" class="nav-link">15天啟動</a>
+    <a href="#gono" class="nav-link">Go/No-Go</a>
+    <a href="#q1-action" class="nav-link">Q1 行動</a>
+  </div>
+</nav>
+
+<div class="container">
+
+<!-- ===== HEADER ===== -->
+<div class="header">
+  <div class="badge">AGGRESSIVE EXPANSION — 全台制霸計畫 v2</div>
+  <h1>一年內 200 BD 全台擴張</h1>
+  <p>從 25 人技術公司 → 400 人全台業務軍團<br>12 個月搶佔台灣 SaaS 市場的完整作戰計畫</p>
+</div>
+
+
+<!-- ===== 1. 規模對比 ===== -->
+<div class="section" id="scale">
+  <div class="section-title">💥 1. 這是一場什麼等級的擴張？</div>
+
+  <div class="answer-box">
+    <div class="answer-label">12 個月目標</div>
+    <div class="answer-number">200 BD ｜ 全台灣</div>
+    <div class="answer-sub">公司從 25 人 → 380-420 人 ｜ 成長 16 倍</div>
+    <div class="answer-detail">這不是「擴編」— 這是一場組織級別的閃電戰。你必須以軍隊建制的方式來執行。</div>
+  </div>
+
+  <div class="compare-grid">
+    <div class="compare-card old">
+      <p style="font-size:.82rem;color:var(--gray-500);">之前的保守方案</p>
+      <p style="font-size:2.8rem;font-weight:900;">25 BD</p>
+      <p style="font-size:.88rem;color:var(--gray-700);">60 人公司 ｜ 12 個月</p>
+      <p style="font-size:.78rem;color:var(--gray-500);margin-top:6px;">投資 3,800 萬 ｜ ROI 3.5x</p>
+    </div>
+    <div class="compare-arrow">→</div>
+    <div class="compare-card new">
+      <p style="font-size:.82rem;color:var(--red);font-weight:700;">現在的作戰計畫</p>
+      <p style="font-size:2.8rem;font-weight:900;color:var(--red);">200 BD</p>
+      <p style="font-size:.88rem;color:var(--gray-700);">400 人公司 ｜ 12 個月</p>
+      <p style="font-size:.78rem;color:var(--red);margin-top:6px;">投資 2-2.5 億 ｜ 目標 ROI 3x+</p>
+    </div>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card"><div class="kpi-val" style="color:var(--red);">200</div><div class="kpi-label">BD 業務代表</div><div class="kpi-sub" style="color:var(--red);">全台 4 大區域</div></div>
+    <div class="kpi-card"><div class="kpi-val" style="color:var(--amber);">~420</div><div class="kpi-label">總人數（M12）</div><div class="kpi-sub">從 25 人成長 16 倍</div></div>
+    <div class="kpi-card"><div class="kpi-val" style="color:var(--green);">~2,750</div><div class="kpi-label">SaaS 客戶數（M12）</div><div class="kpi-sub" style="color:var(--green);">從 200 成長 14 倍</div></div>
+    <div class="kpi-card"><div class="kpi-val" style="color:var(--primary);">9.3 億</div><div class="kpi-label">年化總營收（M12）</div><div class="kpi-sub" style="color:var(--green);">成長 5-9 倍</div></div>
+    <div class="kpi-card"><div class="kpi-val" style="color:var(--purple);">~395</div><div class="kpi-label">新增人力</div><div class="kpi-sub">月均招聘 33 人</div></div>
+    <div class="kpi-card"><div class="kpi-val" style="color:var(--amber);">2-2.5 億</div><div class="kpi-label">12 個月總投資</div><div class="kpi-sub">需要充裕資金</div></div>
+  </div>
+
+  <div class="callout red">
+    <strong>坦白說：</strong>從 25 人擴張到 400 人，這是台灣企業少見的閃電擴張。你需要的不只是「錢」，還需要 <strong>① 一位世界級 CRO ② 外部顧問/投資人支持 ③ 極強的執行紀律 ④ 每月 Go/No-Go 決策機制</strong>。下面我會把每一步拆解給你。
+  </div>
+</div>
+
+
+<!-- ===== 2. 區域部署 ===== -->
+<div class="section" id="regions">
+  <div class="section-title">🗺️ 2. 全台灣四大區域部署</div>
+  <div class="section-sub">200 BD 按市場規模分配到北中南東四大區域</div>
+
+  <div class="region-grid">
+    <div class="region-card north">
+      <div class="region-name">🏙 北部大區</div>
+      <div class="region-cities">台北・新北・桃園・新竹・基隆・宜蘭</div>
+      <div class="region-bd">90 BD</div>
+      <div class="region-bd-label">佔 45%</div>
+      <div class="region-detail">總部所在地，最大市場<br>3 Director ｜ 15 TL<br>目標客戶 ~1,200 戶</div>
+    </div>
+    <div class="region-card central">
+      <div class="region-name">🏭 中部大區</div>
+      <div class="region-cities">台中・彰化・南投・苗栗・雲林</div>
+      <div class="region-bd">45 BD</div>
+      <div class="region-bd-label">佔 22.5%</div>
+      <div class="region-detail">製造業 & 中小企業聚集<br>2 Director ｜ 8 TL<br>目標客戶 ~620 戶</div>
+    </div>
+    <div class="region-card south">
+      <div class="region-name">🌴 南部大區</div>
+      <div class="region-cities">高雄・台南・屏東・嘉義</div>
+      <div class="region-bd">50 BD</div>
+      <div class="region-bd-label">佔 25%</div>
+      <div class="region-detail">科學園區 + 傳產轉型<br>2 Director ｜ 9 TL<br>目標客戶 ~690 戶</div>
+    </div>
+    <div class="region-card east">
+      <div class="region-name">🌊 東部/離島</div>
+      <div class="region-cities">花蓮・台東・澎湖・金門</div>
+      <div class="region-bd">15 BD</div>
+      <div class="region-bd-label">佔 7.5%</div>
+      <div class="region-detail">觀光 & 農業 SaaS<br>1 Director ｜ 3 TL<br>目標客戶 ~245 戶</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4>📊 區域市場規模與 BD 密度分析</h4>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr><th>區域</th><th>BD 數</th><th>Director</th><th>TL</th><th>SDR</th><th>CS</th><th>目標客戶</th><th>辦公室</th><th>展開時間</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="tag tag-north">北部</span></td><td><strong>90</strong></td><td>3</td><td>15</td><td>20</td><td>10</td>
+            <td>~1,200</td><td>總部 + 1 分部</td><td><span class="tag tag-red">M1 起</span></td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-central">中部</span></td><td><strong>45</strong></td><td>2</td><td>8</td><td>10</td><td>5</td>
+            <td>~620</td><td>台中辦公室</td><td><span class="tag tag-amber">M2 起</span></td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-south">南部</span></td><td><strong>50</strong></td><td>2</td><td>9</td><td>12</td><td>6</td>
+            <td>~690</td><td>高雄辦公室</td><td><span class="tag tag-amber">M2 起</span></td>
+          </tr>
+          <tr>
+            <td><span class="tag tag-east">東部</span></td><td><strong>15</strong></td><td>1</td><td>3</td><td>3</td><td>2</td>
+            <td>~245</td><td>花蓮據點</td><td><span class="tag tag-green">M5 起</span></td>
+          </tr>
+          <tr class="hl">
+            <td><strong>合計</strong></td><td><strong>200</strong></td><td><strong>8</strong></td><td><strong>35</strong></td><td><strong>45</strong></td><td><strong>23</strong></td>
+            <td><strong>~2,755</strong></td><td><strong>4-5 處</strong></td><td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>區域展開策略：北部先行 → 中南同步 → 東部最後。</strong>北部是你的大本營和最大市場，M1 就啟動。中部和南部在 M2 同步開展。東部市場較小，M5 再啟動即可。
+  </div>
+</div>
+
+
+<!-- ===== 3. 組織架構 ===== -->
+<div class="section" id="org">
+  <div class="section-title">🏗️ 3. 200 BD 完整組織架構</div>
+  <div class="section-sub">六層架構：CEO → CRO → Regional VP → Director → Team Lead → BD</div>
+
+  <div class="org-chart">
+    <div class="org-level"><div class="org-node ceo">CEO / 創辦人（你）</div></div>
+    <div class="org-connector">┃</div>
+    <div class="org-label-text">雙引擎 + 營運長</div>
+
+    <div class="org-level">
+      <div class="org-node tech" style="min-width:130px;">CTO / 技術副總<br><small>（現有，管 35 人）</small></div>
+      <div class="org-node cro" style="min-width:180px;">CRO 營收長 ⭐<br><small>（外聘，管業務引擎全體）</small></div>
+      <div class="org-node ops" style="min-width:130px;">COO 營運長<br><small>（新聘，管行政 HR）</small></div>
+    </div>
+    <div class="org-connector">┃</div>
+    <div class="org-label-text">CRO 管轄 4 個區域 VP + 支援部門</div>
+
+    <div class="org-level">
+      <div class="org-node rvp">北部 VP<br><small>管 90 BD</small></div>
+      <div class="org-node rvp">中部 VP<br><small>管 45 BD</small></div>
+      <div class="org-node rvp">南部 VP<br><small>管 50 BD</small></div>
+      <div class="org-node rvp" style="background:var(--green);color:white;">東部主管<br><small>管 15 BD</small></div>
+      <div class="org-node ops" style="min-width:120px;">Sales Ops<br><small>12-15 人</small></div>
+      <div class="org-node" style="background:var(--pink-light);color:#9d174d;border:1px solid #f9a8d4;">Enablement<br><small>5-8 人</small></div>
+    </div>
+    <div class="org-connector">┃ ─ ─ ─ ─ ─ ─ ┃ ─ ─ ─ ─ ─ ┃</div>
+
+    <div class="org-level">
+      <div class="org-node dir">Director × 3<br><small>北部</small></div>
+      <div class="org-node dir">Director × 2<br><small>中部</small></div>
+      <div class="org-node dir">Director × 2<br><small>南部</small></div>
+      <div class="org-node dir">Director × 1<br><small>東部</small></div>
+    </div>
+    <div class="org-connector">┃ ─ ─ ┃</div>
+    <div class="org-label-text">每 Director 管 4-5 TL</div>
+
+    <div class="org-level">
+      <div class="org-node tl">TL × 15<br><small>北部</small></div>
+      <div class="org-node tl">TL × 8<br><small>中部</small></div>
+      <div class="org-node tl">TL × 9<br><small>南部</small></div>
+      <div class="org-node tl">TL × 3<br><small>東部</small></div>
+    </div>
+    <div class="org-connector">┃</div>
+    <div class="org-label-text">每 TL 管 5-6 BD</div>
+
+    <div class="org-level">
+      <div class="org-node bd">Hunter BD × 80</div>
+      <div class="org-node bd" style="background:var(--green-light);color:var(--green-dark);">Farmer BD × 120</div>
+      <div class="org-node" style="background:var(--teal-light);color:#155e75;border:1px solid #67e8f9;padding:8px 12px;font-size:.76rem;">SDR × 45</div>
+      <div class="org-node" style="background:var(--pink-light);color:#9d174d;border:1px solid #f9a8d4;padding:8px 12px;font-size:.76rem;">CS × 23</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4>📋 完整編制一覽</h4>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead><tr><th>層級</th><th>人數</th><th>月薪範圍</th><th>月薪酬總計</th><th>說明</th></tr></thead>
+        <tbody>
+          <tr><td><strong>CEO</strong></td><td>1</td><td>—</td><td>—</td><td>你本人</td></tr>
+          <tr class="hl-red"><td><strong>CRO 營收長</strong> ⭐</td><td>1</td><td>35-50 萬</td><td>~42 萬</td><td>最關鍵招聘，M1 啟動</td></tr>
+          <tr><td><strong>COO 營運長</strong></td><td>1</td><td>20-30 萬</td><td>~25 萬</td><td>管 HR/行政/財務擴編</td></tr>
+          <tr><td><strong>CTO（現有）</strong></td><td>1</td><td>既有</td><td>—</td><td>管技術引擎擴編</td></tr>
+          <tr><td><strong>區域 VP</strong></td><td>4</td><td>18-25 萬</td><td>~84 萬</td><td>北中南各 1 + 東部</td></tr>
+          <tr><td><strong>Director</strong></td><td>8</td><td>15-20 萬</td><td>~136 萬</td><td>每人管 4-5 TL</td></tr>
+          <tr><td><strong>Team Lead</strong></td><td>35</td><td>10-14 萬</td><td>~420 萬</td><td>每人管 5-6 BD</td></tr>
+          <tr><td><strong>Hunter BD</strong></td><td>80</td><td>5.5-9 萬</td><td>~560 萬</td><td>新客開發</td></tr>
+          <tr><td><strong>Farmer BD</strong></td><td>120</td><td>5-8.5 萬</td><td>~780 萬</td><td>客戶經營</td></tr>
+          <tr><td><strong>SDR</strong></td><td>45</td><td>3.5-5 萬</td><td>~191 萬</td><td>線索開發</td></tr>
+          <tr><td><strong>CS 客戶成功</strong></td><td>23</td><td>5-8 萬</td><td>~149 萬</td><td>客戶留存</td></tr>
+          <tr><td><strong>Sales Ops</strong></td><td>13</td><td>5-8 萬</td><td>~84 萬</td><td>CRM/數據/流程</td></tr>
+          <tr><td><strong>Enablement</strong></td><td>6</td><td>6-9 萬</td><td>~45 萬</td><td>培訓/教材/新人</td></tr>
+          <tr><td><strong>技術團隊</strong></td><td>35</td><td>依職級</td><td>~350 萬</td><td>從 15 擴到 35 人</td></tr>
+          <tr><td><strong>行政/HR/財務</strong></td><td>20</td><td>4-8 萬</td><td>~110 萬</td><td>從 3 擴到 20 人</td></tr>
+          <tr style="background:var(--red-light);">
+            <td><strong>全公司合計</strong></td><td><strong>~393</strong></td><td></td>
+            <td><strong style="font-size:1.05rem;">~2,976 萬/月</strong></td>
+            <td><strong>年人事成本 ~3.57 億</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="callout purple">
+    <strong>200 BD 的關鍵人物不是 VP Sales，而是 CRO（營收長）。</strong>這個規模你需要一位曾經從 0 建到 200+ 人業務團隊的人。台灣找不到就去中國、新加坡、甚至矽谷挖。月薪 35-50 萬，但他一年幫你做到 9 億+。
+  </div>
+</div>
+
+
+<!-- ===== 4. BD 薪酬制度設計（NEW） ===== -->
+<div class="section" id="compensation">
+  <div class="section-title">💎 4. BD 薪酬制度設計</div>
+  <div class="section-sub">具競爭力的底薪 + 績效佣金，讓頂尖 BD 月入超越外商水準</div>
+
+  <div class="card" style="border-left:5px solid var(--green);">
+    <h4>🏹 Hunter BD 薪酬公式</h4>
+    <div class="formula-box">
+      <span class="comment">// Hunter BD — 新客開發專家</span><br>
+      <span class="keyword">底薪</span> = <span class="number">55,000</span> <span class="comment">/月</span><br>
+      <span class="keyword">新客佣金</span> = 首年 ARR × <span class="number">8%</span><br>
+      <span class="comment">// 例：客戶年繳 28.2 萬 → 佣金 22,560</span><br><br>
+      <span class="comment">// 加速器機制</span><br>
+      <span class="keyword">達標 120%</span> → 佣金 <span class="string">double</span>（<span class="number">16%</span>）<br>
+      <span class="keyword">達標 150%</span> → 佣金 <span class="string">triple</span>（<span class="number">24%</span>）
+    </div>
+    <div class="kpi-grid">
+      <div class="kpi-card"><div class="kpi-val" style="color:var(--amber);">6-7 萬</div><div class="kpi-label">M1-3 預期月收</div><div class="kpi-sub">Ramp-up 期</div></div>
+      <div class="kpi-card"><div class="kpi-val" style="color:var(--green);">8-10 萬</div><div class="kpi-label">M6 預期月收</div><div class="kpi-sub">穩定產出</div></div>
+      <div class="kpi-card"><div class="kpi-val" style="color:var(--primary);">12-18 萬</div><div class="kpi-label">M12 預期月收</div><div class="kpi-sub">Top Performer</div></div>
+    </div>
+  </div>
+
+  <div class="card" style="border-left:5px solid var(--primary);">
+    <h4>🌱 Farmer BD 薪酬公式</h4>
+    <div class="formula-box">
+      <span class="comment">// Farmer BD — 客戶經營專家</span><br>
+      <span class="keyword">底薪</span> = <span class="number">50,000</span> <span class="comment">/月</span><br><br>
+      <span class="keyword">續約獎金</span> = 客戶續約 ARR × <span class="number">3%</span><br>
+      <span class="keyword">升級獎金</span> = 客戶升級方案差額 × <span class="number">15%</span><br>
+      <span class="keyword">NPS 獎金</span> = 客戶 NPS &gt; 8 分 → 每位 <span class="number">2,000</span> 元
+    </div>
+    <div class="kpi-grid">
+      <div class="kpi-card"><div class="kpi-val" style="color:var(--amber);">5.5-6.5 萬</div><div class="kpi-label">M1-3 預期月收</div><div class="kpi-sub">接手客戶期</div></div>
+      <div class="kpi-card"><div class="kpi-val" style="color:var(--primary);">9-14 萬</div><div class="kpi-label">M12 預期月收</div><div class="kpi-sub">客群穩定後</div></div>
+    </div>
+  </div>
+
+  <div class="card" style="border-left:5px solid var(--purple);">
+    <h4>👑 TL 管理獎金</h4>
+    <div class="formula-box">
+      <span class="comment">// Team Lead — 管理 5-6 位 BD</span><br>
+      <span class="keyword">底薪</span> = <span class="number">100,000 - 140,000</span> <span class="comment">/月</span><br>
+      <span class="keyword">團隊達標獎金</span> = <span class="number">20,000</span> <span class="comment">/月</span><br>
+      <span class="keyword">超額 profit sharing</span> = 團隊超額部分 × <span class="number">5%</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4>📊 薪資市場對標表</h4>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr><th>類型</th><th>台灣市場平均</th><th>LargeHome BD</th><th>競爭力</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>保險業務</strong></td>
+            <td>底薪 2.5-3.5 萬 + 佣金</td>
+            <td><strong>底薪 5-5.5 萬 + 佣金</strong></td>
+            <td><span class="tag tag-green">大幅領先</span></td>
+          </tr>
+          <tr>
+            <td><strong>傳統業務</strong></td>
+            <td>3.5-5 萬含佣金</td>
+            <td><strong>6-18 萬（依績效）</strong></td>
+            <td><span class="tag tag-green">大幅領先</span></td>
+          </tr>
+          <tr>
+            <td><strong>SaaS BD</strong></td>
+            <td>5-8 萬含佣金</td>
+            <td><strong>6-18 萬（依績效）</strong></td>
+            <td><span class="tag tag-green">具競爭力</span></td>
+          </tr>
+          <tr>
+            <td><strong>外商 AE</strong></td>
+            <td>8-15 萬含佣金</td>
+            <td><strong>12-18 萬（top performer）</strong></td>
+            <td><span class="tag tag-blue">持平/略勝</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="callout green">
+    <strong>薪酬策略核心：高底薪 + 高天花板。</strong>底薪比市場高 50-80%，吸引穩定人才加入；佣金上不封頂 + 加速器機制，讓 top performer 月入超越外商。這種結構能在 M3-M6 的高壓招聘期吸引到最好的人。
+  </div>
+</div>
+
+
+<!-- ===== 5. 招聘節奏 ===== -->
+<div class="section" id="hiring">
+  <div class="section-title">📅 5. 12 個月招聘節奏</div>
+  <div class="section-sub">月均招聘 33 人，尖峰月需要一週面試 30+ 人</div>
+
+  <div class="card">
+    <div class="timeline">
+      <div class="tl-item t1">
+        <h4>🔴 Phase 1｜M1-2：建立司令部</h4>
+        <div class="tl-meta">新增 20-25 人 ｜ 公司達 45-50 人</div>
+        <p><strong>核心任務：找到 CRO + COO + 北部 VP + 3 位 Director。</strong>同步招 Sales Ops 3 人、Enablement 2 人建制度。從現有 BD 中辨識 4-5 位升 TL。啟動台中/高雄辦公室選址。技術端開始擴編（+5 人）。HR 部門擴到 5 人應對後續大量招聘。</p>
+      </div>
+      <div class="tl-item t2">
+        <h4>🟡 Phase 2｜M3-5：北部全面展開 + 中南啟動</h4>
+        <div class="tl-meta">新增 80-100 人 ｜ 公司達 130-150 人</div>
+        <p><strong>北部：</strong>BD 衝到 40-50 人，TL 到位 8 人。<strong>中南部：</strong>VP 到位、Director 到位、每區先進 10-15 BD。SDR 團隊開始運轉（每區 5-8 人）。CRM 全面上線。第一批 BD 開始有成交量。<strong>這是現金流壓力最大的階段。</strong></p>
+      </div>
+      <div class="tl-item t3">
+        <h4>🟢 Phase 3｜M6-9：全台加速</h4>
+        <div class="tl-meta">新增 120-140 人 ｜ 公司達 270-300 人</div>
+        <p><strong>全面衝量。</strong>北部 BD 達 70-80 人，中南部各 30-40 人。東部據點啟動。CS 團隊全面運轉。Hunter/Farmer 正式分流。Phase 1 的 BD 已達滿產能，開始看到月營收翻倍增長。Enablement 建立完整新人 Bootcamp（每月 2 梯次）。</p>
+      </div>
+      <div class="tl-item t4">
+        <h4>🔵 Phase 4｜M10-12：補齊 + 穩固</h4>
+        <div class="tl-meta">新增 50-60 人 ｜ 公司達 380-420 人</div>
+        <p><strong>補齊 200 BD 缺口，重心轉向穩定。</strong>績效評估全面展開，淘汰表現不佳的 10-15%（~20-30 人）並補新血。建立月度 Business Review 機制。開始規劃第 2 年的 100→300 BD 架構。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4>📊 招聘速度要求</h4>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead><tr><th>月份</th><th>當月新增</th><th>累計人數</th><th>BD 人數</th><th>有效BD*</th><th>招聘壓力</th></tr></thead>
+        <tbody>
+          <tr><td>M1</td><td>8</td><td>33</td><td>6</td><td>6</td><td><span class="tag tag-green">可控</span></td></tr>
+          <tr><td>M2</td><td>15</td><td>48</td><td>12</td><td>8</td><td><span class="tag tag-green">可控</span></td></tr>
+          <tr><td>M3</td><td>30</td><td>78</td><td>30</td><td>15</td><td><span class="tag tag-amber">加速</span></td></tr>
+          <tr><td>M4</td><td>30</td><td>108</td><td>50</td><td>25</td><td><span class="tag tag-amber">加速</span></td></tr>
+          <tr><td>M5</td><td>35</td><td>143</td><td>75</td><td>42</td><td><span class="tag tag-red">高壓</span></td></tr>
+          <tr><td>M6</td><td>40</td><td>183</td><td>100</td><td>58</td><td><span class="tag tag-red">高壓</span></td></tr>
+          <tr><td>M7</td><td>40</td><td>223</td><td>125</td><td>78</td><td><span class="tag tag-red">高壓</span></td></tr>
+          <tr><td>M8</td><td>40</td><td>263</td><td>150</td><td>100</td><td><span class="tag tag-red">高壓</span></td></tr>
+          <tr><td>M9</td><td>35</td><td>298</td><td>170</td><td>125</td><td><span class="tag tag-amber">加速</span></td></tr>
+          <tr><td>M10</td><td>30</td><td>328</td><td>185</td><td>148</td><td><span class="tag tag-amber">加速</span></td></tr>
+          <tr><td>M11</td><td>25</td><td>353</td><td>195</td><td>168</td><td><span class="tag tag-green">趨緩</span></td></tr>
+          <tr class="hl"><td><strong>M12</strong></td><td><strong>20</strong></td><td><strong>~393</strong></td><td><strong>200</strong></td><td><strong>180</strong></td><td><span class="tag tag-green">穩定</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:.78rem;color:var(--gray-500);margin-top:8px;">* 有效 BD = 已完成 3 個月 ramp-up 的 BD，能以 100% 產能運作</p>
+  </div>
+
+  <div class="callout red">
+    <strong>M5-M8 是生死關頭。</strong>這四個月你需要每月招 35-40 人，同時管理 150+ 人的快速擴張組織。HR 團隊必須提前準備好：① 同時跑 5+ 招聘管道（獵頭、104、LinkedIn、校園、內推） ② 每週辦 2 場面試日 ③ 新人 Bootcamp 每月 2 梯次。
+  </div>
+</div>
+
+
+<!-- ===== 6. BD 培訓體系（NEW） ===== -->
+<div class="section" id="training">
+  <div class="section-title">🎓 6. BD 培訓體系</div>
+  <div class="section-sub">8 週系統化培訓：Bootcamp 2 週 → Shadowing 2 週 → Supervised 4 週，確保每位 BD 上線即能戰</div>
+
+  <div class="card" style="border-top:4px solid var(--red);">
+    <h4>🔴 Bootcamp Week 1：產品 + 市場</h4>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead><tr><th>天數</th><th>培訓內容</th><th>產出</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Day 1-2</strong></td><td>公司願景、產品 deep dive、競品分析</td><td>產品知識測驗通過 80%+</td></tr>
+          <tr><td><strong>Day 3-4</strong></td><td>目標客戶 persona、痛點分析、案例演練</td><td>完成 3 個客戶 persona 分析</td></tr>
+          <tr><td><strong>Day 5</strong></td><td>CRM 操作訓練（Salesforce/HubSpot）</td><td>能獨立建立並管理 pipeline</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card" style="border-top:4px solid var(--amber);">
+    <h4>🟡 Bootcamp Week 2：銷售技巧</h4>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead><tr><th>天數</th><th>培訓內容</th><th>產出</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Day 6-7</strong></td><td>陌生開發電話技巧、腳本練習</td><td>完成 20 通模擬電話</td></tr>
+          <tr><td><strong>Day 8-9</strong></td><td>簡報技巧、異議處理、角色扮演</td><td>通過 3 場模擬簡報</td></tr>
+          <tr><td><strong>Day 10</strong></td><td>模擬考核</td><td><span class="tag tag-red">通過率目標 85%</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card" style="border-top:4px solid var(--green);">
+    <h4>🟢 Shadowing 2 週：實戰觀摩</h4>
+    <div class="two-col">
+      <div>
+        <p style="font-size:.9rem;color:var(--gray-700);"><strong>配對資深 BD，每天跟訪</strong></p>
+        <p style="font-size:.84rem;color:var(--gray-500);margin-top:6px;">新人全程旁聽資深 BD 的客戶拜訪、電話開發、提案簡報，學習實戰技巧和客戶應對方式。</p>
+      </div>
+      <div>
+        <p style="font-size:.9rem;color:var(--gray-700);"><strong>每日 debrief 30 分鐘</strong></p>
+        <p style="font-size:.84rem;color:var(--gray-500);margin-top:6px;">由 TL 主持，回顧當天觀察重點、討論客戶反應、強化學習。累積觀察筆記至少 20 頁。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="border-top:4px solid var(--primary);">
+    <h4>🔵 Supervised 4 週：帶教上線</h4>
+    <div class="kpi-grid">
+      <div class="kpi-card" style="border:2px solid var(--primary-light);"><div class="kpi-val" style="color:var(--primary);">10 通</div><div class="kpi-label">每日開發電話</div></div>
+      <div class="kpi-card" style="border:2px solid var(--primary-light);"><div class="kpi-val" style="color:var(--amber);">5 場</div><div class="kpi-label">每週客戶拜訪</div></div>
+      <div class="kpi-card" style="border:2px solid var(--primary-light);"><div class="kpi-val" style="color:var(--green);">≥ 1 筆</div><div class="kpi-label">首月成交目標</div></div>
+    </div>
+    <div class="callout red">
+      <strong>鐵律：不達標 → PIP 2 週 → 離開。</strong>培訓期就是篩選期。寧可在第 8 週淘汰不適合的人，也不要讓他們佔著名額拖累團隊 3 個月。
+    </div>
+  </div>
+</div>
+
+
+<!-- ===== 7. 財務預測 ===== -->
+<div class="section" id="finance">
+  <div class="section-title">💰 7. 12 個月財務預測</div>
+  <div class="section-sub">基於有效 BD 數 × 月新簽 3 客戶 × 加權平均 ARR 28.2 萬，含 1% 月流失率</div>
+
+  <div class="card">
+    <h4>逐月營收預測（簡化版）</h4>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr><th>月份</th><th>有效BD</th><th>月新增客戶</th><th>客戶累計</th><th>SaaS MRR</th><th>既有月營收</th><th>合計月營收</th><th>月人事成本</th><th>月淨利</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>M1</td><td>6</td><td>18</td><td>216</td><td>508 萬</td><td>1,250 萬</td><td>1,758 萬</td><td>280 萬</td><td style="color:var(--green);">+</td></tr>
+          <tr><td>M3</td><td>15</td><td>45</td><td>281</td><td>660 萬</td><td>1,250 萬</td><td>1,910 萬</td><td>680 萬</td><td style="color:var(--green);">+</td></tr>
+          <tr><td>M5</td><td>42</td><td>126</td><td>477</td><td>1,121 萬</td><td>1,250 萬</td><td>2,371 萬</td><td>1,350 萬</td><td style="color:var(--green);">+</td></tr>
+          <tr><td>M6</td><td>58</td><td>174</td><td>644</td><td>1,513 萬</td><td>1,250 萬</td><td>2,763 萬</td><td>1,680 萬</td><td style="color:var(--green);">+</td></tr>
+          <tr><td>M8</td><td>100</td><td>300</td><td>1,103</td><td>2,592 萬</td><td>1,250 萬</td><td>3,842 萬</td><td>2,350 萬</td><td style="color:var(--green);">+</td></tr>
+          <tr><td>M10</td><td>148</td><td>444</td><td>1,812</td><td>4,258 萬</td><td>1,250 萬</td><td>5,508 萬</td><td>2,800 萬</td><td style="color:var(--green);font-weight:700;">++</td></tr>
+          <tr class="hl">
+            <td><strong>M12</strong></td><td><strong>180</strong></td><td><strong>540</strong></td><td><strong>~2,755</strong></td>
+            <td><strong>6,474 萬</strong></td><td><strong>1,250 萬</strong></td><td><strong>7,724 萬</strong></td>
+            <td><strong>2,976 萬</strong></td><td style="color:var(--green);font-weight:800;">+++</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 情境分析（NEW） -->
+  <div class="card" style="border-left:5px solid var(--amber);">
+    <h4>📈 情境分析：悲觀 / 基準 / 樂觀</h4>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>指標</th>
+            <th style="background:var(--red-light);"><span style="color:var(--red);">🔻 悲觀（70%）</span></th>
+            <th style="background:var(--amber-light);"><span style="color:var(--amber);">📊 基準</span></th>
+            <th style="background:var(--green-light);"><span style="color:var(--green);">🔺 樂觀（130%）</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>M12 客戶數</strong></td>
+            <td>~1,930</td>
+            <td><strong>~2,755</strong></td>
+            <td style="color:var(--green);font-weight:600;">~3,580</td>
+          </tr>
+          <tr>
+            <td><strong>M12 SaaS MRR</strong></td>
+            <td>4,532 萬</td>
+            <td><strong>6,474 萬</strong></td>
+            <td style="color:var(--green);font-weight:600;">8,416 萬</td>
+          </tr>
+          <tr>
+            <td><strong>M12 月營收</strong></td>
+            <td>5,782 萬</td>
+            <td><strong>7,724 萬</strong></td>
+            <td style="color:var(--green);font-weight:600;">9,666 萬</td>
+          </tr>
+          <tr>
+            <td><strong>Breakeven 月份</strong></td>
+            <td><span class="tag tag-red">M9</span></td>
+            <td><span class="tag tag-amber">M7</span></td>
+            <td><span class="tag tag-green">M5</span></td>
+          </tr>
+          <tr>
+            <td><strong>12 月累計投入</strong></td>
+            <td>2.0 億</td>
+            <td><strong>2.2 億</strong></td>
+            <td>2.5 億</td>
+          </tr>
+          <tr class="hl">
+            <td><strong>12 月 ROI</strong></td>
+            <td style="font-weight:700;">1.8x</td>
+            <td style="font-weight:800;color:var(--amber);">2.8x</td>
+            <td style="font-weight:800;color:var(--green);">3.5x</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout amber" style="margin-top:14px;">
+      <strong>即使悲觀情境（達標 70%），M12 月營收仍達 5,782 萬，ROI 1.8x。</strong>最壞情況下 Breakeven 延後到 M9，但全年仍為正報酬。這代表計畫有足夠的安全邊際。
+    </div>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card"><div class="kpi-val" style="color:var(--green);">6,474 萬</div><div class="kpi-label">SaaS MRR（M12）</div><div class="kpi-sub" style="color:var(--green);">年化 ARR 7.77 億</div></div>
+    <div class="kpi-card"><div class="kpi-val" style="color:var(--amber);">7,724 萬</div><div class="kpi-label">合計月營收（M12）</div><div class="kpi-sub" style="color:var(--green);">年化 9.27 億</div></div>
+    <div class="kpi-card"><div class="kpi-val" style="color:var(--primary);">~2,755</div><div class="kpi-label">SaaS 客戶數</div><div class="kpi-sub" style="color:var(--green);">從 200 成長 14 倍</div></div>
+    <div class="kpi-card"><div class="kpi-val" style="color:var(--red);">4,748 萬</div><div class="kpi-label">M12 月毛利</div><div class="kpi-sub">月營收 - 月人事</div></div>
+  </div>
+
+  <div class="callout green">
+    <strong>關鍵轉折點在 M6-M7。</strong>這時 SaaS MRR 超過人事成本，新增業務開始產生正現金流。M12 時月營收 7,724 萬，扣除全部人事成本 2,976 萬，月毛利約 4,748 萬。年化總營收 <strong>9.27 億</strong>，比現在成長 <strong>5-9 倍</strong>。
+  </div>
+</div>
+
+
+<!-- ===== 8. 投資預算 ===== -->
+<div class="section" id="investment">
+  <div class="section-title">💸 8. 12 個月總投資預算</div>
+
+  <div class="card">
+    <div style="overflow-x:auto;">
+      <table>
+        <thead><tr><th>項目</th><th>12 個月合計</th><th>說明</th></tr></thead>
+        <tbody>
+          <tr><td>C-Level 薪酬（CRO+COO）</td><td><strong>700-900 萬</strong></td><td>2 人 × avg 30 萬 × 12 月</td></tr>
+          <tr><td>區域 VP 薪酬</td><td><strong>600-800 萬</strong></td><td>4 人 × avg 21 萬 × avg 8 月</td></tr>
+          <tr><td>Director 薪酬</td><td><strong>1,000-1,300 萬</strong></td><td>8 人 × avg 17 萬 × avg 8 月</td></tr>
+          <tr><td>TL 薪酬</td><td><strong>1,800-2,200 萬</strong></td><td>35 人 × avg 12 萬 × avg 5 月</td></tr>
+          <tr><td>BD 薪酬（新增 194 人）</td><td><strong>5,500-7,000 萬</strong></td><td>分批到位，avg 6 個月在職</td></tr>
+          <tr><td>SDR+CS+Ops+Enablement</td><td><strong>2,500-3,200 萬</strong></td><td>~87 人支援團隊</td></tr>
+          <tr><td>技術團隊擴編（+20 人）</td><td><strong>1,500-2,000 萬</strong></td><td>年化人事 + 設備</td></tr>
+          <tr><td>行政/HR 擴編（+17 人）</td><td><strong>700-900 萬</strong></td><td>年化人事</td></tr>
+          <tr><td>辦公室（3 個新據點）</td><td><strong>1,200-1,800 萬</strong></td><td>裝潢 + 12 個月租金</td></tr>
+          <tr><td>招聘成本</td><td><strong>1,500-2,000 萬</strong></td><td>獵頭費 + 廣告 + 校園</td></tr>
+          <tr><td>CRM & 工具</td><td><strong>400-600 萬</strong></td><td>Salesforce/HubSpot + 通訊</td></tr>
+          <tr><td>培訓 & Bootcamp</td><td><strong>300-500 萬</strong></td><td>教材、講師、場地</td></tr>
+          <tr><td>行銷 & 品牌</td><td><strong>500-800 萬</strong></td><td>配合 BD 開發的市場活動</td></tr>
+          <tr><td>預備金（10%）</td><td><strong>1,800-2,300 萬</strong></td><td>意外支出緩衝</td></tr>
+          <tr style="background:var(--red-light);">
+            <td><strong>12 個月總投資</strong></td>
+            <td><strong style="font-size:1.2rem;color:var(--red);">2.0 - 2.5 億</strong></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4>💰 資金來源分析</h4>
+    <div class="three-col">
+      <div style="padding:16px;border-radius:10px;background:var(--green-light);border-top:3px solid var(--green);">
+        <p style="font-weight:700;color:var(--green-dark);margin-bottom:6px;">方案 A：自有資金</p>
+        <p style="font-size:.84rem;color:var(--gray-700);">如果你年利潤率 30%+（年利潤 4,500 萬+），加上保留盈餘，可以 cover 前 6 個月。M7 開始新增營收會逐漸補上缺口。</p>
+        <p style="font-size:.78rem;color:var(--amber);font-weight:600;margin-top:6px;">⚠ 但 M3-M6 的現金流壓力非常大</p>
+      </div>
+      <div style="padding:16px;border-radius:10px;background:var(--amber-light);border-top:3px solid var(--amber);">
+        <p style="font-weight:700;color:var(--amber-dark);margin-bottom:6px;">方案 B：銀行融資</p>
+        <p style="font-size:.84rem;color:var(--gray-700);">20 年公司 + 穩定營收 = 銀行信用好。可以拿 8,000-1.2 億的營運週轉金，利率可能 2-3%。用 MRR 作為還款擔保。</p>
+        <p style="font-size:.78rem;color:var(--green);font-weight:600;margin-top:6px;">✅ 推薦作為補充方案</p>
+      </div>
+      <div style="padding:16px;border-radius:10px;background:var(--primary-light);border-top:3px solid var(--primary);">
+        <p style="font-weight:700;color:var(--primary-dark);margin-bottom:6px;">方案 C：策略投資人</p>
+        <p style="font-size:.84rem;color:var(--gray-700);">如果要更快、更穩，找一位 SaaS 領域的策略投資人，拿 1-1.5 億。他們帶來的不只是錢，還有人脈和經驗。</p>
+        <p style="font-size:.78rem;color:var(--purple);font-weight:600;margin-top:6px;">💡 適合有上市/併購計畫的情境</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout amber">
+    <strong>務實建議：</strong>用「自有資金 + 銀行融資」的組合最安全。準備 <strong>1 億自有資金 + 1-1.5 億銀行額度</strong>。不要把所有籌碼一次壓上 — 用 Go/No-Go 機制分階段釋放預算。
+  </div>
+</div>
+
+
+<!-- ===== 9. 風險管控 ===== -->
+<div class="section" id="risks">
+  <div class="section-title">🚨 9. 重大風險與管控措施</div>
+  <div class="section-sub">200 BD 擴張的風險比 25 BD 高出一個量級，每一項都需要專門對策</div>
+
+  <div class="card" style="border-left:5px solid var(--red);">
+    <h4>風險 1：招聘品質失控</h4>
+    <p style="font-size:.86rem;color:var(--gray-700);margin-bottom:8px;">月均招 33 人，高峰期 40 人/月。在這種速度下，面試流程容易走捷徑，招進「只想混底薪」的人。</p>
+    <div class="risk-meter"><div class="risk-block filled"></div><div class="risk-block filled"></div><div class="risk-block filled"></div><div class="risk-block filled"></div><div class="risk-block"></div></div>
+    <p style="font-size:.84rem;color:var(--green);font-weight:600;">✅ 對策：① 建立標準化面試流程（4 關制） ② 新人 90 天試用期嚴格考核 ③ 第 90 天淘汰率預設 15-20% ④ 寧可慢一週也不要招錯人</p>
+  </div>
+
+  <div class="card" style="border-left:5px solid var(--red);">
+    <h4>風險 2：管理層斷層</h4>
+    <p style="font-size:.86rem;color:var(--gray-700);margin-bottom:8px;">你需要 4 VP + 8 Director + 35 TL = 47 位管理者。台灣有 SaaS 經驗的管理人才非常稀缺。</p>
+    <div class="risk-meter"><div class="risk-block filled"></div><div class="risk-block filled"></div><div class="risk-block filled"></div><div class="risk-block filled"></div><div class="risk-block filled"></div></div>
+    <p style="font-size:.84rem;color:var(--green);font-weight:600;">✅ 對策：① CRO 必須有超強招募能力 ② 35 TL 中 15 位從 BD 內升、20 位外聘 ③ 考慮從中國/東南亞 SaaS 公司挖角 ④ 建立「管理者加速培養計畫」（6 週密集訓練）</p>
+  </div>
+
+  <div class="card" style="border-left:5px solid var(--red);">
+    <h4>風險 3：現金流斷裂</h4>
+    <p style="font-size:.86rem;color:var(--gray-700);margin-bottom:8px;">M3-M6 人事成本快速膨脹但營收還沒跟上。如果新簽速度低於預期 20%，你可能在 M5 面臨現金缺口。</p>
+    <div class="risk-meter"><div class="risk-block filled"></div><div class="risk-block filled"></div><div class="risk-block filled"></div><div class="risk-block filled"></div><div class="risk-block"></div></div>
+    <p style="font-size:.84rem;color:var(--green);font-weight:600;">✅ 對策：① 提前準備 1.5 億以上的銀行額度 ② 每月做現金流預測 ③ 設定「紅線」— 如果實際營收低於預測 25%，立即放緩招聘 ④ BD 薪酬結構 60:40 確保底薪不會壓垮現金流</p>
+  </div>
+
+  <div class="card" style="border-left:5px solid var(--amber);">
+    <h4>風險 4：組織文化崩潰</h4>
+    <p style="font-size:.86rem;color:var(--gray-700);margin-bottom:8px;">25 人的家族式文化在 400 人面前完全不適用。老員工可能大量離職。</p>
+    <div class="risk-meter"><div class="risk-block filled amber"></div><div class="risk-block filled amber"></div><div class="risk-block filled amber"></div><div class="risk-block"></div><div class="risk-block"></div></div>
+    <p style="font-size:.84rem;color:var(--green);font-weight:600;">✅ 對策：① 由 COO 專門負責文化建設 ② 老員工給予留任獎金和股權 ③ 每月全公司 Town Hall ④ 建立企業文化手冊（M1 就要開始）</p>
+  </div>
+
+  <div class="card" style="border-left:5px solid var(--amber);">
+    <h4>風險 5：產品/技術跟不上</h4>
+    <p style="font-size:.86rem;color:var(--gray-700);margin-bottom:8px;">客戶從 200 → 2,755 戶，增長 14 倍。伺服器、技術支援、功能需求都會爆炸。</p>
+    <div class="risk-meter"><div class="risk-block filled amber"></div><div class="risk-block filled amber"></div><div class="risk-block filled amber"></div><div class="risk-block filled amber"></div><div class="risk-block"></div></div>
+    <p style="font-size:.84rem;color:var(--green);font-weight:600;">✅ 對策：① 技術團隊從 15 擴到 35 人 ② 建立 SLA 機制（回覆 2 小時、解決 24 小時） ③ 投資自動化客服（Chatbot） ④ 基礎設施提前規劃 10 倍容量</p>
+  </div>
+</div>
+
+
+<!-- ===== 10. 15 天快速啟動計畫（NEW） ===== -->
+<div class="section" id="launch15">
+  <div class="section-title">🚀 10. 15 天快速啟動計畫</div>
+  <div class="section-sub">從決策到啟動，15 天內完成所有前置作業 — 確保 Gate 0 所有條件就位</div>
+
+  <div class="card" style="border-left:5px solid var(--red);">
+    <h4 style="color:var(--red);">🔴 Day 1-3：宣戰動員</h4>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead><tr><th>#</th><th>行動項目</th><th>負責人</th><th>產出</th></tr></thead>
+        <tbody>
+          <tr>
+            <td style="font-weight:800;color:var(--red);">1</td>
+            <td><strong>CEO 全員大會宣布計畫</strong><br><small>25 人全員參加，說明願景、保障、角色</small></td>
+            <td>CEO</td>
+            <td>全員 buy-in</td>
+          </tr>
+          <tr>
+            <td style="font-weight:800;color:var(--red);">2</td>
+            <td><strong>聯繫 3 家獵頭啟動 CRO 搜尋</strong><br><small>頂級獵頭 ×2 + LinkedIn headhunting ×1</small></td>
+            <td>CEO</td>
+            <td>搜尋啟動確認</td>
+          </tr>
+          <tr>
+            <td style="font-weight:800;color:var(--red);">3</td>
+            <td><strong>COO JD 發布到 LinkedIn + 104</strong></td>
+            <td>CEO</td>
+            <td>JD 上線</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card" style="border-left:5px solid var(--amber);">
+    <h4 style="color:var(--amber-dark);">🟡 Day 4-7：基礎建設</h4>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead><tr><th>#</th><th>行動項目</th><th>負責人</th><th>產出</th></tr></thead>
+        <tbody>
+          <tr>
+            <td style="font-weight:800;">4</td>
+            <td><strong>銀行洽談營運週轉金額度</strong><br><small>目標 1-1.5 億額度</small></td>
+            <td>CEO + 財務</td>
+            <td>額度意向書</td>
+          </tr>
+          <tr>
+            <td style="font-weight:800;">5</td>
+            <td><strong>HR 主管 JD 發布</strong></td>
+            <td>CEO</td>
+            <td>JD 上線</td>
+          </tr>
+          <tr>
+            <td style="font-weight:800;">6</td>
+            <td><strong>CRM 系統評估</strong><br><small>Salesforce vs HubSpot demo 各一場</small></td>
+            <td>現有 IT</td>
+            <td>評估報告</td>
+          </tr>
+          <tr>
+            <td style="font-weight:800;">7</td>
+            <td><strong>現有 200 客戶 S/A/B/C 分級</strong><br><small>辨識高價值客戶與升級機會</small></td>
+            <td>現有 BD</td>
+            <td>客戶分級表</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card" style="border-left:5px solid var(--green);">
+    <h4 style="color:var(--green-dark);">🟢 Day 8-10：制度建立</h4>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead><tr><th>#</th><th>行動項目</th><th>負責人</th><th>產出</th></tr></thead>
+        <tbody>
+          <tr>
+            <td style="font-weight:800;">8</td>
+            <td><strong>BD JD 發布（北部先行）</strong><br><small>104 + LinkedIn + 內推啟動</small></td>
+            <td>HR</td>
+            <td>JD 上線</td>
+          </tr>
+          <tr>
+            <td style="font-weight:800;">9</td>
+            <td><strong>台中/高雄商務中心看件</strong><br><small>先租共享空間，快速到位</small></td>
+            <td>行政</td>
+            <td>候選清單</td>
+          </tr>
+          <tr>
+            <td style="font-weight:800;">10</td>
+            <td><strong>薪酬制度 v1.0 定稿</strong><br><small>Hunter/Farmer/TL 薪酬公式確認</small></td>
+            <td>CEO</td>
+            <td>薪酬制度文件</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card" style="border-left:5px solid var(--primary);">
+    <h4 style="color:var(--primary-dark);">🔵 Day 11-15：驗證就位</h4>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead><tr><th>#</th><th>行動項目</th><th>負責人</th><th>產出</th></tr></thead>
+        <tbody>
+          <tr>
+            <td style="font-weight:800;">11</td>
+            <td><strong>CRO 候選人第一輪面談</strong><br><small>至少 3 位候選人進入面談</small></td>
+            <td>CEO</td>
+            <td>面談紀錄</td>
+          </tr>
+          <tr>
+            <td style="font-weight:800;">12</td>
+            <td><strong>培訓教材 v1.0 產出</strong><br><small>產品手冊 + 銷售腳本 + CRM SOP</small></td>
+            <td>現有團隊</td>
+            <td>教材初版</td>
+          </tr>
+          <tr class="hl">
+            <td style="font-weight:800;color:var(--red);">13</td>
+            <td><strong>Gate 0 自檢：資金、人選、制度是否就位？</strong><br><small>所有前置條件 checklist 確認</small></td>
+            <td>CEO</td>
+            <td><span class="tag tag-red">GO / NO-GO</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="callout purple">
+    <strong>15 天是紀律測試。</strong>如果連這 15 天的啟動計畫都無法準時完成，那 12 個月 200 BD 的計畫更不可能成功。把這 15 天當作「能不能執行大計畫」的試金石。
+  </div>
+</div>
+
+
+<!-- ===== 11. Go/No-Go ===== -->
+<div class="section" id="gono">
+  <div class="section-title">🚦 11. Go / No-Go 決策機制</div>
+  <div class="section-sub">每個 Phase 結束前必須過關才能進入下一階段 — 這是防止災難的安全閥</div>
+
+  <div class="card">
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr><th>檢查點</th><th>時間</th><th>✅ Go 條件</th><th>🟡 條件式 Go</th><th>❌ No-Go / 暫停</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Gate 1</strong><br><small>司令部就位？</small></td>
+            <td>M2 底</td>
+            <td>CRO 到位 + 北部 VP 到位 + CRM 上線</td>
+            <td>CRO 到位但 VP 還在找 → 縮小 Phase 2 規模</td>
+            <td>CRO 還沒到位 → <strong>暫停全部，繼續找</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Gate 2</strong><br><small>第一批 BD 有產出？</small></td>
+            <td>M5 底</td>
+            <td>月新簽 ≥ 90 客戶 + 3 個區域辦公室運轉</td>
+            <td>月新簽 60-89 → 放緩 Phase 3 招聘 30%</td>
+            <td>月新簽 < 60 → <strong>凍結招聘，診斷問題</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Gate 3</strong><br><small>全速運轉可行？</small></td>
+            <td>M8 底</td>
+            <td>月新簽 ≥ 250 + SaaS MRR > 2,000 萬 + 現金流為正</td>
+            <td>MRR 1,500-2,000 萬 → 最終目標降為 150 BD</td>
+            <td>MRR < 1,500 萬 → <strong>收縮到 100 BD 穩住</strong></td>
+          </tr>
+          <tr class="hl">
+            <td><strong>Final Gate</strong><br><small>是否達標？</small></td>
+            <td>M12</td>
+            <td>200 BD + MRR > 5,000 萬 + 全台 4 區域運轉</td>
+            <td>150-199 BD → 第 2 年 Q1 補齊</td>
+            <td>BD < 150 or MRR < 3,000 萬 → 重新評估策略</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="callout red">
+    <strong>Gate 1 是鐵律：沒有 CRO 就不要啟動。</strong>如果 M2 底 CRO 還沒到位，你必須暫停整個計畫繼續找人。沒有 CRO 就衝 200 BD 等於沒有將軍就上戰場 — 一定潰敗。寧可計畫延後 2 個月，也不能在沒有統帥的情況下展開。
+  </div>
+</div>
+
+
+<!-- ===== 12. Q1 行動 ===== -->
+<div class="section" id="q1-action">
+  <div class="section-title">⚡ 12. 第一季行動清單（最關鍵 90 天）</div>
+
+  <div class="card">
+    <h4>🔴 Week 1-2：啟動</h4>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead><tr><th>#</th><th>行動</th><th>負責</th><th>完成</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:800;color:var(--red);">1</td><td><strong>啟動 CRO 搜尋</strong><br><small>至少 3 條管道：頂級獵頭×2、LinkedIn 主動搜尋、同業推薦</small></td><td>CEO</td><td>Day 1</td></tr>
+          <tr><td style="font-weight:800;color:var(--red);">2</td><td><strong>全公司 25 人全員大會</strong><br><small>宣布擴張計畫、願景、老員工的角色和保障</small></td><td>CEO</td><td>Day 3</td></tr>
+          <tr><td style="font-weight:800;color:var(--red);">3</td><td><strong>啟動 COO 搜尋</strong><br><small>負責 HR/行政/財務的營運長</small></td><td>CEO</td><td>Day 3</td></tr>
+          <tr><td style="font-weight:800;">4</td><td><strong>銀行融資洽談</strong><br><small>準備 1-1.5 億營運週轉金額度</small></td><td>CEO+財務</td><td>Day 5-14</td></tr>
+          <tr><td style="font-weight:800;">5</td><td><strong>CRM 系統選定 + 開始導入</strong><br><small>Salesforce 或 HubSpot Enterprise</small></td><td>現有 IT</td><td>Day 7-14</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4>🟡 Week 3-6：建基礎</h4>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead><tr><th>#</th><th>行動</th><th>負責</th><th>完成</th></tr></thead>
+        <tbody>
+          <tr><td>6</td><td><strong>招聘 HR 主管 + 2 位招聘專員</strong><br><small>後續 350+ 人的招聘引擎</small></td><td>CEO/COO</td><td>W3-4</td></tr>
+          <tr><td>7</td><td><strong>台中、高雄辦公室選址</strong><br><small>先租商務中心或共享空間，M4 再擴</small></td><td>COO</td><td>W4-6</td></tr>
+          <tr><td>8</td><td><strong>盤點現有 200 個客戶，分級 S/A/B/C</strong><br><small>辨識升級機會，做為 Farmer BD 第一批任務</small></td><td>現有 BD</td><td>W3-4</td></tr>
+          <tr><td>9</td><td><strong>設計獎金制度 v1.0</strong><br><small>Hunter: ARR×8% + 加速器 / Farmer: 三維度加權</small></td><td>CEO+CRO</td><td>W4-6</td></tr>
+          <tr><td>10</td><td><strong>技術主管提交「10 倍容量計畫」</strong><br><small>伺服器、DevOps、技術支援人力的擴編方案</small></td><td>CTO</td><td>W4-5</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4>🟢 Week 7-12：第一波招聘</h4>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead><tr><th>#</th><th>行動</th><th>負責</th><th>完成</th></tr></thead>
+        <tbody>
+          <tr><td>11</td><td><strong>CRO 到位 → 由 CRO 主導後續業務招聘</strong></td><td>CRO</td><td>M2 底前</td></tr>
+          <tr><td>12</td><td><strong>招聘北部 VP + 中南部 VP 候選</strong></td><td>CRO</td><td>M2-3</td></tr>
+          <tr><td>13</td><td><strong>第一批 Director ×3 + TL ×6 到位</strong></td><td>CRO</td><td>M2-3</td></tr>
+          <tr><td>14</td><td><strong>第一批 BD ×15 + SDR ×5 開始培訓</strong></td><td>TL+Enable</td><td>M3</td></tr>
+          <tr><td>15</td><td><strong>新人 Bootcamp 第一梯次啟動</strong><br><small>2 週密集培訓 → 2 週 shadowing → 4 週 supervised → 正式上線</small></td><td>Enablement</td><td>M3</td></tr>
+          <tr><td>16</td><td><strong>Gate 1 Review：Go or No-Go？</strong></td><td>CEO+CRO</td><td>M2 底</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===== 25 BD vs 200 BD 對照 ===== -->
+<div class="section">
+  <div class="section-title">📊 25 BD vs 200 BD 方案全對照</div>
+  <div class="card">
+    <div style="overflow-x:auto;">
+      <table>
+        <thead><tr><th>指標</th><th>保守方案（25 BD）</th><th>全台制霸（200 BD）</th><th>倍數</th></tr></thead>
+        <tbody>
+          <tr><td>BD 人數</td><td>25</td><td><strong>200</strong></td><td>8x</td></tr>
+          <tr><td>公司總人數</td><td>60</td><td><strong>~400</strong></td><td>6.7x</td></tr>
+          <tr><td>區域覆蓋</td><td>北部為主</td><td><strong>全台 4 區域</strong></td><td>—</td></tr>
+          <tr><td>M12 SaaS 客戶</td><td>~740</td><td><strong>~2,755</strong></td><td>3.7x</td></tr>
+          <tr><td>M12 SaaS MRR</td><td>1,739 萬</td><td><strong>6,474 萬</strong></td><td>3.7x</td></tr>
+          <tr><td>M12 合計月營收</td><td>2,989 萬</td><td><strong>7,724 萬</strong></td><td>2.6x</td></tr>
+          <tr><td>年化營收（M12）</td><td>3.59 億</td><td><strong>9.27 億</strong></td><td>2.6x</td></tr>
+          <tr><td>12 個月投資</td><td>3,800 萬</td><td><strong>2-2.5 億</strong></td><td>6x</td></tr>
+          <tr><td>管理複雜度</td><td><span class="tag tag-green">中</span></td><td><span class="tag tag-red">極高</span></td><td>—</td></tr>
+          <tr><td>執行風險</td><td><span class="tag tag-green">低</span></td><td><span class="tag tag-red">高</span></td><td>—</td></tr>
+          <tr><td>市場佔領速度</td><td><span class="tag tag-amber">穩步</span></td><td><span class="tag tag-red">閃電戰</span></td><td>—</td></tr>
+          <tr class="hl"><td><strong>ROI</strong></td><td><strong>3.2-3.9x</strong></td><td><strong>2.5-3.5x</strong></td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>200 BD 方案的 ROI 比 25 BD 略低</strong>（因為規模化的效率損耗和管理成本更高），但<strong>市場佔領速度和競爭壁壘遠勝</strong>。如果你的市場有競爭者在追趕，200 BD 方案讓你在 12 個月內建立起別人 3-5 年都追不上的領先優勢。
+  </div>
+</div>
+
+
+<!-- ===== 最終建議 ===== -->
+<div class="section">
+  <div class="section-title">💡 CEO 決策框架</div>
+  <div class="card" style="border:2px solid var(--red);background:linear-gradient(135deg,#fff5f5,#ffffff);">
+    <h4 style="color:var(--red);">你真正需要回答的 3 個問題</h4>
+    <div style="margin-top:14px;">
+      <div style="padding:14px;border-radius:10px;background:white;border-left:4px solid var(--red);margin-bottom:12px;">
+        <p style="font-weight:800;font-size:.95rem;margin-bottom:4px;">Q1：你能準備 2 億以上的資金嗎？</p>
+        <p style="font-size:.86rem;color:var(--gray-700);">自有資金 + 銀行融資 + 投資人。如果 < 1.5 億，建議先走 100 BD 方案。</p>
+      </div>
+      <div style="padding:14px;border-radius:10px;background:white;border-left:4px solid var(--amber);margin-bottom:12px;">
+        <p style="font-weight:800;font-size:.95rem;margin-bottom:4px;">Q2：你能在 M2 底前找到世界級的 CRO 嗎？</p>
+        <p style="font-size:.86rem;color:var(--gray-700);">這個人決定整個計畫成敗。如果找不到，所有後續都不成立。</p>
+      </div>
+      <div style="padding:14px;border-radius:10px;background:white;border-left:4px solid var(--primary);">
+        <p style="font-weight:800;font-size:.95rem;margin-bottom:4px;">Q3：你願意承受 6 個月「燒錢看不到回報」的壓力嗎？</p>
+        <p style="font-size:.86rem;color:var(--gray-700);">M1-M6 是淨投入期。你必須有足夠的心理素質和財務緩衝，不在最黑暗的時候踩煞車。</p>
+      </div>
+    </div>
+    <div style="margin-top:16px;padding:14px;border-radius:10px;background:var(--green-light);">
+      <p style="font-weight:800;color:var(--green-dark);font-size:.95rem;">如果三個問題的答案都是 YES → 那就全速前進。</p>
+      <p style="font-size:.86rem;color:var(--gray-700);margin-top:4px;">200 BD 全台制霸不是夢 — 但需要軍事級的紀律、充裕的資金、和一位世界級的 CRO。你有 20 年的品牌信任和穩定現金流做後盾，這是多數公司沒有的巨大優勢。<strong>用它，搶佔整個台灣。</strong></p>
+    </div>
+  </div>
+</div>
+
+
+<!-- FOOTER -->
+<div class="footer">
+  <p><strong>全台 200 BD 擴張作戰計畫 v2</strong></p>
+  <p>20 年技術型公司 × 25 人 → 12 個月 → 400 人全台業務軍團</p>
+  <p style="margin-top:6px;">會員費 $15,000-$35,000/月 ｜ 加權平均 ARR 28.2 萬 ｜ 目標 M12 月營收 7,724 萬</p>
+  <p style="margin-top:4px;font-size:.75rem;">所有財務數據為模型推估，請依實際營運數據每月覆盤。Gate 機制是安全閥 — 每個關卡都必須認真執行。</p>
+</div>
+
+</div>
+</body>
+</html>
