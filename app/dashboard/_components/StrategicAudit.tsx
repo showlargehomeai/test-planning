@@ -262,12 +262,14 @@ export default function StrategicAudit({ compact = false }: { compact?: boolean 
 
   // Guard: if audit data schema changed (cron may update), show formatted view
   if (!taiwan?.modules || !company) {
-    const status = data?.executionStatus;
-    const statusSummary = typeof status === 'string' ? status : status?.summary || '';
-    const achievements: string[] = typeof status === 'object' && status?.achievements ? status.achievements : [];
-    const systemHealth: Record<string, string> = typeof status === 'object' && status?.systemHealth ? status.systemHealth : {};
-    const actions: Array<{action: string; priority: string; details: string}> = Array.isArray(data?.businessActionPlan) ? data.businessActionPlan : [];
-    const metrics = data?.businessMetrics || {};
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const d = data as any;
+    const status = d?.executionStatus;
+    const statusSummary: string = typeof status === 'string' ? status : status?.summary || '';
+    const achievements: string[] = Array.isArray(status?.achievements) ? status.achievements : [];
+    const systemHealthList: string[] = Array.isArray(status?.systemHealth) ? status.systemHealth : [];
+    const actions: Array<{action: string; priority: string; details: string}> = Array.isArray(d?.businessActionPlan) ? d.businessActionPlan : [];
+    const metrics: Record<string, unknown> = d?.businessMetrics || {};
 
     return (
       <div className="space-y-4">
@@ -275,13 +277,13 @@ export default function StrategicAudit({ compact = false }: { compact?: boolean 
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-lg font-bold text-slate-900">🎯 戰略審計 Round {data?.round || '?'}</h2>
-              <p className="text-sm text-slate-500">{data?.timestamp ? new Date(data.timestamp).toLocaleString('zh-TW') : ''}</p>
-              {data?.perspective && <p className="text-xs text-indigo-600 mt-1">{data.perspective}</p>}
+              <h2 className="text-lg font-bold text-slate-900">🎯 戰略審計 Round {d?.round || '?'}</h2>
+              <p className="text-sm text-slate-500">{d?.timestamp ? new Date(d.timestamp).toLocaleString('zh-TW') : ''}</p>
+              {d?.perspective && <p className="text-xs text-indigo-600 mt-1">{d.perspective}</p>}
             </div>
-            {data?.developmentStatus && (
+            {d?.developmentStatus && (
               <span className="text-xs px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 font-medium">
-                {typeof data.developmentStatus === 'string' ? data.developmentStatus.slice(0, 40) : ''}
+                {String(d.developmentStatus).slice(0, 40)}
               </span>
             )}
           </div>
@@ -308,14 +310,13 @@ export default function StrategicAudit({ compact = false }: { compact?: boolean 
         )}
 
         {/* System Health */}
-        {Object.keys(systemHealth).length > 0 && (
+        {systemHealthList.length > 0 && (
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
             <h3 className="text-sm font-semibold text-slate-900 mb-3">🔧 系統狀態</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {Object.entries(systemHealth).map(([key, val]) => (
-                <div key={key} className="bg-slate-50 rounded-lg p-3">
-                  <p className="text-xs text-slate-500 mb-1">{key}</p>
-                  <p className="text-sm font-medium text-slate-800">{val}</p>
+              {systemHealthList.map((item, idx) => (
+                <div key={idx} className="bg-slate-50 rounded-lg p-3">
+                  <p className="text-sm font-medium text-slate-800">{String(item)}</p>
                 </div>
               ))}
             </div>
@@ -338,11 +339,11 @@ export default function StrategicAudit({ compact = false }: { compact?: boolean 
         )}
 
         {/* Critical Recommendation */}
-        {data?.criticalRecommendation && (
+        {d?.criticalRecommendation && (
           <div className="bg-amber-50 rounded-2xl p-6 shadow-sm border border-amber-200">
             <h3 className="text-sm font-semibold text-amber-900 mb-2">⚠️ 關鍵建議</h3>
             <p className="text-sm text-amber-800 leading-relaxed">
-              {typeof data.criticalRecommendation === 'string' ? data.criticalRecommendation : JSON.stringify(data.criticalRecommendation)}
+              {String(d.criticalRecommendation)}
             </p>
           </div>
         )}
@@ -372,21 +373,21 @@ export default function StrategicAudit({ compact = false }: { compact?: boolean 
         )}
 
         {/* Strategic Milestone */}
-        {data?.strategicMilestone && (
+        {d?.strategicMilestone && (
           <div className="bg-gradient-to-r from-indigo-50 to-violet-50 rounded-2xl p-6 shadow-sm border border-indigo-100">
             <h3 className="text-sm font-semibold text-indigo-900 mb-2">🏆 戰略里程碑</h3>
             <p className="text-sm text-indigo-800 leading-relaxed">
-              {typeof data.strategicMilestone === 'string' ? data.strategicMilestone : JSON.stringify(data.strategicMilestone)}
+              {String(d.strategicMilestone)}
             </p>
           </div>
         )}
 
         {/* Next Round */}
-        {data?.nextRoundStrategy && (
+        {d?.nextRoundStrategy && (
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
             <h3 className="text-sm font-semibold text-slate-900 mb-2">🔜 下一輪策略</h3>
             <p className="text-sm text-slate-700 leading-relaxed">
-              {typeof data.nextRoundStrategy === 'string' ? data.nextRoundStrategy : JSON.stringify(data.nextRoundStrategy)}
+              {String(d.nextRoundStrategy)}
             </p>
           </div>
         )}

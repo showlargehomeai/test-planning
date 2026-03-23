@@ -180,7 +180,7 @@ function ContractsContent() {
 
   const handleSendForSigning = (contractId: string) => {
     setContracts(prev => prev.map(c =>
-      c.id === contractId ? { ...c, status: "pending" as const } : c
+      c.id === contractId ? { ...c, status: "pending" as const, signedDate: null } : c
     ));
     setToast("📤 合約已送出，等待客戶簽署");
     setTimeout(() => setToast(null), 2000);
