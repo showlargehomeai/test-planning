@@ -57,6 +57,7 @@ const navGroups = [
       { name: "商業計畫", href: "/plan" },
       { name: "產品 Demo", href: "/demo" },
       { name: "協作中心", href: "/collaboration" },
+      { name: "需求市場", href: "/marketplace" },
     ],
   },
   {
