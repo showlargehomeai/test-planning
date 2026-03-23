@@ -75,6 +75,7 @@ const sections = [
     accent: "bg-sky-500",
     items: [
       { name: "協作中心", href: "/collaboration", desc: "三方空間" },
+      { name: "需求市場", href: "/marketplace", desc: "統一需求池" },
       { name: "更新日誌", href: "/changelog", desc: "版本紀錄" },
       { name: "點子牆", href: "/ideas", desc: "功能提案" },
     ],
