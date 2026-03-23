@@ -1,10 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import { clsx } from "clsx";
 
-const renderStyles = ["現代簡約", "北歐風", "日式無印", "工業風", "新古典", "鄉村風"];
-const rooms = ["客廳", "臥室", "廚房", "浴室", "書房", "餐廳"];
+const renderStyles = [
+  { name: "現代簡約", icon: "🏢", desc: "乾淨線條、中性色調" },
+  { name: "北歐風", icon: "🌿", desc: "木質溫暖、自然光" },
+  { name: "日式無印", icon: "🍵", desc: "極簡禪意、原木色" },
+  { name: "工業風", icon: "🏭", desc: "水泥裸牆、金屬元素" },
+  { name: "新古典", icon: "🏛️", desc: "歐式線板、優雅奢華" },
+  { name: "鄉村風", icon: "🌾", desc: "磚牆木樑、溫馨手作" },
+];
+const rooms = ["客廳", "臥室", "廚房", "浴室", "書房", "餐廳", "玄關", "陽台"];
 
 const mockGallery = [
   { id: 1, name: "大安區客廳_v3", style: "現代簡約", room: "客廳", date: "2026-03-15", status: "completed", gradient: "from-slate-500 to-slate-700" },
@@ -12,33 +19,153 @@ const mockGallery = [
   { id: 3, name: "信義區廚房_v1", style: "北歐風", room: "廚房", date: "2026-03-13", status: "completed", gradient: "from-sky-500 to-blue-600" },
   { id: 4, name: "中山書房_v4", style: "新古典", room: "書房", date: "2026-03-12", status: "completed", gradient: "from-violet-500 to-purple-600" },
   { id: 5, name: "西屯浴室_v1", style: "日式無印", room: "浴室", date: "2026-03-11", status: "completed", gradient: "from-emerald-500 to-teal-600" },
-  { id: 6, name: "左營餐廳_v2", style: "混搭風", room: "餐廳", date: "2026-03-10", status: "completed", gradient: "from-cyan-500 to-blue-600" },
+  { id: 6, name: "左營餐廳_v2", style: "鄉村風", room: "餐廳", date: "2026-03-10", status: "completed", gradient: "from-cyan-500 to-blue-600" },
 ];
+
+const renderOptionGroups = [
+  { label: "解析度", options: ["1024×1024", "1536×1024", "2048×2048"], default: "1536×1024" },
+  { label: "渲染強度", options: ["輕微調整", "中度改造", "完全重設計"], default: "中度改造" },
+];
+
+// 根據風格產生不同的模擬色彩
+const styleGradients: Record<string, string> = {
+  "現代簡約": "from-slate-300 via-gray-200 to-slate-400",
+  "北歐風": "from-amber-100 via-sky-100 to-emerald-100",
+  "日式無印": "from-amber-200 via-orange-100 to-stone-200",
+  "工業風": "from-gray-400 via-stone-500 to-zinc-600",
+  "新古典": "from-amber-200 via-yellow-100 to-violet-200",
+  "鄉村風": "from-green-200 via-amber-100 to-orange-200",
+};
 
 export default function RenderingPage() {
   const [selectedStyle, setSelectedStyle] = useState("現代簡約");
   const [selectedRoom, setSelectedRoom] = useState("客廳");
   const [isRendering, setIsRendering] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [renderPhase, setRenderPhase] = useState("");
   const [showBefore, setShowBefore] = useState(true);
+  const [uploadedFile, setUploadedFile] = useState<{ name: string; size: string } | null>(null);
+  const [renderCompleted, setRenderCompleted] = useState(false);
+  const [resolution, setResolution] = useState("1536×1024");
+  const [strength, setStrength] = useState("中度改造");
+  const [gallery, setGallery] = useState(mockGallery);
+  const [toast, setToast] = useState<string | null>(null);
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [prompt, setPrompt] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const sizeKB = (file.size / 1024).toFixed(0);
+      const sizeMB = (file.size / 1024 / 1024).toFixed(1);
+      setUploadedFile({
+        name: file.name,
+        size: file.size > 1024 * 1024 ? `${sizeMB} MB` : `${sizeKB} KB`,
+      });
+      setRenderCompleted(false);
+      setProgress(0);
+      setToast(`✅ 已上傳：${file.name}`);
+      setTimeout(() => setToast(null), 2000);
+    }
+  }, []);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files?.[0];
+    if (file && (file.type.startsWith("image/") || file.type === "application/pdf")) {
+      const sizeMB = (file.size / 1024 / 1024).toFixed(1);
+      setUploadedFile({ name: file.name, size: `${sizeMB} MB` });
+      setRenderCompleted(false);
+      setProgress(0);
+      setToast(`✅ 已上傳：${file.name}`);
+      setTimeout(() => setToast(null), 2000);
+    }
+  }, []);
+
+  const phases = [
+    { at: 5, text: "🔍 分析空間結構..." },
+    { at: 20, text: "🧱 識別牆面/地板/天花板..." },
+    { at: 40, text: `🎨 套用${selectedStyle}風格材質...` },
+    { at: 60, text: "💡 計算光照與陰影..." },
+    { at: 75, text: "🪑 擺放家具與裝飾..." },
+    { at: 90, text: "✨ 後製處理與細節優化..." },
+    { at: 98, text: "📦 輸出高解析度圖片..." },
+  ];
 
   const startRendering = () => {
+    if (!uploadedFile) {
+      setToast("⚠️ 請先上傳圖片");
+      setTimeout(() => setToast(null), 2000);
+      return;
+    }
     setIsRendering(true);
     setProgress(0);
+    setRenderCompleted(false);
+    setShowBefore(true);
+    setRenderPhase(phases[0].text);
+
+    let currentProgress = 0;
     const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setIsRendering(false);
-          return 100;
+      currentProgress += 2 + Math.random() * 5;
+      if (currentProgress >= 100) {
+        currentProgress = 100;
+        clearInterval(interval);
+        setIsRendering(false);
+        setRenderCompleted(true);
+        setShowBefore(false);
+        setRenderPhase("✅ 渲染完成！");
+
+        // 加入 gallery
+        const newItem = {
+          id: Date.now(),
+          name: `${selectedRoom}_${selectedStyle}_v1`,
+          style: selectedStyle,
+          room: selectedRoom,
+          date: new Date().toISOString().split("T")[0],
+          status: "completed",
+          gradient: styleGradients[selectedStyle]?.replace("from-", "from-").split(" ")[0]?.replace("from-", "") 
+            ? `from-indigo-400 to-violet-500` : "from-indigo-400 to-violet-500",
+        };
+        setGallery(prev => [newItem, ...prev]);
+      }
+
+      setProgress(currentProgress);
+      // 更新階段文字
+      for (let i = phases.length - 1; i >= 0; i--) {
+        if (currentProgress >= phases[i].at) {
+          setRenderPhase(phases[i].text);
+          break;
         }
-        return prev + Math.random() * 15;
-      });
-    }, 400);
+      }
+    }, 300);
+  };
+
+  const handleDownload = () => {
+    setToast("📥 高解析度圖片已下載");
+    setTimeout(() => setToast(null), 2000);
+  };
+
+  const handleShareToClient = () => {
+    setToast("📤 已分享給客戶，等待回饋");
+    setTimeout(() => setToast(null), 2000);
+  };
+
+  const handleReRender = () => {
+    setRenderCompleted(false);
+    setProgress(0);
+    startRendering();
   };
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto space-y-6">
+      {/* Toast */}
+      {toast && (
+        <div className="fixed top-6 right-6 z-50 bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium animate-pulse">
+          {toast}
+        </div>
+      )}
+
       <div>
         <h1 className="text-xl sm:text-2xl font-bold text-slate-900">🎨 3D/AI 快速渲染出圖</h1>
         <p className="text-sm text-slate-500 mt-1">上傳平面圖或照片，AI 自動生成 3D 效果圖</p>
@@ -48,7 +175,7 @@ export default function RenderingPage() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="bg-white rounded-xl border border-slate-200 p-4">
           <p className="text-xs text-slate-500">本月渲染數</p>
-          <p className="text-2xl font-bold text-indigo-600">24</p>
+          <p className="text-2xl font-bold text-indigo-600">{24 + gallery.length - mockGallery.length}</p>
         </div>
         <div className="bg-white rounded-xl border border-slate-200 p-4">
           <p className="text-xs text-slate-500">平均渲染時間</p>
@@ -56,7 +183,7 @@ export default function RenderingPage() {
         </div>
         <div className="bg-white rounded-xl border border-slate-200 p-4">
           <p className="text-xs text-slate-500">剩餘配額</p>
-          <p className="text-2xl font-bold text-amber-600">76</p>
+          <p className="text-2xl font-bold text-amber-600">{76 - (gallery.length - mockGallery.length)}</p>
         </div>
         <div className="bg-white rounded-xl border border-slate-200 p-4">
           <p className="text-xs text-slate-500">客戶滿意度</p>
@@ -65,34 +192,54 @@ export default function RenderingPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Upload & Settings */}
+        {/* Left: Upload & Settings */}
         <div className="space-y-4">
           {/* Upload Area */}
           <div className="bg-white rounded-xl border border-slate-200 p-5">
-            <h2 className="text-sm font-semibold text-slate-700 mb-3">上傳圖片</h2>
-            <div className="border-2 border-dashed border-slate-300 rounded-xl p-8 text-center hover:border-indigo-400 transition-colors cursor-pointer">
-              <div className="text-4xl mb-2">📤</div>
-              <p className="text-sm text-slate-600 font-medium">拖曳檔案至此或點擊上傳</p>
-              <p className="text-xs text-slate-400 mt-1">支援 JPG, PNG, PDF 格式，最大 20MB</p>
-            </div>
+            <h2 className="text-sm font-semibold text-slate-700 mb-3">📤 上傳圖片</h2>
+            <input ref={fileInputRef} type="file" accept="image/*,.pdf" className="hidden" onChange={handleFileUpload} />
+            {!uploadedFile ? (
+              <div
+                onClick={() => fileInputRef.current?.click()}
+                onDragOver={e => e.preventDefault()}
+                onDrop={handleDrop}
+                className="border-2 border-dashed border-slate-300 rounded-xl p-8 text-center hover:border-indigo-400 hover:bg-indigo-50/30 transition-all cursor-pointer"
+              >
+                <div className="text-4xl mb-2">📤</div>
+                <p className="text-sm text-slate-600 font-medium">拖曳檔案至此或點擊上傳</p>
+                <p className="text-xs text-slate-400 mt-1">支援 JPG, PNG, PDF 格式，最大 20MB</p>
+              </div>
+            ) : (
+              <div className="flex items-center gap-3 p-4 bg-indigo-50 rounded-xl border border-indigo-200">
+                <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center text-xl">🖼️</div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-slate-900 truncate">{uploadedFile.name}</p>
+                  <p className="text-xs text-slate-500">{uploadedFile.size}</p>
+                </div>
+                <button onClick={() => { setUploadedFile(null); setRenderCompleted(false); setProgress(0); }} className="text-xs text-red-500 hover:text-red-700 px-2 py-1 rounded hover:bg-red-50">移除</button>
+                <button onClick={() => fileInputRef.current?.click()} className="text-xs text-indigo-600 hover:text-indigo-800 px-2 py-1 rounded hover:bg-indigo-100">換圖</button>
+              </div>
+            )}
           </div>
 
           {/* Style Selector */}
           <div className="bg-white rounded-xl border border-slate-200 p-5">
-            <h2 className="text-sm font-semibold text-slate-700 mb-3">渲染風格</h2>
-            <div className="grid grid-cols-3 gap-2">
+            <h2 className="text-sm font-semibold text-slate-700 mb-3">🎨 渲染風格</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {renderStyles.map((style) => (
                 <button
-                  key={style}
-                  onClick={() => setSelectedStyle(style)}
+                  key={style.name}
+                  onClick={() => setSelectedStyle(style.name)}
                   className={clsx(
-                    "py-2 px-3 rounded-lg text-sm font-medium transition-all",
-                    selectedStyle === style
-                      ? "bg-indigo-600 text-white shadow-sm"
-                      : "bg-slate-50 text-slate-600 hover:bg-slate-100"
+                    "py-2.5 px-3 rounded-lg text-left transition-all border",
+                    selectedStyle === style.name
+                      ? "bg-indigo-50 border-indigo-300 ring-2 ring-indigo-200"
+                      : "bg-slate-50 border-slate-200 hover:border-slate-300"
                   )}
                 >
-                  {style}
+                  <span className="text-lg">{style.icon}</span>
+                  <p className={clsx("text-sm font-medium mt-0.5", selectedStyle === style.name ? "text-indigo-700" : "text-slate-700")}>{style.name}</p>
+                  <p className="text-[10px] text-slate-400">{style.desc}</p>
                 </button>
               ))}
             </div>
@@ -100,8 +247,8 @@ export default function RenderingPage() {
 
           {/* Room Selector */}
           <div className="bg-white rounded-xl border border-slate-200 p-5">
-            <h2 className="text-sm font-semibold text-slate-700 mb-3">空間類型</h2>
-            <div className="grid grid-cols-3 gap-2">
+            <h2 className="text-sm font-semibold text-slate-700 mb-3">🏠 空間類型</h2>
+            <div className="grid grid-cols-4 gap-2">
               {rooms.map((room) => (
                 <button
                   key={room}
@@ -119,81 +266,170 @@ export default function RenderingPage() {
             </div>
           </div>
 
+          {/* Advanced Options */}
+          <div className="bg-white rounded-xl border border-slate-200 p-5">
+            <button onClick={() => setShowAdvanced(!showAdvanced)} className="flex items-center justify-between w-full">
+              <h2 className="text-sm font-semibold text-slate-700">⚙️ 進階設定</h2>
+              <span className="text-slate-400 text-sm">{showAdvanced ? "▲" : "▼"}</span>
+            </button>
+            {showAdvanced && (
+              <div className="mt-3 space-y-3">
+                {/* Resolution */}
+                <div>
+                  <label className="text-xs text-slate-500 mb-1.5 block">輸出解析度</label>
+                  <div className="flex gap-1.5">
+                    {renderOptionGroups[0].options.map(opt => (
+                      <button key={opt} onClick={() => setResolution(opt)} className={clsx(
+                        "flex-1 px-2 py-1.5 rounded-lg text-xs font-medium border transition-all",
+                        resolution === opt ? "bg-indigo-50 text-indigo-700 border-indigo-300" : "border-slate-200 text-slate-500"
+                      )}>{opt}</button>
+                    ))}
+                  </div>
+                </div>
+                {/* Strength */}
+                <div>
+                  <label className="text-xs text-slate-500 mb-1.5 block">渲染強度</label>
+                  <div className="flex gap-1.5">
+                    {renderOptionGroups[1].options.map(opt => (
+                      <button key={opt} onClick={() => setStrength(opt)} className={clsx(
+                        "flex-1 px-2 py-1.5 rounded-lg text-xs font-medium border transition-all",
+                        strength === opt ? "bg-indigo-50 text-indigo-700 border-indigo-300" : "border-slate-200 text-slate-500"
+                      )}>{opt}</button>
+                    ))}
+                  </div>
+                </div>
+                {/* Prompt */}
+                <div>
+                  <label className="text-xs text-slate-500 mb-1.5 block">自訂描述（選填）</label>
+                  <textarea
+                    value={prompt}
+                    onChange={e => setPrompt(e.target.value)}
+                    rows={2}
+                    placeholder="例如：白色大理石地板、落地窗自然光、深色木質家具..."
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none resize-none"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* Render Button */}
           <button
             onClick={startRendering}
             disabled={isRendering}
             className={clsx(
-              "w-full py-3 rounded-xl text-sm font-semibold transition-all min-h-[48px]",
+              "w-full py-3.5 rounded-xl text-sm font-semibold transition-all min-h-[48px]",
               isRendering
                 ? "bg-slate-200 text-slate-500 cursor-not-allowed"
-                : "bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm"
+                : uploadedFile
+                  ? "bg-indigo-600 text-white hover:bg-indigo-700 shadow-md hover:shadow-lg"
+                  : "bg-slate-300 text-slate-500 cursor-not-allowed"
             )}
           >
-            {isRendering ? "渲染中..." : "🚀 開始 AI 渲染"}
+            {isRendering ? `⏳ ${renderPhase}` : uploadedFile ? "🚀 開始 AI 渲染" : "📤 請先上傳圖片"}
           </button>
 
           {/* Progress Bar */}
-          {(isRendering || progress >= 100) && (
+          {(isRendering || renderCompleted) && (
             <div className="bg-white rounded-xl border border-slate-200 p-4">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-slate-700">渲染進度</span>
+                <span className="text-sm font-medium text-slate-700">{renderPhase}</span>
                 <span className="text-sm font-bold text-indigo-600">{Math.min(100, Math.round(progress))}%</span>
               </div>
               <div className="w-full bg-slate-100 rounded-full h-3">
                 <div
                   className={clsx(
-                    "h-3 rounded-full transition-all duration-500",
-                    progress >= 100 ? "bg-emerald-500" : "bg-indigo-500"
+                    "h-3 rounded-full transition-all duration-300",
+                    renderCompleted ? "bg-emerald-500" : "bg-indigo-500"
                   )}
                   style={{ width: `${Math.min(100, progress)}%` }}
                 />
               </div>
-              {progress >= 100 && (
-                <p className="text-xs text-emerald-600 mt-2 font-medium">✓ 渲染完成！</p>
+              {renderCompleted && (
+                <div className="flex gap-2 mt-3">
+                  <button onClick={handleDownload} className="flex-1 px-3 py-2 text-xs font-medium rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 transition-colors">📥 下載高解析圖</button>
+                  <button onClick={handleShareToClient} className="flex-1 px-3 py-2 text-xs font-medium rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors">📤 分享給客戶</button>
+                  <button onClick={handleReRender} className="px-3 py-2 text-xs font-medium rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-50 transition-colors">🔄 重新渲染</button>
+                </div>
               )}
             </div>
           )}
         </div>
 
-        {/* Preview Area */}
+        {/* Right: Preview & Gallery */}
         <div className="space-y-4">
           <div className="bg-white rounded-xl border border-slate-200 p-5">
             <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm font-semibold text-slate-700">預覽</h2>
+              <h2 className="text-sm font-semibold text-slate-700">👁️ 預覽</h2>
               <div className="flex gap-1 bg-slate-100 rounded-lg p-1">
                 <button
                   onClick={() => setShowBefore(true)}
-                  className={clsx("px-3 py-1 rounded-md text-xs font-medium", showBefore ? "bg-white shadow-sm text-slate-900" : "text-slate-500")}
+                  className={clsx("px-3 py-1 rounded-md text-xs font-medium transition-colors", showBefore ? "bg-white shadow-sm text-slate-900" : "text-slate-500")}
                 >
                   原圖
                 </button>
                 <button
                   onClick={() => setShowBefore(false)}
-                  className={clsx("px-3 py-1 rounded-md text-xs font-medium", !showBefore ? "bg-white shadow-sm text-slate-900" : "text-slate-500")}
+                  className={clsx("px-3 py-1 rounded-md text-xs font-medium transition-colors", !showBefore ? "bg-white shadow-sm text-slate-900" : "text-slate-500")}
                 >
                   渲染圖
                 </button>
               </div>
             </div>
             <div className={clsx(
-              "aspect-video rounded-xl flex items-center justify-center",
+              "aspect-video rounded-xl flex items-center justify-center relative overflow-hidden transition-all duration-500",
               showBefore
-                ? "bg-gradient-to-br from-slate-200 to-slate-300"
-                : "bg-gradient-to-br from-indigo-200 to-violet-300"
+                ? uploadedFile ? "bg-gradient-to-br from-slate-300 to-slate-400" : "bg-gradient-to-br from-slate-200 to-slate-300"
+                : renderCompleted
+                  ? `bg-gradient-to-br ${styleGradients[selectedStyle] || "from-indigo-200 to-violet-300"}`
+                  : "bg-gradient-to-br from-slate-200 to-slate-300"
             )}>
-              <div className="text-center">
-                <span className="text-5xl block mb-2">{showBefore ? "📐" : "🏠"}</span>
-                <p className="text-sm text-slate-500">{showBefore ? "平面圖 / 原始照片" : `${selectedStyle} · ${selectedRoom}`}</p>
-              </div>
+              {showBefore ? (
+                <div className="text-center">
+                  <span className="text-5xl block mb-2">{uploadedFile ? "🖼️" : "📐"}</span>
+                  <p className="text-sm text-slate-500">
+                    {uploadedFile ? uploadedFile.name : "尚未上傳圖片"}
+                  </p>
+                </div>
+              ) : renderCompleted ? (
+                <div className="text-center">
+                  <span className="text-5xl block mb-2">🏠</span>
+                  <p className="text-sm font-medium text-slate-700">{selectedStyle} · {selectedRoom}</p>
+                  <p className="text-xs text-slate-500 mt-1">{resolution} · {strength}</p>
+                  {prompt && <p className="text-[10px] text-slate-400 mt-1 max-w-[200px] mx-auto">「{prompt}」</p>}
+                </div>
+              ) : isRendering ? (
+                <div className="text-center animate-pulse">
+                  <span className="text-5xl block mb-2">⏳</span>
+                  <p className="text-sm text-slate-500">{renderPhase}</p>
+                </div>
+              ) : (
+                <div className="text-center">
+                  <span className="text-5xl block mb-2">🎨</span>
+                  <p className="text-sm text-slate-400">渲染結果將顯示在此</p>
+                </div>
+              )}
             </div>
+
+            {/* Render settings summary */}
+            {(renderCompleted || isRendering) && (
+              <div className="mt-3 flex flex-wrap gap-2">
+                <span className="text-[10px] px-2 py-1 rounded-full bg-indigo-50 text-indigo-600 border border-indigo-200">{selectedStyle}</span>
+                <span className="text-[10px] px-2 py-1 rounded-full bg-slate-50 text-slate-600 border border-slate-200">{selectedRoom}</span>
+                <span className="text-[10px] px-2 py-1 rounded-full bg-slate-50 text-slate-600 border border-slate-200">{resolution}</span>
+                <span className="text-[10px] px-2 py-1 rounded-full bg-slate-50 text-slate-600 border border-slate-200">{strength}</span>
+              </div>
+            )}
           </div>
 
           {/* Gallery */}
           <div className="bg-white rounded-xl border border-slate-200 p-5">
-            <h2 className="text-sm font-semibold text-slate-700 mb-3">歷史渲染記錄</h2>
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-sm font-semibold text-slate-700">📂 歷史渲染記錄</h2>
+              <span className="text-xs text-slate-400">{gallery.length} 筆</span>
+            </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {mockGallery.map((item) => (
+              {gallery.slice(0, 9).map((item) => (
                 <div key={item.id} className="group cursor-pointer">
                   <div className={clsx("aspect-video rounded-lg bg-gradient-to-br flex items-center justify-center relative overflow-hidden", item.gradient)}>
                     <span className="text-white/30 text-2xl">🏠</span>
@@ -206,6 +442,11 @@ export default function RenderingPage() {
                 </div>
               ))}
             </div>
+            {gallery.length > 9 && (
+              <button className="w-full mt-3 py-2 text-xs text-indigo-600 font-medium hover:bg-indigo-50 rounded-lg transition-colors">
+                查看全部 {gallery.length} 筆記錄 →
+              </button>
+            )}
           </div>
         </div>
       </div>
