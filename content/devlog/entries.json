@@ -1,0 +1,164 @@
+[
+  {
+    "id": "DEV-001",
+    "date": "2026-03-23",
+    "feature": "建立新合約（三步驟精靈）",
+    "page": "/designer/contracts",
+    "type": "mock",
+    "status": "frontend-only",
+    "summary": "三步驟表單：選範本 → 填金額付款 → 確認建立。前端 mock data，合約以草稿狀態加入列表。",
+    "frontend": {
+      "changes": [
+        "新增 NewContractModal 元件（含表單驗證、3 步驟 wizard）",
+        "新增 handleCreateContract 函式（產生 ID、加入 contracts state）",
+        "修改 '+ 建立新合約' 按鈕觸發 modal",
+        "統計數（草稿數）改為 dynamic 計算"
+      ],
+      "files": ["app/designer/contracts/page.tsx"]
+    },
+    "backend": {
+      "existingSchema": {
+        "table": "contracts",
+        "service": "interaction-service",
+        "fields": ["contract_number (CTR-YYYYMMDD-XXXX)", "type (string 30)", "status (string 30)", "total_amount (decimal 12,2)", "start_date", "end_date", "client_name", "client_phone", "project_id (FK → projects)", "contact_id (FK → crm_contacts)"],
+        "api": "POST /api/v1/contracts → 自動產生合約編號"
+      },
+      "gaps": [
+        "前端欄位 designFee/constructionFee 後端沒有 → 需在 contracts table 加欄位或用 notes JSON",
+        "前端 warrantyMonths 後端沒有 → 需加欄位",
+        "前端 paymentTerms 後端用 payment_milestones table 而非字串 → 建立合約後需自動建立里程碑",
+        "前端合約範本名稱作為 type → 後端 type 限 30 字元，需定義 enum mapping"
+      ],
+      "integrationPlan": "串接時：POST /api/v1/contracts 建立合約 → 依 paymentTerms 自動建立 payment_milestones → 回傳 contract_number 顯示在前端"
+    },
+    "roleAccess": {
+      "designer": "建立、編輯、送出簽署",
+      "homeowner": "檢視、簽署",
+      "crew": "不可存取（施工承攬由設計師建立）",
+      "vendor": "不可存取"
+    },
+    "conflicts": "無 table 衝突。但前端 mock ID (C-2026-XXX) 與後端自動產生格式 (CTR-YYYYMMDD-XXXX) 不一致，串接時需改用後端回傳 ID。",
+    "viability": "可行。後端 API 已完整（CRUD + milestones），前端只需改 fetch 呼叫。主要工作在欄位對齊和建立後自動生成 milestones。"
+  },
+  {
+    "id": "DEV-002",
+    "date": "2026-03-23",
+    "feature": "完整合約範本內容（6 份法律條款）",
+    "page": "/designer/contracts（範本庫 tab）",
+    "type": "mock",
+    "status": "frontend-only",
+    "summary": "6 份合約範本各有完整法律條款：住宅設計 11 條、商業空間 8 條、設計顧問 5 條、施工承攬 10 條、追加變更 5 條、NDA 5 條。",
+    "frontend": {
+      "changes": [
+        "mockTemplates 加入 sections[] 陣列，每個 section 有 title + clauses[]",
+        "預覽區改為展開完整條款（含可捲動區域、條款統計）"
+      ],
+      "files": ["app/designer/contracts/page.tsx"]
+    },
+    "backend": {
+      "existingSchema": {
+        "table": "signature_templates",
+        "service": "interaction-service",
+        "fields": ["template_name", "document_type", "description", "required_signers (JSON)", "signing_deadline_days", "document_template_url", "placeholder_mappings (JSON)"]
+      },
+      "gaps": [
+        "後端 signature_templates 是簽署流程範本，非合約條款範本",
+        "合約條款內容（sections/clauses）後端目前沒有存儲機制",
+        "需要新建 contract_templates table 或用 document_template_url 指向外部模板"
+      ],
+      "integrationPlan": "方案 A：合約內容存為 HTML/PDF 在 Azure Blob Storage，URL 存在 document_template_url。方案 B：新建 contract_templates table 存結構化條款。推薦方案 A（更彈性、可支援律師審核後上傳）。"
+    },
+    "roleAccess": {
+      "designer": "瀏覽範本、使用範本建立合約",
+      "admin": "管理範本（新增/編輯/停用）",
+      "homeowner": "不可存取範本庫",
+      "crew": "不可存取",
+      "vendor": "不可存取"
+    },
+    "conflicts": "無衝突。signature_templates 是獨立功能（簽署流程），合約條款範本是新需求。",
+    "viability": "可行。短期用前端 hardcode 展示，長期建議用 Azure Blob 存 PDF 範本 + placeholder_mappings 動態填入客戶資料。"
+  },
+  {
+    "id": "DEV-003",
+    "date": "2026-03-23",
+    "feature": "工程看板新增工項",
+    "page": "/designer/kanban",
+    "type": "mock",
+    "status": "frontend-only",
+    "summary": "新增工項 Modal：工項名稱、業主、負責工班、完成日、優先度、欄位選擇、工種標籤（12 種）。建立後卡片即時出現在看板。",
+    "frontend": {
+      "changes": [
+        "新增 NewTaskModal 元件",
+        "cards state 從 const 改為 useState（支援動態增減）",
+        "新增 handleCreateTask（自動分配 ID、預設進度）"
+      ],
+      "files": ["app/designer/kanban/page.tsx"]
+    },
+    "backend": {
+      "existingSchema": {
+        "note": "後端沒有獨立的 kanban/task table",
+        "relatedTables": [
+          "daily_reports — 施工日報（有 project_id, 日期, 進度描述）",
+          "sop_checklists — SOP 檢查表（有 project_id, specialty, steps）",
+          "rfq_project_materials — 專案材料/工項（有 status, 可作為工項來源）"
+        ]
+      },
+      "gaps": [
+        "看板工項需要獨立的 task/work_item table",
+        "建議新增 project_tasks table：project_id, title, assignee_id, assignee_type (crew/designer), status (waiting/in_progress/review/completed), priority, due_date, specialty_tags (JSON), progress (0-100)",
+        "或擴展 rfq_project_materials 加入看板相關欄位"
+      ],
+      "integrationPlan": "建議在 interaction-service 新增 project_tasks table + CRUD API。看板是前端展示邏輯，用 status 欄位區分欄位。拖曳移動 = PATCH status。"
+    },
+    "roleAccess": {
+      "designer": "建立、分配、移動工項",
+      "crew": "檢視分配給自己的工項、回報進度",
+      "homeowner": "唯讀檢視（了解施工進度）",
+      "vendor": "不可存取"
+    },
+    "conflicts": "無衝突。是全新功能，不影響既有 table。",
+    "viability": "可行。需新建 project_tasks table（約 10 個欄位）+ 4 個 API endpoint（CRUD）。前端已有完整 UI，串接時改 fetch 即可。"
+  },
+  {
+    "id": "DEV-004",
+    "date": "2026-03-23",
+    "feature": "AI 渲染服務完善",
+    "page": "/designer/rendering",
+    "type": "mock",
+    "status": "frontend-only",
+    "summary": "完整的 AI 渲染流程：上傳圖片 → 選風格/空間/解析度/強度 → 渲染（7 階段動態進度）→ 下載/分享/重渲染。歷史記錄自動累積。",
+    "frontend": {
+      "changes": [
+        "新增真實檔案上傳（拖曳 + 點擊）",
+        "風格選擇改為卡片式（含圖示 + 描述）",
+        "新增進階設定（解析度、渲染強度、自訂 prompt）",
+        "渲染過程 7 階段動態提示",
+        "完成後 3 個 action 按鈕（下載/分享/重渲染）",
+        "gallery 動態累積新渲染結果"
+      ],
+      "files": ["app/designer/rendering/page.tsx"]
+    },
+    "backend": {
+      "existingSchema": {
+        "table": "無直接對應",
+        "service": "image-segmentation (port 8100)",
+        "note": "image-segmentation 用 SegFormer 做圖像分割，但不是 AI 渲染服務"
+      },
+      "gaps": [
+        "AI 渲染需要對接外部 API（Stable Diffusion / ControlNet / 第三方 SaaS）",
+        "需新建 rendering_jobs table：id, user_id, input_image_url (Azure Blob), output_image_url, style, room_type, resolution, strength, prompt, status, progress, created_at",
+        "需新建 rendering-service 或在 interaction-service 加 router",
+        "圖片存儲用 Azure Blob Storage"
+      ],
+      "integrationPlan": "方案 A（推薦）：用第三方 AI 渲染 API（如 Replicate/Stability AI），interaction-service 加 rendering router 做代理。方案 B：自建 GPU 服務跑 ControlNet。短期用方案 A，長期看用量決定。"
+    },
+    "roleAccess": {
+      "designer": "上傳、渲染、下載、分享給客戶",
+      "homeowner": "檢視設計師分享的渲染圖、回饋意見",
+      "crew": "不可存取",
+      "vendor": "不可存取"
+    },
+    "conflicts": "無衝突。全新功能。image-segmentation 是圖像分割（家具偵測），與 AI 渲染是不同用途，可並存。",
+    "viability": "可行。前端流程完整，後端需：(1) 選定 AI 渲染服務商 (2) 新建 rendering_jobs table (3) 建 API proxy。技術上最大挑戰是 AI 渲染服務的成本控制（每張約 $0.01-0.05 USD）。"
+  }
+]
