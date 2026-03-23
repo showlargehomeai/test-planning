@@ -23,6 +23,7 @@ const sections: { title: string; items: { name: string; href: string; icon: stri
     items: [
       { name: "訂單追蹤", href: "/supplier/orders", icon: "📦" },
       { name: "報價管理", href: "/supplier/quotes", icon: "💰" },
+      { name: "需求池", href: "/supplier/requirements", icon: "🏪" },
     ],
   },
 ];

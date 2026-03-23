@@ -26,6 +26,7 @@ const sections = [
       { name: "工程看板", href: "/designer/kanban", icon: "📋" },
       { name: "合約簽章", href: "/designer/contracts", icon: "📝" },
       { name: "RFQ 詢價", href: "/designer/rfq", icon: "📨" },
+      { name: "需求池", href: "/designer/rfq/requirements", icon: "📢" },
     ],
   },
   {

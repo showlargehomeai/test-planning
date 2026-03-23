@@ -37,6 +37,7 @@ const navGroups = [
       { name: "產品目錄", href: "/supplier/catalog" },
       { name: "訂單追蹤", href: "/supplier/orders" },
       { name: "報價管理", href: "/supplier/quotes" },
+      { name: "需求池", href: "/supplier/requirements" },
     ],
   },
   {
