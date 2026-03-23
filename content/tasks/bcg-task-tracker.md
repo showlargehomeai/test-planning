@@ -104,7 +104,7 @@
 ## 📋 待完成任務
 
 ### P2-13 爭議處理/仲裁
-**完成時間：** 2026-03-23 09:00  
+**完成時間：** 2026-03-23 13:10  
 **負責人：** backend-integrator cron job  
 **狀態：** ✅ 完成
 
@@ -116,10 +116,16 @@
 - ✅ 建立 `dispute_resolution_history` 表 — 解決歷史追蹤
 - ✅ 建立自動化觸發器與索引優化
 - ✅ 預建測試資料 (3 筆爭議案例)
+- ✅ 後端 API 模型定義 — 匹配現有資料庫結構
+- ✅ 後端 API 路由實作 — 完整 CRUD 操作
+- ✅ API 註冊到主應用程式 — 可正常訪問
+- ✅ 基礎功能測試 — 列表、詳情、狀態更新
 
 **檔案清單：**
 ```
 ~/largehomeai-repos/LargeHomeAI--interaction-service/create_dispute_system.sql
+~/largehomeai-repos/LargeHomeAI--interaction-service/app/models/disputes.py
+~/largehomeai-repos/LargeHomeAI--interaction-service/app/routers/disputes.py
 ```
 
 **功能特色：**
@@ -128,6 +134,8 @@
 - 證據上傳與驗證機制
 - 多方溝通協調平台
 - 自動狀態變更記錄
+- RESTful API 完整支援 (GET/POST/PUT 操作)
+- 統計與報表功能 (狀態分布、類型分析)
 
 ---
 

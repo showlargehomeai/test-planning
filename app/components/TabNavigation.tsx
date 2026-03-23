@@ -27,6 +27,7 @@ const navGroups = [
       { name: "智慧報價", href: "/designer/quotation" },
       { name: "建材資料庫", href: "/designer/materials" },
       { name: "工程看板", href: "/designer/kanban" },
+      { name: "RFQ 詢價", href: "/designer/rfq" },
     ],
   },
   {

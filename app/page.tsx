@@ -27,6 +27,7 @@ const sections = [
       { name: "智慧報價", href: "/designer/quotation", desc: "自動計算" },
       { name: "建材資料庫", href: "/designer/materials", desc: "搜尋比價" },
       { name: "工程看板", href: "/designer/kanban", desc: "施工進度" },
+      { name: "RFQ 詢價", href: "/designer/rfq", desc: "發包比價" },
       { name: "作品集", href: "/designer/portfolio", desc: "展示作品" },
       { name: "合約簽章", href: "/designer/contracts", desc: "電子合約" },
       { name: "諮詢預約", href: "/designer/booking", desc: "預約管理" },

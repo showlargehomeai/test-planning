@@ -25,6 +25,7 @@ const sections = [
       { name: "智慧報價", href: "/designer/quotation", icon: "💰" },
       { name: "工程看板", href: "/designer/kanban", icon: "📋" },
       { name: "合約簽章", href: "/designer/contracts", icon: "📝" },
+      { name: "RFQ 詢價", href: "/designer/rfq", icon: "📨" },
     ],
   },
   {

@@ -1,5 +1,19 @@
 [
   {
+    "id": "DEV-007",
+    "date": "2026-03-23",
+    "feature": "RFQ 詢價管理（設計師發包核心工具）",
+    "page": "/designer/rfq",
+    "status": "mock",
+    "what": "三步驟建立詢價單（專案+工項+供應商選擇）→ 發送 → 收報價 → 逐項比價表+總金額比較。欄位對齊後端 RfqRequirement/project_materials/quotes。",
+    "backend_table": "requirements + project_materials + quotes + quote_items + chat_rooms（全部已存在）",
+    "backend_api": "POST /api/v1/projects/{id}/materials, POST /api/v1/requirements, GET quotes 等（全部已存在）",
+    "backend_gap": "前端 materialType(material/with_labor/labor_only/to_discuss) 已對齊後端。比價表需聚合多份 quote 的 quote_items。前端的 vendor 選擇需串接 vendors API。",
+    "roles": "設計師建立發送 / 供應商收到詢價回報價 / 業主不可存取 / 工班收到詢價回報價",
+    "conflict": "無。全新頁面，使用既有後端 table",
+    "next_step": "串接 POST /api/v1/requirements 建立詢價 → 觸發通知給 vendor → vendor 在平台報價 → 前端拉取 quotes 做比價"
+  },
+  {
     "id": "DEV-006",
     "date": "2026-03-23",
     "feature": "專案追蹤新增專案",
