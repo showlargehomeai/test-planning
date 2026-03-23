@@ -255,8 +255,8 @@ export default function SupplierRequirementsPage() {
 
       {/* Header */}
       <div>
-        <h1 className="text-xl sm:text-2xl font-bold text-slate-900">🏪 需求池</h1>
-        <p className="text-sm text-slate-500 mt-1">瀏覽設計師發布的需求，主動聯繫搶單</p>
+        <h1 className="text-xl sm:text-2xl font-bold text-slate-900">🏪 工程需求池</h1>
+        <p className="text-sm text-slate-500 mt-1">瀏覽設計師發布的工程需求，主動搶單接案</p>
       </div>
 
       {/* Stats */}

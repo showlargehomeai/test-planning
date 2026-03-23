@@ -14,6 +14,12 @@ const sections = [
     ],
   },
   {
+    title: "接案",
+    items: [
+      { name: "需求池", href: "/contractor/requirements", icon: "🏪" },
+    ],
+  },
+  {
     title: "團隊與財務",
     items: [
       { name: "班底管理", href: "/contractor/team", icon: "👷" },

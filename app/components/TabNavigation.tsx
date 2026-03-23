@@ -47,6 +47,7 @@ const navGroups = [
       { name: "排程日曆", href: "/contractor/schedule" },
       { name: "施工紀錄", href: "/contractor/records" },
       { name: "班底管理", href: "/contractor/team" },
+      { name: "需求池", href: "/contractor/requirements" },
     ],
   },
   {
