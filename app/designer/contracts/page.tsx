@@ -139,6 +139,359 @@ function SignatureModal({ contract, onClose, onSign }: { contract: typeof mockCo
   );
 }
 
+/* ── 建立新合約 Modal ── */
+interface NewContractForm {
+  template: string;
+  client: string;
+  project: string;
+  total: string;
+  startDate: string;
+  endDate: string;
+  designFee: string;
+  constructionFee: string;
+  warrantyMonths: string;
+  paymentTerms: string;
+  notes: string;
+}
+
+const emptyForm: NewContractForm = {
+  template: "",
+  client: "",
+  project: "",
+  total: "",
+  startDate: "",
+  endDate: "",
+  designFee: "",
+  constructionFee: "",
+  warrantyMonths: "12",
+  paymentTerms: "3-3-3-1",
+  notes: "",
+};
+
+const paymentOptions = [
+  { value: "3-3-3-1", label: "30/30/30/10（簽約/開工/中期/驗收）" },
+  { value: "5-3-2", label: "50/30/20（簽約/中期/驗收）" },
+  { value: "4-3-3", label: "40/30/30（簽約/中期/驗收）" },
+  { value: "custom", label: "自訂付款方式" },
+];
+
+function NewContractModal({
+  templates,
+  onClose,
+  onCreate,
+  prefill,
+}: {
+  templates: typeof mockTemplates;
+  onClose: () => void;
+  onCreate: (form: NewContractForm) => void;
+  prefill?: Partial<NewContractForm>;
+}) {
+  const [form, setForm] = useState<NewContractForm>({ ...emptyForm, ...prefill });
+  const [step, setStep] = useState(1); // 1: 基本資訊, 2: 金額與付款, 3: 確認
+  const [errors, setErrors] = useState<Partial<Record<keyof NewContractForm, string>>>({});
+
+  const update = (field: keyof NewContractForm, value: string) => {
+    setForm(prev => ({ ...prev, [field]: value }));
+    setErrors(prev => ({ ...prev, [field]: undefined }));
+  };
+
+  const validateStep1 = () => {
+    const e: typeof errors = {};
+    if (!form.template) e.template = "請選擇合約範本";
+    if (!form.client.trim()) e.client = "請輸入客戶名稱";
+    if (!form.project.trim()) e.project = "請輸入專案名稱";
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  };
+
+  const validateStep2 = () => {
+    const e: typeof errors = {};
+    if (!form.total || Number(form.total) <= 0) e.total = "請輸入合約總金額";
+    if (!form.startDate) e.startDate = "請選擇預計開工日";
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  };
+
+  const handleNext = () => {
+    if (step === 1 && validateStep1()) setStep(2);
+    else if (step === 2 && validateStep2()) setStep(3);
+  };
+
+  const handleBack = () => setStep(s => Math.max(1, s - 1));
+
+  const selectedTemplate = templates.find(t => t.name === form.template);
+
+  // 自動計算總金額
+  const autoTotal = (Number(form.designFee) || 0) + (Number(form.constructionFee) || 0);
+  const displayTotal = form.total ? Number(form.total) : autoTotal;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={onClose}>
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+        {/* Header */}
+        <div className="p-5 border-b border-slate-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-bold text-slate-900">📝 建立新合約</h2>
+              <p className="text-sm text-slate-500 mt-0.5">步驟 {step} / 3</p>
+            </div>
+            <button onClick={onClose} className="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-400">✕</button>
+          </div>
+          {/* Progress bar */}
+          <div className="flex gap-1.5 mt-3">
+            {[1, 2, 3].map(s => (
+              <div key={s} className={clsx("h-1 flex-1 rounded-full transition-colors", s <= step ? "bg-indigo-500" : "bg-slate-200")} />
+            ))}
+          </div>
+        </div>
+
+        <div className="p-5 space-y-4">
+          {step === 1 && (
+            <>
+              <div className="text-sm font-semibold text-slate-700 mb-2">基本資訊</div>
+              {/* 合約範本 */}
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">合約範本 *</label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {templates.map(t => (
+                    <button
+                      key={t.id}
+                      onClick={() => update("template", t.name)}
+                      className={clsx(
+                        "text-left p-3 rounded-lg border-2 transition-all text-sm",
+                        form.template === t.name
+                          ? "border-indigo-500 bg-indigo-50"
+                          : "border-slate-200 hover:border-slate-300"
+                      )}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="font-medium text-slate-800">{t.name}</span>
+                        {t.popular && <span className="text-[10px] px-1.5 py-0.5 bg-amber-50 text-amber-600 rounded-full">熱門</span>}
+                      </div>
+                      <p className="text-xs text-slate-500 mt-0.5 line-clamp-1">{t.desc}</p>
+                    </button>
+                  ))}
+                </div>
+                {errors.template && <p className="text-xs text-red-500 mt-1">{errors.template}</p>}
+              </div>
+              {/* 客戶名稱 */}
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">客戶名稱 *</label>
+                <input
+                  value={form.client}
+                  onChange={e => update("client", e.target.value)}
+                  placeholder="例如：陳怡君"
+                  className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+                />
+                {errors.client && <p className="text-xs text-red-500 mt-1">{errors.client}</p>}
+              </div>
+              {/* 專案名稱 */}
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">專案名稱 *</label>
+                <input
+                  value={form.project}
+                  onChange={e => update("project", e.target.value)}
+                  placeholder="例如：大安區現代簡約宅"
+                  className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+                />
+                {errors.project && <p className="text-xs text-red-500 mt-1">{errors.project}</p>}
+              </div>
+            </>
+          )}
+
+          {step === 2 && (
+            <>
+              <div className="text-sm font-semibold text-slate-700 mb-2">金額與付款方式</div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1.5">設計費 (NT$)</label>
+                  <input
+                    type="number"
+                    value={form.designFee}
+                    onChange={e => {
+                      update("designFee", e.target.value);
+                      if (!form.total || form.total === String(autoTotal)) {
+                        const newTotal = (Number(e.target.value) || 0) + (Number(form.constructionFee) || 0);
+                        update("total", String(newTotal));
+                      }
+                    }}
+                    placeholder="0"
+                    className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1.5">施工費 (NT$)</label>
+                  <input
+                    type="number"
+                    value={form.constructionFee}
+                    onChange={e => {
+                      update("constructionFee", e.target.value);
+                      if (!form.total || form.total === String(autoTotal)) {
+                        const newTotal = (Number(form.designFee) || 0) + (Number(e.target.value) || 0);
+                        update("total", String(newTotal));
+                      }
+                    }}
+                    placeholder="0"
+                    className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">合約總金額 (NT$) *</label>
+                <input
+                  type="number"
+                  value={form.total}
+                  onChange={e => update("total", e.target.value)}
+                  placeholder="自動加總或手動輸入"
+                  className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none font-bold text-indigo-700"
+                />
+                {errors.total && <p className="text-xs text-red-500 mt-1">{errors.total}</p>}
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1.5">預計開工日 *</label>
+                  <input
+                    type="date"
+                    value={form.startDate}
+                    onChange={e => update("startDate", e.target.value)}
+                    className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+                  />
+                  {errors.startDate && <p className="text-xs text-red-500 mt-1">{errors.startDate}</p>}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1.5">預計完工日</label>
+                  <input
+                    type="date"
+                    value={form.endDate}
+                    onChange={e => update("endDate", e.target.value)}
+                    className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">付款方式</label>
+                <select
+                  value={form.paymentTerms}
+                  onChange={e => update("paymentTerms", e.target.value)}
+                  className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white"
+                >
+                  {paymentOptions.map(o => (
+                    <option key={o.value} value={o.value}>{o.label}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1.5">保固期（月）</label>
+                  <input
+                    type="number"
+                    value={form.warrantyMonths}
+                    onChange={e => update("warrantyMonths", e.target.value)}
+                    className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">備註</label>
+                <textarea
+                  value={form.notes}
+                  onChange={e => update("notes", e.target.value)}
+                  rows={2}
+                  placeholder="特殊條款或備註事項..."
+                  className="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none resize-none"
+                />
+              </div>
+            </>
+          )}
+
+          {step === 3 && (
+            <>
+              <div className="text-sm font-semibold text-slate-700 mb-2">確認合約資訊</div>
+              <div className="bg-slate-50 rounded-xl p-5 space-y-3 text-sm">
+                <div className="flex justify-between border-b border-slate-200 pb-2">
+                  <span className="text-slate-500">合約範本</span>
+                  <span className="font-medium text-slate-800">{form.template}</span>
+                </div>
+                <div className="flex justify-between border-b border-slate-200 pb-2">
+                  <span className="text-slate-500">客戶</span>
+                  <span className="font-medium text-slate-800">{form.client}</span>
+                </div>
+                <div className="flex justify-between border-b border-slate-200 pb-2">
+                  <span className="text-slate-500">專案</span>
+                  <span className="font-medium text-slate-800">{form.project}</span>
+                </div>
+                {form.designFee && (
+                  <div className="flex justify-between border-b border-slate-200 pb-2">
+                    <span className="text-slate-500">設計費</span>
+                    <span>NT$ {Number(form.designFee).toLocaleString()}</span>
+                  </div>
+                )}
+                {form.constructionFee && (
+                  <div className="flex justify-between border-b border-slate-200 pb-2">
+                    <span className="text-slate-500">施工費</span>
+                    <span>NT$ {Number(form.constructionFee).toLocaleString()}</span>
+                  </div>
+                )}
+                <div className="flex justify-between border-b border-slate-200 pb-2">
+                  <span className="text-slate-500">合約總金額</span>
+                  <span className="font-bold text-indigo-600 text-base">NT$ {displayTotal.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between border-b border-slate-200 pb-2">
+                  <span className="text-slate-500">工期</span>
+                  <span>{form.startDate || "—"} ～ {form.endDate || "—"}</span>
+                </div>
+                <div className="flex justify-between border-b border-slate-200 pb-2">
+                  <span className="text-slate-500">付款方式</span>
+                  <span>{paymentOptions.find(o => o.value === form.paymentTerms)?.label}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500">保固期</span>
+                  <span>{form.warrantyMonths} 個月</span>
+                </div>
+                {form.notes && (
+                  <div className="pt-2 border-t border-slate-200">
+                    <span className="text-slate-500">備註：</span>
+                    <p className="text-slate-700 mt-1">{form.notes}</p>
+                  </div>
+                )}
+              </div>
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-xs text-amber-800">
+                ⚠️ 確認建立後，合約將以「草稿」狀態保存。你可以在送出簽署前隨時編輯。
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="p-5 border-t border-slate-200 flex gap-3">
+          {step > 1 ? (
+            <button onClick={handleBack} className="px-4 py-2.5 rounded-lg border border-slate-300 text-sm font-medium text-slate-600 hover:bg-slate-50">
+              ← 上一步
+            </button>
+          ) : (
+            <button onClick={onClose} className="px-4 py-2.5 rounded-lg border border-slate-300 text-sm font-medium text-slate-600 hover:bg-slate-50">
+              取消
+            </button>
+          )}
+          <div className="flex-1" />
+          {step < 3 ? (
+            <button onClick={handleNext} className="px-6 py-2.5 rounded-lg bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition-colors">
+              下一步 →
+            </button>
+          ) : (
+            <button
+              onClick={() => onCreate(form)}
+              className="px-6 py-2.5 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 transition-colors"
+            >
+              ✅ 確認建立合約
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function ContractsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -151,8 +504,31 @@ function ContractsContent() {
   const [toast, setToast] = useState<string | null>(null);
   const [signingContract, setSigningContract] = useState<string | null>(null);
   const [contracts, setContracts] = useState(mockContracts);
+  const [showNewContract, setShowNewContract] = useState(false);
 
   const hasPreFill = fromQuote && fromClient && fromTotal;
+
+  const handleCreateContract = (form: NewContractForm) => {
+    const newId = `C-2026-${String(contracts.length + 1).padStart(3, "0")}`;
+    const newContract = {
+      id: newId,
+      template: form.template,
+      client: form.client,
+      project: form.project,
+      total: `NT$ ${Number(form.total).toLocaleString()}`,
+      status: "draft" as const,
+      signedDate: null,
+      signers: [
+        { name: form.client, signed: false },
+        { name: "設計師 張明哲", signed: false },
+      ],
+    };
+    setContracts(prev => [newContract, ...prev]);
+    setShowNewContract(false);
+    setTab("contracts");
+    setToast(`✅ 合約 ${newId} 已建立！`);
+    setTimeout(() => setToast(null), 3000);
+  };
 
   const handleSyncToFinance = (contractId: string) => {
     setToast("合約已同步至收支系統");
@@ -188,7 +564,17 @@ function ContractsContent() {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto space-y-6">
-      {/* Toast */}
+      {/* New Contract Modal */}
+      {showNewContract && (
+        <NewContractModal
+          templates={mockTemplates}
+          onClose={() => setShowNewContract(false)}
+          onCreate={handleCreateContract}
+          prefill={hasPreFill ? { client: fromClient, total: fromTotal, project: "" } : undefined}
+        />
+      )}
+
+      {/* Signature Modal */}
       {signingContract && (() => {
         const c = contracts.find(x => x.id === signingContract);
         return c ? <SignatureModal contract={c} onClose={() => setSigningContract(null)} onSign={handleSign} /> : null;
@@ -205,7 +591,7 @@ function ContractsContent() {
           <h1 className="text-xl sm:text-2xl font-bold text-slate-900">📝 合約範本庫與電子簽章</h1>
           <p className="text-sm text-slate-500 mt-1">管理合約範本、建立與追蹤電子簽章</p>
         </div>
-        <button onClick={() => { setToast("新合約表單已開啟"); setTimeout(() => setToast(null), 2000); }} className="px-4 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors min-h-[44px] shrink-0">
+        <button onClick={() => setShowNewContract(true)} className="px-4 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors min-h-[44px] shrink-0">
           + 建立新合約
         </button>
       </div>
@@ -233,7 +619,7 @@ function ContractsContent() {
                 </div>
               </div>
               <div className="flex gap-2 mt-3">
-                <button onClick={() => { setToast("合約已建立"); setTimeout(() => setToast(null), 2000); }} className="px-4 py-2 text-sm font-medium rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors">
+                <button onClick={() => setShowNewContract(true)} className="px-4 py-2 text-sm font-medium rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors">
                   確認建立合約
                 </button>
                 <button
@@ -264,7 +650,7 @@ function ContractsContent() {
         </div>
         <div className="bg-white rounded-xl border border-slate-200 p-4">
           <p className="text-xs text-slate-500">草稿中</p>
-          <p className="text-2xl font-bold text-slate-500">{mockContracts.filter((c) => c.status === "draft").length}</p>
+          <p className="text-2xl font-bold text-slate-500">{contracts.filter((c) => c.status === "draft").length}</p>
         </div>
       </div>
 
@@ -387,7 +773,7 @@ function ContractsContent() {
                 >
                   預覽
                 </button>
-                <button onClick={() => { setToast(`正在使用「${template.name}」範本建立合約`); setTimeout(() => setToast(null), 2000); }} className="flex-1 px-3 py-2 text-xs font-medium rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors min-h-[36px]">
+                <button onClick={() => { setShowNewContract(true); setTimeout(() => { /* template will be prefilled via modal */ }, 0); setTab("contracts"); }} className="flex-1 px-3 py-2 text-xs font-medium rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors min-h-[36px]">
                   使用範本
                 </button>
               </div>
