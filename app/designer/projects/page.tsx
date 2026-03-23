@@ -673,6 +673,13 @@ function KanbanTab({
 function GanttTab() {
   const [expandedProjects, setExpandedProjects] = useState<Set<string>>(new Set(["gp1", "gp2", "gp3"]));
   const [selectedTask, setSelectedTask] = useState<GanttTask | null>(null);
+  const [tasks, setTasks] = useState<Record<string, GanttTask[]>>(() => {
+    const map: Record<string, GanttTask[]> = {};
+    ganttProjects.forEach(gp => { map[gp.id] = [...gp.tasks]; });
+    return map;
+  });
+  const [dragInfo, setDragInfo] = useState<{ taskId: string; projectId: string; mode: "move" | "resize-end"; startX: number; origStart: number; origDuration: number } | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
 
   const toggleProject = (id: string) => {
     setExpandedProjects((prev) => {
@@ -697,15 +704,66 @@ function GanttTab() {
 
   const rows: GanttRow[] = [];
   ganttProjects.forEach((gp) => {
-    const span = getProjectSpan(gp.tasks);
+    const gpTasks = tasks[gp.id] || gp.tasks;
+    const span = getProjectSpan(gpTasks);
     rows.push({ type: "project", project: gp, span });
     if (expandedProjects.has(gp.id)) {
-      gp.tasks.forEach((t) => rows.push({ type: "task", task: t, projectId: gp.id }));
+      gpTasks.forEach((t) => rows.push({ type: "task", task: t, projectId: gp.id }));
     }
   });
 
+  // Drag handlers for task bars
+  const handleBarMouseDown = (e: React.MouseEvent, taskId: string, projectId: string, mode: "move" | "resize-end") => {
+    e.stopPropagation();
+    e.preventDefault();
+    const gpTasks = tasks[projectId] || [];
+    const task = gpTasks.find(t => t.id === taskId);
+    if (!task) return;
+    setDragInfo({ taskId, projectId, mode, startX: e.clientX, origStart: task.startWeek, origDuration: task.duration });
+  };
+
+  const handleBarMouseMove = (e: React.MouseEvent) => {
+    if (!dragInfo) return;
+    const timelineEl = e.currentTarget as HTMLElement;
+    const rect = timelineEl.getBoundingClientRect();
+    const pxPerWeek = rect.width / TOTAL_WEEKS;
+    const deltaWeeks = Math.round((e.clientX - dragInfo.startX) / pxPerWeek);
+    if (deltaWeeks === 0) return;
+
+    setTasks(prev => {
+      const gpTasks = [...(prev[dragInfo.projectId] || [])];
+      const idx = gpTasks.findIndex(t => t.id === dragInfo.taskId);
+      if (idx === -1) return prev;
+      const task = { ...gpTasks[idx] };
+
+      if (dragInfo.mode === "move") {
+        task.startWeek = Math.max(1, Math.min(TOTAL_WEEKS - task.duration + 1, dragInfo.origStart + deltaWeeks));
+      } else {
+        task.duration = Math.max(1, Math.min(TOTAL_WEEKS - task.startWeek + 1, dragInfo.origDuration + deltaWeeks));
+      }
+      gpTasks[idx] = task;
+      return { ...prev, [dragInfo.projectId]: gpTasks };
+    });
+  };
+
+  const handleBarMouseUp = () => {
+    if (dragInfo) {
+      const gpTasks = tasks[dragInfo.projectId] || [];
+      const task = gpTasks.find(t => t.id === dragInfo.taskId);
+      if (task && (task.startWeek !== dragInfo.origStart || task.duration !== dragInfo.origDuration)) {
+        setToast(`✅ ${task.name}：第${task.startWeek}週開始，${task.duration}週`);
+        setTimeout(() => setToast(null), 2000);
+      }
+    }
+    setDragInfo(null);
+  };
+
   return (
     <div className="space-y-4">
+      {/* Toast */}
+      {toast && (
+        <div className="fixed top-6 right-6 z-50 bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium">{toast}</div>
+      )}
       {/* Legend */}
       <div className="bg-white rounded-xl border border-slate-200 p-4">
         <p className="text-sm font-semibold text-slate-700 mb-2">工種圖例</p>
@@ -756,7 +814,12 @@ function GanttTab() {
 
           {/* Right Column — Timeline */}
           <div className="flex-1 overflow-x-auto">
-            <div className="min-w-[720px] relative">
+            <div
+              className={clsx("min-w-[720px] relative", dragInfo && "select-none")}
+              onMouseMove={handleBarMouseMove}
+              onMouseUp={handleBarMouseUp}
+              onMouseLeave={handleBarMouseUp}
+            >
               {/* Week Headers */}
               <div className="h-10 flex border-b border-slate-200">
                 {GANTT_WEEKS.map((w, i) => (
@@ -797,29 +860,36 @@ function GanttTab() {
                       </span>
                     </div>
                   ) : (
-                    // Task bar
+                    // Task bar — draggable
                     <div
                       className={clsx(
-                        "absolute top-1.5 h-7 rounded cursor-pointer transition-all overflow-hidden",
-                        selectedTask?.id === row.task.id ? "ring-2 ring-indigo-500 ring-offset-1" : "hover:brightness-110"
+                        "absolute top-1.5 h-7 rounded transition-all overflow-visible group",
+                        dragInfo?.taskId === row.task.id ? "ring-2 ring-indigo-500 ring-offset-1 z-20" : "hover:brightness-110 z-10",
+                        dragInfo ? "cursor-grabbing" : "cursor-grab"
                       )}
                       style={{
                         left: `${((row.task.startWeek - 1) / TOTAL_WEEKS) * 100}%`,
                         width: `${(row.task.duration / TOTAL_WEEKS) * 100}%`,
                       }}
-                      onClick={() => setSelectedTask(selectedTask?.id === row.task.id ? null : row.task)}
+                      onMouseDown={(e) => handleBarMouseDown(e, row.task.id, row.projectId, "move")}
+                      onClick={(e) => { if (!dragInfo) setSelectedTask(selectedTask?.id === row.task.id ? null : row.task); }}
                     >
                       {/* Light background */}
-                      <div className={clsx("absolute inset-0", categoryColorMap[row.task.category].bgLight)} />
+                      <div className={clsx("absolute inset-0 rounded", categoryColorMap[row.task.category].bgLight)} />
                       {/* Progress fill */}
                       <div
-                        className={clsx("absolute inset-y-0 left-0", categoryColorMap[row.task.category].bg)}
+                        className={clsx("absolute inset-y-0 left-0 rounded-l", categoryColorMap[row.task.category].bg)}
                         style={{ width: `${row.task.progress}%` }}
                       />
                       {/* Label */}
                       <span className="relative z-10 text-[10px] font-medium text-slate-800 px-1.5 leading-7 truncate block">
                         {row.task.name} {row.task.progress > 0 ? `${row.task.progress}%` : ""}
                       </span>
+                      {/* Right resize handle */}
+                      <div
+                        className="absolute right-0 top-0 bottom-0 w-2 cursor-ew-resize hover:bg-black/10 rounded-r opacity-0 group-hover:opacity-100 transition-opacity"
+                        onMouseDown={(e) => handleBarMouseDown(e, row.task.id, row.projectId, "resize-end")}
+                      />
                     </div>
                   )}
                 </div>
