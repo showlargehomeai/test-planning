@@ -56,6 +56,162 @@ const mockProducts: Product[] = [
   { id: 17, name: "防水漆 透明彈性", category: "paint", brand: "青葉", model: "QY-WP01", price: 2200, unit: "桶", stock: 150, minOrder: 3, specs: "5加侖 / 彈性防水 / 可塗刷於潮濕面 / 耐候10年", origin: "台灣", gradient: "from-blue-100 to-blue-300" },
 ];
 
+/* ── 新增產品 Modal ── */
+const productTypeOptions = [
+  { value: "tile", label: "磁磚", icon: "🧱" },
+  { value: "floor", label: "木地板", icon: "🪵" },
+  { value: "bathroom", label: "衛浴", icon: "🚿" },
+  { value: "hardware", label: "五金", icon: "🔩" },
+  { value: "paint", label: "油漆", icon: "🎨" },
+];
+
+const originOptions = ["台灣", "日本", "德國", "義大利", "奧地利", "中國", "其他"];
+const unitOptions = ["片", "坪", "台", "組", "個", "對", "支", "桶", "罐", "包", "箱"];
+
+function NewProductModal({ onClose, onCreate }: {
+  onClose: () => void;
+  onCreate: (p: Product) => void;
+}) {
+  const [name, setName] = useState("");
+  const [category, setCategory] = useState("");
+  const [brand, setBrand] = useState("");
+  const [model, setModel] = useState("");
+  const [price, setPrice] = useState("");
+  const [unit, setUnit] = useState("片");
+  const [stock, setStock] = useState("");
+  const [minOrder, setMinOrder] = useState("1");
+  const [specs, setSpecs] = useState("");
+  const [origin, setOrigin] = useState("台灣");
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validate = () => {
+    const e: Record<string, string> = {};
+    if (!name.trim()) e.name = "必填";
+    if (!category) e.category = "必填";
+    if (!brand.trim()) e.brand = "必填";
+    if (!price || Number(price) <= 0) e.price = "必填";
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  };
+
+  const gradients: Record<string, string> = {
+    tile: "from-slate-300 to-slate-500", floor: "from-amber-300 to-amber-500",
+    bathroom: "from-sky-200 to-blue-400", hardware: "from-slate-500 to-slate-700",
+    paint: "from-emerald-50 to-emerald-200",
+  };
+
+  const handleSubmit = () => {
+    if (!validate()) return;
+    onCreate({
+      id: Date.now(),
+      name, category, brand, model: model || "N/A",
+      price: Number(price), unit,
+      stock: Number(stock) || 0, minOrder: Number(minOrder) || 1,
+      specs: specs || "—", origin,
+      gradient: gradients[category] || "from-slate-300 to-slate-500",
+    });
+  };
+
+  const inputCls = "w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none";
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={onClose}>
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+        <div className="p-5 border-b border-slate-200 flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-bold text-slate-900">📦 新增產品</h2>
+            <p className="text-xs text-slate-500 mt-0.5">後端對應：product-service / products table</p>
+          </div>
+          <button onClick={onClose} className="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-400">✕</button>
+        </div>
+
+        <div className="p-5 space-y-4">
+          {/* 產品分類 */}
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1.5">產品分類 *</label>
+            <div className="grid grid-cols-5 gap-1.5">
+              {productTypeOptions.map(t => (
+                <button key={t.value} onClick={() => { setCategory(t.value); setErrors(e => ({ ...e, category: "" })); }} className={clsx(
+                  "py-2 rounded-lg text-xs font-medium border transition-all text-center",
+                  category === t.value ? "bg-emerald-50 border-emerald-300 text-emerald-700 ring-2 ring-emerald-200" : "border-slate-200 text-slate-500"
+                )}>
+                  <span className="block text-base">{t.icon}</span>{t.label}
+                </button>
+              ))}
+            </div>
+            {errors.category && <p className="text-xs text-red-500 mt-1">{errors.category}</p>}
+          </div>
+
+          {/* 產品名稱 */}
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1.5">產品名稱 *</label>
+            <input value={name} onChange={e => { setName(e.target.value); setErrors(er => ({ ...er, name: "" })); }} placeholder="例如：霧面拋光石英磚 60x60" className={inputCls} />
+            {errors.name && <p className="text-xs text-red-500 mt-1">{errors.name}</p>}
+          </div>
+
+          {/* 品牌 + 型號 */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">品牌 *</label>
+              <input value={brand} onChange={e => { setBrand(e.target.value); setErrors(er => ({ ...er, brand: "" })); }} placeholder="例如：冠軍磁磚" className={inputCls} />
+              {errors.brand && <p className="text-xs text-red-500 mt-1">{errors.brand}</p>}
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">型號</label>
+              <input value={model} onChange={e => setModel(e.target.value)} placeholder="例如：CG-6601" className={inputCls} />
+            </div>
+          </div>
+
+          {/* 價格 + 單位 + 產地 */}
+          <div className="grid grid-cols-3 gap-3">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">單價 (NT$) *</label>
+              <input type="number" value={price} onChange={e => { setPrice(e.target.value); setErrors(er => ({ ...er, price: "" })); }} placeholder="0" className={inputCls} />
+              {errors.price && <p className="text-xs text-red-500 mt-1">{errors.price}</p>}
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">單位</label>
+              <select value={unit} onChange={e => setUnit(e.target.value)} className={inputCls + " bg-white"}>
+                {unitOptions.map(u => <option key={u} value={u}>{u}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">產地</label>
+              <select value={origin} onChange={e => setOrigin(e.target.value)} className={inputCls + " bg-white"}>
+                {originOptions.map(o => <option key={o} value={o}>{o}</option>)}
+              </select>
+            </div>
+          </div>
+
+          {/* 庫存 + 最低訂量 */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">庫存數量</label>
+              <input type="number" value={stock} onChange={e => setStock(e.target.value)} placeholder="0" className={inputCls} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">最低訂量</label>
+              <input type="number" value={minOrder} onChange={e => setMinOrder(e.target.value)} placeholder="1" className={inputCls} />
+            </div>
+          </div>
+
+          {/* 規格說明 */}
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1.5">規格說明</label>
+            <textarea value={specs} onChange={e => setSpecs(e.target.value)} rows={2} placeholder="尺寸、材質、特色..." className={inputCls + " resize-none"} />
+          </div>
+        </div>
+
+        <div className="p-5 border-t border-slate-200 flex gap-3">
+          <button onClick={onClose} className="px-4 py-2.5 rounded-lg border border-slate-300 text-sm font-medium text-slate-600 hover:bg-slate-50">取消</button>
+          <div className="flex-1" />
+          <button onClick={handleSubmit} className="px-6 py-2.5 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 transition-colors">✅ 新增產品</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function CatalogPage() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [search, setSearch] = useState("");
@@ -64,13 +220,22 @@ export default function CatalogPage() {
   const [editingStock, setEditingStock] = useState<number | null>(null);
   const [editingPrice, setEditingPrice] = useState<number | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+  const [products, setProducts] = useState(mockProducts);
+  const [showNewProduct, setShowNewProduct] = useState(false);
 
   const showToast = (msg: string) => {
     setToast(msg);
     setTimeout(() => setToast(null), 2000);
   };
 
-  const filtered = mockProducts
+  const handleCreateProduct = (p: Product) => {
+    setProducts(prev => [p, ...prev]);
+    setShowNewProduct(false);
+    setActiveCategory(p.category);
+    showToast(`✅ 產品「${p.name}」已新增`);
+  };
+
+  const filtered = products
     .filter((p) => activeCategory === "all" || p.category === activeCategory)
     .filter((p) => !search || p.name.includes(search) || p.brand.includes(search) || p.model.includes(search))
     .sort((a, b) => {
@@ -81,10 +246,13 @@ export default function CatalogPage() {
     });
 
   const categoryCount = (key: string) =>
-    key === "all" ? mockProducts.length : mockProducts.filter((p) => p.category === key).length;
+    key === "all" ? products.length : products.filter((p) => p.category === key).length;
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto space-y-6">
+      {/* New Product Modal */}
+      {showNewProduct && <NewProductModal onClose={() => setShowNewProduct(false)} onCreate={handleCreateProduct} />}
+
       {/* Toast */}
       {toast && (
         <div className="fixed top-6 right-6 z-50 bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium">
@@ -95,9 +263,9 @@ export default function CatalogPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-slate-900">產品目錄</h1>
-          <p className="text-sm text-slate-500 mt-1">管理您的建材商品，共 {mockProducts.length} 項產品</p>
+          <p className="text-sm text-slate-500 mt-1">管理您的建材商品，共 {products.length} 項產品</p>
         </div>
-        <button onClick={() => showToast("新增產品表單已開啟")} className="px-4 py-2.5 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors shrink-0">
+        <button onClick={() => setShowNewProduct(true)} className="px-4 py-2.5 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors shrink-0">
           + 新增產品
         </button>
       </div>

@@ -1,5 +1,19 @@
 [
   {
+    "id": "DEV-005",
+    "date": "2026-03-23",
+    "feature": "產品目錄新增產品",
+    "page": "/supplier/catalog",
+    "status": "mock",
+    "what": "新增產品 Modal：分類(5種)/名稱/品牌/型號/單價/單位(11種)/產地(7國)/庫存/最低訂量/規格說明。建立後即時加入列表。",
+    "backend_table": "products + area_products/paint_products/kitchen_equipment/bathroom_equipment/decoration_products（已存在）",
+    "backend_api": "POST /api/v1/catalogs/upload（上傳型錄）、無獨立 create product endpoint",
+    "backend_gap": "後端產品建立綁定 catalog upload 流程（上傳型錄 PDF → 自動解析產品）。單獨新增產品需新建 API 或擴展現有 endpoint。",
+    "roles": "建材商可用 / 設計師唯讀瀏覽 / 業主×工班不可",
+    "conflict": "無。products table 已存在，欄位對齊（name/brand_id/vendor_id/sku/item_number/origin_country/status）",
+    "next_step": "新建 POST /api/v1/products endpoint → 前端改 fetch → brand_id 從 brands table 查詢"
+  },
+  {
     "id": "DEV-004",
     "date": "2026-03-23",
     "feature": "AI 渲染出圖",
