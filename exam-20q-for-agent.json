@@ -1,0 +1,294 @@
+[
+  {
+    "id": 1,
+    "service": "auth",
+    "question": "When a brand-new user logs in for the first time via Google, what external notifications are triggered after the user record is created, and what happens if those notifications fail?",
+    "source_files": [
+      "app/utils/auth.py",
+      "app/utils/power_automate.py",
+      "app/services/novu_client.py",
+      "app/main.py"
+    ],
+    "function_names": [
+      "get_or_create_user",
+      "trigger_new_user_registration",
+      "create_or_update_subscriber",
+      "verify_token"
+    ]
+  },
+  {
+    "id": 2,
+    "service": "auth",
+    "question": "The service supports multiple identity providers (Google, Facebook, LINE, local). How does the system handle a scenario where the same email address logs in first via Google and later via Facebook? Describe the database field-level changes.",
+    "source_files": [
+      "app/utils/auth.py",
+      "app/models/user.py"
+    ],
+    "function_names": [
+      "get_or_create_user",
+      "find_user_by_entra_sub",
+      "determine_provider_from_payload"
+    ]
+  },
+  {
+    "id": 3,
+    "service": "auth",
+    "question": "Describe the complete data flow when the /verify endpoint receives a valid JWT token that is NOT in the cache. Include all systems touched and the response format.",
+    "source_files": [
+      "app/main.py",
+      "app/utils/auth.py",
+      "app/utils/redis_cache.py",
+      "app/services/novu_client.py"
+    ],
+    "function_names": [
+      "verify_token",
+      "verify_entra_jwt",
+      "get_or_create_user",
+      "create_or_update_subscriber"
+    ]
+  },
+  {
+    "id": 4,
+    "service": "auth",
+    "question": "If you want to add a new updatable field 'address' to the user profile (both read and write), what are ALL the changes required across the codebase?",
+    "source_files": [
+      "app/models/user.py",
+      "app/models/user_schemas.py",
+      "app/api/user.py"
+    ],
+    "function_names": [
+      "update_user_profile"
+    ]
+  },
+  {
+    "id": 5,
+    "service": "auth",
+    "question": "The profile picture upload flow has two different paths: direct upload via POST /profile/picture and inline update via PUT /profile. How do they differ in terms of blob storage handling, and what cleanup strategy is used for old images?",
+    "source_files": [
+      "app/api/user.py",
+      "app/utils/blob_storage.py"
+    ],
+    "function_names": [
+      "upload_profile_picture",
+      "update_user_profile",
+      "upload_to_permanent",
+      "move_to_permanent",
+      "move_to_temp",
+      "cleanup_old_images"
+    ]
+  },
+  {
+    "id": 6,
+    "service": "auth",
+    "question": "How does the authentication dependency injection work for the user profile API endpoints, and how does it differ from the /verify endpoint's authentication mechanism?",
+    "source_files": [
+      "app/utils/dependencies.py",
+      "app/main.py",
+      "app/api/user.py",
+      "app/utils/auth.py"
+    ],
+    "function_names": [
+      "get_current_user",
+      "verify_token",
+      "verify_entra_jwt"
+    ]
+  },
+  {
+    "id": 7,
+    "service": "auth",
+    "question": "The LINE account linking endpoint exchanges an authorization code for user profile data. If a LINE account is already bound to a different user, what happens? Also, what database fields are affected when linking and unlinking?",
+    "source_files": [
+      "app/api/user.py",
+      "app/models/user.py",
+      "app/core/config.py"
+    ],
+    "function_names": [
+      "link_line",
+      "unlink_line",
+      "get_line_status"
+    ]
+  },
+  {
+    "id": 8,
+    "service": "auth",
+    "question": "The database module provides both async and sync session factories. Why do both exist, and how does the sync engine URL differ from the async one? What would break if you removed the sync session factory?",
+    "source_files": [
+      "app/core/database.py",
+      "app/core/config.py"
+    ],
+    "function_names": [
+      "get_session",
+      "get_db",
+      "create_tables",
+      "drop_tables"
+    ]
+  },
+  {
+    "id": 9,
+    "service": "auth",
+    "question": "The JWT cache uses Redis with a specific TTL and key hashing strategy. Describe the cache key generation, what data is stored, and how the system handles Redis being completely unavailable during token verification.",
+    "source_files": [
+      "app/utils/redis_cache.py",
+      "app/main.py",
+      "app/core/config.py"
+    ],
+    "function_names": [
+      "_get_cache_key",
+      "get",
+      "set",
+      "verify_token",
+      "health_check"
+    ]
+  },
+  {
+    "id": 10,
+    "service": "auth",
+    "question": "If you need to add a new role-based access control (e.g., only 'designer' role can access a new endpoint), what existing infrastructure can you reuse, and how does the role data flow from login to endpoint authorization?",
+    "source_files": [
+      "app/utils/dependencies.py",
+      "app/utils/auth.py",
+      "app/models/user.py",
+      "app/main.py"
+    ],
+    "function_names": [
+      "get_current_user",
+      "get_or_create_user",
+      "verify_token"
+    ]
+  },
+  {
+    "id": 11,
+    "service": "product",
+    "question": "When a vendor submits a new brand via the catalog submission review process and it gets approved, the system needs to determine which database table to insert the brand into. What are the three possible target tables, and what input value controls the routing?",
+    "source_files": [
+      "app/api/catalog_submission.py",
+      "app/models/database.py"
+    ],
+    "function_names": [
+      "_create_brand",
+      "approve_submission"
+    ]
+  },
+  {
+    "id": 12,
+    "service": "product",
+    "question": "The product search endpoint uses Redis caching. If a new product is created, how does the system ensure that stale search results are not served? Describe the invalidation mechanism.",
+    "source_files": [
+      "app/core/redis_client.py",
+      "app/api/products.py"
+    ],
+    "function_names": [
+      "invalidate_product_cache",
+      "build_search_cache_key",
+      "_get_cache_generation",
+      "create_product"
+    ]
+  },
+  {
+    "id": 13,
+    "service": "product",
+    "question": "When exporting a favorite collection to PDF, the system builds product categories (like '材料 - 石材 - 水磨石'). How does the export determine the category string, and why doesn't this require additional database queries beyond the main export query?",
+    "source_files": [
+      "app/api/favorites.py"
+    ],
+    "function_names": [
+      "_build_category_from_joined_data",
+      "export_materials_list"
+    ]
+  },
+  {
+    "id": 14,
+    "service": "product",
+    "question": "When updating a product's images, the system performs 'smart image management'. Describe what happens when the frontend removes one of the existing other_images and adds a new one in the same update request.",
+    "source_files": [
+      "app/api/products.py",
+      "app/utils/blob_storage.py"
+    ],
+    "function_names": [
+      "update_product",
+      "_extract_uuid_from_image_object",
+      "move_image_group_to_temp_for_cleanup",
+      "move_multi_size_images"
+    ]
+  },
+  {
+    "id": 15,
+    "service": "product",
+    "question": "The favorites feature limits private collections to a maximum of 3 per user. Where and how is this constraint enforced, and what concurrency-safe mechanism prevents race conditions when two requests try to create private collections simultaneously?",
+    "source_files": [
+      "app/api/favorites.py",
+      "app/models/favorites.py"
+    ],
+    "function_names": [
+      "create_collection",
+      "update_collection",
+      "add_item"
+    ]
+  },
+  {
+    "id": 16,
+    "service": "product",
+    "question": "When querying material products with price sorting (e.g., sort_by=price_m2), the system needs to merge results from two separate database queries (area_products and paint_products). How does it handle products with zero or very low prices during sorting?",
+    "source_files": [
+      "app/api/products.py"
+    ],
+    "function_names": [
+      "merge_sorted_product_lists",
+      "get_price_field_for_sort",
+      "query_products"
+    ]
+  },
+  {
+    "id": 17,
+    "service": "product",
+    "question": "The catalog upload endpoints use a three-phase pattern for database connection management. Describe the three phases and explain why the pattern is necessary for this particular operation.",
+    "source_files": [
+      "app/api/catalogs.py",
+      "app/core/database.py"
+    ],
+    "function_names": [
+      "upload_catalog",
+      "upload_equipment_catalog",
+      "upload_decoration_catalog"
+    ]
+  },
+  {
+    "id": 18,
+    "service": "product",
+    "question": "When a product is created or updated, the system queues a 'catalog hashtag update'. What triggers this queuing, what data structure is used, and how does the system determine which catalog type to queue?",
+    "source_files": [
+      "app/api/products.py"
+    ],
+    "function_names": [
+      "queue_catalog_hashtag_update",
+      "create_product",
+      "update_product",
+      "delete_product"
+    ]
+  },
+  {
+    "id": 19,
+    "service": "product",
+    "question": "The public catalog endpoint for vendors (GET /vendors/{vendor_id}/catalogs/public) can return catalogs with product thumbnails. Describe how the optimized batch query approach works and which tables from all three product domains (material, equipment, decoration) are involved.",
+    "source_files": [
+      "app/api/catalogs.py",
+      "app/models/database.py",
+      "app/models/product.py"
+    ],
+    "function_names": [
+      "_get_catalogs_with_products",
+      "get_vendor_catalogs_public"
+    ]
+  },
+  {
+    "id": 20,
+    "service": "product",
+    "question": "The 'related products' feature uses a circular navigation logic. If a user is viewing product ID 50 in a catalog that has products with IDs [10, 20, 30, 40, 50, 60, 70], and the limit is 5, which product IDs would be returned and in what order? What happens if there's no catalog_id?",
+    "source_files": [
+      "app/api/products.py"
+    ],
+    "function_names": [
+      "get_related_products_circular"
+    ]
+  }
+]

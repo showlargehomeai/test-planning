@@ -1,0 +1,138 @@
+{
+  "summary": {
+    "group_a": {"total_score": 196, "max_score": 200, "percentage": 98.0, "avg_per_question": 9.8},
+    "group_b": {"total_score": 194, "max_score": 200, "percentage": 97.0, "avg_per_question": 9.7}
+  },
+  "per_question": [
+    {
+      "id": 1,
+      "service": "auth",
+      "group_a": {"score": 10, "correctness": 6, "completeness": 3, "precision": 1, "notes": "All key points covered: both notifications identified, correct function names, non-blocking behavior, correct location (Power Automate in get_or_create_user, Novu in /verify). Extra detail about 202 response."},
+      "group_b": {"score": 10, "correctness": 6, "completeness": 3, "precision": 1, "notes": "All key points covered accurately. Same quality as Group A with correct function names, failure handling, and location of each notification."}
+    },
+    {
+      "id": 2,
+      "service": "auth",
+      "group_a": {"score": 10, "correctness": 6, "completeness": 3, "precision": 1, "notes": "Correctly describes email-based linking, IDP_FIELD_MAPPING, all field-level changes. Notes Facebook support may be commented out (extra observation). display_name preservation correct."},
+      "group_b": {"score": 10, "correctness": 6, "completeness": 3, "precision": 1, "notes": "Correctly covers cross-provider linking, IDP_FIELD_MAPPING with all 4 providers, field-level changes, display_name preservation. Mentions determine_provider_from_payload."}
+    },
+    {
+      "id": 3,
+      "service": "auth",
+      "group_a": {"score": 10, "correctness": 6, "completeness": 3, "precision": 1, "notes": "Complete 7-step flow with all systems touched. Correct JWKS URL, SHA256 key, 780s TTL, response headers. Lists all systems including Power Automate for new users."},
+      "group_b": {"score": 10, "correctness": 6, "completeness": 3, "precision": 1, "notes": "Complete flow covered with correct details. JWKS URL, cache key generation, TTL, response format all accurate. Systems touched correctly listed."}
+    },
+    {
+      "id": 4,
+      "service": "auth",
+      "group_a": {"score": 9, "correctness": 5, "completeness": 3, "precision": 1, "notes": "Correctly identifies model, schemas, and migration changes. However, claims GET /profile endpoint in user.py needs modification, contradicting ground truth which states 'No changes needed in app/api/user.py'."},
+      "group_b": {"score": 9, "correctness": 5, "completeness": 3, "precision": 1, "notes": "Same issue as Group A: correctly identifies core changes but also claims user.py GET endpoint needs modification. Ground truth explicitly says no user.py changes needed due to dynamic update pattern."}
+    },
+    {
+      "id": 5,
+      "service": "auth",
+      "group_a": {"score": 10, "correctness": 6, "completeness": 3, "precision": 1, "notes": "Thoroughly covers both paths. POST direct-to-permanent correct. PUT three scenarios (None, temp, permanent) all correct. Linus-style cleanup with move_to_temp and 24hr lifecycle accurate."},
+      "group_b": {"score": 10, "correctness": 6, "completeness": 3, "precision": 1, "notes": "Both paths accurately described. Three PUT scenarios covered. Cleanup strategy with move_to_temp and 24-hour lifecycle policy correct. Slightly more concise than Group A but equally complete."}
+    },
+    {
+      "id": 6,
+      "service": "auth",
+      "group_a": {"score": 10, "correctness": 6, "completeness": 3, "precision": 1, "notes": "Clear explanation of two-tier architecture. get_current_user() header extraction correct. /verify JWT validation flow correct. Architecture diagram (client→Nginx→/verify→headers→profile) matches ground truth."},
+      "group_b": {"score": 10, "correctness": 6, "completeness": 3, "precision": 1, "notes": "Same quality. Correctly differentiates header-based DI from direct JWT validation. Architecture explanation clear. Mentions role-based dependencies as additional infrastructure."}
+    },
+    {
+      "id": 7,
+      "service": "auth",
+      "group_a": {"score": 10, "correctness": 6, "completeness": 3, "precision": 1, "notes": "Complete coverage: OAuth flow, 409 conflict check, all four fields for linking/unlinking, LINE credentials from Settings. Extra detail about unique=True constraint and separate entra_sub_line field distinction."},
+      "group_b": {"score": 10, "correctness": 6, "completeness": 3, "precision": 1, "notes": "All key points covered: OAuth exchange, 409 conflict, four fields, unlinking sets all to None. Mentions unique constraint and LINE credential source."}
+    },
+    {
+      "id": 8,
+      "service": "auth",
+      "group_a": {"score": 8, "correctness": 5, "completeness": 2, "precision": 1, "notes": "Correctly identifies async/sync engines and URL difference. Mentions get_db() breakage. Missing: drop_tables() deletes data (not drops) because of shared DB, Base declarative_base shared between engines."},
+      "group_b": {"score": 8, "correctness": 5, "completeness": 2, "precision": 1, "notes": "Correctly covers async/sync engines, URL difference, 'for vendor API' comment. Missing same key details: drop_tables() behavior (DELETE not DROP), shared Base. Mentions Novu sync SDK as justification."}
+    },
+    {
+      "id": 9,
+      "service": "auth",
+      "group_a": {"score": 10, "correctness": 6, "completeness": 3, "precision": 1, "notes": "Comprehensive: SHA256 key generation, stored data fields, 780s TTL, Redis failure handling (try/except, fallthrough, reconnection), Azure Managed Redis (port 10000, RedisCluster, SSL), DEGRADED health status."},
+      "group_b": {"score": 9, "correctness": 6, "completeness": 2, "precision": 1, "notes": "Correct on key generation, stored data, TTL, failure handling. Missing: Azure Managed Redis (port 10000) RedisCluster with SSL detail, and DEGRADED health status on /health endpoint."}
+    },
+    {
+      "id": 10,
+      "service": "auth",
+      "group_a": {"score": 10, "correctness": 6, "completeness": 3, "precision": 1, "notes": "Complete role flow from login to endpoint. ARRAY(Text) storage, x-roles header, get_current_user() parsing, database-driven roles. Describes require_role() factory and pre-built dependencies."},
+      "group_b": {"score": 10, "correctness": 6, "completeness": 3, "precision": 1, "notes": "Same quality. Complete role data flow described. Mentions require_role() factory, ARRAY(Text) storage, header forwarding, parsing. Database-driven nature of roles covered."}
+    },
+    {
+      "id": 11,
+      "service": "product",
+      "group_a": {"score": 10, "correctness": 6, "completeness": 3, "precision": 1, "notes": "Three tables correctly identified with brand_type routing. Equipment brand_type conversion (kitchen/bathroom) accurate. Deduplication logic covered. Mentions ValueError for invalid types."},
+      "group_b": {"score": 10, "correctness": 6, "completeness": 3, "precision": 1, "notes": "Same quality. Three tables, routing logic, equipment brand_type conversion, deduplication all correct. Concise and accurate."}
+    },
+    {
+      "id": 12,
+      "service": "product",
+      "group_a": {"score": 10, "correctness": 6, "completeness": 3, "precision": 1, "notes": "Generation counter strategy fully explained. Key structure with generation embedding correct. Orphaned keys mechanism, detail cache deletion, TTLs (120s search, 300s detail) all accurate."},
+      "group_b": {"score": 10, "correctness": 6, "completeness": 3, "precision": 1, "notes": "Same quality. Terms it 'lazy invalidation'. Generation counter, key structure, orphaning mechanism, TTLs all correct. Mentions Redis failure handling as extra."}
+    },
+    {
+      "id": 13,
+      "service": "product",
+      "group_a": {"score": 10, "correctness": 6, "completeness": 3, "precision": 1, "notes": "Single query with LEFT JOINs to all 5 tables correct. _build_category_from_joined_data logic for all 5 types accurate. Shows actual query code. Category field mappings match ground truth."},
+      "group_b": {"score": 10, "correctness": 6, "completeness": 3, "precision": 1, "notes": "Same quality. LEFT JOINs, category construction for all 5 types, no additional queries. Mentions default '其他' fallback as extra detail."}
+    },
+    {
+      "id": 14,
+      "service": "product",
+      "group_a": {"score": 9, "correctness": 5.5, "completeness": 2.5, "precision": 1, "notes": "Covers UUID extraction, removed/new image identification, cleanup via move_image_group_to_temp_for_cleanup, move_multi_size_images, order preservation, flag_modified. Missing: imgproxy thumbnail generation and medium-URL fallback on thumbnail failure."},
+      "group_b": {"score": 9, "correctness": 5.5, "completeness": 2.5, "precision": 1, "notes": "Same coverage and same gaps as Group A. Missing imgproxy thumbnail generation detail and fallback mechanism. Otherwise thorough on the smart image management flow."}
+    },
+    {
+      "id": 15,
+      "service": "product",
+      "group_a": {"score": 10, "correctness": 6, "completeness": 3, "precision": 1, "notes": "Both create_collection and update_collection enforcement covered. with_for_update() mechanism well explained. Excludes current collection in update check. Mentions 20-item limit in add_item as ground truth does."},
+      "group_b": {"score": 9, "correctness": 6, "completeness": 2.5, "precision": 0.5, "notes": "create_collection and update_collection covered with with_for_update(). Race condition prevention well explained. Missing: the 20-item-per-collection limit pattern in add_item mentioned in ground truth."}
+    },
+    {
+      "id": 16,
+      "service": "product",
+      "group_a": {"score": 10, "correctness": 6, "completeness": 3, "precision": 1, "notes": "CASE WHEN priority logic correct. merge_sorted_product_lists O(n) merge described. Zero/low price handling (< 1 threshold) accurate. composite_score tiebreaker mentioned. Price field mapping extra."},
+      "group_b": {"score": 10, "correctness": 6, "completeness": 3, "precision": 1, "notes": "Same quality. CASE WHEN, priority logic, merge algorithm, composite_score tiebreaker all correct. Describes threshold < 1 and behavior for both ASC/DESC."}
+    },
+    {
+      "id": 17,
+      "service": "product",
+      "group_a": {"score": 10, "correctness": 6, "completeness": 3, "precision": 1, "notes": "Three phases clearly described with code. SessionLocal vs Depends(get_db) distinction explained. Pool exhaustion reasoning correct. File size limits (100MB/50MB) mentioned. Generator-based streaming."},
+      "group_b": {"score": 10, "correctness": 6, "completeness": 3, "precision": 1, "notes": "Three phases accurately described. Pool exhaustion reasoning correct. File size limits mentioned. Same quality as Group A."}
+    },
+    {
+      "id": 18,
+      "service": "product",
+      "group_a": {"score": 10, "correctness": 6, "completeness": 3, "precision": 1, "notes": "Three triggers (create/update/delete) identified. ON CONFLICT DO NOTHING dedup. catalog_type routing by product type correct. Shows detailed code for routing. External cron job mentioned."},
+      "group_b": {"score": 10, "correctness": 6, "completeness": 3, "precision": 1, "notes": "Same quality. All triggers, dedup mechanism, catalog_type routing, deletion handling (saves catalog info first), external cron job all covered accurately."}
+    },
+    {
+      "id": 19,
+      "service": "product",
+      "group_a": {"score": 10, "correctness": 6, "completeness": 3, "precision": 1, "notes": "SQL window functions with ROW_NUMBER explained. Material (6), equipment (kitchen 3 + bathroom 3), decoration (6) queries correct. All tables from three domains listed. defaultdict maps. 7 total queries."},
+      "group_b": {"score": 10, "correctness": 6, "completeness": 3, "precision": 1, "notes": "Same quality. Window functions, all three domain queries, table lists, defaultdict, query count all correct. Shows actual SQL for each domain."}
+    },
+    {
+      "id": 20,
+      "service": "product",
+      "group_a": {"score": 10, "correctness": 6, "completeness": 3, "precision": 1, "notes": "Circular logic correct: [60,70,10,20,30]. Two-layer fallback (catalog → subcategory → none) accurate. Subcategory field mapping per product type correct. source values correct."},
+      "group_b": {"score": 10, "correctness": 6, "completeness": 3, "precision": 1, "notes": "Same quality. Result [60,70,10,20,30] correct. Fallback layers described accurately. Subcategory mapping and source='none' for no matches covered."}
+    }
+  ],
+  "key_findings": [
+    "Both groups performed exceptionally well, scoring 98% (Group A: 196/200) and 97% (Group B: 194/200) respectively — a difference of only 2 points.",
+    "Group A's edge comes from: (1) Q9: mentioning Azure Managed Redis (port 10000, RedisCluster with SSL) and DEGRADED health status that Group B missed; (2) Q15: mentioning the 20-item-per-collection limit in add_item that Group B omitted.",
+    "Both groups lost points on Q4 (both incorrectly claimed user.py API needs GET endpoint changes when ground truth says no changes needed) and Q8 (both missed drop_tables() DELETE-not-DROP behavior and shared Base declarative_base).",
+    "Both groups missed imgproxy thumbnail generation and medium-URL fallback detail in Q14 (smart image management).",
+    "Both groups demonstrated deep knowledge of the codebase with accurate file paths, function names, and data flow descriptions across auth-service and product-service.",
+    "The answers are remarkably similar in quality — the 2-point gap is marginal and reflects minor completeness differences rather than any correctness issues.",
+    "Auth-service questions (Q1-Q10): Group A scored 97/100 vs Group B 96/100. Product-service questions (Q11-Q20): Group A scored 99/100 vs Group B 98/100.",
+    "Both groups excelled at: cross-provider linking logic, JWT cache mechanisms, cache invalidation strategies, three-phase DB patterns, and circular navigation algorithms."
+  ]
+}

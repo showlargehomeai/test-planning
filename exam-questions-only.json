@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "question": "在身份提供者（Identity Provider）到資料庫欄位的映射表中，LINE 登入對應的使用者資料表欄位名稱是什麼？"
+  },
+  {
+    "id": 2,
+    "question": "每位使用者最多可以建立幾個私人（非公開）的收藏集（favorite collection）？"
+  },
+  {
+    "id": 3,
+    "question": "AI 智能媒合引擎在計算工班推薦綜合分數時，「地理位置（location）」維度的評分權重佔多少百分比？"
+  },
+  {
+    "id": 4,
+    "question": "當使用者提交保固申請（warranty claim）時，系統自動產生的申請編號（claim_id）遵循什麼格式？請寫出具體的命名規則。"
+  },
+  {
+    "id": 5,
+    "question": "廠商（vendor）的統計摘要資料儲存在 Cosmos DB 的哪個 container 名稱中？"
+  }
+]

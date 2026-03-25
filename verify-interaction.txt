@@ -1,0 +1,129 @@
+========================================================
+Interaction Service Deep Scan - 交叉比對驗證報告
+生成時間: 2026-03-24 15:58 (Asia/Taipei)
+文件: ~/largehomeai-repos/docs/interaction-service-deep-scan.md
+代碼: ~/largehomeai-repos/LargeHomeAI--interaction-service/app/
+========================================================
+
+ERRORS:
+-------
+
+1. [md:Section 5.17] md 寫 warranty prefix 為 `/api/v1/warranty` 但 api/v1/__init__.py 實際註冊為 prefix="/warranties"
+   → v1 warranty 實際路徑: /api/v1/warranties/...
+   → routers/warranty.py 路徑: /api/v1/warranty/... (這個確實是 /warranty)
+   → 結論: 存在兩套 warranty 路由，md 只提到一個且 prefix 混淆
+
+2. [md:Section 1] md 未列出 app/api/rfq_chat.py（聚合 router），但 main.py 實際 import 的是此檔案
+   → rfq_chat.py 是聚合 router，include rfq_chat_rooms + rfq_chat_messages + rfq_chat_quotes + rfq_notifications_api
+   → md 把子模組列為獨立檔案但漏了聚合入口
+
+3. [md:Section 5.14] md 寫 material_inquiries_enhanced 在 `/api/v1` 路徑下
+   但 main.py 實際註冊為 prefix="/api/v2"
+   → 實際路徑: /api/v2/... 不是 /api/v1/...
+
+4. [md:Section 4.9] Warranty claim_id 格式不一致:
+   - warranty_models.py (ORM WarrantyClaim): 使用 `claim_number` 欄位，格式 "WC-YYYY-XXXXXX"
+   - routers/warranty.py (legacy JSON): 使用 `claim_id` 變數，格式 "WTY-YYYY-MM-XXX"
+   - api/v1/warranty.py: 用整數 claim_id (即 PK id)
+   → md 完全未提到這三種不同格式和命名的衝突
+
+5. [md:Section 4.9] md 寫 warranty_claims 只有一行 "Detailed warranty claim process..."
+   但實際 WarrantyClaim model 有 20+ 個欄位（issue_title, issue_description, issue_category, 
+   severity, affected_areas, issue_photos, priority, inspection_report, resolution_plan 等）
+   → md 對 warranty_claims 表結構完全省略
+
+6. [md:Section 4.9] md 寫 Warranty model 有 `contractor_id` 為 Integer，正確
+   但 md 漏了以下欄位: project_name, homeowner_name, contact_phone, contact_email, property_address (JSONB)
+
+7. [md:Section 5.18] md 列出 commission 為 "Other Routers" 但 commission router 並未在 main.py 註冊
+   → routers/commission.py 存在但完全未啟用
+
+8. [md:Section 4.10] md 寫 warranty_reminders 為獨立 section 但實際表結構完全省略
+   → warranty_models.py 有完整 WarrantyReminder class 但 md 只有一行描述
+
+MISSING (code 有但 md 沒提到):
+-------------------------------
+
+檔案層級:
+- app/api/rfq_chat.py — 聚合 router（main.py 實際 import 的入口）
+- app/models/schemas.py — Push Subscription + 其他 Pydantic schemas
+- app/models/gallery_schemas.py — Gallery Pydantic schemas
+- app/models/material_orders_schemas.py — Material Orders Pydantic schemas
+- app/models/review_old_backup.py — 舊版 review model 備份
+- app/models/warranty_old.py — 舊版 warranty model（JSON-based）
+- app/models/sop_models_old.py — 舊版 SOP model（含 sop_violations table）
+- app/services/__init__.py — Services package init
+
+Table 層級（code 有定義但 md 未詳列結構）:
+- beta_testers — Beta 測試者（models/beta_testing.py）
+- beta_transactions — Beta 交易紀錄
+- beta_milestones — Beta 里程碑
+- beta_feedback — Beta 回饋
+- commission_settings — 佣金設定（models/commission_models.py）
+- disputes — 糾紛主表（models/disputes.py，有完整 ORM）
+- arbitration_proceedings — 仲裁程序
+- dispute_evidence — 糾紛證據
+- dispute_communications — 糾紛溝通紀錄
+- dispute_resolution_history — 糾紛解決歷史
+- gallery_categories — 作品集分類（models/gallery_models.py）
+- project_galleries — 專案作品集
+- gallery_favorites — 作品集收藏
+- gallery_category_relations — 作品集分類關聯
+- gallery_views — 作品集瀏覽
+- gallery_likes — 作品集按讚
+- homeowner_reviews — 屋主評價（models/homeowner_reviews.py）
+- review_votes — 評價投票
+- review_reports — 評價檢舉
+- review_summaries — 評價摘要
+- location_index — 地理位置索引（models/location.py）
+- taiwan_locations — 台灣地區資料
+- material_inquiries — 建材詢價（models/material_inquiry.py，與 project_material_inquiries 不同）
+- inquiry_attachments — 詢價附件
+- auto_quote_rules — 自動報價規則
+
+重複/衝突路由（md 未提及）:
+- warranty: routers/warranty.py (/api/v1/warranty/) 和 api/v1/warranty.py (/api/v1/warranties/) 同時註冊
+- disputes: routers/disputes.py (/api/v1/disputes/) 和 api/v1/dispute_routes.py (/api/v1/disputes/) 同時註冊
+- payments: routers/payments.py (/api/v1/payments/) 和 api/v1/payments.py (/api/v1/payments/) 同時註冊
+- insurance: routers/insurance.py (/api/v1/insurance/) 和 api/v1/insurance.py (/api/v1/insurance/) 同時註冊
+- reviews: routers/reviews.py (/api/v1/reviews/) 和 api/v1/review.py (/api/v1/reviews/) 同時註冊
+
+OK: 驗證通過的 reference
+--------------------------
+
+✅ 檔案存在驗證: 78/81 個 md 提到的 .py 檔案確實存在（3 個漏列見 MISSING）
+✅ 依賴注入函數 (6/6): get_current_user, get_current_user_optional, get_current_user_record, 
+   require_designer_role, require_vendor_role, require_responder_role
+✅ RFQ 核心 Table (10/10): projects, project_zones, project_materials, requirements, 
+   requirement_responders, chat_rooms, chat_messages, quotes, quote_items, notifications
+✅ 參考 Table (5/5): users, designers, vendors, crews, products (+product_images)
+✅ 專案管理 Table (5/5): daily_reports, site_inspections, contracts, payment_milestones, project_material_inquiries
+✅ Push/Notification Table (2/2): push_subscriptions, notification_preferences
+✅ 物流 Table (2/2): material_orders, shipments
+✅ E-Signature Table (4/4): e_signature_sessions, e_signatures, e_signature_audit_logs, signature_templates
+✅ SOP Table (2/2): sop_templates, sop_checklists
+✅ Payment Table (1/1): payment_transactions
+✅ Warranty Table (3/3): warranties, warranty_claims, warranty_reminders
+✅ Insurance Table (3/3): insurance_policies, project_insurance, insurance_claims
+✅ RFQ Chat Helpers (6/6): get_or_create_chat_room, build_message_response, build_responder_info, 
+   resolve_room_access, get_room_or_403, write_through_material
+✅ RFQ Helpers (2/2): get_responder_display, get_responder_display_bulk
+✅ Notification Service (6/6): notify_vendor_contacted_requirement, notify_owner_sent_inquiry, 
+   notify_vendor_submitted_quote, notify_vendor_revised_quote, notify_owner_confirmed_quote, notify_new_chat_message
+✅ Service 檔案 (8/8): rfq_notification_service, novu_service, novu_service_simple, web_push_service, 
+   line_service, inquiry_notification, beta_testing_service, commission_service, insurance_service, location_service
+✅ 環境變數列表準確
+✅ Auth header 機制 (x-user-id, x-email, x-roles) 正確
+
+統計: 約 120 個 reference 驗證通過
+
+========================================================
+重點摘要
+========================================================
+
+主要問題集中在:
+1. Warranty 系統最混亂 — 3 種 claim ID 格式並存（WC-, WTY-, integer PK），md 完全未提及
+2. 5 個模組存在 routers/ 和 api/v1/ 重複路由，md 未說明哪個是主要的
+3. material_inquiries_enhanced 實際在 /api/v2 不是 /api/v1
+4. commission router 存在但未啟用，md 卻列為正常 router
+5. 大量 table（~25 個）在 code 中有完整 ORM 定義但 md 只有檔名沒有結構

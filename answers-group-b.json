@@ -1,0 +1,7 @@
+[
+  {"id": 1, "answer": "entra_sub_line"},
+  {"id": 2, "answer": "3"},
+  {"id": 3, "answer": "30%"},
+  {"id": 4, "answer": "WTY-{YYYY-MM}-{流水號3碼}，例如 WTY-2026-03-001。格式為 f\"WTY-{datetime.now().strftime('%Y-%m')}-{total_claims + 1:03d}\""},
+  {"id": 5, "answer": "vendor_summaries"}
+]

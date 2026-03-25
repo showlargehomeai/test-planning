@@ -1,0 +1,258 @@
+============================================================
+LargeHomeAI Frontend Deep Scan MD vs Code 交叉比對報告
+產出時間: 2026-03-24 16:01 (Asia/Taipei)
+============================================================
+
+來源文件: ~/largehomeai-repos/docs/frontend-deep-scan.md
+比對目標: ~/largehomeai-repos/LargeHomeAI--Frontend/app/
+
+============================================================
+一、頁面路徑 (Page Paths) 比對
+============================================================
+
+【MD 統計數字錯誤】
+- MD 寫 "Total pages (page.tsx): 99"
+- 實際: 100 個 page.tsx
+- 差異: 少算 1 頁
+
+【Code 有但 MD 漏掉的頁面】
+1. /search/area — 存在 app/search/area/page.tsx，MD 完全未提及
+
+【MD 寫了但 Code 沒有的頁面】
+（無 — 所有 MD 列出的頁面路徑在 code 中都存在）
+
+【MD 頁面路徑寫法正確性】
+- 全部頁面路徑與 code 目錄結構一致 ✅
+
+============================================================
+二、API Function 名稱比對
+============================================================
+
+【MD 統計數字問題】
+- MD 寫 "API files: 34" — lib/api/ 下確實有 34 個 .ts 檔案 ✅
+- 但 MD 漏掉了 app/lib/favorites-api.ts（不在 lib/api/ 目錄下，獨立檔案）
+- MD 漏掉了 lib/api/gallery.ts（根層級另一份 gallery API）
+- MD 漏掉了 app/api/ 下的 56 個 Next.js API Route 檔案（MD 僅簡略提及 "Frontend proxy"）
+
+【warranty.ts — MD 寫錯/漏掉的 function】
+1. MD 寫 getDashboardStats → Code 實際是 getWarrantyDashboardStats（函式名不同）
+2. Code 有 getClaimDetail → MD 漏掉此函式
+
+【insurance.ts — MD 結構描述不精確】
+1. MD 把所有 function 列為獨立 export，但 code 實際是分成 4 個 object：
+   - insurancePolicyApi（getPolicies, getPolicy, createPolicy, updatePolicy）
+   - projectInsuranceApi（getProjectInsurances, getProjectInsurance, createProjectInsurance, updateProjectInsurance, calculateInsurance, autoAttachInsurance）
+   - insuranceClaimApi（getClaims, createClaim, updateClaim）
+   - insuranceDashboardApi（getDashboardStats）
+2. MD 漏掉 getProjectInsurance（單筆查詢）和 updateProjectInsurance
+3. MD 寫 12 endpoints 但 code 實際有 14+ 方法（含 getProjectInsurance, updateProjectInsurance）
+
+【material-orders.ts — MD 結構描述不精確】
+- MD 列為獨立函式（listOrders, getOrder, createOrder...）
+- Code 實際是 materialOrdersApi 和 shipmentsApi 兩個 object
+- Code 額外有 getOrderShipments 方法（MD 漏掉）
+- Code 額外有 orderUtils object（MD 漏掉）
+
+【payments.ts — MD 結構描述不精確】
+- MD 列為獨立函式（getTransactions, getTransaction...）
+- Code 實際是 paymentApi object
+
+【disputes.ts — MD 漏掉的部分】
+- Code 有 disputeResolutionsAPI object（getResolution, createResolution, updateResolution）
+  MD 只在 function 列表提及但沒標示為獨立 API object
+- Code 有 disputeUtils object（MD 完全漏掉）
+
+【revenue.ts — MD 漏掉的 function】
+- Code 有多個 utility functions：formatCurrency, formatPercentage, getCommissionTypeLabel, 
+  getParticipantTypeLabel, calculateGrowthRate（MD 完全漏掉）
+
+【gallery.ts — MD 漏掉的部分】
+- Code 有 galleryUtils object 和 handleGalleryError function（MD 漏掉）
+
+【location-search.ts — MD 漏掉的部分】
+- Code 有 locationUtils object 和 handleLocationSearchError function（MD 漏掉）
+
+【rfq.ts — MD 漏掉的 utility functions】
+- Code 有 formatBudgetRange, formatDuration, formatArea, canBidOnRfq, getTimeToDeadline
+  （MD 完全漏掉）
+
+【articles.ts — MD 描述不完整】
+- MD 寫 "likeArticle, createArticle, updateArticle, getStats, getRelatedArticles"（5 個）
+- Code 實際是 ArticlesApi class，有 9 個 static methods：
+  getArticles, getArticleBySlug, getCategories, getPopularTags, likeArticle, 
+  getStats, getRelatedArticles, createArticle, updateArticle
+- MD 漏掉：getArticles, getArticleBySlug, getCategories, getPopularTags
+
+【site-inspections.ts — MD endpoint 路徑不一致】
+- MD 寫 endpoint 為 `/projects/{projectId}/inspections`（無 /api/v1 前綴）
+- 其他所有 API 都有 `/api/v1/` 前綴
+- Code 中確實沒有 /api/v1 前綴，所以 MD 的寫法是正確的，但格式不一致可能造成混淆
+
+【crew-simple.ts — MD 幾乎沒有描述】
+- MD 在 "Other Services" 提到 crew-simple.ts 但沒有列出任何 function
+
+【favorites-api.ts — MD 完全漏掉】
+- app/lib/favorites-api.ts 是獨立的 API 檔案
+- MD 只在 endpoints.ts 的 FAVORITES_ENDPOINTS 提及 favorites
+- 沒有列出 favorites-api.ts 的 function
+
+【lib/api/client.ts — MD 漏掉】
+- MD 沒有在 API file 列表提到 client.ts（API client 基礎設施）
+
+【lib/api/index.ts — MD 漏掉】
+- MD 沒有在 API file 列表提到 index.ts（統一匯出）
+
+【projects API — MD 描述不一致】
+- MD 說 /projects 頁面用 getProjects，但 code 中沒有 projects.ts API 檔案
+- getProjects 呼叫可能在 ProjectsContext 或 page 內直接實作
+- MD Section 6 也確認 ProjectsContext 的 API calls 是 TODO（使用 mock data）
+
+============================================================
+三、API Endpoint URL 比對
+============================================================
+
+【整體一致性】 — endpoint URL 路徑與 code 大致吻合 ✅
+
+【site-inspections.ts — 前綴不一致（已在上方提及）】
+- MD 寫 `/projects/{projectId}/inspections` 和 `/inspections/{inspectionId}`
+- 缺少 /api/v1 前綴（可能是 code 中確實如此，但與其他 API 格式不同）
+
+【warranty.ts — function name 與 endpoint mapping 差異】
+- MD 寫 getDashboardStats → `/api/v1/warranty-dashboard/stats`
+- Code 實際函式名是 getWarrantyDashboardStats（不是 getDashboardStats）
+
+============================================================
+四、Type 定義檔比對
+============================================================
+
+【MD 統計數字】
+- MD 寫 "Type definition files: 38"
+- 實際 app/types/ 下有 39 個 .ts 檔案
+- 差異: 少算 1 個
+
+【MD 只列出 14 個 "Core Type Files" 但漏掉 25 個】
+MD 列出的 14 個 type 檔案（全部存在 ✅）：
+  user.ts, api.ts, product.ts, project.ts, contracts.ts, payment.ts,
+  rfq.ts, crm.ts, dispute.ts, matching.ts, sop.ts, insurance.ts,
+  warranty.ts, material-orders.ts
+
+MD 漏掉的 25 個 type 檔案：
+  1. articles.ts
+  2. batch-inquiry.ts
+  3. beta.ts
+  4. beta-testing.ts
+  5. catalog.ts
+  6. compare.ts
+  7. crew.ts
+  8. crew-public.ts
+  9. daily-reports.ts
+  10. designer.ts
+  11. favorites.ts
+  12. gallery.ts
+  13. homeowner-dashboard.ts
+  14. index.ts
+  15. location-search.ts
+  16. material-inquiries.ts
+  17. onboarding.ts
+  18. preferences.ts
+  19. public-profile.ts
+  20. revenue.ts
+  21. reviews.ts
+  22. search.ts
+  23. site-inspections.ts
+  24. vendor-dashboard.ts
+  25. weekly-digest.ts
+
+【MD 漏掉的非 app/types/ 的 type 檔案】（code 中有額外 types.ts）
+  1. app/designer-profile/types.ts — designer profile 頁面專用型別
+  2. app/profile/types.ts — profile 頁面專用型別
+  3. app/work-crew-profile/types.ts — crew profile 頁面專用型別
+  4. app/vendor/[vendor_code]/types.ts — vendor 頁面專用型別
+
+============================================================
+五、Context 比對
+============================================================
+
+【MD 列出 5 個 Context — 全部正確 ✅】
+  AuthContext, FavoritesContext, OnboardingContext, ProjectsContext, SidebarFiltersContext
+  所有檔案都存在於 app/contexts/
+
+============================================================
+六、Next.js API Routes（app/api/）— MD 嚴重不足
+============================================================
+
+Code 有 56 個 API route 檔案，MD 僅在 "Other Services" 草草提及
+"articles.ts, crew-public.ts, crew-simple.ts → Frontend proxy to backend"
+
+MD 完全漏掉的 API routes（僅列重要的）：
+  - /api/auth/* (10+ routes: login, logout, signup, refresh, LINE callback 等)
+  - /api/gallery/* (5 routes: portfolios, filters, stats, test)
+  - /api/reviews/* (4 routes: list, stats, test)
+  - /api/crew-public/[code]/* (4 routes)
+  - /api/designer-public/[code]/* (2 routes)
+  - /api/proxy/* (5 routes: catalog, crew, designers)
+  - /api/profile-proxy/* (2 routes)
+  - /api/profile-service/[...path]/ (catch-all proxy)
+  - /api/stats/* (3 routes: products exports, vendor timeline)
+  - /api/decoration-brands/*, /api/equipment-brands/*
+  - /api/decoration/, /api/equipment/
+  - /api/catalog-upload/submit/
+  - /api/feedback/, /api/health/, /api/location-search/, /api/preview/, /api/revalidate/
+
+============================================================
+七、Components — 比對重點
+============================================================
+
+【MD 列出 10 個 Core Shared Components — 全部存在 ✅】
+  TopNav, MegaMenu, HomePageClient, ChatPanel, OnboardingModal,
+  BookingModal, ProductFormLayout, ProjectCard, CategoryPageClient, FeedbackForm
+
+============================================================
+八、其他發現
+============================================================
+
+1. 【lib/api/ 根層級重複】
+   - ~/LargeHomeAI--Frontend/lib/api/gallery.ts 存在（根層級 lib/）
+   - ~/LargeHomeAI--Frontend/app/lib/api/gallery.ts 也存在
+   - MD 未提及此重複
+
+2. 【crew API 三重重複 — MD 正確標記但描述不完整】
+   - crew.ts 和 crew-public.ts 都有 getPublicCrews, searchCrews 等重複 function
+   - crew-simple.ts 存在但 MD 沒列出其 function
+
+3. 【MD 說 getProjects 是 Designer 頁面的 API 呼叫】
+   - 但 code 中 /projects/page.tsx 可能直接從 ProjectsContext 取資料（TODO/mock）
+   - 沒有獨立的 projects.ts API 檔案
+
+4. 【provider 檔案未提及】
+   - app/providers/QueryProvider.tsx 存在但 MD 未提及
+
+============================================================
+總結
+============================================================
+
+■ 嚴重問題（會誤導開發者）：
+  1. Type 檔案只列 14/39 個，漏掉 25 個（64% 遺漏率）
+  2. Next.js API Routes（56 個）幾乎完全沒記錄
+  3. 多個 API function 結構描述不正確（object vs 獨立函式）
+  4. warranty getDashboardStats 名稱寫錯
+
+■ 中等問題：
+  5. /search/area 頁面漏掉（頁面計數 99→100）
+  6. insurance API 漏掉 2 個方法
+  7. articles API 漏掉 4 個方法
+  8. favorites-api.ts 完全漏掉
+  9. 多處 utility functions 未記錄
+
+■ 輕微問題：
+  10. Type 檔案數量 38→39 差 1
+  11. site-inspections endpoint 前綴格式不一致
+  12. lib/api/ 根層級重複檔案未提及
+
+■ MD 正確的部分：
+  - 頁面路徑幾乎全部正確（99/100）
+  - Context 架構完全正確
+  - Core Shared Components 全部正確
+  - 大部分 API function 名稱和 endpoint URL 正確
+  - Tech Debt 標記（beta 重複、crew 重複、mock pages）正確
+  - 權限矩陣整體描述合理

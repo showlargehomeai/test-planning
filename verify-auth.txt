@@ -1,0 +1,89 @@
+============================================================
+Auth Service Deep Scan 交叉驗證報告
+驗證時間: 2026-03-24T15:59+08:00
+MD 文件: ~/largehomeai-repos/docs/auth-service-deep-scan.md
+Code 目錄: ~/largehomeai-repos/LargeHomeAI--auth-service/app/
+============================================================
+
+ERRORS (MD 與 Code 不一致):
+------------------------------------------------------------
+
+1. [MD: Pydantic Schemas 段落]
+   MD 寫: LinkLineRequest 和 LineStatusResponse 在 app/models/user_schemas.py
+   Code 實際: 這兩個 schema 定義在 app/api/user.py 中（直接寫在 API 檔案裡）
+   user_schemas.py 只有: UserProfileResponse, UserProfileUpdateRequest, UserProfileUpdateResponse, ErrorResponse
+
+2. [MD: Environment Variables 表格]
+   MD 寫: POWER_AUTOMATE_WEBHOOK_URL（通用 webhook）存在
+   Code 實際: power_automate.py 只讀取 POWER_AUTOMATE_NEW_USER_WEBHOOK_URL，
+   沒有任何 code 使用 POWER_AUTOMATE_WEBHOOK_URL 這個 env var
+   （config.py 也沒有定義）
+
+3. [MD: Environment Variables 表格]
+   MD 寫: TEST_DATABASE_URL 是一個環境變數
+   Code 實際: config.py 中沒有定義 TEST_DATABASE_URL，
+   app/ 下所有 source code 均未讀取此變數
+   （可能僅在 tests/ 中使用，但 app/ 不認識它）
+
+MISSING (Code 有但 MD 沒提到):
+------------------------------------------------------------
+
+1. app/utils/auth.py: find_user_by_entra_sub(entra_sub, idp)
+   — 根據 entra_sub + IDP 查找用戶的輔助函數
+
+2. app/utils/auth.py: determine_provider_from_issuer(iss_claim)
+   — 從 JWT issuer claim 判斷身份提供者
+
+3. app/utils/auth.py: determine_provider_from_payload(entra_payload)
+   — 從 JWT payload 判斷身份提供者（優先用 idp claim，fallback 到 issuer）
+   — 這是 get_or_create_user 的核心判斷邏輯，MD 只簡略說「Determine IDP from JWT idp claim」
+
+4. app/utils/redis_cache.py: JWTCache.reset_metrics()
+   — 重置 cache metrics 的方法
+
+5. app/utils/redis_cache.py: CacheMetrics dataclass
+   — 定義 hits/misses/errors/hit_rate/total_requests 的資料結構
+
+6. app/core/database.py: drop_tables()
+   — 清空 users 資料的函數（用 DELETE FROM users）
+
+7. app/core/database.py: AsyncSessionFactory / SyncSessionFactory
+   — Session factory 物件名稱未在 MD 中明確提及
+
+8. app/core/config.py: BLOB_STORAGE_BASE_URL property
+   — 動態組合的 blob storage base URL
+
+9. app/core/config.py: BLOB_CONTAINER_TEMP_UPLOADS / BLOB_CONTAINER_USERS / BLOB_CONTAINER_VENDORS
+   — Container 名稱常數定義
+
+10. app/utils/blob_storage.py: 多個 module-level helper functions
+    — upload_temp_image(), move_blob_image(), cleanup_old_images(),
+      delete_blob_image(), get_blob_metadata(), ensure_blob_containers()
+    — 這些是 BlobStorageManager 方法的便捷包裝，方便 import
+
+OK: 90 個 reference 驗證通過
+------------------------------------------------------------
+驗證涵蓋範圍：
+  - Endpoints: 11/11 ✅ (health, metrics, verify, verify-optional, 7 user API)
+  - 函數名: 10/10 ✅ (verify_entra_jwt, get_or_create_user, get_current_user,
+    require_vendor_role, require_admin_role, require_role, get_session, get_db,
+    create_or_update_subscriber, trigger_new_user_registration)
+  - BlobStorageManager 方法: 9/9 ✅
+  - JWTCache 方法: 5/5 ✅ (get, set, delete, health_check, get_metrics)
+  - DB Table: 1/1 ✅ (users)
+  - DB 欄位: 20/20 ✅ (所有欄位名稱、類型、約束完全匹配)
+  - Env Vars: 21/23 ✅ (TEST_DATABASE_URL 和 POWER_AUTOMATE_WEBHOOK_URL 不在 code 中)
+  - IDP Mapping: 4/4 ✅ (google.com, facebook.com, https://access.line.me, local)
+  - Global Singletons: 4/4 ✅ (jwt_cache, novu_service, power_automate_client, blob_manager)
+  - Pydantic Schemas: 4/4 ✅ (in user_schemas.py: 4 個 class 正確)
+  - Constants: JWT_CACHE_TTL=780 ✅, max 10MB ✅, 2048x2048 ✅, formats ✅
+  - DB Pool: size=10, max_overflow=10, timeout=30, recycle=300, pre_ping=True ✅
+  - Cache Key 格式: jwt_cache:{sha256[:16]} ✅
+  - JWKS URL 格式: {TENANT_ID}.ciamlogin.com/{TENANT_ID}/discovery/v2.0/keys ✅
+  - Azure Redis port 10000 → RedisCluster ✅
+
+SUMMARY:
+  ERRORS: 3 個不一致
+  MISSING: 10 個 code 存在但 MD 未記錄
+  OK: 90 個 reference 驗證通過
+  整體準確率: 90/93 = 96.8%

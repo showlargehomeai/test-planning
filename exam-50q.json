@@ -1,0 +1,402 @@
+[
+  {
+    "id": 1,
+    "service": "auth",
+    "question": "When a brand-new user logs in for the first time via Google, what external notifications are triggered after the user record is created, and what happens if those notifications fail?",
+    "ground_truth": "Two external notifications are triggered: (1) A Power Automate webhook is called via trigger_new_user_registration() sending user_email, user_name, and login_provider to a configured webhook URL; (2) A Novu subscriber is created/updated via novu_service.create_or_update_subscriber() with the user's id, email, and display_name. Both are non-blocking — if Power Automate fails, a warning is logged but the user is still created successfully. If Novu sync fails, a warning is logged but it does not affect the login flow. The Power Automate call happens inside get_or_create_user(), while the Novu sync happens in the /verify endpoint after get_or_create_user() returns.",
+    "source_files": ["app/utils/auth.py", "app/utils/power_automate.py", "app/services/novu_client.py", "app/main.py"],
+    "function_names": ["get_or_create_user", "trigger_new_user_registration", "create_or_update_subscriber", "verify_token"]
+  },
+  {
+    "id": 2,
+    "service": "auth",
+    "question": "The service supports multiple identity providers (Google, Facebook, LINE, local). How does the system handle a scenario where the same email address logs in first via Google and later via Facebook? Describe the database field-level changes.",
+    "ground_truth": "The system uses email as the primary identifier for cross-provider linking. In get_or_create_user(), it first queries User by email. If found (e.g., previously created via Google with entra_sub_google set), it looks up the IDP_FIELD_MAPPING for the new provider ('facebook.com' → 'entra_sub_facebook') and sets that field with the new entra_sub value. It also updates last_login_provider to 'facebook.com', last_login_at and updated_at to current time. The display_name is only updated from JWT if it was previously empty (not user.display_name), preserving any user-customized name. The entra_sub_google field remains intact, so both providers are now linked to the same user record.",
+    "source_files": ["app/utils/auth.py", "app/models/user.py"],
+    "function_names": ["get_or_create_user", "find_user_by_entra_sub", "determine_provider_from_payload"]
+  },
+  {
+    "id": 3,
+    "service": "auth",
+    "question": "Describe the complete data flow when the /verify endpoint receives a valid JWT token that is NOT in the cache. Include all systems touched and the response format.",
+    "ground_truth": "Flow: (1) Token extracted from Authorization header or session cookie; (2) jwt_cache.get() checks Redis — cache miss; (3) verify_entra_jwt() fetches JWKS from Entra External ID endpoint (https://{TENANT_ID}.ciamlogin.com/{TENANT_ID}/discovery/v2.0/keys), finds matching public key by kid, and validates JWT with RS256 algorithm against configured audience and issuer; (4) get_or_create_user() queries PostgreSQL by email — creates or updates user record, potentially triggers Power Automate webhook for new users; (5) novu_service.create_or_update_subscriber() syncs user to Novu (non-blocking); (6) jwt_cache.set() stores user_data (user_id, email, display_name, roles, entra_sub, idp, cached_at) in Redis with 780-second TTL using SHA256-hashed token as key; (7) Returns Response('OK') with headers: x-user-id, x-email, x-roles (comma-separated). Systems touched: Redis, Entra External ID JWKS endpoint, PostgreSQL, Power Automate (new users only), Novu.",
+    "source_files": ["app/main.py", "app/utils/auth.py", "app/utils/redis_cache.py", "app/services/novu_client.py"],
+    "function_names": ["verify_token", "verify_entra_jwt", "get_or_create_user", "create_or_update_subscriber"]
+  },
+  {
+    "id": 4,
+    "service": "auth",
+    "question": "If you want to add a new updatable field 'address' to the user profile (both read and write), what are ALL the changes required across the codebase?",
+    "ground_truth": "Five changes are needed: (1) app/models/user.py — Add 'address = Column(Text)' to the User model class; (2) app/models/user_schemas.py — Add 'address: Optional[str]' to UserProfileResponse for reading; (3) app/models/user_schemas.py — Add 'address: Optional[str] = Field(None, ...)' to UserProfileUpdateRequest for writing; (4) Database migration — The actual PostgreSQL table needs an ALTER TABLE to add the column; (5) No changes needed in app/api/user.py because the update endpoint uses dynamic model_dump(exclude_unset=True) and setattr() to update any field present in the update schema that has a matching User model attribute — the pattern 'if hasattr(user, field): setattr(user, field, value)' auto-handles new fields.",
+    "source_files": ["app/models/user.py", "app/models/user_schemas.py", "app/api/user.py"],
+    "function_names": ["update_user_profile"]
+  },
+  {
+    "id": 5,
+    "service": "auth",
+    "question": "The profile picture upload flow has two different paths: direct upload via POST /profile/picture and inline update via PUT /profile. How do they differ in terms of blob storage handling, and what cleanup strategy is used for old images?",
+    "ground_truth": "POST /profile/picture uploads directly to permanent storage (users container) via blob_manager.upload_to_permanent(), bypassing temp storage entirely. It then updates the DB, and calls cleanup_old_images() on the old URL. PUT /profile handles three scenarios for profile_picture_url: (a) if new URL is None and old exists → calls cleanup_old_images() on old URL and sets DB to None; (b) if new URL contains 'temp-uploads/' → calls move_blob_image() to copy from temp-uploads to users container, then cleanup_old_images() on old URL; (c) if new URL differs from old but is already permanent → directly updates DB. The cleanup strategy is 'Linus-style': old permanent images are moved back to the temp-uploads container (via move_to_temp() which copies blob then deletes original), where Azure's 24-hour lifecycle policy auto-deletes them. This provides a safety window for recovery.",
+    "source_files": ["app/api/user.py", "app/utils/blob_storage.py"],
+    "function_names": ["upload_profile_picture", "update_user_profile", "upload_to_permanent", "move_to_permanent", "move_to_temp", "cleanup_old_images"]
+  },
+  {
+    "id": 6,
+    "service": "auth",
+    "question": "How does the authentication dependency injection work for the user profile API endpoints, and how does it differ from the /verify endpoint's authentication mechanism?",
+    "ground_truth": "The user profile API endpoints (GET/PUT /profile, POST/DELETE /profile/picture, LINE endpoints) use get_current_user() from dependencies.py, which extracts pre-validated user info from HTTP headers (x-user-id, x-email, x-roles) set by Nginx after it calls the /verify endpoint. It validates UUID format, parses comma-separated roles, and does basic email validation. The /verify endpoint itself has NO authentication dependency — it directly reads the raw JWT token from the Authorization header or session cookie, checks Redis cache, and if missed, performs full Entra JWT cryptographic validation (JWKS fetch, RS256 signature verification, audience/issuer checks) via verify_entra_jwt(). So the architecture is: client → Nginx → /verify (JWT validation) → sets headers → profile API endpoints (header-based auth). The profile endpoints never see the JWT token directly.",
+    "source_files": ["app/utils/dependencies.py", "app/main.py", "app/api/user.py", "app/utils/auth.py"],
+    "function_names": ["get_current_user", "verify_token", "verify_entra_jwt"]
+  },
+  {
+    "id": 7,
+    "service": "auth",
+    "question": "The LINE account linking endpoint exchanges an authorization code for user profile data. If a LINE account is already bound to a different user, what happens? Also, what database fields are affected when linking and unlinking?",
+    "ground_truth": "When linking: the endpoint exchanges the authorization code with LINE's OAuth2 token endpoint for an access_token, then fetches the LINE profile. Before writing, it checks if any User record already has the same line_user_id. If found and it belongs to a different user (str(existing_user.id) != current_user['user_id']), it raises HTTP 409 with '此 LINE 帳號已被其他使用者綁定'. On success, four fields are updated: line_user_id (LINE's userId), line_display_name (displayName), line_picture_url (pictureUrl), and line_linked_at (current UTC time). When unlinking: all four fields are set to None. The LINE credentials (LINE_LOGIN_CHANNEL_ID, LINE_LOGIN_CHANNEL_SECRET) come from the Settings class and are used for the OAuth token exchange.",
+    "source_files": ["app/api/user.py", "app/models/user.py", "app/core/config.py"],
+    "function_names": ["link_line", "unlink_line", "get_line_status"]
+  },
+  {
+    "id": 8,
+    "service": "auth",
+    "question": "The database module provides both async and sync session factories. Why do both exist, and how does the sync engine URL differ from the async one? What would break if you removed the sync session factory?",
+    "ground_truth": "The async engine uses 'postgresql+asyncpg://' and is used by all main application code (user profile endpoints, auth verification, get_or_create_user). The sync engine is created by replacing 'postgresql+asyncpg://' with 'postgresql://' in the DATABASE_URL string, and the sync session factory (SyncSessionFactory) is exposed via get_db() generator. The comment says it's 'for vendor API'. The sync session uses standard sqlalchemy Session while async uses AsyncSession. If removed, any code depending on get_db() or SyncSessionFactory would break. Additionally, the drop_tables() function is async and only deletes data from the users table (DELETE FROM users) rather than dropping tables, because the service uses a shared database. The Base declarative_base is shared between both engines for model definitions.",
+    "source_files": ["app/core/database.py", "app/core/config.py"],
+    "function_names": ["get_session", "get_db", "create_tables", "drop_tables"]
+  },
+  {
+    "id": 9,
+    "service": "auth",
+    "question": "The JWT cache uses Redis with a specific TTL and key hashing strategy. Describe the cache key generation, what data is stored, and how the system handles Redis being completely unavailable during token verification.",
+    "ground_truth": "Cache key: SHA256 hash of the raw token, truncated to 16 characters, prefixed with 'jwt_cache:' (e.g., 'jwt_cache:a1b2c3d4e5f67890'). Stored data is a JSON object with: user_id, email, display_name, roles (array), entra_sub, idp, and cached_at timestamp. TTL is 780 seconds (13 minutes) set via SETEX. When Redis is unavailable: (1) In /verify, the cache get is wrapped in try/except — failure logs a warning and falls through to full JWT validation; (2) After successful JWT validation, the cache set is also wrapped in try/except — failure logs a warning but the response is still returned; (3) The JWTCache._get_redis() method attempts reconnection on ping failure by rebuilding the client. For Azure Managed Redis (port 10000), it uses RedisCluster with SSL; otherwise standard redis.asyncio. The service returns DEGRADED status on /health when Redis is down but continues to function.",
+    "source_files": ["app/utils/redis_cache.py", "app/main.py", "app/core/config.py"],
+    "function_names": ["_get_cache_key", "get", "set", "verify_token", "health_check"]
+  },
+  {
+    "id": 10,
+    "service": "auth",
+    "question": "If you need to add a new role-based access control (e.g., only 'designer' role can access a new endpoint), what existing infrastructure can you reuse, and how does the role data flow from login to endpoint authorization?",
+    "ground_truth": "Role flow: (1) At login, get_or_create_user() sets roles=['user'] for new users from the User model default, stored in PostgreSQL as ARRAY(Text); (2) During /verify, roles are read from the user record and included in x-roles response header as comma-separated values, and cached in Redis user_data; (3) At endpoint level, get_current_user() in dependencies.py parses x-roles header back into a list. There's no built-in role-checking decorator — you would need to check 'designer' in current_user['roles'] manually or create a dependency. The roles can be updated via the admin or profile endpoints by modifying the user.roles array field. The IDP_FIELD_MAPPING and provider detection don't affect roles — roles are purely database-driven.",
+    "source_files": ["app/utils/dependencies.py", "app/utils/auth.py", "app/models/user.py", "app/main.py"],
+    "function_names": ["get_current_user", "get_or_create_user", "verify_token"]
+  },
+  {
+    "id": 11,
+    "service": "product",
+    "question": "When a vendor submits a new brand via the catalog submission review process and it gets approved, the system needs to determine which database table to insert the brand into. What are the three possible target tables, and what input value controls the routing?",
+    "ground_truth": "The _create_brand function in the catalog submission module routes based on brand_type: 'material' inserts into the brands table (Brand model), 'kitchen_equipment' or 'bathroom_equipment' inserts into the equipment_brands table (EquipmentBrand model, with brand_type set to 'kitchen' or 'bathroom'), and 'decoration' inserts into the decoration_brands table (DecorationBrand model). If the brand name already exists in the target table, it returns the existing brand's ID instead of creating a duplicate.",
+    "source_files": ["app/api/catalog_submission.py", "app/models/database.py"],
+    "function_names": ["_create_brand", "approve_submission"]
+  },
+  {
+    "id": 12,
+    "service": "product",
+    "question": "The product search endpoint uses Redis caching. If a new product is created, how does the system ensure that stale search results are not served? Describe the invalidation mechanism.",
+    "ground_truth": "When a product is created (or updated/deleted), the invalidate_product_cache function is called. It increments a generation counter key (products:cache:gen) in Redis. The build_search_cache_key function embeds the current generation value into every search cache key. After incrementing, all existing search cache keys reference the old generation and will never be matched again, effectively orphaning them. For product detail caches, the specific product's detail key is also explicitly deleted. The search cache TTL is 120 seconds and detail cache TTL is 300 seconds.",
+    "source_files": ["app/core/redis_client.py", "app/api/products.py"],
+    "function_names": ["invalidate_product_cache", "build_search_cache_key", "_get_cache_generation", "create_product"]
+  },
+  {
+    "id": 13,
+    "service": "product",
+    "question": "When exporting a favorite collection to PDF, the system builds product categories (like '材料 - 石材 - 水磨石'). How does the export determine the category string, and why doesn't this require additional database queries beyond the main export query?",
+    "ground_truth": "The export endpoint performs a single query with LEFT JOINs to all five product-type tables (AreaProduct, PaintProduct, KitchenEquipment, BathroomEquipment, DecorationProduct). The _build_category_from_joined_data function then checks which join produced a non-None result and constructs the category string from the pre-joined data. For area products it uses material_type/material_subtype, for paint it uses material_type/paint_type, for kitchen/bathroom equipment it uses equipment_category/equipment_subcategory, and for decoration it uses decoration_category/decoration_subcategory. Since all data comes from the JOIN, no additional queries are needed.",
+    "source_files": ["app/api/favorites.py"],
+    "function_names": ["_build_category_from_joined_data", "export_materials_list"]
+  },
+  {
+    "id": 14,
+    "service": "product",
+    "question": "When updating a product's images, the system performs 'smart image management'. Describe what happens when the frontend removes one of the existing other_images and adds a new one in the same update request.",
+    "ground_truth": "The update_product function extracts UUIDs from both current and new image sets using _extract_uuid_from_image_object. It computes removed_uuids (in current but not in new). For each removed UUID, it calls blob_client.move_image_group_to_temp_for_cleanup, which lists all blobs with that UUID prefix in the products container and moves them to temp-uploads for cleanup by Azure lifecycle policy. For the new image (identified by having a 'uuid' key in the dict), it calls blob_client.move_multi_size_images to move original and medium from temp-uploads to products container and generate a thumbnail via imgproxy. The final order preserves the frontend's array order. If thumbnail generation fails, the medium image URL is used as fallback.",
+    "source_files": ["app/api/products.py", "app/utils/blob_storage.py"],
+    "function_names": ["update_product", "_extract_uuid_from_image_object", "move_image_group_to_temp_for_cleanup", "move_multi_size_images"]
+  },
+  {
+    "id": 15,
+    "service": "product",
+    "question": "The favorites feature limits private collections to a maximum of 3 per user. Where and how is this constraint enforced, and what concurrency-safe mechanism prevents race conditions when two requests try to create private collections simultaneously?",
+    "ground_truth": "The constraint is enforced in both create_collection and update_collection endpoints in the favorites API. When creating a private collection, the code queries existing private collections using with_for_update() (SELECT FOR UPDATE), which acquires a row-level lock in PostgreSQL. This prevents concurrent requests from reading the same count simultaneously. If the count is >= 3, it raises HTTP 400. Similarly, when changing a public collection to private, it locks other private collections (excluding the current one) with with_for_update() before checking the limit. The same pattern applies to the 20-item-per-collection limit when adding items.",
+    "source_files": ["app/api/favorites.py", "app/models/favorites.py"],
+    "function_names": ["create_collection", "update_collection", "add_item"]
+  },
+  {
+    "id": 16,
+    "service": "product",
+    "question": "When querying material products with price sorting (e.g., sort_by=price_m2), the system needs to merge results from two separate database queries (area_products and paint_products). How does it handle products with zero or very low prices during sorting?",
+    "ground_truth": "The system uses a two-level sorting approach. At the database level, a CASE WHEN expression assigns priority=1 to products where the price field < 1, and priority=0 to normal-priced products. This pushes zero/low-price items to the end regardless of sort direction. The merge_sorted_product_lists function then performs an O(n) merge of the two pre-sorted lists, respecting both the priority and price values. For ascending sort, items with priority=0 come first sorted by price ascending; for descending, priority=0 items come first sorted by price descending. All zero-price items (priority=1) appear at the end. The composite_score is used as a tie-breaker.",
+    "source_files": ["app/api/products.py"],
+    "function_names": ["merge_sorted_product_lists", "get_price_field_for_sort", "query_products"]
+  },
+  {
+    "id": 17,
+    "service": "product",
+    "question": "The catalog upload endpoints use a three-phase pattern for database connection management. Describe the three phases and explain why the pattern is necessary for this particular operation.",
+    "ground_truth": "Phase 1 (Quick DB validation): Opens a SessionLocal connection, validates the brand exists and the vendor is authorized, extracts needed IDs (vendor_id, brand_id), then closes the DB connection immediately. Phase 2 (HTTP uploads): Performs Azure Blob Storage uploads (streaming PDF chunks and optional cover image) with NO database connection held, using generator-based chunk reading for memory efficiency. Phase 3 (Quick DB write): Opens a new SessionLocal connection, creates the Catalog/EquipmentCatalog/DecorationCatalog record with the blob URL, commits, and closes. This pattern is necessary because blob uploads can take significant time (files up to 100MB for material catalogs, 50MB for equipment/decoration), and holding a DB connection from the pool during slow HTTP operations would exhaust the connection pool under concurrent requests.",
+    "source_files": ["app/api/catalogs.py", "app/core/database.py"],
+    "function_names": ["upload_catalog", "upload_equipment_catalog", "upload_decoration_catalog"]
+  },
+  {
+    "id": 18,
+    "service": "product",
+    "question": "When a product is created or updated, the system queues a 'catalog hashtag update'. What triggers this queuing, what data structure is used, and how does the system determine which catalog type to queue?",
+    "ground_truth": "After creating or updating a product, the queue_catalog_hashtag_update function is called. It inserts a record into the catalog_hashtag_queue table with catalog_id and catalog_type, using ON CONFLICT DO NOTHING to avoid duplicates. The catalog type is determined by the product type: area_product and paint_product use the product's catalog_id with type 'material', kitchen_equipment and bathroom_equipment use equipment_catalog_id with type 'equipment', and decoration products use decoration_catalog_id with type 'decoration'. On product deletion, the code first saves the catalog info before deleting the product, then queues the update. This queue is processed by an external cron job (not in this service) that regenerates hashtags for the affected catalogs.",
+    "source_files": ["app/api/products.py"],
+    "function_names": ["queue_catalog_hashtag_update", "create_product", "update_product", "delete_product"]
+  },
+  {
+    "id": 19,
+    "service": "product",
+    "question": "The public catalog endpoint for vendors (GET /vendors/{vendor_id}/catalogs/public) can return catalogs with product thumbnails. Describe how the optimized batch query approach works and which tables from all three product domains (material, equipment, decoration) are involved.",
+    "ground_truth": "The _get_catalogs_with_products function uses SQL window functions (ROW_NUMBER OVER PARTITION BY catalog_id) via raw SQL text queries to efficiently fetch at most 6 product thumbnails per catalog in batch. For material catalogs, it queries the products table joined with product_images, area_products, and paint_products with a CTE limiting to 6 per catalog_id. For equipment catalogs, it runs two separate CTEs: one for kitchen_equipment (limit 3) and one for bathroom_equipment (limit 3), combining them to max 6 per catalog. For decoration catalogs, it queries decoration_products with a similar CTE. All results are stored in defaultdict(list) maps keyed by catalog_id, avoiding N+1 queries. The function queries Catalog, EquipmentCatalog, and DecorationCatalog tables for the vendor, then builds CatalogWithProducts responses with catalog_type set to 'material', 'equipment', or 'decoration'.",
+    "source_files": ["app/api/catalogs.py", "app/models/database.py", "app/models/product.py"],
+    "function_names": ["_get_catalogs_with_products", "get_vendor_catalogs_public"]
+  },
+  {
+    "id": 20,
+    "service": "product",
+    "question": "The 'related products' feature uses a circular navigation logic. If a user is viewing product ID 50 in a catalog that has products with IDs [10, 20, 30, 40, 50, 60, 70], and the limit is 5, which product IDs would be returned and in what order? What happens if there's no catalog_id?",
+    "ground_truth": "The get_related_products_circular function first queries products with ID > 50 (ascending): [60, 70] — that's 2 results. Since limit=5 and only 2 found, it needs 3 more. It then queries products with ID < 50 (ascending): [10, 20, 30]. The final result is [60, 70, 10, 20, 30] — first the 'after' products, then the 'before' products to wrap around. If there's no catalog_id but a subcategory exists, it falls back to the second layer: filtering by the same subcategory (material_subtype for area, paint_type for paint, equipment_subcategory for equipment, decoration_subcategory for decoration) across all catalogs, using the same circular logic. If neither catalog_id nor subcategory exists, it returns an empty list with source='none'.",
+    "source_files": ["app/api/products.py"],
+    "function_names": ["get_related_products_circular"]
+  },
+  {
+    "id": 21,
+    "service": "profile",
+    "question": "When a new vendor registers through the self-service endpoint, what external integrations are triggered besides the database insert, and what happens if those integrations fail?",
+    "ground_truth": "Two external integrations are triggered after vendor creation: (1) A Power Automate webhook notification is sent via PowerAutomateClient.trigger_vendor_application() with vendor details (company_name, contact_person, phone, address, email, tax_id, line_id). (2) If EA_API_KEY is configured, an Easy!Appointments provider is created via ea_client.create_provider() with a random password, and the returned provider ID is saved as vendor.ea_provider_id. Both integrations are wrapped in try/except blocks, so failures are logged as warnings but do NOT prevent vendor creation from succeeding. The vendor record is committed regardless of integration outcomes.",
+    "source_files": ["app/api/vendor.py", "app/utils/power_automate.py", "app/utils/easyappointments.py", "app/core/config.py"],
+    "function_names": ["create_my_vendor_profile", "trigger_vendor_application", "create_provider"]
+  },
+  {
+    "id": 22,
+    "service": "profile",
+    "question": "The Gallery API merges portfolios from two different profile types into a unified response. How does it handle the cover image extraction differently for each type, and what's the budget unit conversion applied?",
+    "ground_truth": "For designer portfolios, the cover image comes directly from DesignerPortfolio.cover_image_url field. For crew portfolios, there is no cover_image_url field, so it extracts the image from the JSONB 'images' array using cover_image_index: it checks if images[index] is a dict with 'url' key or a plain string. Both types fall back to a picsum.photos placeholder URL if no image is found. Budget conversion: both designer and crew portfolios store budget_min/budget_max in 萬 (ten-thousands), but the Gallery API multiplies them by 10000 to return values in 元 (NTD).",
+    "source_files": ["app/api/v1/gallery.py", "app/models/database.py"],
+    "function_names": ["get_gallery_portfolios"]
+  },
+  {
+    "id": 23,
+    "service": "profile",
+    "question": "The AI matching engine uses a weighted scoring system to recommend crews for RFQ projects. What are the five scoring dimensions and their weights, and which dimension queries an external database table (not the crews table) for historical data?",
+    "ground_truth": "The five dimensions and weights are: location (0.30), specialty (0.25), budget (0.20), availability (0.15), and history (0.10), totaling 1.0. The 'history' dimension queries the 'crew_performance_history' table via raw SQL to fetch total_projects_completed, average_rating, on_time_completion_rate, and customer_satisfaction_score. The location scoring uses a Haversine formula with hardcoded Taiwan city coordinates to calculate distances. Match results are saved to the 'ai_match_results' table, and old results for the same RFQ project are deleted before inserting new ones.",
+    "source_files": ["app/services/ai_matching_service.py", "app/api/v1/ai_matching.py"],
+    "function_names": ["find_matching_crews", "_calculate_crew_scores", "_calculate_history_score", "_save_match_results"]
+  },
+  {
+    "id": 24,
+    "service": "profile",
+    "question": "If a developer wants to add a new field 'rating_avg' to the public crew list API response, which files need modification, and what's the pattern used for authentication in crew endpoints?",
+    "ground_truth": "Files to modify: (1) app/models/database.py - add the column to the Crew model if it's a DB field, (2) app/models/schemas.py - add the field to CrewListItem and CrewResponse Pydantic schemas, (3) app/api/crews.py - update _build_crew_list_item() and _build_crew_response() helper functions to include the new field. Authentication pattern: all crew endpoints use get_current_user() which extracts user info from Nginx-forwarded headers (x-user-id, x-email, x-roles). There's no JWT validation in the service itself - auth is delegated to an upstream Nginx/gateway layer that sets these headers.",
+    "source_files": ["app/api/crews.py", "app/models/database.py", "app/models/schemas.py"],
+    "function_names": ["get_current_user", "_build_crew_list_item", "_build_crew_response"]
+  },
+  {
+    "id": 25,
+    "service": "profile",
+    "question": "The crew list endpoint supports filtering by service_area with automatic region expansion. How does this work for a query like service_area='北部地區', and what happens if the value is a direct city name instead?",
+    "ground_truth": "The list_crews endpoint in app/api/crews.py uses a REGION_TO_CITIES mapping dictionary. When service_area='北部地區', it looks up the region and gets the list ['台北市', '新北市', '桃園市', '基隆市', '新竹市', '新竹縣', '宜蘭縣']. It then builds OR filters using Crew.service_areas.contains([city]) for each city in the list. For '全台服務', the REGION_TO_CITIES value is None, meaning no filter is applied (matches all). If the value is a direct city name (not found in REGION_TO_CITIES), it falls through to the else branch and does a direct Crew.service_areas.contains([service_area]) filter.",
+    "source_files": ["app/api/crews.py"],
+    "function_names": ["list_crews"]
+  },
+  {
+    "id": 26,
+    "service": "profile",
+    "question": "When a designer deletes their vendor profile, what cleanup operations occur beyond the database deletion, and how does the role system get updated?",
+    "ground_truth": "When delete_my_vendor_profile is called: (1) If vendor.logo_url exists, it attempts to delete the logo from Azure Blob Storage via blob_client.delete_vendor_logo(). (2) If vendor.ea_provider_id exists and EA_API_KEY is configured, it deletes the Easy!Appointments provider via ea_client.delete_provider(). Both cleanup operations are wrapped in try/except so failures don't block deletion. (3) The vendor record is then deleted from the database. Role update: the docstring states 'The PostgreSQL trigger will automatically remove the vendor role from the user when the vendor record is deleted' - this is handled at the database level via a trigger, not in application code.",
+    "source_files": ["app/api/vendor.py", "app/utils/blob_storage.py", "app/utils/easyappointments.py"],
+    "function_names": ["delete_my_vendor_profile", "delete_vendor_logo", "delete_provider"]
+  },
+  {
+    "id": 27,
+    "service": "profile",
+    "question": "The SOP system has three database models forming a hierarchy. What are they, how do they relate to each other, and what mechanism is used to track individual step completion within a checklist?",
+    "ground_truth": "The three models are: (1) SOPTemplate - defines reusable SOP templates with a 'steps' JSONB column containing the checklist steps, linked to a specialty. (2) SOPChecklist - an execution instance tied to a project_id and optionally to a template_id and crew_id, with status tracking (pending/in_progress/completed/failed). (3) SOPViolation - violation records linked to a checklist_id with severity levels (low/medium/high/critical). Step completion is tracked via the SOPChecklist.completed_steps JSONB column (a dictionary keyed by step_id). The complete_sop_step endpoint updates this dict with completed_at timestamp, notes, photos, and crew_member info. When the first step is completed, it sets started_at and changes status to 'in_progress'.",
+    "source_files": ["app/models/sop.py", "app/routers/sop.py", "app/schemas/sop.py"],
+    "function_names": ["complete_sop_step", "create_sop_checklist", "create_sop_violation"]
+  },
+  {
+    "id": 28,
+    "service": "profile",
+    "question": "The designer portfolio detail endpoint resolves linked materials from a JSONB field. Describe the data flow: where is the material linkage stored, how are product details fetched, and what image resolution priority is used?",
+    "ground_truth": "The linkage is stored in DesignerPortfolio.linked_materials as a JSONB column containing an array of objects like [{product_id: 540, usage_area: '廚房'}]. The get_portfolio_detail endpoint extracts product_ids from this array, then batch-queries the Product and ProductImage tables using an outerjoin. It builds a product_map dict keyed by product_id with product name and image URL. For image resolution, it reads ProductImage.primary_image (a JSONB field) and prefers 'medium' size, falling back to 'original' if medium is unavailable. The final response merges product details with usage_area from the original linked_materials array. Materials are capped at 10 items during portfolio creation/update.",
+    "source_files": ["app/api/designers.py", "app/models/database.py"],
+    "function_names": ["get_portfolio_detail", "create_portfolio", "update_portfolio"]
+  },
+  {
+    "id": 29,
+    "service": "profile",
+    "question": "The CRM module tracks a BD (Business Development) pipeline. When an activity is added to a contact, what side effects occur on the contact record, and what role-based access control is enforced for viewing team performance metrics?",
+    "ground_truth": "When add_activity is called on a contact: (1) A CrmActivity record is created with the current user as bd_user_id. (2) The parent CrmContact.last_contact_at is updated to the current UTC time. (3) The CrmContact.updated_at is also set to current UTC time. Both updates happen in the same transaction before commit. For team BD performance (team_bd_performance endpoint), role-based access requires the user to have one of: 'admin', 'director', 'team_lead', or 'bd_manager' in their roles array. If none match, a 403 Forbidden error is raised. The endpoint queries BdPerformance table filtered by period_month and returns results ordered by revenue_closed descending.",
+    "source_files": ["app/api/crm.py", "app/models/database.py"],
+    "function_names": ["add_activity", "team_bd_performance", "my_bd_performance"]
+  },
+  {
+    "id": 30,
+    "service": "profile",
+    "question": "The Premium subscription system for designers has a subscribe endpoint. What pricing tiers exist, how is the expiration date calculated if a designer re-subscribes before their current plan expires, and where is the payment transaction recorded?",
+    "ground_truth": "Two pricing tiers: monthly (NT$3,000 = 300000 cents, 30 days) and yearly (NT$30,000 = 3000000 cents, 365 days). If a designer re-subscribes while still active (premium_expires_at > now), the new duration is added to the existing expiration date rather than starting from now, effectively extending the subscription. However, the endpoint also raises a 409 conflict if already an active subscriber, so this extension logic only applies if the 409 check is bypassed. A transaction ID is generated as 'PREM-{uuid_hex[:12]}'. The _record_premium_transaction function is called but currently contains only a pass statement - it's a placeholder noting that production should call the interaction-service payment_transactions API. The designer's is_premium, premium_expires_at, and premium_plan_type fields are updated directly on the Designer model.",
+    "source_files": ["app/api/premium.py", "app/models/database.py", "app/api/designers.py"],
+    "function_names": ["subscribe_premium", "get_premium_status", "cancel_premium", "_record_premium_transaction"]
+  },
+  {
+    "id": 31,
+    "service": "interaction",
+    "question": "When a vendor submits a quote in a chat room and the homeowner later confirms it, what downstream data operation synchronizes the confirmed quote items into the project's material list, and what fields get populated on the target record?",
+    "ground_truth": "The write_through_material() function in rfq_chat_helpers.py is called during confirm_quote() (rfq_chat_quotes.py). For each confirmed quote item, it either updates an existing RfqProjectMaterial record or creates a new one. It sets status='confirmed', quoted_price=item.subtotal, quantity, unit, quoted_responder_id, quoted_responder_name, quoted_responder_logo_url, material_type (mapped from item_type via _ITEM_TYPE_TO_MAT_TYPE), source_quote_item_id, and synchronizes thumbnail/image_url bidirectionally between the quote item and the project material.",
+    "source_files": ["app/api/rfq_chat_helpers.py", "app/api/rfq_chat_quotes.py", "app/models/rfq_models.py"],
+    "function_names": ["write_through_material", "confirm_quote", "confirm_quote_item"]
+  },
+  {
+    "id": 32,
+    "service": "interaction",
+    "question": "The notification system supports four delivery channels. When a new chat message is sent, trace the exact notification flow: which function triggers it, what channels are used, and how does the system decide whether to skip web push or LINE for a particular user?",
+    "ground_truth": "send_message() in rfq_chat_messages.py calls notify_new_chat_message() from rfq_notification_service.py, which calls _send_all(). _send_all() writes to RfqNotification table (in-app), triggers Novu workflow (email+bell), calls WebPushService.send_to_user() (browser push), and calls LineService.push_text() via get_line_user_id(). Web Push is skipped if: (1) VAPID keys are not configured (get_web_push_service returns None), (2) user has push_enabled=False in NotificationPreference, or (3) notification_type doesn't match user preferences (quote_notifications, etc.). LINE is skipped if the user has no line_user_id in the users table (get_line_user_id returns None).",
+    "source_files": ["app/api/rfq_chat_messages.py", "app/services/rfq_notification_service.py", "app/services/web_push_service.py", "app/services/line_service.py"],
+    "function_names": ["send_message", "notify_new_chat_message", "_send_all", "send_to_user", "get_line_user_id"]
+  },
+  {
+    "id": 33,
+    "service": "interaction",
+    "question": "The service has two different authentication/authorization dependency mechanisms used across its API endpoints. What are they, how do they extract user identity differently, and which endpoint groups use which mechanism?",
+    "ground_truth": "Mechanism 1: get_current_user() in utils/dependencies.py extracts user_id, email, and roles from Nginx-forwarded headers (x-user-id, x-email, x-roles). Used by RFQ chat, notifications, push subscriptions, file upload, and requirement pool endpoints. Mechanism 2: get_current_user_record() also in utils/dependencies.py, which calls get_current_user() then queries the User DB table to return a full User ORM object. Used by contracts, daily_reports, site_inspections, rfq_projects, rfq_requirements, and material endpoints. There's also a separate simplified core/auth.py module with CurrentUser class that returns a hardcoded demo user (user_id=1), but it's not used by the main API routes.",
+    "source_files": ["app/utils/dependencies.py", "app/core/auth.py", "app/api/contracts.py", "app/api/rfq_chat_messages.py"],
+    "function_names": ["get_current_user", "get_current_user_record", "require_responder_role", "require_vendor_role"]
+  },
+  {
+    "id": 34,
+    "service": "interaction",
+    "question": "When a payment transaction is created, the system automatically calculates platform commission. Trace the full commission calculation flow: how does it determine which commission type applies, and what are the three possible outcomes for the commission amount?",
+    "ground_truth": "In app/api/v1/payments.py create_transaction(), CommissionService.get_commission_type_from_transaction() is called first to infer the commission type based on: material_order_id presence → 'material_order', payee_type 'designer' → 'design_fee', payee_type 'crew' → 'construction', payee_type 'vendor' → 'material_order', description containing 'premium' → 'premium_subscription'. Then CommissionService.calculate_commission() queries CommissionSetting table for an active setting matching the service_type with valid effective dates. Three outcomes: (1) 'calculated' - normal percentage applied, (2) 'minimum' - commission below min_amount so min_amount is used, (3) 'maximum' - commission exceeds max_amount so max_amount is used. If no setting exists, returns 0 with 'no_setting'.",
+    "source_files": ["app/api/v1/payments.py", "app/services/commission_service.py", "app/models/commission_models.py"],
+    "function_names": ["create_transaction", "get_commission_type_from_transaction", "calculate_commission", "get_active_commission_setting"]
+  },
+  {
+    "id": 35,
+    "service": "interaction",
+    "question": "The enhanced material inquiry system (v2) integrates vendor trust scores from crew_reviews when creating inquiries. Describe the full auto-quote workflow: what triggers it, how is the auto-quote price calculated, and how does trust score affect the confidence level?",
+    "ground_truth": "In material_inquiries_enhanced.py create_inquiry(), a raw SQL query joins vendors → crews → crew_reviews to calculate avg rating (trust_score) and review_count. If auto_quote_enabled is True, try_auto_quote() runs as a background task. It queries AutoQuoteRule matching vendor_id, product_id, and quantity range. If a rule is found, it queries price_history for the latest base_price, then calls rule.calculate_price(base_price, quantity). Confidence mapping: trust_score >= 4.0 → 0.95, >= 3.5 → 0.85, >= 3.0 → 0.75, below 3.0 → 0.60. The inquiry status becomes 'auto_quoted' with auto_quote_price, auto_quote_confidence populated. Delivery estimate is 7 days if trust >= 4.0, else 10 days.",
+    "source_files": ["app/api/material_inquiries_enhanced.py", "app/models/material_inquiry.py"],
+    "function_names": ["create_inquiry", "try_auto_quote"]
+  },
+  {
+    "id": 36,
+    "service": "interaction",
+    "question": "The RFQ chat system uses a 'supersede' pattern for quote versioning. When a vendor revises a quote, what happens to previously confirmed items, how are they preserved across versions, and what prevents duplicate items in the new quote?",
+    "ground_truth": "In revise_quote() (rfq_chat_quotes.py), the original quote's status is set to 'superseded'. Already-confirmed items (item.confirmed=True) are collected into confirmed_items_to_carry and their names into confirmed_names set. A new RfqQuote is created. The confirmed items are moved to the new quote by updating their quote_id and resetting sort_order (starting from 0). Then for new items from body.items, each item.name is checked against confirmed_names - if the name exists in confirmed_names, it's skipped (defensive check against frontend sending duplicate confirmed items). New items also get previous_price auto-filled from orig_price_by_name dict, and image_url auto-filled from project_materials thumbnails via mat_thumbnail_by_name. The total amount includes both confirmed items' subtotals and new items' recalculated subtotals.",
+    "source_files": ["app/api/rfq_chat_quotes.py", "app/api/rfq_chat_helpers.py", "app/models/rfq_models.py"],
+    "function_names": ["revise_quote", "submit_quote", "remove_quote_item"]
+  },
+  {
+    "id": 37,
+    "service": "interaction",
+    "question": "The file upload endpoint supports multiple entity types but explicitly excludes one common entity. Which entity type is excluded from uploads, why, and what validation chain does the upload go through before reaching Azure Blob Storage?",
+    "ground_truth": "The 'materials' entity type is excluded from rfq_upload.py. The comment explains: materials thumbnails come from product_images (managed by product-service), not from rfq-uploads. Validation chain: (1) entity_type must be in ENTITY_ALLOWED_TYPES dict (requirements/projects/chat only), (2) ownership verification - projects checks RfqProject.owner_id, requirements checks RfqRequirement.owner_id, chat checks RfqChatRoom.owner_id or responder_id, (3) file size check against MAX_FILE_SIZE (50MB), (4) MIME type validation against ALLOWED_ALL_TYPES (images + PDF + video + CAD), with special handling for application/octet-stream falling back to extension whitelist (ALLOWED_CAD_EXTENSIONS: .dwg/.dxf), (5) upload via RfqBlobClient which uses temp-uploads → rfq-uploads two-stage pattern.",
+    "source_files": ["app/api/rfq_upload.py", "app/utils/blob_storage.py"],
+    "function_names": ["upload_rfq_file", "upload_file", "_upload_to_temp", "_move_to_rfq"]
+  },
+  {
+    "id": 38,
+    "service": "interaction",
+    "question": "When a homeowner creates a requirement with publish_type='direct' and specifies vendor_ids, what chain of database records and chat room interactions are created in a single transaction? How does the system ensure chat room uniqueness when multiple materials or requirements target the same vendor?",
+    "ground_truth": "In create_requirement() (rfq_requirements.py): (1) RfqRequirement is created and flushed. (2) For each vendor_id, a RfqRequirementResponder is created with is_designated=True. (3) For 'direct' publish_type, get_or_create_chat_room() (rfq_chat_helpers.py) is called per vendor - it queries for an existing active chat room matching (project_id, responder_id, owner_id, status='active'). If found, returns the existing room (same vendor+project+owner shares one room regardless of source_type). If not, creates a new RfqChatRoom with try/except IntegrityError for concurrent insert protection. (4) A system message is added to the chat room. (5) The RfqRequirementResponder's chat_room_id and contacted_at are updated. This ensures uniqueness: the same vendor-project-owner combination always maps to one active chat room, shared across materials and requirements.",
+    "source_files": ["app/api/rfq_requirements.py", "app/api/rfq_chat_helpers.py", "app/models/rfq_models.py"],
+    "function_names": ["create_requirement", "get_or_create_chat_room", "contact_requirement"]
+  },
+  {
+    "id": 39,
+    "service": "interaction",
+    "question": "The service uses two completely different database connection mechanisms. Identify them, explain why they coexist, and list which API modules use each approach.",
+    "ground_truth": "Mechanism 1: SQLAlchemy ORM via core/database.py - creates engine with connection pooling (pool_size=25, max_overflow=75, pool_pre_ping=True for Azure), SessionLocal sessionmaker, and get_db() dependency. Used by most API modules: contracts, daily_reports, rfq_*, material_inquiries, material_orders, e_signatures, push_subscription, notification_preferences, webhooks, all v1 routes, and all routers/. Mechanism 2: Raw psycopg2 via app/database.py (top-level) - simple get_db_connection() returning a raw psycopg2 connection. Used only by app/routers/articles.py for article CRUD. Additionally, app/api/test_db.py uses direct psycopg2 connections (inline, not via either module) for raw SQL test queries. The v1/dispute_routes.py and v1/sop_routes.py use raw SQL via sqlalchemy text() within the ORM session, a hybrid approach.",
+    "source_files": ["app/core/database.py", "app/database.py", "app/api/test_db.py", "app/api/v1/dispute_routes.py"],
+    "function_names": ["get_db", "get_db_connection"]
+  },
+  {
+    "id": 40,
+    "service": "interaction",
+    "question": "When a daily report is submitted and later approved, what status constraints are enforced at each stage, and what fields are automatically populated by the system (not the user) during each operation?",
+    "ground_truth": "During creation (create_daily_report): submitted_by is automatically set to the current user's ID from get_current_user_record(). The DailyReport model defaults status to 'draft', and created_at/updated_at are set via server_default=func.now(). During update (update_daily_report): the system enforces that report.status must equal 'draft' — if not, it raises HTTP 400 '僅草稿狀態可編輯'. The updated_at field is automatically set to func.now(). During approval (approve_daily_report): the system checks if status is already 'approved' and raises HTTP 400 '日報已核准' if so. Upon approval, status is set to 'approved', approved_by is automatically set to the approving user's ID, and both approved_at and updated_at are set to func.now(). The approver does not need to be the same person who submitted the report — there's no ownership check.",
+    "source_files": ["app/api/daily_reports.py", "app/models/project_mgmt_models.py", "app/utils/dependencies.py"],
+    "function_names": ["create_daily_report", "update_daily_report", "approve_daily_report", "get_current_user_record"]
+  },
+  {
+    "id": 41,
+    "service": "analytics",
+    "question": "When a vendor's summary stats are updated via the upsert method used by the cronjob, what happens to the cached data for that vendor, and which layers are involved in this invalidation flow?",
+    "ground_truth": "When upsert_vendor_summary is called, it writes the new summary to the Cosmos DB 'vendor_summaries' container, then calls self.cache.delete(vendor_id) to invalidate the Redis cache entry with key 'analytics:vendor_summary:{vendor_id}'. This ensures the next get_vendor_stats call will bypass the stale cache and read fresh data from Cosmos DB, then re-populate Redis. The layers involved are: StatsService (orchestration), Cosmos DB container 'vendor_summaries' (persistence), and AnalyticsCache/Redis (cache invalidation).",
+    "source_files": ["app/services/stats_service.py", "app/core/redis_cache.py"],
+    "function_names": ["upsert_vendor_summary", "delete", "get_vendor_stats"]
+  },
+  {
+    "id": 42,
+    "service": "analytics",
+    "question": "The service supports two distinct entity types with separate caching strategies. How are their cache namespaces differentiated, and what is the implication if you accidentally used the wrong cache instance when adding a new entity type?",
+    "ground_truth": "Two global AnalyticsCache instances exist: analytics_cache with prefix 'analytics:vendor_summary:' and designer_analytics_cache with prefix 'analytics:designer_summary:'. StatsService assigns self.cache = analytics_cache and self.designer_cache = designer_analytics_cache. If you used the wrong cache instance (e.g., vendor cache for designer data), cache keys would collide when vendor_id and designer_id share the same integer value, causing one entity to return another's cached stats data.",
+    "source_files": ["app/core/redis_cache.py", "app/services/stats_service.py"],
+    "function_names": ["__init__", "_get_cache_key", "get_vendor_stats", "get_designer_stats"]
+  },
+  {
+    "id": 43,
+    "service": "analytics",
+    "question": "The vendor stats response includes a 'favorites' field in total stats but NOT in last_30_days stats. If a developer wants to add favorites to the last 30 days view as well, which schema definitions and service logic would need to change?",
+    "ground_truth": "The developer would need to: (1) Add a 'favorites: int = 0' field to the StatsDetailLast30d schema in stats_schemas.py, (2) Ensure the Cosmos DB 'vendor_summaries' document's 'last_30d' object includes a favorites count (updated by the cronjob via upsert_vendor_summary), and (3) The _get_default_stats method in stats_service.py would need 'favorites' added to the last_30_days defaults. The API endpoint itself doesn't need changes since it passes through whatever the service returns.",
+    "source_files": ["app/models/stats_schemas.py", "app/services/stats_service.py"],
+    "function_names": ["_get_default_stats", "upsert_vendor_summary"]
+  },
+  {
+    "id": 44,
+    "service": "analytics",
+    "question": "When the Redis connection is on Azure Managed Redis, the system uses a different client class than standard Redis. How does the code detect this, and what specific connection parameters differ between the two modes?",
+    "ground_truth": "The detection is done by checking if ':10000' appears in the Redis URL string. If detected, it uses RedisCluster from redis.asyncio.cluster with explicit host/port/password parsed from the URL, plus ssl=True, ssl_cert_reqs='none', ssl_check_hostname=False. For standard Redis, it uses aredis.from_url() which takes the full URL directly. Both modes share socket_timeout=10 and socket_connect_timeout=10. The cluster mode also sets decode_responses=False explicitly.",
+    "source_files": ["app/core/redis_cache.py"],
+    "function_names": ["_get_redis"]
+  },
+  {
+    "id": 45,
+    "service": "analytics",
+    "question": "The product export stats endpoint accepts product IDs differently from other endpoints. Describe the input format, validation rules, and how the query to the data store is constructed. What SQL injection-like risk exists in the current implementation?",
+    "ground_truth": "Product IDs are passed as a comma-separated string query parameter (e.g., '1,2,3'), parsed via split(',') and converted to int. Validation limits to max 100 IDs and checks for empty list. The Cosmos DB query builds an IN clause using f-string interpolation: f\"SELECT ... WHERE c.id IN ({id_list})\" where id_list is constructed by joining string-quoted IDs. Although the int() conversion provides some protection, the query construction uses string formatting rather than parameterized queries (unlike the timeline queries which use @parameters), and it also uses enable_cross_partition_query=True instead of a partition key.",
+    "source_files": ["app/api/stats.py", "app/services/stats_service.py"],
+    "function_names": ["get_product_export_stats"]
+  },
+  {
+    "id": 46,
+    "service": "analytics",
+    "question": "The timeline endpoint normalizes the 'days' query parameter. If a client requests days=15, what value will actually be used, and how does the timeline builder handle dates that have no recorded data?",
+    "ground_truth": "The days parameter is normalized to either 7 or 30: if days <= 7 it becomes 7, otherwise it becomes 30. So days=15 becomes 30. The _build_timeline method iterates from (today - days) to today, and for each date checks items_dict.get(date_str, {}). Missing dates get zero values for all metrics (profile_views, product_views, catalog_views, contact_clicks all default to 0). This ensures the timeline always has a complete, gap-free series of daily entries.",
+    "source_files": ["app/api/stats.py", "app/services/stats_service.py"],
+    "function_names": ["get_vendor_timeline", "_build_timeline"]
+  },
+  {
+    "id": 47,
+    "service": "analytics",
+    "question": "The service has a mock implementation for its primary data store. How does the mock's query_items method differ from what the real data store would do, and what impact would this have on testing the vendor timeline feature?",
+    "ground_truth": "MockCosmosContainer.query_items ignores the actual SQL query string and parameters entirely — it simply filters items by checking if item.get('vendor_id') == partition_key. This means date range filtering (WHERE stat_date >= @start_date AND stat_date <= @end_date) and ORDER BY are not applied. For timeline testing, the mock would return ALL daily stats for a vendor regardless of the requested date range, and in insertion order rather than sorted by date. The _build_timeline method in StatsService would still produce correct output structure since it builds its own date sequence, but the mock wouldn't test the actual query filtering logic.",
+    "source_files": ["app/services/mock_cosmos.py", "app/services/stats_service.py"],
+    "function_names": ["query_items", "get_vendor_timeline", "_build_timeline"]
+  },
+  {
+    "id": 48,
+    "service": "analytics",
+    "question": "If you need to add a new metric 'inquiry_clicks' to the designer statistics, trace all the locations that must be modified for it to appear correctly in both the summary endpoint and the timeline endpoint.",
+    "ground_truth": "You would need to modify: (1) DesignerStatsDetail — add inquiry_clicks: int = 0 for total stats, (2) DesignerStatsDetailLast30d — add inquiry_clicks: int = 0 for last 30 days, (3) DesignerDailyStats — add inquiry_clicks: int = 0 for timeline entries, (4) _get_default_designer_stats in StatsService — add 'inquiry_clicks': 0 to the zeros dict, (5) _build_designer_timeline in StatsService — add stats.get('inquiry_clicks', 0) to each timeline entry. The API layer (stats.py) doesn't need changes since get_designer_stats and get_designer_timeline pass through dicts. The Cosmos DB documents and cronjob would also need to populate this field.",
+    "source_files": ["app/models/stats_schemas.py", "app/services/stats_service.py"],
+    "function_names": ["_get_default_designer_stats", "_build_designer_timeline"]
+  },
+  {
+    "id": 49,
+    "service": "analytics",
+    "question": "The health check endpoint reports on infrastructure connectivity. Which components are checked and which are NOT checked? If the database storing the primary analytics data goes down, would the health check detect it?",
+    "ground_truth": "The health check endpoint in main.py only checks Redis connectivity via analytics_cache.health_check(), which calls ping() on the Redis connection. It does NOT check Cosmos DB connectivity (the primary data store) or PostgreSQL (mentioned in config as DATABASE_URL for favorites). So if Cosmos DB goes down, the health check would still return 'healthy' status as long as Redis is up. The health check would only show redis as 'disconnected' if Redis fails, but the overall status always returns 'healthy' regardless.",
+    "source_files": ["app/main.py", "app/core/redis_cache.py", "app/core/config.py"],
+    "function_names": ["health_check"]
+  },
+  {
+    "id": 50,
+    "service": "analytics",
+    "question": "The top portfolios endpoint constructs its response differently from other endpoints. How does the API layer transform the raw data from the service layer, and what happens if the data store returns items missing expected fields like 'title' or 'cover_image_url'?",
+    "ground_truth": "In the get_top_portfolios API endpoint, the raw list of dicts from stats_service.get_top_portfolios() is transformed into PortfolioViewStats Pydantic models using dict.get() with defaults: portfolio_id defaults to 0, title defaults to '', cover_image_url defaults to '', and view_count defaults to 0. This means missing fields won't cause errors — they gracefully fall back to empty/zero values. This is different from vendor/designer stats endpoints which pass through the service response dict directly without field-level transformation in the API layer. The response is wrapped in TopPortfoliosResponse with a 'portfolios' key.",
+    "source_files": ["app/api/stats.py", "app/models/stats_schemas.py", "app/services/stats_service.py"],
+    "function_names": ["get_top_portfolios", "get_top_portfolios"]
+  }
+]

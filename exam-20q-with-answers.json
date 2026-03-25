@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "service": "auth",
+    "question": "When a brand-new user logs in for the first time via Google, what external notifications are triggered after the user record is created, and what happens if those notifications fail?",
+    "ground_truth": "Two external notifications are triggered: (1) A Power Automate webhook is called via trigger_new_user_registration() sending user_email, user_name, and login_provider to a configured webhook URL; (2) A Novu subscriber is created/updated via novu_service.create_or_update_subscriber() with the user's id, email, and display_name. Both are non-blocking — if Power Automate fails, a warning is logged but the user is still created successfully. If Novu sync fails, a warning is logged but it does not affect the login flow. The Power Automate call happens inside get_or_create_user(), while the Novu sync happens in the /verify endpoint after get_or_create_user() returns."
+  },
+  {
+    "id": 2,
+    "service": "auth",
+    "question": "The service supports multiple identity providers (Google, Facebook, LINE, local). How does the system handle a scenario where the same email address logs in first via Google and later via Facebook? Describe the database field-level changes.",
+    "ground_truth": "The system uses email as the primary identifier for cross-provider linking. In get_or_create_user(), it first queries User by email. If found (e.g., previously created via Google with entra_sub_google set), it looks up the IDP_FIELD_MAPPING for the new provider ('facebook.com' → 'entra_sub_facebook') and sets that field with the new entra_sub value. It also updates last_login_provider to 'facebook.com', last_login_at and updated_at to current time. The display_name is only updated from JWT if it was previously empty (not user.display_name), preserving any user-customized name. The entra_sub_google field remains intact, so both providers are now linked to the same user record."
+  },
+  {
+    "id": 3,
+    "service": "auth",
+    "question": "Describe the complete data flow when the /verify endpoint receives a valid JWT token that is NOT in the cache. Include all systems touched and the response format.",
+    "ground_truth": "Flow: (1) Token extracted from Authorization header or session cookie; (2) jwt_cache.get() checks Redis — cache miss; (3) verify_entra_jwt() fetches JWKS from Entra External ID endpoint (https://{TENANT_ID}.ciamlogin.com/{TENANT_ID}/discovery/v2.0/keys), finds matching public key by kid, and validates JWT with RS256 algorithm against configured audience and issuer; (4) get_or_create_user() queries PostgreSQL by email — creates or updates user record, potentially triggers Power Automate webhook for new users; (5) novu_service.create_or_update_subscriber() syncs user to Novu (non-blocking); (6) jwt_cache.set() stores user_data (user_id, email, display_name, roles, entra_sub, idp, cached_at) in Redis with 780-second TTL using SHA256-hashed token as key; (7) Returns Response('OK') with headers: x-user-id, x-email, x-roles (comma-separated). Systems touched: Redis, Entra External ID JWKS endpoint, PostgreSQL, Power Automate (new users only), Novu."
+  },
+  {
+    "id": 4,
+    "service": "auth",
+    "question": "If you want to add a new updatable field 'address' to the user profile (both read and write), what are ALL the changes required across the codebase?",
+    "ground_truth": "Five changes are needed: (1) app/models/user.py — Add 'address = Column(Text)' to the User model class; (2) app/models/user_schemas.py — Add 'address: Optional[str]' to UserProfileResponse for reading; (3) app/models/user_schemas.py — Add 'address: Optional[str] = Field(None, ...)' to UserProfileUpdateRequest for writing; (4) Database migration — The actual PostgreSQL table needs an ALTER TABLE to add the column; (5) No changes needed in app/api/user.py because the update endpoint uses dynamic model_dump(exclude_unset=True) and setattr() to update any field present in the update schema that has a matching User model attribute — the pattern 'if hasattr(user, field): setattr(user, field, value)' auto-handles new fields."
+  },
+  {
+    "id": 5,
+    "service": "auth",
+    "question": "The profile picture upload flow has two different paths: direct upload via POST /profile/picture and inline update via PUT /profile. How do they differ in terms of blob storage handling, and what cleanup strategy is used for old images?",
+    "ground_truth": "POST /profile/picture uploads directly to permanent storage (users container) via blob_manager.upload_to_permanent(), bypassing temp storage entirely. It then updates the DB, and calls cleanup_old_images() on the old URL. PUT /profile handles three scenarios for profile_picture_url: (a) if new URL is None and old exists → calls cleanup_old_images() on old URL and sets DB to None; (b) if new URL contains 'temp-uploads/' → calls move_blob_image() to copy from temp-uploads to users container, then cleanup_old_images() on old URL; (c) if new URL differs from old but is already permanent → directly updates DB. The cleanup strategy is 'Linus-style': old permanent images are moved back to the temp-uploads container (via move_to_temp() which copies blob then deletes original), where Azure's 24-hour lifecycle policy auto-deletes them. This provides a safety window for recovery."
+  },
+  {
+    "id": 6,
+    "service": "auth",
+    "question": "How does the authentication dependency injection work for the user profile API endpoints, and how does it differ from the /verify endpoint's authentication mechanism?",
+    "ground_truth": "The user profile API endpoints (GET/PUT /profile, POST/DELETE /profile/picture, LINE endpoints) use get_current_user() from dependencies.py, which extracts pre-validated user info from HTTP headers (x-user-id, x-email, x-roles) set by Nginx after it calls the /verify endpoint. It validates UUID format, parses comma-separated roles, and does basic email validation. The /verify endpoint itself has NO authentication dependency — it directly reads the raw JWT token from the Authorization header or session cookie, checks Redis cache, and if missed, performs full Entra JWT cryptographic validation (JWKS fetch, RS256 signature verification, audience/issuer checks) via verify_entra_jwt(). So the architecture is: client → Nginx → /verify (JWT validation) → sets headers → profile API endpoints (header-based auth). The profile endpoints never see the JWT token directly."
+  },
+  {
+    "id": 7,
+    "service": "auth",
+    "question": "The LINE account linking endpoint exchanges an authorization code for user profile data. If a LINE account is already bound to a different user, what happens? Also, what database fields are affected when linking and unlinking?",
+    "ground_truth": "When linking: the endpoint exchanges the authorization code with LINE's OAuth2 token endpoint for an access_token, then fetches the LINE profile. Before writing, it checks if any User record already has the same line_user_id. If found and it belongs to a different user (str(existing_user.id) != current_user['user_id']), it raises HTTP 409 with '此 LINE 帳號已被其他使用者綁定'. On success, four fields are updated: line_user_id (LINE's userId), line_display_name (displayName), line_picture_url (pictureUrl), and line_linked_at (current UTC time). When unlinking: all four fields are set to None. The LINE credentials (LINE_LOGIN_CHANNEL_ID, LINE_LOGIN_CHANNEL_SECRET) come from the Settings class and are used for the OAuth token exchange."
+  },
+  {
+    "id": 8,
+    "service": "auth",
+    "question": "The database module provides both async and sync session factories. Why do both exist, and how does the sync engine URL differ from the async one? What would break if you removed the sync session factory?",
+    "ground_truth": "The async engine uses 'postgresql+asyncpg://' and is used by all main application code (user profile endpoints, auth verification, get_or_create_user). The sync engine is created by replacing 'postgresql+asyncpg://' with 'postgresql://' in the DATABASE_URL string, and the sync session factory (SyncSessionFactory) is exposed via get_db() generator. The comment says it's 'for vendor API'. The sync session uses standard sqlalchemy Session while async uses AsyncSession. If removed, any code depending on get_db() or SyncSessionFactory would break. Additionally, the drop_tables() function is async and only deletes data from the users table (DELETE FROM users) rather than dropping tables, because the service uses a shared database. The Base declarative_base is shared between both engines for model definitions."
+  },
+  {
+    "id": 9,
+    "service": "auth",
+    "question": "The JWT cache uses Redis with a specific TTL and key hashing strategy. Describe the cache key generation, what data is stored, and how the system handles Redis being completely unavailable during token verification.",
+    "ground_truth": "Cache key: SHA256 hash of the raw token, truncated to 16 characters, prefixed with 'jwt_cache:' (e.g., 'jwt_cache:a1b2c3d4e5f67890'). Stored data is a JSON object with: user_id, email, display_name, roles (array), entra_sub, idp, and cached_at timestamp. TTL is 780 seconds (13 minutes) set via SETEX. When Redis is unavailable: (1) In /verify, the cache get is wrapped in try/except — failure logs a warning and falls through to full JWT validation; (2) After successful JWT validation, the cache set is also wrapped in try/except — failure logs a warning but the response is still returned; (3) The JWTCache._get_redis() method attempts reconnection on ping failure by rebuilding the client. For Azure Managed Redis (port 10000), it uses RedisCluster with SSL; otherwise standard redis.asyncio. The service returns DEGRADED status on /health when Redis is down but continues to function."
+  },
+  {
+    "id": 10,
+    "service": "auth",
+    "question": "If you need to add a new role-based access control (e.g., only 'designer' role can access a new endpoint), what existing infrastructure can you reuse, and how does the role data flow from login to endpoint authorization?",
+    "ground_truth": "Role flow: (1) At login, get_or_create_user() sets roles=['user'] for new users from the User model default, stored in PostgreSQL as ARRAY(Text); (2) During /verify, roles are read from the user record and included in x-roles response header as comma-separated values, and cached in Redis user_data; (3) At endpoint level, get_current_user() in dependencies.py parses x-roles header back into a list. There's no built-in role-checking decorator — you would need to check 'designer' in current_user['roles'] manually or create a dependency. The roles can be updated via the admin or profile endpoints by modifying the user.roles array field. The IDP_FIELD_MAPPING and provider detection don't affect roles — roles are purely database-driven."
+  },
+  {
+    "id": 11,
+    "service": "product",
+    "question": "When a vendor submits a new brand via the catalog submission review process and it gets approved, the system needs to determine which database table to insert the brand into. What are the three possible target tables, and what input value controls the routing?",
+    "ground_truth": "The _create_brand function in the catalog submission module routes based on brand_type: 'material' inserts into the brands table (Brand model), 'kitchen_equipment' or 'bathroom_equipment' inserts into the equipment_brands table (EquipmentBrand model, with brand_type set to 'kitchen' or 'bathroom'), and 'decoration' inserts into the decoration_brands table (DecorationBrand model). If the brand name already exists in the target table, it returns the existing brand's ID instead of creating a duplicate."
+  },
+  {
+    "id": 12,
+    "service": "product",
+    "question": "The product search endpoint uses Redis caching. If a new product is created, how does the system ensure that stale search results are not served? Describe the invalidation mechanism.",
+    "ground_truth": "When a product is created (or updated/deleted), the invalidate_product_cache function is called. It increments a generation counter key (products:cache:gen) in Redis. The build_search_cache_key function embeds the current generation value into every search cache key. After incrementing, all existing search cache keys reference the old generation and will never be matched again, effectively orphaning them. For product detail caches, the specific product's detail key is also explicitly deleted. The search cache TTL is 120 seconds and detail cache TTL is 300 seconds."
+  },
+  {
+    "id": 13,
+    "service": "product",
+    "question": "When exporting a favorite collection to PDF, the system builds product categories (like '材料 - 石材 - 水磨石'). How does the export determine the category string, and why doesn't this require additional database queries beyond the main export query?",
+    "ground_truth": "The export endpoint performs a single query with LEFT JOINs to all five product-type tables (AreaProduct, PaintProduct, KitchenEquipment, BathroomEquipment, DecorationProduct). The _build_category_from_joined_data function then checks which join produced a non-None result and constructs the category string from the pre-joined data. For area products it uses material_type/material_subtype, for paint it uses material_type/paint_type, for kitchen/bathroom equipment it uses equipment_category/equipment_subcategory, and for decoration it uses decoration_category/decoration_subcategory. Since all data comes from the JOIN, no additional queries are needed."
+  },
+  {
+    "id": 14,
+    "service": "product",
+    "question": "When updating a product's images, the system performs 'smart image management'. Describe what happens when the frontend removes one of the existing other_images and adds a new one in the same update request.",
+    "ground_truth": "The update_product function extracts UUIDs from both current and new image sets using _extract_uuid_from_image_object. It computes removed_uuids (in current but not in new). For each removed UUID, it calls blob_client.move_image_group_to_temp_for_cleanup, which lists all blobs with that UUID prefix in the products container and moves them to temp-uploads for cleanup by Azure lifecycle policy. For the new image (identified by having a 'uuid' key in the dict), it calls blob_client.move_multi_size_images to move original and medium from temp-uploads to products container and generate a thumbnail via imgproxy. The final order preserves the frontend's array order. If thumbnail generation fails, the medium image URL is used as fallback."
+  },
+  {
+    "id": 15,
+    "service": "product",
+    "question": "The favorites feature limits private collections to a maximum of 3 per user. Where and how is this constraint enforced, and what concurrency-safe mechanism prevents race conditions when two requests try to create private collections simultaneously?",
+    "ground_truth": "The constraint is enforced in both create_collection and update_collection endpoints in the favorites API. When creating a private collection, the code queries existing private collections using with_for_update() (SELECT FOR UPDATE), which acquires a row-level lock in PostgreSQL. This prevents concurrent requests from reading the same count simultaneously. If the count is >= 3, it raises HTTP 400. Similarly, when changing a public collection to private, it locks other private collections (excluding the current one) with with_for_update() before checking the limit. The same pattern applies to the 20-item-per-collection limit when adding items."
+  },
+  {
+    "id": 16,
+    "service": "product",
+    "question": "When querying material products with price sorting (e.g., sort_by=price_m2), the system needs to merge results from two separate database queries (area_products and paint_products). How does it handle products with zero or very low prices during sorting?",
+    "ground_truth": "The system uses a two-level sorting approach. At the database level, a CASE WHEN expression assigns priority=1 to products where the price field < 1, and priority=0 to normal-priced products. This pushes zero/low-price items to the end regardless of sort direction. The merge_sorted_product_lists function then performs an O(n) merge of the two pre-sorted lists, respecting both the priority and price values. For ascending sort, items with priority=0 come first sorted by price ascending; for descending, priority=0 items come first sorted by price descending. All zero-price items (priority=1) appear at the end. The composite_score is used as a tie-breaker."
+  },
+  {
+    "id": 17,
+    "service": "product",
+    "question": "The catalog upload endpoints use a three-phase pattern for database connection management. Describe the three phases and explain why the pattern is necessary for this particular operation.",
+    "ground_truth": "Phase 1 (Quick DB validation): Opens a SessionLocal connection, validates the brand exists and the vendor is authorized, extracts needed IDs (vendor_id, brand_id), then closes the DB connection immediately. Phase 2 (HTTP uploads): Performs Azure Blob Storage uploads (streaming PDF chunks and optional cover image) with NO database connection held, using generator-based chunk reading for memory efficiency. Phase 3 (Quick DB write): Opens a new SessionLocal connection, creates the Catalog/EquipmentCatalog/DecorationCatalog record with the blob URL, commits, and closes. This pattern is necessary because blob uploads can take significant time (files up to 100MB for material catalogs, 50MB for equipment/decoration), and holding a DB connection from the pool during slow HTTP operations would exhaust the connection pool under concurrent requests."
+  },
+  {
+    "id": 18,
+    "service": "product",
+    "question": "When a product is created or updated, the system queues a 'catalog hashtag update'. What triggers this queuing, what data structure is used, and how does the system determine which catalog type to queue?",
+    "ground_truth": "After creating or updating a product, the queue_catalog_hashtag_update function is called. It inserts a record into the catalog_hashtag_queue table with catalog_id and catalog_type, using ON CONFLICT DO NOTHING to avoid duplicates. The catalog type is determined by the product type: area_product and paint_product use the product's catalog_id with type 'material', kitchen_equipment and bathroom_equipment use equipment_catalog_id with type 'equipment', and decoration products use decoration_catalog_id with type 'decoration'. On product deletion, the code first saves the catalog info before deleting the product, then queues the update. This queue is processed by an external cron job (not in this service) that regenerates hashtags for the affected catalogs."
+  },
+  {
+    "id": 19,
+    "service": "product",
+    "question": "The public catalog endpoint for vendors (GET /vendors/{vendor_id}/catalogs/public) can return catalogs with product thumbnails. Describe how the optimized batch query approach works and which tables from all three product domains (material, equipment, decoration) are involved.",
+    "ground_truth": "The _get_catalogs_with_products function uses SQL window functions (ROW_NUMBER OVER PARTITION BY catalog_id) via raw SQL text queries to efficiently fetch at most 6 product thumbnails per catalog in batch. For material catalogs, it queries the products table joined with product_images, area_products, and paint_products with a CTE limiting to 6 per catalog_id. For equipment catalogs, it runs two separate CTEs: one for kitchen_equipment (limit 3) and one for bathroom_equipment (limit 3), combining them to max 6 per catalog. For decoration catalogs, it queries decoration_products with a similar CTE. All results are stored in defaultdict(list) maps keyed by catalog_id, avoiding N+1 queries. The function queries Catalog, EquipmentCatalog, and DecorationCatalog tables for the vendor, then builds CatalogWithProducts responses with catalog_type set to 'material', 'equipment', or 'decoration'."
+  },
+  {
+    "id": 20,
+    "service": "product",
+    "question": "The 'related products' feature uses a circular navigation logic. If a user is viewing product ID 50 in a catalog that has products with IDs [10, 20, 30, 40, 50, 60, 70], and the limit is 5, which product IDs would be returned and in what order? What happens if there's no catalog_id?",
+    "ground_truth": "The get_related_products_circular function first queries products with ID > 50 (ascending): [60, 70] — that's 2 results. Since limit=5 and only 2 found, it needs 3 more. It then queries products with ID < 50 (ascending): [10, 20, 30]. The final result is [60, 70, 10, 20, 30] — first the 'after' products, then the 'before' products to wrap around. If there's no catalog_id but a subcategory exists, it falls back to the second layer: filtering by the same subcategory (material_subtype for area, paint_type for paint, equipment_subcategory for equipment, decoration_subcategory for decoration) across all catalogs, using the same circular logic. If neither catalog_id nor subcategory exists, it returns an empty list with source='none'."
+  }
+]

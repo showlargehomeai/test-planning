@@ -1,0 +1,240 @@
+======================================================================
+Profile Service Deep Scan 文件 vs 實際 Code 交叉比對報告
+產生時間：2026-03-24 16:00 (Asia/Taipei)
+文件：~/largehomeai-repos/docs/profile-service-deep-scan.md
+Code：~/largehomeai-repos/LargeHomeAI--profile-service/app/
+======================================================================
+
+═══════════════════════════════════════════════════════════════
+A. Router / Prefix 不一致
+═══════════════════════════════════════════════════════════════
+
+1. [MD 錯] premium router 掛載方式
+   MD 寫：Router Mount Structure 表格列 prefix=(none), Router=premium
+   Code 實際：premium_router 有 import 但 main.py 從未 include_router
+   → premium router 完全沒掛載！MD 寫 (none) prefix 暗示有掛載，但實際上未掛載
+
+2. [MD 錯] designer_public prefix
+   MD 寫：prefix=/api/v1, router=designer_public
+   Code 實際：router 自帶 prefix="/designer-public"，main.py 再加 prefix="/api/v1"
+   → 最終路徑是 /api/v1/designer-public/{code}
+   MD §4.13 寫 prefix: /api/v1/designer-public 是正確的，但 Router Mount Structure 表格漏了 /designer-public
+
+3. [MD 錯] public_profile_fixed prefix
+   MD Router Mount Structure 寫：prefix=/api/v1/public
+   Code 實際：router 自帶 prefix="/api/v1/public"，main.py 沒加額外 prefix
+   → 最終一致，但 MD 表格標示方式 inconsistent（有些只列 main.py prefix、有些列最終路徑）
+
+4. [MD 錯] crew_public_profile prefix
+   MD Router Mount Structure 寫：prefix=/api/v1/crew-public
+   Code 實際：router 自帶 prefix="/api/v1/crew-public"，main.py 沒加額外 prefix
+   → 同上
+
+5. [MD 錯] gallery prefix
+   MD Router Mount Structure 寫：prefix=/api/v1/gallery
+   Code 實際：router 自帶 prefix="/api/v1/gallery"，main.py 沒加額外 prefix
+
+6. [MD 錯] gallery_simple prefix
+   MD Router Mount Structure 寫：prefix=/api/v1/gallery-simple
+   Code 實際：router 自帶 prefix="/api/v1/gallery-simple"，main.py 沒加額外 prefix
+
+7. [MD 錯] location_search prefix
+   MD Router Mount Structure 寫：prefix=/api/v1/location
+   Code 實際：router 自帶 prefix="/api/v1/location"，main.py 沒加額外 prefix
+
+8. [MD 錯] crew_public prefix
+   MD Router Mount Structure 寫：prefix=/api/v1/crew
+   Code 實際：router 自帶 prefix="/api/v1/crew"，main.py 沒加額外 prefix
+
+9. [MD 錯] Router Mount Structure 的 tags 全部用英文
+   Code 實際 tags 多數用中文：「公開Profile」「工班公開Profile」「案例Gallery」「簡化Gallery」
+   「地區搜尋」「設計師公開Profile」「AI智能媒合」「SOP施工標準」
+
+═══════════════════════════════════════════════════════════════
+B. 檔案存在但 MD 漏記
+═══════════════════════════════════════════════════════════════
+
+1. [MD 漏] app/api/v1/public_profile.py (381 行)
+   Code 存在此檔案（原版 public_profile，非 _fixed 版本）
+   MD 完全沒提到此檔案，只列了 public_profile_fixed.py
+   main.py 也沒掛載它，但它確實存在於 codebase 中
+
+═══════════════════════════════════════════════════════════════
+C. Env Var 名稱不一致
+═══════════════════════════════════════════════════════════════
+
+1. [MD 錯] POWER_AUTOMATE_WEBHOOK_URL
+   MD 寫 env var 名：POWER_AUTOMATE_WEBHOOK_URL
+   Code config.py 定義的 Settings 屬性名：POWER_AUTOMATE_VENDOR_WEBHOOK_URL
+   Code 實際 os.getenv 取的是："POWER_AUTOMATE_WEBHOOK_URL"（和 MD 一致）
+   → 不算嚴重錯誤（因為 os.getenv key 一致），但 MD 沒有反映 Settings 屬性名的差異
+
+═══════════════════════════════════════════════════════════════
+D. DB Model / Table 欄位不一致
+═══════════════════════════════════════════════════════════════
+
+1. [MD 漏] designers 表缺少 is_premium, premium_expires_at, premium_plan_type
+   Code premium.py 使用 designer.is_premium, designer.premium_expires_at, designer.premium_plan_type
+   schemas.py 有 is_premium 欄位
+   但 database.py Designer model 沒有這些 Column 定義！
+   → Code 有 BUG：premium.py 引用了 model 上不存在的屬性
+   → MD §3.2 designers 表也沒列這些欄位
+   → MD §7.2 提到 "is_premium, premium_expires_at, premium_plan_type"，但只是比較表，不是 schema 定義
+
+2. [MD 漏] bd_performance 表缺少 created_at, updated_at
+   Code database.py BdPerformance model 有 created_at 和 updated_at
+   MD §3.10 bd_performance 表沒列這兩個欄位
+
+3. [MD 漏] crew_schedules 表缺少 created_at, updated_at
+   Code database.py CrewSchedule model 有 created_at 和 updated_at
+   MD §3.12 crew_schedules 表沒列這兩個欄位
+
+4. [MD 漏] crew_availability 表缺少 created_at, updated_at
+   Code database.py CrewAvailability model 有 created_at 和 updated_at
+   MD §3.13 crew_availability 表沒列這兩個欄位
+
+5. [MD 漏] sop_templates 表缺少 updated_at
+   Code sop.py SOPTemplate model 有 updated_at
+   MD §3.16 sop_templates 表沒列 updated_at
+
+6. [MD 漏] sop_checklists 表缺少 updated_at
+   Code sop.py SOPChecklist model 有 updated_at
+   MD §3.16 sop_checklists 表沒列 updated_at
+
+7. [MD 漏] crew_rfq_projects 表缺少 updated_at
+   Code rfq_database.py CrewRfqProject model 有 updated_at
+   MD §3.14 crew_rfq_projects 表沒列 updated_at
+
+8. [MD 漏] crew_bids 表缺少 updated_at
+   Code rfq_database.py CrewBid model 有 updated_at
+   MD §3.15 crew_bids 表沒列 updated_at
+
+9. [MD 錯] sop_templates.created_by 型別
+   MD 寫：BIGINT (FK->designers)
+   Code 實際：BIGINT, nullable=True（有 FK 到 designers.id，一致）
+   → 但 designers.id 是 Integer 不是 BIGINT，跨表 FK 型別不匹配
+
+10. [MD 漏] favorite_collections 表欄位不完整
+    Code database.py 有完整定義：id, user_id, name, description, is_public, created_at, updated_at
+    MD §3.18 只列了表名，沒列任何欄位
+
+11. [MD 漏] favorite_items 表欄位不完整
+    Code database.py 有完整定義：id, collection_id, product_id, notes, created_at
+    MD §3.18 只列了表名，沒列任何欄位
+
+12. [MD 漏] products 表欄位不完整
+    Code database.py 有：id, name, description, brand_id, images relationship
+    MD §3.18 只列了表名，沒列任何欄位
+
+13. [MD 漏] product_images 表欄位不完整
+    Code database.py 有：id, product_id, primary_image (JSONB)
+    MD §3.18 只列了表名
+
+═══════════════════════════════════════════════════════════════
+E. Endpoint 不一致
+═══════════════════════════════════════════════════════════════
+
+1. [MD 錯] Premium endpoints 不可達
+   MD §4.8 列了 3 個 premium endpoint
+   Code premium.py 定義了這些路由
+   但 main.py 沒有 include_router(premium_router)！（有 import 但沒有掛載）
+   → 這些 endpoint 在 runtime 完全無法存取
+
+2. [MD 漏] AI Matching endpoint path 參數名
+   MD 寫：POST /recommendations/{rfq_id}
+   Code 實際：POST /recommendations/{rfq_project_id}
+   → 參數名不同
+
+3. [MD 漏] Location search /nearby 路徑
+   MD §4.17 列了 /nearby
+   Code location_search.py 確實有 /nearby endpoint ✓（一致）
+
+═══════════════════════════════════════════════════════════════
+F. Service / Utility 函數不一致
+═══════════════════════════════════════════════════════════════
+
+1. [MD 漏] blob_storage.py 額外函數
+   Code 有 get_blob_client() 工廠函數和 _ensure_container_exists() 方法
+   MD §6.1 沒有列出這些
+
+2. [MD 漏] AI Matching Service 函數名不完整
+   MD §5.1 只概述了流程，沒列出實際函數名
+   Code 實際函數：
+   - find_matching_crews()
+   - _get_rfq_project()
+   - _get_available_crews()
+   - _calculate_crew_scores()
+   - _calculate_location_score()
+   - _calculate_specialty_score()
+   - _calculate_budget_score()
+   - _calculate_availability_score()
+   - _calculate_history_score()
+   - _calculate_distance()
+   - _save_match_results()
+
+═══════════════════════════════════════════════════════════════
+G. 額外 Raw SQL 表（code 用但無 model 定義）
+═══════════════════════════════════════════════════════════════
+
+MD §5.1 有提到這些表（正確），但歸類為「Additional tables used (raw SQL)」：
+1. crew_match_preferences — 用於 ai_matching.py, ai_matching_service.py (raw SQL)
+2. ai_match_results — 用於 ai_matching.py, ai_matching_service.py (raw SQL)
+3. crew_performance_history — 用於 ai_matching_service.py (raw SQL)
+4. location_index — 用於 location_search.py (raw SQL)
+
+→ MD 提到了 1-3 但漏了 location_index
+→ [MD 漏] location_index 表：location_search.py 大量使用此表（5 處 raw SQL），MD 完全沒提
+
+═══════════════════════════════════════════════════════════════
+H. 檔案結構不一致
+═══════════════════════════════════════════════════════════════
+
+1. [MD 漏] Appendix 的 Flat file list 漏了：
+   - app/api/v1/public_profile.py（原版，381 行，未掛載但存在）
+
+2. [MD 漏] 各 router 和 model 檔案中有多個重複定義的 get_current_user()
+   Code 在 6 個檔案中各自獨立定義了 get_current_user()：
+   - app/api/designers.py
+   - app/api/crews.py
+   - app/api/vendor.py
+   - app/api/crm.py
+   - app/api/rfq.py
+   - app/api/v1/ai_matching.py
+   MD 沒有提到這個架構特點（不是 bug 但值得記錄）
+
+═══════════════════════════════════════════════════════════════
+I. MD 寫了但 Code 真的沒有的功能
+═══════════════════════════════════════════════════════════════
+
+1. [MD 寫了/Code 無] designers model 的 premium 欄位
+   MD §7.2 比較表列出 is_premium, premium_expires_at, premium_plan_type
+   database.py Designer class 沒有定義這些 Column
+   premium.py 引用了它們（會 runtime error）
+   → 可能是 DB migration 加了但 ORM model 忘了更新，或者完全未實現
+
+═══════════════════════════════════════════════════════════════
+J. 總結
+═══════════════════════════════════════════════════════════════
+
+嚴重問題（影響運行）：
+  ❌ premium router 有 import 但未掛載，3 個 endpoint 不可達
+  ❌ Designer model 缺少 is_premium/premium_expires_at/premium_plan_type 欄位，
+     premium.py 引用這些會 AttributeError
+
+中等問題（文件不準確）：
+  ⚠️ Router Mount Structure 表格的 prefix 標示方式混亂（有些列 main.py prefix，有些列 router 自帶 prefix）
+  ⚠️ AI Matching 的 path 參數名 rfq_id vs rfq_project_id 不一致
+  ⚠️ location_index 表完全未記錄
+  ⚠️ 多個表遺漏 created_at/updated_at 欄位記錄
+  ⚠️ SOP FK 型別 BIGINT vs Integer 不匹配
+
+輕微問題（文件遺漏）：
+  📝 public_profile.py（原版）存在但未記錄
+  📝 Reference tables 欄位細節未展開
+  📝 Tags 名稱 MD 用英文、code 用中文
+  📝 blob_storage 的工廠函數未記錄
+  📝 AI Matching Service 函數名未列出
+
+======================================================================
+報告結束
+======================================================================

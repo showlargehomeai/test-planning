@@ -1,0 +1,156 @@
+================================================================================
+Admin Service Deep Scan 交叉比對驗證報告
+產生時間: 2026-03-24T16:00+08:00
+來源 MD: ~/largehomeai-repos/docs/admin-service-deep-scan.md
+來源 Code: ~/largehomeai-repos/LargeHomeAI--admin-service/app/
+================================================================================
+
+【一、MD 寫了但 Code 沒有 / MD 寫錯】
+
+1. [路由缺失] vendors.py 和 products.py 未被 main.py include
+   MD §2.5 寫 products.py (prefix: /api/v1/products) 和 §2.11 寫 vendors.py (prefix: /api/v1/vendors)
+   Code: main.py 的 import 和 include_router 都沒有 products 和 vendors
+   → api/products.py 和 api/vendors.py 檔案存在但未被掛載，等於死代碼
+
+2. [Service 方法不存在] AuditService.log_create() / log_update() / log_delete()
+   MD §5.1 寫 "Legacy methods log_create()/log_update()/log_delete() still used by admin_vendors.py"
+   Code: audit_service.py 只有一個 log() 方法，沒有 log_create/log_update/log_delete
+   但 admin_vendors.py 確實呼叫了 log_create/log_update/log_delete → 這是 runtime bug！
+   admin_vendors.py:161 AuditService.log_create()
+   admin_vendors.py:217 AuditService.log_update()
+   admin_vendors.py:255 AuditService.log_delete()
+
+3. [Env Var 名稱錯誤] CORS_ORIGINS
+   MD §6.1 寫 env var 名 "CORS_ORIGINS"
+   Code config.py: field alias 確實是 "CORS_ORIGINS"，但 field name 是 cors_origins_str
+   → MD 寫的 env var 名正確，但沒提到 internal field name 不同 (minor)
+
+4. [Redis Key 描述不完整] recommended_products 相關 key
+   MD §9.6 寫 Redis key: recommended_products:pool (3-day TTL)
+   Code admin_recommended_vendors.py 實際使用兩個 key:
+     - {prefix}recommended_products:pool
+     - {prefix}recommended_products:counter  ← MD 漏了這個
+
+5. [DB Table 引用疑慮] paint_products
+   Code admin_recommended_vendors.py:177,185 引用 paint_products table (raw SQL)
+   但 models/ 下沒有 PaintProduct model，__tablename__ 也沒有 paint_products
+   MD 完全沒提到 paint_products table
+   → 這可能是跨 service 的 shared table（product-service 的），或是遺留 bug
+
+6. [Schema 命名差異] CrewDetailResponse / DesignerDetailResponse
+   MD §4.9 寫 "CrewUpdate/Response/DetailResponse/ListResponse"
+   Code schemas/crew.py 確實有 CrewDetailResponse ✓
+   MD §4.8 寫 "DesignerUpdate/Response/DetailResponse/ListResponse"
+   Code schemas/designer.py 確實有 DesignerDetailResponse ✓
+   → 這部分正確，無問題
+
+7. [Service 方法名微小差異]
+   MD §5.4 EquipmentService 寫有 create_product() / update_product()
+   Code: 確實有，名稱正確 ✓
+   MD §5.4 寫有 detect_equipment_type()
+   Code: 確實有 ✓
+   但 MD 漏寫了 get_equipment_with_type() — code 有但 MD 沒列
+
+8. [Audit 類型語法錯誤]
+   Code services/audit_service.py:10 有語法錯誤:
+     from typing import A, Optionalny  ← 應為 from typing import Any, Optional
+   MD 沒提到這個 bug
+
+================================================================================
+
+【二、Code 有但 MD 漏了】
+
+1. [Service 方法] EquipmentService.get_equipment_with_type()
+   Code services/equipment_service.py:71 定義了此方法
+   MD §5.4 沒有列出
+
+2. [Service 方法] ProductService.__init__() 和 get_product_service()
+   Code services/product_service.py:34 有 __init__，321 有 get_product_service()
+   MD §5.3 沒有提到 ProductService 是 instance-based（有 __init__），
+   也沒提到 dependency injection function get_product_service()
+
+3. [Service 函數] blob_storage.get_blob_service()
+   Code services/blob_storage.py:591 有工廠函數 get_blob_service()
+   MD §5.2 沒有提到
+
+4. [Blob 方法] BlobStorageService._extract_blob_name_from_url()
+   Code services/blob_storage.py:568 private helper
+   MD §5.2 沒列出 (minor，private method)
+
+5. [PostHog 方法] PostHogService 內部方法
+   Code 有多個 private methods:
+     - _query_vendor_events()
+     - _query_vendor_timeline()
+     - _count_events()
+     - _count_events_by_day()
+     - _execute_hogql_query()
+     - _empty_vendor_stats()
+     - _empty_vendor_timeline()
+   MD §5.7 沒有列出這些（只描述了 public API）→ 可接受
+
+6. [Redis Key] recommended_products:counter
+   Code admin_recommended_vendors.py:238 使用此 key
+   MD §9.6 未提到
+
+7. [Schema] PortfolioImageItem (schemas/designer.py:35)
+   Code 有此 schema class
+   MD §4.8 沒有列出
+
+8. [Crew Schema] LinkedMaterialItem 也在 crew.py
+   Code schemas/crew.py:18 有 LinkedMaterialItem
+   MD §4.9 沒有提到 crew 也有 LinkedMaterialItem（§4.8 只說 designer 有）
+
+9. [Dependencies] verify_password() 和 hash_password()
+   Code dependencies.py 有這兩個 helper functions
+   MD §8 只描述了 get_current_admin()，沒有列出 helper functions
+
+10. [Constants] 各 enum value 的中文名
+    MD §6.3 只寫 "10 kitchen equipment category enum values" 和 "12 bathroom equipment category enum values"
+    沒有列出具體值（code 有完整中文 enum）→ minor
+
+================================================================================
+
+【三、結構性問題 / 需關注事項】
+
+1. [CRITICAL] AuditService 方法不匹配
+   admin_vendors.py 呼叫 log_create/log_update/log_delete 但 audit_service.py 沒有
+   → 這是 production runtime error，vendor CRUD 的 audit logging 會 crash
+
+2. [CRITICAL] audit_service.py 有語法錯誤
+   Line 10: "from typing import A, Optionalny" → 應為 "from typing import Any, Optional"
+   → 此 service import 會失敗，影響所有使用 AuditService 的路由
+
+3. [HIGH] products.py 和 vendors.py 是死代碼
+   檔案存在但 main.py 未 include → /api/v1/products 和 /api/v1/vendors 端點不可訪問
+   MD 文件卻記錄了這些 endpoint，會誤導開發者
+
+4. [MEDIUM] paint_products 是跨 DB 引用
+   recommended_vendors refresh-pool 用 raw SQL 查 paint_products table
+   但 admin-service 自己沒有這個 model → 依賴 shared DB schema
+
+================================================================================
+
+【四、比對摘要統計】
+
+MD 記錄的 endpoint 分組數: 21 (§2.1-§2.21)
+Code 實際掛載的 router 數: 18 (main.py include_router)
+未掛載的 router: products.py, vendors.py (2 個檔案存在但未 include)
+
+MD 記錄的 Model/Table 數: 17
+Code 實際 Model/Table 數: 17  ← 完全匹配 ✓
+
+MD 記錄的 Env Var 數: 11
+Code 實際 Env Var 數: 11  ← 完全匹配 ✓
+
+MD 記錄的 Service 數: 7
+Code 實際 Service 數: 7  ← 匹配，但內部方法有差異
+
+MD 記錄的 Schema class 數: ~50+
+Code 實際 Schema class 數: ~52  ← 大致匹配，2-3 個 MD 漏列
+
+================================================================================
+驗證結論:
+- 2 個 CRITICAL bug（AuditService 方法缺失 + 語法錯誤）
+- 2 個路由未掛載（products.py, vendors.py 是死代碼）
+- MD 整體準確度約 90%，主要遺漏在內部 helper methods 和 Redis key 細節
+================================================================================

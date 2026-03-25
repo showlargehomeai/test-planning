@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "answer": "entra_sub_line"
+  },
+  {
+    "id": 2,
+    "answer": "3"
+  },
+  {
+    "id": 3,
+    "answer": "30%"
+  },
+  {
+    "id": 4,
+    "answer": "WC-YYYY-XXXXXX，即前綴 WC- 加上四位數西元年份，再加上六位數流水號，例如 WC-2026-001234"
+  },
+  {
+    "id": 5,
+    "answer": "vendor_summaries"
+  }
+]

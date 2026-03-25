@@ -1,0 +1,328 @@
+================================================================================
+unified-system-map.md 交叉驗證報告
+生成時間: 2026-03-24 16:05 (Asia/Taipei)
+驗證方法: 比對所有 repos 的實際 code (git-tracked + untracked files)
+================================================================================
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. 前端頁面 -> API ENDPOINT 映射驗證
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## 1.1 地圖列出的頁面 vs 實際存在的頁面
+
+統一對照表列出 99 個前端路由，實際前端 app/ 下有 100 個 page.tsx。
+
+✅ 正確匹配: 99/99 個 map 中的頁面在前端 code 中都存在
+   (46 個 git-tracked + 54 個 untracked 但實際存在的檔案)
+
+⚠️ 遺漏的頁面（存在於 code 但未列入 map）：
+  - /gallery-simple — 簡化 Gallery 測試頁 (src/app/ 下存在)
+  - /search/area — 地區搜尋分頁 (app/search/area/page.tsx 存在)
+
+## 1.2 關鍵 API Endpoint 映射不一致
+
+❌ 【嚴重】/sop 頁面 → API 實際不可達
+   MAP 聲稱: /sop → interaction-service 的 /api/v1/sop-templates, /api/v1/sop-checklists
+   實際情況: interaction-service 的 SOP 路由在 main.py 中全部 COMMENTED OUT：
+     - app/routers/sop.py (原始版) — 被註解 (# app.include_router)
+     - app/api/v1/sop_routes.py — 被註解 (# from .sop_routes import)
+     - app/api/sop_routes.py — 完全未被 include
+   前端 sop.ts 呼叫 /api/v1/sop-templates (flat URL)
+   profile-service 有 SOP 在 /api/v1/sop/templates (nested URL，多一層 /sop/)
+   → 前端 URL 和 profile-service URL 格式不匹配！
+   → 結論: /sop 頁面的 API 端點在所有後端服務中都無法正確對接
+
+❌ 【嚴重】/homeowner/dashboard → GET /api/v1/projects/my 不存在
+   MAP 聲稱: interaction-service 有 GET /api/v1/projects/my
+   實際情況: interaction-service 只有 GET /api/v1/projects (列表)，沒有 /projects/my
+   前端 homeowner-dashboard.ts 確實呼叫 /api/v1/projects/my
+   → 此 endpoint 後端不存在
+
+❌ 【嚴重】/revenue → 多個 commission/revenue endpoints 不存在
+   MAP 聲稱: GET /api/v1/commission/revenue/stats, /transactions, /monthly, /targets
+   實際情況: interaction-service commission.py 只有:
+     - GET /api/v1/commission/revenue/summary (不是 /stats)
+     - GET /api/v1/commission/settings (CRUD)
+     - POST /api/v1/commission/calculate
+     - GET /api/v1/commission/types
+   缺少: /revenue/stats, /transactions, /monthly, /targets, /participants/revenue
+   前端 revenue.ts 呼叫 6 個端點，後端只存在 1 個（且名稱不同）
+
+❌ 【嚴重】/weekly-digest (3頁) → 後端 API 完全不存在
+   MAP 聲稱: product-service 有 GET /api/v1/weekly-digest/*
+   實際情況: product-service 中完全沒有 weekly-digest 相關的路由或檔案
+   所有後端服務 (product/interaction/profile/auth) 均無此 endpoint
+   前端 weekly-digest.ts 有完整 API 定義但帶 USE_MOCK 開關
+   → MAP 的聲稱完全錯誤
+
+❌ 【中等】GET /api/v1/notifications → 路由未被 include
+   MAP 聲稱: interaction-service 有 GET /api/v1/notifications
+   實際情況: rfq_notifications_api.py 有此路由定義，但 main.py 中 NEVER include
+   只有 notification_preferences_router 被 include
+   → notifications 列表端點不可達
+
+❌ 【中等】/gallery → 兩個 service 都有同路徑！
+   MAP 聲稱: /gallery → profile-service 的 /api/v1/gallery/portfolios
+   實際情況: BOTH profile-service AND interaction-service 都有:
+     - router = APIRouter(prefix="/api/v1/gallery")
+   兩者端點有部分重疊（如 /portfolios, /stats）和部分不同
+   → 存在 API 路徑衝突風險（依 Nginx 路由決定打到哪個服務）
+
+⚠️ 【注意】/projects/[id]/batch-inquiry → 後端完全沒有實作
+   MAP 聲稱: POST/GET /api/v1/projects/{id}/batch-inquiries
+   實際情況: interaction-service 中無任何 batch-inquiry/batch_inquiry 相關路由
+   前端 batch-inquiry.ts 有 USE_MOCK 開關
+   MAP 標注了 [WARN] 但低估了問題——不是「可能未完整」而是「完全不存在」
+
+⚠️ 【注意】/designer/[code]/reviews → 只回傳空陣列
+   MAP 正確標注了 TODO，實際 profile-service designer_public.py 確認:
+   get_designer_reviews() 直接 return [] （硬編碼空陣列）
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2. API ENDPOINT -> BACKEND SERVICE 歸屬驗證
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## 2.1 auth-service (app/api/users.py + main.py)
+✅ MAP 列出的端點全部正確:
+   - /verify, /verify-optional, /health, /metrics — 在 main.py
+   - /api/v1/users/profile (GET/PUT), /picture (POST/DELETE) — users.py
+   - /link-line, /unlink-line, /line-status — users.py
+✅ 歸屬正確
+
+## 2.2 product-service
+✅ MAP 基本正確，46 個端點已確認存在
+   - products CRUD, images upload, catalogs, collections, brands 等全部正確
+❌ MAP 錯誤歸屬:
+   - GET /api/v1/weekly-digest/* — MAP 歸給 product-service 但完全不存在
+   - GET /api/v1/vendors/stats — MAP 歸給 product-service
+     實際: product-service 有 health router 帶 /stats 端點,
+     但 /api/v1/vendors/stats 需確認是否在 vendor 路由下
+
+## 2.3 profile-service
+✅ MAP 基本正確，主要端點已確認:
+   - designers CRUD, crews CRUD, vendors CRUD, CRM, gallery, location
+   - crew-rfq, ai-match, premium — 全部存在
+❌ MAP 漏列的 profile-service 端點:
+   - GET /api/v1/crew/{crew_code}/members — crew_public.py 有但 map 未列
+   - POST /api/v1/designers/me/banner — 存在但 map 未列
+   - PUT /api/v1/designers/me/portfolios/reorder — 存在但 map 未列
+   - PUT /api/v1/crews/me/portfolios/reorder — 存在但 map 未列
+   - POST /api/v1/crews/me/avatar, /banner — 存在但 map 未列
+⚠️ MAP 對 SOP 歸屬描述不精確:
+   - MAP 說「前端 /sop 只串 interaction 版」但 interaction 版被註解
+   - profile-service 的 SOP 是 /api/v1/sop/templates（有額外 /sop/ 前綴）
+
+## 2.4 interaction-service
+✅ MAP 基本正確的端點（大約 200+ 個）:
+   - projects/zones/materials/requirements CRUD
+   - chat-rooms/messages/quotes
+   - contracts/milestones
+   - daily-reports, site-inspections
+   - material-orders/shipments
+   - payments (via v1 api_router → /api/v1/payments/*)
+   - insurance (via v1 api_router → /api/v1/insurance/*)
+   - warranties (via v1 api_router → /api/v1/warranties/*)
+   - reviews (via v1 api_router → /api/v1/reviews/*)
+   - disputes (via v1 api_router → /api/v1/disputes/*)
+   - articles (/api/v1/articles/*)
+   - e-signatures (/api/v1/e-signatures/*)
+   - beta-testing (/api/v1/beta/*)
+   - commission (/api/v1/commission/*)
+❌ MAP 聲稱存在但實際被註解或缺少的:
+   - SOP 所有路由 — COMMENTED OUT
+   - GET /api/v1/notifications — 未被 include
+   - GET /api/v1/projects/my — 不存在
+   - /api/v1/commission/revenue/stats — 實際是 /revenue/summary
+   - /api/v1/commission/transactions, /monthly, /targets — 不存在
+
+## 2.5 analytics-service
+✅ MAP 完全正確:
+   - GET /api/v1/stats/vendor/{id} ✓
+   - GET /api/v1/stats/vendor/{id}/timeline ✓
+   - GET /api/v1/stats/products/exports ✓
+   - GET /api/v1/stats/designer/{id} ✓
+   - GET /api/v1/stats/designer/{id}/timeline ✓
+   - GET /api/v1/stats/designer/{id}/top-portfolios ✓
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+3. DB TABLE 歸屬驗證
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## 3.1 auth-service
+✅ users — 正確
+
+## 3.2 product-service 實際擁有的 tables (models/database.py):
+✅ 正確: products, area_products, paint_products, kitchen_equipment,
+   bathroom_equipment, decoration_products, product_images, brands,
+   equipment_brands, decoration_brands, catalogs, equipment_catalogs,
+   decoration_catalogs, vendors, favorite_collections, favorite_items,
+   product_search_index, equipment_search_index, price_history
+❌ MAP 列出但 model 中不存在: catalog_hashtag_queue
+   (可能是 raw SQL 操作而非 SQLAlchemy model)
+
+## 3.3 profile-service 實際擁有的 tables:
+✅ 正確: designers, designer_portfolios, crews, crew_portfolios,
+   crew_certifications, crew_reviews, crew_schedules, crew_availability,
+   crew_rfq_projects, crew_bids, crm_contacts, crm_activities,
+   bd_performance, sop_templates, sop_checklists, sop_violations,
+   vendors, users (共用讀取)
+❌ MAP 列出但實際缺少的:
+   - ai_match_results — MAP 列出但 profile-service models 中未發現 __tablename__
+   - crew_match_preferences — 同上
+   - crew_performance_history — 同上
+✅ MAP 未列出但實際存在的 tables:
+   - portfolio_items, client_testimonials, designer_achievements,
+     designer_faqs, designer_services, designer_seo_metadata
+   (MAP 在 5.2 節有提到 P2-07 擴展 tables 用假資料)
+   - favorite_collections, favorite_items, product_images, products
+   (profile-service 也有這些 model 定義，和 product-service 重複)
+
+## 3.4 interaction-service 實際擁有的 tables:
+✅ 正確的大部分 tables（約 40+）已確認
+❌ MAP 列出但未在 model 中找到:
+   - batch_inquiries — 不存在（前端定義但後端無 table）
+❌ MAP 未列出但實際存在的:
+   - arbitration_proceedings
+   - auto_quote_rules
+   - beta_feedback, beta_milestones, beta_testers, beta_transactions
+   - commission_settings
+   - gallery_categories, gallery_category_relations, gallery_favorites,
+     gallery_likes, gallery_views, project_galleries
+   - homeowner_reviews (interaction-service 也有！與 profile-service 的 crew_reviews 並存)
+   - inquiry_attachments
+   - location_index (寫成 location_inde 因為 grep 截斷)
+   - relationships
+   - review_reports, review_summaries, review_votes
+   - signature_templates
+   - taiwan_locations
+
+## 3.5 admin-service 實際擁有的 tables:
+✅ 正確: admins, audit_logs, recommended_vendors
+⚠️ admin-service 也定義了大量其他服務的 table models（用於 admin CRUD）:
+   products, area_products, bathroom_equipment, brands, catalogs,
+   crew_certifications, crew_portfolios, crews, decoration_brands,
+   decoration_products, designer_portfolios, designers, equipment_brands,
+   favorite_collections, favorite_items, kitchen_equipment, product_images,
+   users, vendors
+   → 這是正常的（admin 需要讀寫所有 tables）但 MAP 未說明此跨服務 model 共用
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+4. GAP 分析驗證
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## 4.1 「前端有但後端沒有」 — 驗證結果
+
+✅ 準確的 GAP:
+  - /smart-schedule — 確認 Mock, 無後端 ✓
+  - /collaboration-board — 確認 Mock ✓
+  - /crew/dashboard — 確認 Mock ✓
+  - /vendor/dashboard — 確認 Mock ✓
+  - /planner — 確認靜態 ✓
+  - /ai-style — 確認 Mock/TODO ✓
+  - /ar-preview — 確認 Mock/TODO ✓
+  - /designer-profile (無 id) — 確認 Mock Demo ✓
+  - /work-crew-profile (無 id) — 確認 Mock Demo ✓
+  - /designers/premium — 確認無支付整合 ✓
+  - /designer/[code]/reviews — 確認回傳空陣列 ✓
+
+❌ MAP 低估的 GAP（標為 WARN 但應為 GAP）:
+  - /projects/[id]/batch-inquiry — MAP 說「後端可能未完整」
+    實際: 後端 100% 不存在任何 batch-inquiry 端點
+  - /notification-center — MAP 說「通知列表存在但中心頁面是 Mock」
+    實際: 通知列表端點也未被 include，完全不可達
+
+❌ MAP 遺漏的 GAP:
+  - /sop — MAP 沒列為 GAP 但 interaction-service SOP 全部被註解
+    profile-service 有 SOP 但 URL 格式不匹配前端
+  - /revenue — MAP 沒列為 GAP 但 6 個前端呼叫的端點中 5 個不存在
+  - /homeowner/dashboard — MAP 沒列為 GAP 但 /projects/my 端點不存在
+  - /weekly-digest (3 頁) — MAP 說歸 product-service 但端點完全不存在
+    應該是最嚴重的 GAP 之一
+
+## 4.2 「後端有但前端沒用」 — 驗證結果
+
+✅ 準確:
+  - e-signatures 系統 — 確認後端完整但前端未串接 ✓
+  - crew schedules/availability CRUD — 確認前端未串接 ✓
+  - catalog PATCH/DELETE — 確認前端未使用 ✓
+  - vendor-analytics (interaction-service v1) — 確認存在 ✓
+  - material-orders/dashboard/stats — 確認存在 ✓
+
+⚠️ 精確度問題:
+  - MAP 說 profile-service SOP 未被使用 — 這是因為前端 URL 不匹配
+    不是「前端沒用」而是「前端想用但 URL 格式不對」
+
+❌ MAP 遺漏的「後端有但前端沒用」:
+  - interaction-service gallery 整套 API（和 profile-service gallery 衝突）
+  - interaction-service commission 多數端點（/settings, /calculate 等）
+  - interaction-service 的 matching, smart-matching, onboarding routers
+    （MAP 在 5.3 有提到但未列在 5.2 的表格中）
+
+## 4.3 跨服務依賴 — 驗證結果
+
+✅ 準確:
+  - 合約 → 電子簽名未串接 ✓
+  - SOP 重複 ✓（但描述不夠準確——不只是重複，interaction 版被註解了）
+  - 設計師評價 return [] ✓
+  - Weekly Digest 未實作 ✓
+
+⚠️ 不夠準確:
+  - MAP 說「前端 /sop 只串 interaction 版」
+    實際: interaction 版被註解，且前端 URL 格式和 profile 版不匹配
+    → 結果是 SOP 系統完全不可用
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+5. 新發現的問題（MAP 完全未提及）
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔴 【嚴重】Gallery API 路徑衝突
+   profile-service 和 interaction-service 都有 prefix="/api/v1/gallery"
+   端點有重疊（如 /portfolios, /stats），Nginx 路由可能導致不可預測行為
+   MAP 完全未提及此衝突
+
+🔴 【嚴重】54 個 page.tsx 未被 git track
+   前端 100 個 page.tsx 中有 54 個是 untracked files
+   包括重要頁面如 contracts, crew-rfq, gallery, insurance, warranty 等
+   任何 git clone 都不會包含這些頁面
+
+🟡 【中等】interaction-service 有大量 MAP 未記錄的 DB tables
+   包括: arbitration_proceedings, auto_quote_rules, beta 相關 (4 tables),
+   commission_settings, gallery 相關 (5 tables), homeowner_reviews,
+   review 相關 (3 tables), taiwan_locations 等約 20+ 個 table
+
+🟡 【中等】多服務定義相同 table 的 model
+   vendors — product-service + profile-service 都有
+   products, product_images — product-service + profile-service + admin-service
+   → 單 DB 架構下這是可以的但增加了 schema 不同步風險
+
+🟡 【中等】payments 路由重複
+   interaction-service 的 payments 有兩條路徑:
+   1. routers/payments.py → prefix="/api/v1/payments" (在 main.py 直接 include)
+   2. api/v1/payments.py → prefix="/payments" via api_router → "/api/v1/payments"
+   可能造成端點重複註冊
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+6. 總結
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+unified-system-map.md 整體架構描述大致正確（~85% 準確度），但有以下關鍵問題:
+
+嚴重不一致 (必須修正):
+1. SOP 系統完全不可用（interaction 被註解 + profile URL 不匹配前端）
+2. Weekly Digest 聲稱在 product-service 但完全不存在
+3. /revenue 頁面 6 個 API 呼叫中 5 個後端不存在
+4. /homeowner/dashboard 的 /projects/my 端點不存在
+5. Gallery API 路徑在兩個服務中衝突
+6. GET /notifications 端點未被 include
+7. 54 個前端頁面未被 git 追蹤
+
+中等不一致 (建議修正):
+1. /batch-inquiry 後端完全不存在（MAP 低估為 WARN）
+2. /notification-center 後端也不可達
+3. ai_match_results 等 tables MAP 列出但 model 不存在
+4. 多個後端端點 MAP 未記錄（約 20+ interaction-service tables）
+5. payments 路由可能重複註冊
+
+MAP 的 Gap 分析整體方向正確，但嚴重度評估偏樂觀:
+- 實際 [GAP] 高 應為 8+ 個（MAP 列 4 個）
+- 多個 [WARN] 實際應升級為 [GAP]

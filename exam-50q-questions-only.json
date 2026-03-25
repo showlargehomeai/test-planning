@@ -1,0 +1,202 @@
+[
+  {
+    "id": 1,
+    "question": "When a brand-new user logs in for the first time via Google, what external notifications are triggered after the user record is created, and what happens if those notifications fail?"
+  },
+  {
+    "id": 2,
+    "question": "The service supports multiple identity providers (Google, Facebook, LINE, local). How does the system handle a scenario where the same email address logs in first via Google and later via Facebook? Describe the database field-level changes."
+  },
+  {
+    "id": 3,
+    "question": "Describe the complete data flow when the /verify endpoint receives a valid JWT token that is NOT in the cache. Include all systems touched and the response format."
+  },
+  {
+    "id": 4,
+    "question": "If you want to add a new updatable field 'address' to the user profile (both read and write), what are ALL the changes required across the codebase?"
+  },
+  {
+    "id": 5,
+    "question": "The profile picture upload flow has two different paths: direct upload via POST /profile/picture and inline update via PUT /profile. How do they differ in terms of blob storage handling, and what cleanup strategy is used for old images?"
+  },
+  {
+    "id": 6,
+    "question": "How does the authentication dependency injection work for the user profile API endpoints, and how does it differ from the /verify endpoint's authentication mechanism?"
+  },
+  {
+    "id": 7,
+    "question": "The LINE account linking endpoint exchanges an authorization code for user profile data. If a LINE account is already bound to a different user, what happens? Also, what database fields are affected when linking and unlinking?"
+  },
+  {
+    "id": 8,
+    "question": "The database module provides both async and sync session factories. Why do both exist, and how does the sync engine URL differ from the async one? What would break if you removed the sync session factory?"
+  },
+  {
+    "id": 9,
+    "question": "The JWT cache uses Redis with a specific TTL and key hashing strategy. Describe the cache key generation, what data is stored, and how the system handles Redis being completely unavailable during token verification."
+  },
+  {
+    "id": 10,
+    "question": "If you need to add a new role-based access control (e.g., only 'designer' role can access a new endpoint), what existing infrastructure can you reuse, and how does the role data flow from login to endpoint authorization?"
+  },
+  {
+    "id": 11,
+    "question": "When a vendor submits a new brand via the catalog submission review process and it gets approved, the system needs to determine which database table to insert the brand into. What are the three possible target tables, and what input value controls the routing?"
+  },
+  {
+    "id": 12,
+    "question": "The product search endpoint uses Redis caching. If a new product is created, how does the system ensure that stale search results are not served? Describe the invalidation mechanism."
+  },
+  {
+    "id": 13,
+    "question": "When exporting a favorite collection to PDF, the system builds product categories (like '材料 - 石材 - 水磨石'). How does the export determine the category string, and why doesn't this require additional database queries beyond the main export query?"
+  },
+  {
+    "id": 14,
+    "question": "When updating a product's images, the system performs 'smart image management'. Describe what happens when the frontend removes one of the existing other_images and adds a new one in the same update request."
+  },
+  {
+    "id": 15,
+    "question": "The favorites feature limits private collections to a maximum of 3 per user. Where and how is this constraint enforced, and what concurrency-safe mechanism prevents race conditions when two requests try to create private collections simultaneously?"
+  },
+  {
+    "id": 16,
+    "question": "When querying material products with price sorting (e.g., sort_by=price_m2), the system needs to merge results from two separate database queries (area_products and paint_products). How does it handle products with zero or very low prices during sorting?"
+  },
+  {
+    "id": 17,
+    "question": "The catalog upload endpoints use a three-phase pattern for database connection management. Describe the three phases and explain why the pattern is necessary for this particular operation."
+  },
+  {
+    "id": 18,
+    "question": "When a product is created or updated, the system queues a 'catalog hashtag update'. What triggers this queuing, what data structure is used, and how does the system determine which catalog type to queue?"
+  },
+  {
+    "id": 19,
+    "question": "The public catalog endpoint for vendors (GET /vendors/{vendor_id}/catalogs/public) can return catalogs with product thumbnails. Describe how the optimized batch query approach works and which tables from all three product domains (material, equipment, decoration) are involved."
+  },
+  {
+    "id": 20,
+    "question": "The 'related products' feature uses a circular navigation logic. If a user is viewing product ID 50 in a catalog that has products with IDs [10, 20, 30, 40, 50, 60, 70], and the limit is 5, which product IDs would be returned and in what order? What happens if there's no catalog_id?"
+  },
+  {
+    "id": 21,
+    "question": "When a new vendor registers through the self-service endpoint, what external integrations are triggered besides the database insert, and what happens if those integrations fail?"
+  },
+  {
+    "id": 22,
+    "question": "The Gallery API merges portfolios from two different profile types into a unified response. How does it handle the cover image extraction differently for each type, and what's the budget unit conversion applied?"
+  },
+  {
+    "id": 23,
+    "question": "The AI matching engine uses a weighted scoring system to recommend crews for RFQ projects. What are the five scoring dimensions and their weights, and which dimension queries an external database table (not the crews table) for historical data?"
+  },
+  {
+    "id": 24,
+    "question": "If a developer wants to add a new field 'rating_avg' to the public crew list API response, which files need modification, and what's the pattern used for authentication in crew endpoints?"
+  },
+  {
+    "id": 25,
+    "question": "The crew list endpoint supports filtering by service_area with automatic region expansion. How does this work for a query like service_area='北部地區', and what happens if the value is a direct city name instead?"
+  },
+  {
+    "id": 26,
+    "question": "When a designer deletes their vendor profile, what cleanup operations occur beyond the database deletion, and how does the role system get updated?"
+  },
+  {
+    "id": 27,
+    "question": "The SOP system has three database models forming a hierarchy. What are they, how do they relate to each other, and what mechanism is used to track individual step completion within a checklist?"
+  },
+  {
+    "id": 28,
+    "question": "The designer portfolio detail endpoint resolves linked materials from a JSONB field. Describe the data flow: where is the material linkage stored, how are product details fetched, and what image resolution priority is used?"
+  },
+  {
+    "id": 29,
+    "question": "The CRM module tracks a BD (Business Development) pipeline. When an activity is added to a contact, what side effects occur on the contact record, and what role-based access control is enforced for viewing team performance metrics?"
+  },
+  {
+    "id": 30,
+    "question": "The Premium subscription system for designers has a subscribe endpoint. What pricing tiers exist, how is the expiration date calculated if a designer re-subscribes before their current plan expires, and where is the payment transaction recorded?"
+  },
+  {
+    "id": 31,
+    "question": "When a vendor submits a quote in a chat room and the homeowner later confirms it, what downstream data operation synchronizes the confirmed quote items into the project's material list, and what fields get populated on the target record?"
+  },
+  {
+    "id": 32,
+    "question": "The notification system supports four delivery channels. When a new chat message is sent, trace the exact notification flow: which function triggers it, what channels are used, and how does the system decide whether to skip web push or LINE for a particular user?"
+  },
+  {
+    "id": 33,
+    "question": "The service has two different authentication/authorization dependency mechanisms used across its API endpoints. What are they, how do they extract user identity differently, and which endpoint groups use which mechanism?"
+  },
+  {
+    "id": 34,
+    "question": "When a payment transaction is created, the system automatically calculates platform commission. Trace the full commission calculation flow: how does it determine which commission type applies, and what are the three possible outcomes for the commission amount?"
+  },
+  {
+    "id": 35,
+    "question": "The enhanced material inquiry system (v2) integrates vendor trust scores from crew_reviews when creating inquiries. Describe the full auto-quote workflow: what triggers it, how is the auto-quote price calculated, and how does trust score affect the confidence level?"
+  },
+  {
+    "id": 36,
+    "question": "The RFQ chat system uses a 'supersede' pattern for quote versioning. When a vendor revises a quote, what happens to previously confirmed items, how are they preserved across versions, and what prevents duplicate items in the new quote?"
+  },
+  {
+    "id": 37,
+    "question": "The file upload endpoint supports multiple entity types but explicitly excludes one common entity. Which entity type is excluded from uploads, why, and what validation chain does the upload go through before reaching Azure Blob Storage?"
+  },
+  {
+    "id": 38,
+    "question": "When a homeowner creates a requirement with publish_type='direct' and specifies vendor_ids, what chain of database records and chat room interactions are created in a single transaction? How does the system ensure chat room uniqueness when multiple materials or requirements target the same vendor?"
+  },
+  {
+    "id": 39,
+    "question": "The service uses two completely different database connection mechanisms. Identify them, explain why they coexist, and list which API modules use each approach."
+  },
+  {
+    "id": 40,
+    "question": "When a daily report is submitted and later approved, what status constraints are enforced at each stage, and what fields are automatically populated by the system (not the user) during each operation?"
+  },
+  {
+    "id": 41,
+    "question": "When a vendor's summary stats are updated via the upsert method used by the cronjob, what happens to the cached data for that vendor, and which layers are involved in this invalidation flow?"
+  },
+  {
+    "id": 42,
+    "question": "The service supports two distinct entity types with separate caching strategies. How are their cache namespaces differentiated, and what is the implication if you accidentally used the wrong cache instance when adding a new entity type?"
+  },
+  {
+    "id": 43,
+    "question": "The vendor stats response includes a 'favorites' field in total stats but NOT in last_30_days stats. If a developer wants to add favorites to the last 30 days view as well, which schema definitions and service logic would need to change?"
+  },
+  {
+    "id": 44,
+    "question": "When the Redis connection is on Azure Managed Redis, the system uses a different client class than standard Redis. How does the code detect this, and what specific connection parameters differ between the two modes?"
+  },
+  {
+    "id": 45,
+    "question": "The product export stats endpoint accepts product IDs differently from other endpoints. Describe the input format, validation rules, and how the query to the data store is constructed. What SQL injection-like risk exists in the current implementation?"
+  },
+  {
+    "id": 46,
+    "question": "The timeline endpoint normalizes the 'days' query parameter. If a client requests days=15, what value will actually be used, and how does the timeline builder handle dates that have no recorded data?"
+  },
+  {
+    "id": 47,
+    "question": "The service has a mock implementation for its primary data store. How does the mock's query_items method differ from what the real data store would do, and what impact would this have on testing the vendor timeline feature?"
+  },
+  {
+    "id": 48,
+    "question": "If you need to add a new metric 'inquiry_clicks' to the designer statistics, trace all the locations that must be modified for it to appear correctly in both the summary endpoint and the timeline endpoint."
+  },
+  {
+    "id": 49,
+    "question": "The health check endpoint reports on infrastructure connectivity. Which components are checked and which are NOT checked? If the database storing the primary analytics data goes down, would the health check detect it?"
+  },
+  {
+    "id": 50,
+    "question": "The top portfolios endpoint constructs its response differently from other endpoints. How does the API layer transform the raw data from the service layer, and what happens if the data store returns items missing expected fields like 'title' or 'cover_image_url'?"
+  }
+]

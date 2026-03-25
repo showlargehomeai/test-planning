@@ -1,0 +1,260 @@
+==============================================================
+Product Service Deep Scan 交叉比對報告
+生成時間: 2026-03-24 16:00 (Asia/Taipei)
+比對來源:
+  MD: ~/largehomeai-repos/docs/product-service-deep-scan.md
+  CODE: ~/largehomeai-repos/LargeHomeAI--product-service/app/
+==============================================================
+
+【總結】
+- 檔案結構: 100% 一致 (20/20 files)
+- Endpoint: 100% 一致 (所有 endpoint 都存在且 path 正確)
+- DB Table: 基本一致，1 個遺漏
+- Env Var: 100% 一致 (24/24)
+- BlobStorageClient 方法: 100% 一致 (14/14)
+- 重要不一致: 5 項
+- 輕微不一致: 6 項
+- Code 有但 MD 漏寫: 4 項
+
+==============================================================
+A. 重要不一致（MD 寫錯或與 Code 矛盾）
+==============================================================
+
+A1. ❌ paint_product 的 material_type 預設值
+    MD 寫: "fixed material_type='paint'"
+    Code 實際: material_type='塗料'
+    位置: app/api/products.py create_product() 第 paint_product 區塊
+    影響: 文件誤導，實際用中文值 '塗料'
+
+A2. ❌ SKU 生成格式不完整
+    MD 寫: "generate SKU (SKU_{uuid[:8]})"
+    Code 實際: f"SKU_{uuid.uuid4().hex[:8].upper()}"
+    位置: app/api/products.py generate_sku()
+    差異: MD 漏了 .upper()，實際 SKU 字母是大寫
+
+A3. ❌ BathroomEquipment equipment query 有 runtime bug
+    MD 正確寫: bathroom_equipment 沒有 installation_type（用 shape 取代）
+    Code bug: products.py GET /equipment 中對 bathroom 也套用了
+        bathroom_query.filter(BathroomEquipment.installation_type.in_(installation_type))
+    但 BathroomEquipment model 沒有 installation_type 欄位
+    影響: 當 installation_type filter 被使用時，bathroom 查詢會 runtime error
+    位置: app/api/products.py query_equipment() bathroom filters 區塊
+
+A4. ❌ DecorationProduct detail 不回傳 is_favorited
+    MD 隱含 GET /products/{id} 所有類型都回傳 is_favorited
+    Code 實際: area/paint/kitchen/bathroom 都傳 is_favorited，
+    但 DecorationProductResponse 建構時沒傳 is_favorited 參數
+    位置: app/api/products.py get_product_details() decoration 區塊
+    影響: 軟裝產品 detail 頁永遠沒有收藏狀態
+
+A5. ❌ custom_brand_name 無法透過 PUT /products/{id} 更新
+    MD 寫: "Body: dict auto-cast to matching Update model" 暗示所有欄位可更新
+    Code 實際: update_product() 的 base product 更新邏輯只處理:
+        item_number, name, description, brand_id, origin_country,
+        catalog_id, is_displayed_offline
+    漏了 custom_brand_name
+    位置: app/api/products.py update_product()
+    影響: 廠商無法更新自有品牌名稱
+
+==============================================================
+B. MD 寫了但 Code 沒有（MD 多寫）
+==============================================================
+
+    （無發現。所有 MD 提到的功能在 code 中都有對應實作。）
+
+==============================================================
+C. Code 有但 MD 漏寫
+==============================================================
+
+C1. 📝 catalog_hashtag_queue table 未列入 Section 3 Model 清單
+    MD Section 4.9 提到此機制，但 Section 3 的 table 清單完全沒有
+    Code 使用: raw SQL INSERT INTO catalog_hashtag_queue (catalog_id, catalog_type)
+    位置: app/api/products.py queue_catalog_hashtag_update()
+    建議: 在 Section 3 補上 catalog_hashtag_queue (catalog_id, catalog_type, created_at)
+
+C2. 📝 私人收藏夾上限 3 個
+    Code: favorites.py create_collection() 和 update_collection()
+        檢查 private_collections >= 3 就拒絕
+    MD Section 2.5 完全沒提到此限制
+
+C3. 📝 brands / decoration_brands table 的 created_at / updated_at
+    MD Section 3.3 brands 和 3.12 decoration_brands 的欄位表沒列出
+    Code models/database.py: 兩個 table 都有 created_at / updated_at columns
+
+C4. 📝 decoration-products 查詢支援 decoration_catalog_id filter
+    Code: get_decoration_products() 有 decoration_catalog_id query param
+    MD Section 2.2 decoration 查詢段落未列出此 filter
+
+==============================================================
+D. 輕微不一致（不影響功能理解）
+==============================================================
+
+D1. recommended_count 上限不一致
+    MD 對 GET /products 寫 0-50
+    Code: products 確實是 0-50 ✅
+    但 equipment 和 decoration 各自是 0-10
+    MD 沒有分別說明 equipment/decoration 的上限
+
+D2. Redis key prefix 邏輯略不精確
+    MD 寫: largehome:{env}:recommended_products:pool:{category_key}
+    Code: production 時 prefix 是 "largehome:" (沒有 env 段)
+         非 production 時才是 "largehome:{env}:"
+
+D3. Blob naming 微差
+    MD Section 6.1: catalogs/{brand_id}/{vendor_id}/{uuid}.pdf
+    Code: blob name 是 {brand_id}/{vendor_id}/{uuid}{file_extension}
+    (container 就是 catalogs，所以完整路徑一樣，只是 MD 硬寫 .pdf)
+
+D4. move_to_products 與 move_multi_size_images 行為差異
+    move_to_products: 生成新 UUID 作為 blob name
+    move_multi_size_images: 保留原始 blob name
+    MD 沒有區分這兩種行為，但兩者在不同場景使用
+
+D5. decoration-products 查詢支援多分類 OR 篩選
+    Code: 有 categories 參數（逗號分隔多選 OR）和 category（單選）
+    MD 只描述了 category 單選
+
+D6. decoration-products 排序支援 name 排序
+    Code: sort_by 接受 composite_score/created_at/updated_at/unit_price/name
+    MD 沒有列出完整的 decoration sort_by 選項
+
+==============================================================
+E. 完全一致的項目（確認清單）
+==============================================================
+
+[Endpoints - 全部 ✅]
+GET /                                            ✅ main.py
+GET /health                                      ✅ health.py
+GET /api/v1/brands                               ✅ products.py
+GET /api/v1/brands/{brand_id}                    ✅ products.py
+POST /api/v1/products                            ✅ products.py
+GET /api/v1/products                             ✅ products.py
+GET /api/v1/products/by-identifier               ✅ products.py
+GET /api/v1/products/{product_id}                ✅ products.py
+PUT /api/v1/products/{product_id}                ✅ products.py
+DELETE /api/v1/products/{product_id}             ✅ products.py
+GET /api/v1/materials/{type}/products            ✅ products.py
+GET /api/v1/equipment                            ✅ products.py
+GET /api/v1/equipment-brands                     ✅ products.py
+GET /api/v1/decoration-brands                    ✅ products.py
+GET /api/v1/decoration-products                  ✅ products.py
+GET /api/v1/products/{id}/price-history          ✅ products.py
+POST /api/v1/images/upload                       ✅ images.py
+POST /api/v1/images/upload-temp                  ✅ images.py
+POST /api/v1/catalogs/upload                     ✅ catalogs.py
+GET /api/v1/brands/{id}/catalogs                 ✅ catalogs.py
+PATCH /api/v1/catalogs/{id}                      ✅ catalogs.py
+DELETE /api/v1/catalogs/{id}                     ✅ catalogs.py
+POST /api/v1/equipment-catalogs/upload           ✅ catalogs.py
+GET /api/v1/equipment-brands/{id}/catalogs       ✅ catalogs.py
+PATCH /api/v1/equipment-catalogs/{id}            ✅ catalogs.py
+DELETE /api/v1/equipment-catalogs/{id}           ✅ catalogs.py
+POST /api/v1/decoration-catalogs/upload          ✅ catalogs.py
+GET /api/v1/decoration-brands/{id}/catalogs      ✅ catalogs.py
+PATCH /api/v1/decoration-catalogs/{id}           ✅ catalogs.py
+DELETE /api/v1/decoration-catalogs/{id}          ✅ catalogs.py
+GET /api/v1/vendors/{id}/catalogs/public         ✅ catalogs.py
+GET /api/v1/vendors/{id}/decoration-catalogs/public  ✅ catalogs.py
+GET /api/v1/vendors/{id}/equipment-catalogs/public   ✅ catalogs.py
+POST /api/v1/collections/                        ✅ favorites.py
+GET /api/v1/collections/                         ✅ favorites.py
+GET /api/v1/collections/{id}                     ✅ favorites.py
+PUT /api/v1/collections/{id}                     ✅ favorites.py
+DELETE /api/v1/collections/{id}                  ✅ favorites.py
+POST /api/v1/collections/{id}/items              ✅ favorites.py
+GET /api/v1/collections/{id}/items/{item_id}     ✅ favorites.py
+PATCH /api/v1/collections/{id}/items/{item_id}   ✅ favorites.py
+DELETE /api/v1/collections/{id}/items/{item_id}  ✅ favorites.py
+POST /api/v1/collections/{id}/export             ✅ favorites.py
+GET /api/v1/vendors/stats                        ✅ vendors.py
+POST /api/v1/catalog-submission/submit           ✅ catalog_submission.py
+POST /api/v1/catalog-submission/approve          ✅ catalog_submission.py
+
+[DB Tables - 18/19 ✅, 1 漏寫]
+users                    ✅
+vendors                  ✅
+brands                   ✅ (MD 漏 created_at/updated_at)
+catalogs                 ✅
+products                 ✅
+area_products            ✅
+paint_products           ✅
+product_images           ✅
+kitchen_equipment        ✅
+bathroom_equipment       ✅
+decoration_products      ✅
+equipment_brands         ✅
+equipment_catalogs       ✅
+decoration_brands        ✅ (MD 漏 created_at/updated_at)
+decoration_catalogs      ✅
+favorite_collections     ✅
+favorite_items           ✅
+product_search_index     ✅
+equipment_search_index   ✅
+price_history            ✅
+catalog_hashtag_queue    ❌ MD Section 3 漏列
+
+[Env Vars - 24/24 ✅]
+DATABASE_URL             ✅ default: postgresql://localhost:5432/largehome
+TEST_DATABASE_URL        ✅ default: postgresql://localhost:5432/largehome_test
+DB_POOL_SIZE             ✅ default: 20
+DB_POOL_TIMEOUT          ✅ default: 30
+DB_POOL_RECYCLE          ✅ default: 1800
+DB_MAX_OVERFLOW          ✅ default: 50
+AZURE_STORAGE_CONNECTION_STRING  ✅ default: ""
+AZURE_STORAGE_CONTAINER  ✅ default: products
+TEMP_CONTAINER           ✅ default: temp-uploads
+AUTH_SERVICE_URL          ✅ default: http://localhost:8001
+AUTH_TIMEOUT             ✅ default: 10
+AUTH_DISABLED            ✅ default: false
+AUTH_HEADER_MODE         ✅ default: true
+REDIS_URL                ✅ default: None
+PORT                     ✅ default: 8000
+HOST                     ✅ default: 0.0.0.0
+ENVIRONMENT              ✅ default: development
+LOG_LEVEL                ✅ default: INFO
+CORS_ENABLED             ✅ default: true
+CORS_ORIGINS             ✅ default: *
+TEST_MODE                ✅ default: false
+IMGPROXY_URL             ✅ default: http://localhost:8080
+POWER_AUTOMATE_CATALOG_WEBHOOK_URL  ✅ default: ""
+CATALOG_APPROVE_API_SECRET  ✅ default: ""
+
+[BlobStorageClient Methods - 14/14 ✅]
+upload_to_temp                       ✅
+move_to_products                     ✅
+generate_thumbnail                   ✅
+move_to_temp_for_cleanup             ✅
+move_multi_size_images               ✅
+move_image_group_to_temp_for_cleanup ✅
+upload_catalog                       ✅
+upload_catalog_cover                 ✅
+upload_equipment_catalog             ✅
+upload_decoration_catalog            ✅
+delete_blob                          ✅
+is_temp_upload_url                   ✅
+is_products_url                      ✅
+_move_blob (internal)                ✅ (MD 未列但合理)
+
+==============================================================
+F. 建議修正優先順序
+==============================================================
+
+🔴 高優先（影響正確性/Runtime Error）:
+  1. A3: 修復 bathroom equipment query 中 installation_type filter bug
+  2. A4: DecorationProductResponse 補上 is_favorited 參數
+  3. A5: update_product() 補上 custom_brand_name 更新邏輯
+
+🟡 中優先（文件準確性）:
+  4. A1: 修正 MD paint material_type 描述為 '塗料'
+  5. C1: MD Section 3 補上 catalog_hashtag_queue table
+  6. C2: MD Section 2.5 補上私人收藏夾上限 3 個的說明
+
+🟢 低優先（完善文件）:
+  7. A2: MD 補上 SKU .upper() 說明
+  8. C3: MD 補上 brands/decoration_brands 的 created_at/updated_at
+  9. C4: MD 補上 decoration_catalog_id filter
+  10. D1-D6: 各項細節修正
+
+==============================================================
+報告結束
+==============================================================

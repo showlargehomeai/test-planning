@@ -1,0 +1,160 @@
+================================================================================
+Analytics Service Deep-Scan 文件 vs 實際 Code 交叉比對報告
+================================================================================
+比對日期: 2026-03-24
+文件: ~/largehomeai-repos/docs/analytics-service-deep-scan.md
+程式碼: ~/largehomeai-repos/LargeHomeAI--analytics-service/app/
+
+================================================================================
+一、總結
+================================================================================
+
+整體準確度: ★★★★☆ (高)
+文件品質良好，大部分描述與 code 一致。發現 3 處錯誤、4 處遺漏。
+
+================================================================================
+二、MD 寫了但有誤（3 處）
+================================================================================
+
+[錯誤-1] Root endpoint 回傳格式描述不完整
+  MD 寫: GET / → { version }
+  Code: 回傳 { service: "analytics-service", version: "1.0.0", docs: "/docs" }
+  → 漏了 service 和 docs 欄位
+
+[錯誤-2] WARN 項目描述不精確
+  MD 寫: "[WARN] StatsDetailLast30d missing favorites/materials_exported 
+          but _get_default_stats includes them — schema mismatch"
+  Code: _get_default_stats() 的 last_30_days 包含 materials_exported
+        但 **不包含 favorites**
+  → MD 說 "includes them"（暗示兩者都有）不準確，只有 materials_exported 是 mismatch
+
+[錯誤-3] VendorStatsResponse json_schema_extra 範例遺漏 materials_exported
+  MD: StatsDetail 列了 materials_exported 欄位
+  Code: VendorStatsResponse 的 json_schema_extra example 的 total 沒有 materials_exported
+  → 不影響功能（Pydantic default=0），但文件和 code example 有落差
+
+================================================================================
+三、MD 漏了（Code 有但 MD 沒提到）（4 處）
+================================================================================
+
+[遺漏-1] Cosmos container table 只列 read access，未提及 write access
+  vendor_summaries: code 有 upsert_item（upsert_vendor_summary 方法用）
+  vendor_daily_stats: code 有 upsert_item（upsert_daily_stats 方法用）
+  → table 的 "Access" 欄只寫 read_item/query_items，遺漏 upsert_item
+
+[遺漏-2] AnalyticsCache 的重連邏輯未提及
+  Code: _get_redis() 每次 ping 失敗會 self._redis = None 重建連線
+  MD: 只說 "graceful degradation"，未描述重連機制
+
+[遺漏-3] AnalyticsCache 參數命名問題未提及
+  Code: AnalyticsCache 所有方法參數都叫 vendor_id，即使 designer cache 也用同名
+  → designer_analytics_cache.get(designer_id) 實際傳的是 designer_id，
+     但方法簽名寫的是 vendor_id，易混淆
+
+[遺漏-4] mock_cosmos.py 的 CosmosResourceNotFoundError 和實際引用不同源
+  Code: stats_service.py import from azure.cosmos.exceptions.CosmosResourceNotFoundError
+  Code: mock_cosmos.py 自定義了同名 class 但完全未被引用
+  MD: 只說 "mock_cosmos.py exists but unused"，未說明有命名衝突
+
+================================================================================
+四、MD 寫了且正確（完全一致項目）
+================================================================================
+
+✅ Endpoints（6 個 API + 2 個 system）
+  - GET /api/v1/stats/vendor/{vendor_id}              → stats.py ✅
+  - GET /api/v1/stats/vendor/{vendor_id}/timeline      → stats.py ✅
+  - GET /api/v1/stats/products/exports                  → stats.py ✅
+  - GET /api/v1/stats/designer/{designer_id}            → stats.py ✅
+  - GET /api/v1/stats/designer/{designer_id}/timeline   → stats.py ✅
+  - GET /api/v1/stats/designer/{designer_id}/top-portfolios → stats.py ✅
+  - GET /health                                         → main.py ✅
+  - GET /                                               → main.py ✅（格式有誤見錯誤-1）
+
+✅ Pydantic Schemas（全部吻合）
+  - StatsDetail: 6 欄位 ✅
+  - StatsDetailLast30d: 4 欄位（無 favorites/materials_exported）✅
+  - VendorStats, VendorStatsResponse ✅
+  - DailyStats, VendorTimelineResponse ✅
+  - ProductExportStats, ProductExportStatsResponse ✅
+  - DesignerStatsDetail: 6 欄位 ✅
+  - DesignerStatsDetailLast30d: 同 total 6 欄位 ✅
+  - DesignerStats, DesignerStatsResponse ✅
+  - DesignerDailyStats, DesignerTimelineResponse ✅
+  - PortfolioViewStats, TopPortfoliosResponse ✅
+
+✅ Cosmos DB Containers（6 個全部吻合）
+  - vendor_summaries (PK: vendor_id) ✅
+  - vendor_daily_stats (PK: vendor_id) ✅
+  - product_export_stats (cross-partition) ✅
+  - designer_summaries (PK: designer_id) ✅
+  - designer_daily_stats (PK: designer_id) ✅
+  - portfolio_view_stats (PK: designer_id) ✅
+
+✅ Environment Variables（7 個全部吻合）
+  - COSMOS_ENDPOINT: str, default "" ✅
+  - COSMOS_KEY: str, default "" ✅
+  - COSMOS_DATABASE: str, default "largehome-analytics" ✅
+  - DATABASE_URL: str, default "" ✅
+  - REDIS_URL: str, default "" ✅
+  - CACHE_TTL: int, default 300 ✅
+  - CORS_ORIGINS: str, default '["http://localhost:3000"]' ✅
+
+✅ Redis Cache 架構
+  - Key prefix: analytics:vendor_summary: / analytics:designer_summary: ✅
+  - TTL: 300s ✅
+  - Azure Managed Redis port 10000 → RedisCluster ✅
+  - Methods: get, set, delete, health_check ✅
+  - 兩個 global instances ✅
+
+✅ StatsService public methods
+  - get_vendor_stats ✅
+  - upsert_vendor_summary ✅
+  - upsert_daily_stats ✅
+  - get_vendor_timeline ✅
+  - get_product_export_stats ✅
+  - get_designer_stats ✅
+  - get_designer_timeline ✅
+  - get_top_portfolios ✅
+
+✅ Key Observations / WARN 項目（大部分正確）
+  - All endpoints unauthenticated ✅
+  - mock_cosmos.py unused ✅
+  - DATABASE_URL unused in API layer ✅
+  - Designer has no upsert methods ✅
+  - product_export_stats uses f-string SQL ✅
+  - Redis graceful degradation ✅
+  - Clean layered architecture ✅
+  - StatsDetailLast30d schema mismatch ✅（描述微誤見錯誤-2）
+
+================================================================================
+五、Code 有但 MD 完全沒提到的東西（非重大）
+================================================================================
+
+- _create_cosmos_client() module-level function（MD 用 "Init" 描述涵蓋了）
+- _build_timeline() / _build_designer_timeline() private helpers
+- _get_default_stats() / _get_default_designer_stats() private helpers
+- _get_container() private method
+- Settings.cors_origins_list property
+- Router tag: tags=["stats"]
+- FastAPI docs_url="/docs", redoc_url="/redoc" 配置
+
+→ 這些是 private/infra 層級細節，不提也合理
+
+================================================================================
+六、建議修正優先級
+================================================================================
+
+P1（應修正）:
+  - 錯誤-1: Root endpoint 回傳格式更正
+  - 錯誤-2: WARN 描述精確化（只有 materials_exported mismatch）
+
+P2（建議補充）:
+  - 遺漏-1: Container table 補充 write access
+  - 遺漏-3: AnalyticsCache 參數命名問題（code 層面應修）
+
+P3（nice to have）:
+  - 遺漏-2: Redis 重連機制描述
+  - 遺漏-4: mock_cosmos 命名衝突說明
+  - 錯誤-3: json_schema_extra 範例補齊
+
+================================================================================

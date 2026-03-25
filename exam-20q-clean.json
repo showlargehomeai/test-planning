@@ -1,0 +1,102 @@
+[
+  {
+    "id": 1,
+    "service": "auth",
+    "question": "When a brand-new user logs in for the first time via Google, what external notifications are triggered after the user record is created, and what happens if those notifications fail?"
+  },
+  {
+    "id": 2,
+    "service": "auth",
+    "question": "The service supports multiple identity providers (Google, Facebook, LINE, local). How does the system handle a scenario where the same email address logs in first via Google and later via Facebook? Describe the database field-level changes."
+  },
+  {
+    "id": 3,
+    "service": "auth",
+    "question": "Describe the complete data flow when the /verify endpoint receives a valid JWT token that is NOT in the cache. Include all systems touched and the response format."
+  },
+  {
+    "id": 4,
+    "service": "auth",
+    "question": "If you want to add a new updatable field 'address' to the user profile (both read and write), what are ALL the changes required across the codebase?"
+  },
+  {
+    "id": 5,
+    "service": "auth",
+    "question": "The profile picture upload flow has two different paths: direct upload via POST /profile/picture and inline update via PUT /profile. How do they differ in terms of blob storage handling, and what cleanup strategy is used for old images?"
+  },
+  {
+    "id": 6,
+    "service": "auth",
+    "question": "How does the authentication dependency injection work for the user profile API endpoints, and how does it differ from the /verify endpoint's authentication mechanism?"
+  },
+  {
+    "id": 7,
+    "service": "auth",
+    "question": "The LINE account linking endpoint exchanges an authorization code for user profile data. If a LINE account is already bound to a different user, what happens? Also, what database fields are affected when linking and unlinking?"
+  },
+  {
+    "id": 8,
+    "service": "auth",
+    "question": "The database module provides both async and sync session factories. Why do both exist, and how does the sync engine URL differ from the async one? What would break if you removed the sync session factory?"
+  },
+  {
+    "id": 9,
+    "service": "auth",
+    "question": "The JWT cache uses Redis with a specific TTL and key hashing strategy. Describe the cache key generation, what data is stored, and how the system handles Redis being completely unavailable during token verification."
+  },
+  {
+    "id": 10,
+    "service": "auth",
+    "question": "If you need to add a new role-based access control (e.g., only 'designer' role can access a new endpoint), what existing infrastructure can you reuse, and how does the role data flow from login to endpoint authorization?"
+  },
+  {
+    "id": 11,
+    "service": "product",
+    "question": "When a vendor submits a new brand via the catalog submission review process and it gets approved, the system needs to determine which database table to insert the brand into. What are the three possible target tables, and what input value controls the routing?"
+  },
+  {
+    "id": 12,
+    "service": "product",
+    "question": "The product search endpoint uses Redis caching. If a new product is created, how does the system ensure that stale search results are not served? Describe the invalidation mechanism."
+  },
+  {
+    "id": 13,
+    "service": "product",
+    "question": "When exporting a favorite collection to PDF, the system builds product categories (like '材料 - 石材 - 水磨石'). How does the export determine the category string, and why doesn't this require additional database queries beyond the main export query?"
+  },
+  {
+    "id": 14,
+    "service": "product",
+    "question": "When updating a product's images, the system performs 'smart image management'. Describe what happens when the frontend removes one of the existing other_images and adds a new one in the same update request."
+  },
+  {
+    "id": 15,
+    "service": "product",
+    "question": "The favorites feature limits private collections to a maximum of 3 per user. Where and how is this constraint enforced, and what concurrency-safe mechanism prevents race conditions when two requests try to create private collections simultaneously?"
+  },
+  {
+    "id": 16,
+    "service": "product",
+    "question": "When querying material products with price sorting (e.g., sort_by=price_m2), the system needs to merge results from two separate database queries (area_products and paint_products). How does it handle products with zero or very low prices during sorting?"
+  },
+  {
+    "id": 17,
+    "service": "product",
+    "question": "The catalog upload endpoints use a three-phase pattern for database connection management. Describe the three phases and explain why the pattern is necessary for this particular operation."
+  },
+  {
+    "id": 18,
+    "service": "product",
+    "question": "When a product is created or updated, the system queues a 'catalog hashtag update'. What triggers this queuing, what data structure is used, and how does the system determine which catalog type to queue?"
+  },
+  {
+    "id": 19,
+    "service": "product",
+    "question": "The public catalog endpoint for vendors (GET /vendors/{vendor_id}/catalogs/public) can return catalogs with product thumbnails. Describe how the optimized batch query approach works and which tables from all three product domains (material, equipment, decoration) are involved."
+  },
+  {
+    "id": 20,
+    "service": "product",
+    "question": "The 'related products' feature uses a circular navigation logic. If a user is viewing product ID 50 in a catalog that has products with IDs [10, 20, 30, 40, 50, 60, 70], and the limit is 5, which product IDs would be returned and in what order? What happens if there's no catalog_id?"
+  }
+]

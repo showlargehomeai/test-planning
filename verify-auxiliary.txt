@@ -1,0 +1,295 @@
+===============================================================================
+auxiliary-services-deep-scan.md 交叉比對報告
+產出時間: 2026-03-24 16:05 (Asia/Taipei)
+比對對象: 6 repos vs docs/auxiliary-services-deep-scan.md
+===============================================================================
+
+目錄:
+  1. bot-service
+  2. cron-jobs
+  3. blog-cms
+  4. ea-docker
+  5. image-segmentation
+  6. largehome-ingress
+  7. 總結統計
+
+===============================================================================
+1. BOT-SERVICE (LargeHomeAI--bot-service)
+===============================================================================
+
+【Endpoints】✅ 全部吻合 (GET /, GET /health, POST /webhook)
+
+【Scripts】✅ 全部吻合 (6 個 scripts/ 下的檔案都存在，無多餘)
+
+【Env Vars】⚠️ 有不一致
+  ❌ MD 寫了但 code 沒用:
+    - REDIS_HOST, REDIS_PORT, REDIS_PASSWORD
+      → k8s deployment.yaml 有設定 (optional: true) 但 Python code 從未讀取
+      → 是 placeholder，實際未使用
+  ❌ Code 有但 MD 漏了:
+    - AZURE_OPENAI_EMBEDDING_DEPLOYMENT (k8s deployment.yaml 有設定
+      value="text-embedding-3-large"，但 Python code 也沒讀取，用 hardcoded 常數)
+
+【Functions/Classes】✅ 吻合
+  - Intent Chain → app/agents_langchain/intent_chain.py ✅
+  - Search Chain → app/agents_langchain/search_chain.py ✅
+  - Response Chain → app/agents_langchain/response_chain.py ✅
+  - Workflow → app/agents_langchain/workflow.py ✅
+
+【MD 漏寫的 code 檔案】
+  - app/agents_langchain/tools.py (LangChain tools)
+  - app/utils/product_query.py (產品查詢工具)
+  - app/handlers/flex_message_builder.py (LINE Flex Message 建構)
+  - archive/ 目錄 (舊版 Azure AI Agent Service code，已棄用)
+
+【Deployment】✅ 全部吻合 (image, port 8000, replicas 2)
+
+===============================================================================
+2. CRON-JOBS (LargeHomeAI--cron-jobs)
+===============================================================================
+
+【目錄結構】✅ 6 個 cron job 全部存在，無多餘未記錄的 job
+
+【sync-posthog-stats】⚠️ 有不一致
+  ❌ MD 寫錯 — Schedule 混亂:
+    - base manifest (sync-posthog-stats-cronjob.yaml): 0 19 * * * (每日!)
+    - prod manifest: 0 19 * * 0 (每週日) ← MD 只寫這個
+    - dev manifest: 0 19 * * 0 (每週日)
+    - base manifest 是過時版本，MD 未提及此差異
+  ❌ MD 漏了:
+    - Designer 事件追蹤包含 favorite_material_clicks，MD 未列出
+  ⚠️ MD 不精確:
+    - MD 說 composite score "runs every Sunday"，但 Python code 每次執行都跑
+      composite score，週日限制純靠 K8s schedule 控制
+    - vendor_payment_tier 轉換邏輯 (0/1/2 → 0/50/100 via ×50) MD 未說明
+
+【sync-products-to-cosmos】✅ 全部吻合
+  - 5 種產品類型、full/incremental sync、container 名稱、env vars、schedule
+
+【sync-embeddings】⚠️ 有不一致
+  ⚠️ MD 不精確:
+    - Code 只處理 area_products 和 paint_products 的 searchable text
+    - 不包含 kitchen_equipment, bathroom_equipment, decoration_products
+    - MD 未說明此範圍限制
+
+【sync-catalog-hashtags】✅ 全部吻合
+
+【sync-recommended-products】❌ 有不一致
+  ❌ MD 寫錯:
+    - MD 說 "Uses round-robin counter for fair exposure"
+    - 實際 code 只寫入 Redis pool 資料，不含 round-robin counter 邏輯
+    - Counter 邏輯在消費端 (product-service)，不在此 cron job
+
+【cleanup-temp-uploads】✅ 全部吻合
+
+【Cosmos DB Container Names】✅ 全部 7 個吻合
+  vendor_daily_stats, vendor_summaries, designer_daily_stats,
+  designer_summaries, product_export_stats, portfolio_view_stats,
+  product_search_data
+
+【Composite Score 公式】✅ 權重吻合 (0.10/0.30/0.30/0.20/0.10)
+  ✅ popularity_score 公式吻合
+  ✅ freshness_score 公式吻合
+  ✅ completeness_score 公式吻合 (base 70 + bonus 30)
+
+===============================================================================
+3. BLOG-CMS (LargeHomeAI--blog-cms)
+===============================================================================
+
+【Content Types】✅ 全部吻合
+  - Post: 所有 fields 完全吻合
+  - Category: 所有 fields 完全吻合
+  - Author: 所有 fields 完全吻合
+
+【Config】⚠️ 有不一致
+  ❌ MD 漏了:
+    - CORS origins 缺 www.largehomeai.com (code 有 4 個 origin，MD 只列 3 個)
+  ⚠️ MD 不完整:
+    - Preview path mapping 未記錄 (Post → /news/${slug})
+    - REST API limits 未記錄 (defaultLimit: 25, maxLimit: 100)
+
+【Env Vars】❌ 大量遺漏
+  MD 列出 13 個 env vars，code 實際使用 28+ 個
+  ❌ Code 有但 MD 漏了 (15 個):
+    - PUBLIC_URL
+    - DATABASE_PORT, DATABASE_NAME, DATABASE_USERNAME, DATABASE_PASSWORD
+    - DATABASE_SSL, DATABASE_SSL_REJECT_UNAUTHORIZED
+    - DATABASE_SCHEMA, DATABASE_FILENAME
+    - DATABASE_CONNECTION_TIMEOUT, DATABASE_POOL_MIN, DATABASE_POOL_MAX
+    - AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCOUNT_KEY, AZURE_STORAGE_CONTAINER
+    - FLAG_NPS, FLAG_PROMOTE_EE
+
+【Plugins】❌ MD 漏了
+  - @strapi/plugin-cloud (未記錄)
+  - @strapi/plugin-users-permissions (未記錄)
+
+【Dockerfile】✅ 基本吻合 (node:20-alpine, port 1337, 3-stage build)
+  ⚠️ 細節未記錄: non-root user (strapi uid 1001), native module 編譯依賴
+
+【Deployment】⚠️ 有不一致
+  - Azure DevOps pipeline 和 AKS 部署細節未記錄
+  - Admin URL 混淆: pipeline 引用 largehomeai.com/admin vs MD 的 cms.largehomeai.com
+
+===============================================================================
+4. EA-DOCKER (LargeHomeAI--ea-docker)
+===============================================================================
+
+【Docker Image & DB】✅ 吻合
+  - alextselegidis/easyappointments:latest ✅
+  - MySQL 8.0 ✅
+
+【Env Vars】❌ 有不一致
+  ❌ Code 有但 MD 漏了 (6 個 prod env vars):
+    - MAIL_PROTOCOL (smtp)
+    - MAIL_SMTP_AUTH (1)
+    - MAIL_SMTP_CRYPTO (tls)
+    - MAIL_SMTP_PORT (587)
+    - MAIL_FROM_NAME (LargeHome Booking)
+    - MAIL_REPLY_TO_ADDRESS (contact@largehomeai.com)
+  ⚠️ Dev 環境差異未記錄:
+    - Dev K8s 完全沒有 MAIL_* 設定
+    - docker-compose 也缺 MAIL_* 設定
+
+【Custom View Overrides】❌ MD 漏了
+  MD 列出: booking_footer, backend_header/footer, about, email templates
+  ❌ 實際多 4 個 layout overrides (MD 漏了):
+    - custom/views/layouts/backend_layout.php
+    - custom/views/layouts/booking_layout.php
+    - custom/views/layouts/account_layout.php
+    - custom/views/layouts/message_layout.php
+
+【K8s Manifests】✅ Namespace/PVC/Replicas 吻合
+  ❌ 嚴重問題: K8s manifests 直接用 upstream image (alextselegidis/easyappointments:latest)
+    而非 custom Dockerfile build。Custom branding overrides 不會生效，除非另行 build+push。
+    MD 未提及 image registry 或 build 流程。
+
+【其他未記錄的檔案】
+  - DEPLOYMENT.md (部署指南)
+  - k8s/dev/patch-auth-service-ea-env.yaml (dev 有，prod 無對應版本)
+  - k8s secrets yaml files 內容未列舉
+
+===============================================================================
+5. IMAGE-SEGMENTATION (LargeHomeAI--image-segmentation)
+===============================================================================
+
+【Endpoints】✅ 全部 5 個吻合，無多餘
+
+【Models】❌ 有不一致
+  ❌ MD 寫了但實際不可用:
+    - MobileSAM: code 有實作但:
+      (1) 不在 AVAILABLE_MODEL_TYPES → GET /models 不會列出
+      (2) mobile_sam 套件不在 requirements.txt → Docker 中會 ImportError
+    - SAM ViT-B: code 有實作但:
+      (1) 不在 AVAILABLE_MODEL_TYPES → GET /models 不會列出
+      (2) segment_anything 套件不在 requirements.txt → Docker 中會 ImportError
+    - segformer-b2: 在 SEGFORMER_MODELS dict 中可用但不在 AVAILABLE_MODEL_TYPES
+      → GET /models 不會列出（但知道 key 可以直接呼叫）
+
+【Core Algorithms】✅ 全部吻合
+  - morphological closing, hole filling, opening ✅
+  - Gaussian blur, median filter ✅
+  - smooth_mask_preserve_boundary() ✅
+  - polygon extraction, simplify_tolerance=5% ✅
+  - color naming ✅
+
+【MD 漏寫的項目】
+  - smooth_mask() 函式（非 preserve boundary 版本，用於 /update-mask）
+  - __main__ block 有 bug: 呼叫不存在的 load_model()，直接執行會 crash
+  - Color naming 回傳中文名稱 (白色區域、深灰區域等)，MD 未提及
+
+【Deployment】✅ 吻合 (port 8100, torch 2.6.0+cpu, multi-stage build)
+
+===============================================================================
+6. LARGEHOME-INGRESS (LargeHomeAI--largehome-ingress)
+===============================================================================
+
+【Routing Rules】❌ 嚴重不一致
+  ❌ MD 寫錯:
+    - /api/v1/products priority 是 78 (optional-auth)，不是 MD 說的 80
+    - auth-service/health 的 regex 比 MD 描述更精確
+  ❌ MD 大量遺漏 — MD 只列 ~9 條路由，實際有 17+ Ingress objects:
+    未記錄的路由包括:
+    - Priority 97: /api/v1/vendors, /api/v1/vendors/stats, /api/v1/vendors/public
+    - Priority 96: /api/v1/vendors/[0-9]+/catalogs/public
+    - Priority 80: /api/v1/designers/me, /api/v1/crews/me
+    - Priority 78: /api/v1/decoration-products
+    - Priority 77: /api/v1/designers, /api/v1/crews (detail)
+    - Priority 76: /api/v1/brands, /api/v1/catalog-submission/approve
+    - Priority 75: /api/v1/users, /api/v1/vendors/.+
+    - Priority 74: quote-cart, quotes, push, notifications, projects,
+                   requirements, chat-rooms (interaction-service routes)
+    - Priority 80: /api/v1/stats → analytics-service:8000
+    - Priority 70: /api/v1(/.*)? catch-all → product-service:8000
+
+【Service Ports】❌ 嚴重錯誤
+  ❌ MD 寫錯:
+    - profile-service: MD 說 8000，實際是 8003
+    - interaction-service: MD 說 8000，實際是 8004
+    - auth-service: MD 說 8000，K8s Service port 實際是 8001 (→container 8000)
+    - frontend-service memory: MD 說 256-512Mi，實際是 256-1536Mi (3 倍差距)
+  ❌ MD 寫了但 repo 不存在:
+    - admin-service: 未在任何 production yaml 中找到
+    - bot-service: 未在任何 production yaml 中找到
+  ❌ Code 有但 MD 漏了:
+    - analytics-service:8000 (64-128Mi) — 完整部署在 production yaml
+
+【Config Files】✅ 8 個列出的檔案都存在
+  ❌ 12+ 個檔案未記錄:
+    - k8s-apps.yaml (root-level)
+    - dev/k8s-custom-headers.yaml
+    - dev/k8s-imgproxy-dev.yaml
+    - dev/k8s-ingress-nginx-configmap.yaml
+    - production/deployment-steps.md
+    - production/AKS-AUTOMATIC-DEPLOYMENT.md
+    - production/azure-redis-info.md
+    - production/postgresql-connection-info.md
+    等
+
+【Scripts】✅ 7 個列出的都存在，無多餘
+
+【EA Production 部署】⚠️
+  - easyappointments-service 在 ingress 被引用但 production yaml 無 Deployment
+    (可能獨立部署在 ea-docker repo)
+
+===============================================================================
+7. 總結統計
+===============================================================================
+
+嚴重度分類:
+
+🔴 HIGH (MD 寫錯，會誤導開發):
+  1. [ingress] profile-service port 是 8003 不是 8000
+  2. [ingress] interaction-service port 是 8004 不是 8000
+  3. [ingress] auth-service K8s Service port 是 8001 不是 8000
+  4. [ingress] frontend-service memory limit 是 1536Mi 不是 512Mi
+  5. [ingress] admin-service, bot-service 不在 ingress repo 的任何 production yaml
+  6. [ingress] 路由規則嚴重不完整 (只列 ~9 條，實際 17+ Ingress objects)
+  7. [image-seg] MobileSAM/SAM ViT-B requirements.txt 缺套件，Docker 會 ImportError
+  8. [ea-docker] K8s 用 upstream image，custom branding overrides 不會生效
+  9. [cron] sync-recommended-products round-robin 歸屬錯誤 (不在此 cron job)
+
+🟡 MEDIUM (MD 遺漏重要資訊):
+  10. [blog-cms] 15 個 env vars 未記錄
+  11. [blog-cms] CORS 缺 www.largehomeai.com
+  12. [ea-docker] 6 個 prod MAIL_* env vars 未記錄
+  13. [ea-docker] 4 個 custom layout overrides 未記錄
+  14. [bot-service] REDIS_* env vars 在 k8s 有設定但 Python 從未使用
+  15. [ingress] analytics-service 存在但 MD 完全未提及
+  16. [image-seg] 3 個 model 不在 AVAILABLE_MODEL_TYPES (GET /models 不顯示)
+  17. [cron] sync-posthog-stats 有 3 份 schedule manifest，base 版是每日不是每週日
+
+🟢 LOW (小遺漏/補充):
+  18. [bot-service] tools.py, product_query.py, flex_message_builder.py 未記錄
+  19. [bot-service] AZURE_OPENAI_EMBEDDING_DEPLOYMENT k8s 有設但無人讀取
+  20. [cron] designer 事件漏列 favorite_material_clicks
+  21. [cron] sync-embeddings 只處理 area+paint products (不含其他 3 種)
+  22. [cron] vendor_payment_tier 轉換邏輯未說明
+  23. [blog-cms] 2 個 plugins 未記錄
+  24. [blog-cms] Preview path mapping 未記錄
+  25. [ea-docker] prod 無 auth-service patch file
+  26. [image-seg] smooth_mask() 函式未記錄
+  27. [image-seg] __main__ block load_model() bug
+  28. [ingress] 12+ 個 config/doc 檔案未列出
+
+總計: 9 個 HIGH | 8 個 MEDIUM | 11 個 LOW = 28 個不一致項目
+===============================================================================
